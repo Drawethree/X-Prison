@@ -1,0 +1,6 @@
+name: WildPrisonCore
+version: ${project.version}
+main: me.drawethree.wildprisoncore.WildPrisonCore
+api-version: 1.13
+depend: [helper]
+authors: [Drawethree]
