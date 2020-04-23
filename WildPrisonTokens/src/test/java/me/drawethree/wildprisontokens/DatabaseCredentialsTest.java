@@ -1,4 +1,4 @@
-package me.drawethree.wildprisontokens.database;
+package me.drawethree.wildprisontokens;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.Before;

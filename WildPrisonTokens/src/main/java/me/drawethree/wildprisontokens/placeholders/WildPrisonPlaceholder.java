@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
  * This class will be registered through the register-method in the
  * plugins onEnable-method.
  */
-public class TokensPlaceholder extends PlaceholderExpansion {
+public class WildPrisonPlaceholder extends PlaceholderExpansion {
 
     private WildPrisonTokens plugin;
 
@@ -17,10 +17,9 @@ public class TokensPlaceholder extends PlaceholderExpansion {
      * can simply use this method here to get an instance of our
      * plugin.
      *
-     * @param plugin
-     *        The instance of our plugin.
+     * @param plugin The instance of our plugin.
      */
-    public TokensPlaceholder(WildPrisonTokens plugin){
+    public WildPrisonPlaceholder(WildPrisonTokens plugin) {
         this.plugin = plugin;
     }
 
@@ -32,7 +31,7 @@ public class TokensPlaceholder extends PlaceholderExpansion {
      * @return true to persist through reloads
      */
     @Override
-    public boolean persist(){
+    public boolean persist() {
         return true;
     }
 
@@ -43,7 +42,7 @@ public class TokensPlaceholder extends PlaceholderExpansion {
      * @return Always true since it's an internal class.
      */
     @Override
-    public boolean canRegister(){
+    public boolean canRegister() {
         return true;
     }
 
@@ -54,7 +53,7 @@ public class TokensPlaceholder extends PlaceholderExpansion {
      * @return The name of the author as a String.
      */
     @Override
-    public String getAuthor(){
+    public String getAuthor() {
         return plugin.getDescription().getAuthors().toString();
     }
 
@@ -68,20 +67,20 @@ public class TokensPlaceholder extends PlaceholderExpansion {
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
     @Override
-    public String getIdentifier(){
-        return "wildprisontokens";
+    public String getIdentifier() {
+        return "wildprison";
     }
 
     /**
      * This is the version of the expansion.
      * <br>You don't have to use numbers, since it is set as a String.
-     *
+     * <p>
      * For convienience do we return the version from the plugin.yml
      *
      * @return The version as a String.
      */
     @Override
-    public String getVersion(){
+    public String getVersion() {
         return plugin.getDescription().getVersion();
     }
 
@@ -91,22 +90,22 @@ public class TokensPlaceholder extends PlaceholderExpansion {
      * <br>We specify the value identifier in this method.
      * <br>Since version 2.9.1 can you use OfflinePlayers in your requests.
      *
-     * @param  player
-     * @param  identifier
-     *         A String containing the identifier/value.
-     *
+     * @param player
+     * @param identifier A String containing the identifier/value.
      * @return possibly-null String of the requested identifier.
      */
     @Override
-    public String onPlaceholderRequest(Player player, String identifier){
+    public String onPlaceholderRequest(Player player, String identifier) {
 
-        if(player == null){
+        if (player == null) {
             return "";
         }
 
 
-        if(identifier.equals("tokens")){
+        if (identifier.equalsIgnoreCase("tokens")) {
             return String.valueOf(plugin.getTokensManager().getPlayerTokens(player));
+        } else if (identifier.equalsIgnoreCase("blocks")) {
+            return String.valueOf(plugin.getTokensManager().getPlayerBrokenBlocks(player));
         }
         return null;
     }

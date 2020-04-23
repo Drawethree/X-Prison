@@ -5,17 +5,32 @@ sql:
   username: dbUser
   password: dbPass
 messages:
-  not_enough_tokens: "&cYou do not have enough tokens!"
+  not_enough_tokens: "&e&l(!) &eYou don't have enough tokens"
   your_tokens: "&eYour Tokens: %tokens%"
   other_tokens: "&e%player%'s Tokens: %tokens%"
+  your_blocks: "&eYour Blocks: %blocks%"
+  other_blocks: "&e%player%'s Blocks: %blocks%"
   withdraw_successful: "&aYou have withdrawn &e%value%x %amount% Tokens!"
   admin_set_tokens: "&aSuccessfuly set &e%player%'s &atokens to &e%tokens%."
   admin_give_tokens: "&aSuccessfuly given &e%tokens% &atokens to &e%player%."
   admin_remove_tokens: "&aSuccessfuly removed &e%tokens% &atokens from &e%player%."
   not_token_item: "&cThis is not a token item!"
-  tokens_redeem: "&eYou redeemed %tokens% tokens."
+  tokens_redeem: "&e&l(!) &eYou redeemed &f%tokens% &etoken(s)"
   tokens_send: "&eYou have sent %tokens% to %player%"
   tokens_received: "&eYou received %tokens% from %player%."
   not_a_number: "&c%input% is not a number!"
   player_not_online: "&cPlayer &e%player% &cis not online!"
+  top_format_tokens: "&f&l#%position%. &e%player% &8» &7%amount% tokens"
+  top_format_blocks: "&f&l#%position%. &e%player% &8» &7%amount% blocks"
+  top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+tokens:
+  breaking:
+    chance: 50
+    max: 35
+    min: 1
+  item:
+    material: DOUBLE_PLANT
+    name: "&e&l%amount% TOKENS"
+    lore:
+      - "&7Right-Click to Redeem"
 

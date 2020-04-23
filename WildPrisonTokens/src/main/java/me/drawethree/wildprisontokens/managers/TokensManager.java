@@ -5,6 +5,8 @@ import me.drawethree.wildprisontokens.database.MySQLDatabase;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
+import me.lucko.helper.text.Text;
+import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -14,13 +16,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TokensManager {
+
+
+    private static String SPACER_LINE = WildPrisonTokens.getMessage("top_spacer_line");
+    private static String TOP_FORMAT_BLOCKS = WildPrisonTokens.getMessage("top_format_blocks");
+    private static String TOP_FORMAT_TOKENS = WildPrisonTokens.getMessage("top_format_tokens");
 
     private WildPrisonTokens plugin;
 
@@ -37,10 +44,37 @@ public class TokensManager {
         Schedulers.async().run(() -> {
             ResultSet set = this.plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.TOKENS_DB_NAME + " WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", player.getUniqueId().toString());
             try {
-                if (set.next()) {
-                    return;
-                } else {
+                if (!set.next()) {
                     this.plugin.getSqlDatabase().execute("INSERT INTO " + MySQLDatabase.TOKENS_DB_NAME + "(" + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + ") VALUES(?,?)", player.getUniqueId().toString(), 0);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            set = this.plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.BLOCKS_DB_NAME + " WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", player.getUniqueId().toString());
+            try {
+                if (!set.next()) {
+                    this.plugin.getSqlDatabase().execute("INSERT INTO " + MySQLDatabase.BLOCKS_DB_NAME + "(" + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + ") VALUES(?,?)", player.getUniqueId().toString(), 0);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void addIntoTable(UUID uuid) {
+        Schedulers.async().run(() -> {
+            ResultSet set = this.plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.TOKENS_DB_NAME + " WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", uuid.toString());
+            try {
+                if (!set.next()) {
+                    this.plugin.getSqlDatabase().execute("INSERT INTO " + MySQLDatabase.TOKENS_DB_NAME + "(" + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + ") VALUES(?,?)", uuid.toString(), 0);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            set = this.plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.BLOCKS_DB_NAME + " WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", uuid.toString());
+            try {
+                if (!set.next()) {
+                    this.plugin.getSqlDatabase().execute("INSERT INTO " + MySQLDatabase.BLOCKS_DB_NAME + "(" + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + ") VALUES(?,?)", uuid.toString(), 0);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -70,7 +104,7 @@ public class TokensManager {
         displayName = displayName.replace(" TOKENS", "");
         try {
             int amount = Integer.parseInt(displayName);
-            this.giveTokens(p,amount,null);
+            this.giveTokens(p, amount, null);
             if (item.getAmount() == 1) {
                 p.getInventory().remove(item);
             } else {
@@ -86,12 +120,12 @@ public class TokensManager {
 
     public void payTokens(Player executor, long amount, OfflinePlayer target) {
         Schedulers.async().run(() -> {
-            if(getPlayerTokens(executor) >= amount) {
+            if (getPlayerTokens(executor) >= amount) {
                 this.removeTokens(executor, amount, null);
                 this.giveTokens(target, amount, null);
                 executor.sendMessage(WildPrisonTokens.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.valueOf(amount)));
-                if(target.isOnline()) {
-                    ((Player)target).sendMessage(WildPrisonTokens.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.valueOf(amount)));
+                if (target.isOnline()) {
+                    ((Player) target).sendMessage(WildPrisonTokens.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.valueOf(amount)));
                 }
             } else {
                 executor.sendMessage(WildPrisonTokens.getMessage("not_enough_tokens"));
@@ -129,6 +163,18 @@ public class TokensManager {
         return 0;
     }
 
+    public long getPlayerBrokenBlocks(OfflinePlayer p) {
+        ResultSet set = plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.BLOCKS_DB_NAME + " WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", p.getUniqueId().toString());
+        try {
+            if (set.next()) {
+                return set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public void removeTokens(OfflinePlayer p, long amount, CommandSender executor) {
         Schedulers.async().run(() -> {
             long currentTokens = getPlayerTokens(p);
@@ -150,13 +196,66 @@ public class TokensManager {
         return ItemStackBuilder.of(Material.DOUBLE_PLANT).amount(value).name("&e&l" + amount + " TOKENS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
     }
 
-    public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {
+    public void sendInfoMessage(CommandSender sender, OfflinePlayer target, boolean tokens) {
         Schedulers.async().run(() -> {
             if (sender == target) {
-                sender.sendMessage(WildPrisonTokens.getMessage("your_tokens").replace("%tokens%", String.valueOf(this.getPlayerTokens(target))));
+                if (tokens) {
+                    sender.sendMessage(WildPrisonTokens.getMessage("your_tokens").replace("%tokens%", String.valueOf(this.getPlayerTokens(target))));
+                } else {
+                    sender.sendMessage(WildPrisonTokens.getMessage("your_blocks").replace("%blocks%", String.valueOf(this.getPlayerBrokenBlocks(target))));
+                }
             } else {
-                sender.sendMessage(WildPrisonTokens.getMessage("other_tokens").replace("%tokens%", String.valueOf(this.getPlayerTokens(target))).replace("%player%", target.getName()));
+                if (tokens) {
+                    sender.sendMessage(WildPrisonTokens.getMessage("other_tokens").replace("%tokens%", String.valueOf(this.getPlayerTokens(target))).replace("%player%", target.getName()));
+                } else {
+                    sender.sendMessage(WildPrisonTokens.getMessage("other_blocks").replace("%blocks%", String.valueOf(this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
+                }
             }
         });
     }
+
+    public void addBlocksBroken(Player player, int amount) {
+        Schedulers.async().run(() -> {
+            long currentBroken = getPlayerBrokenBlocks(player);
+            this.plugin.getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBroken + amount, player.getUniqueId().toString());
+        });
+    }
+
+    public void sendBlocksTop(CommandSender sender) {
+        Schedulers.async().run(() -> {
+            ResultSet set = this.plugin.getSqlDatabase().query("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " LIMIT 10");
+            sender.sendMessage(Text.colorize(SPACER_LINE));
+            for (int i = 0; i < 10; i++) {
+                try {
+                    if (!set.next()) {
+                        break;
+                    }
+                    sender.sendMessage(TOP_FORMAT_BLOCKS.replace("%position%", String.valueOf(i + 1)).replace("%player%", Players.getOfflineNullable(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME))).getName()).replace("%amount%", String.format("%,d", set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME))));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            sender.sendMessage(Text.colorize(SPACER_LINE));
+        });
+    }
+
+    public void sendTokensTop(CommandSender sender) {
+        Schedulers.async().run(() -> {
+            ResultSet set = this.plugin.getSqlDatabase().query("SELECT " + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + " FROM " + MySQLDatabase.TOKENS_DB_NAME + " ORDER BY " + MySQLDatabase.TOKENS_TOKENS_COLNAME + " DESC LIMIT 10");
+            sender.sendMessage(Text.colorize(SPACER_LINE));
+            for (int i = 0; i < 10; i++) {
+                try {
+                    if (!set.next()) {
+                        break;
+                    }
+                    sender.sendMessage(TOP_FORMAT_TOKENS.replace("%position%", String.valueOf(i + 1)).replace("%player%", Players.getOfflineNullable(UUID.fromString(set.getString(MySQLDatabase.TOKENS_UUID_COLNAME))).getName()).replace("%amount%", String.format("%,d", set.getLong(MySQLDatabase.TOKENS_TOKENS_COLNAME))));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            sender.sendMessage(Text.colorize(SPACER_LINE));
+
+        });
+    }
+
 }

@@ -11,8 +11,13 @@ public class MySQLDatabase {
 
 
     public static final String TOKENS_DB_NAME = "WildPrison_Tokens";
+    public static final String BLOCKS_DB_NAME = "WildPrison_BlocksBroken";
+
     public static final String TOKENS_UUID_COLNAME = "UUID";
     public static final String TOKENS_TOKENS_COLNAME = "Tokens";
+
+    public static final String BLOCKS_UUID_COLNAME = "UUID";
+    public static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
 
     @Getter
     private WildPrisonTokens parent;
@@ -26,29 +31,27 @@ public class MySQLDatabase {
         this.connect();
     }
 
-    public MySQLDatabase(DatabaseCredentials credentials) {
-        this.credentials = credentials;
-        this.connect();
-    }
-
 
     private synchronized void connect() {
-        if (this.parent != null && !this.parent.isEnabled()) {
-            return;
-        }
+        Schedulers.async().run(() -> {
+            if (this.parent != null && !this.parent.isEnabled()) {
+                return;
+            }
 
-        try {
-            openConnection();
-            createTables();
-        } catch (Exception e) {
-            e.printStackTrace();
-            this.parent.getServer().getPluginManager().disablePlugin(this.parent);
-        }
+            try {
+                openConnection();
+                createTables();
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.parent.getServer().getPluginManager().disablePlugin(this.parent);
+            }
+        });
     }
 
     private synchronized void openConnection() throws SQLException {
         this.connection = DriverManager.getConnection(
-                "jdbc:mysql://" + this.credentials.getHost() + ":" + this.credentials.getPort() + "/" + this.credentials.getDatabaseName() + "?characterEncoding=latin1", this.credentials.getUserName(), this.credentials.getPassword());
+                "jdbc:mysql://" + this.credentials.getHost() + ":" + this.credentials.getPort() + "/" + this.credentials.getDatabaseName(), this.credentials.getUserName(), this.credentials.getPassword());
+
     }
 
     //Always call async!
@@ -76,6 +79,7 @@ public class MySQLDatabase {
 
     private synchronized void createTables() {
         Schedulers.async().run(() -> execute("CREATE TABLE IF NOT EXISTS " + TOKENS_DB_NAME + "(UUID varchar(36) NOT NULL, Tokens long, primary key (UUID))"));
+        Schedulers.async().run(() -> execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks long, primary key (UUID))"));
     }
 
 
@@ -112,7 +116,7 @@ public class MySQLDatabase {
     public synchronized Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             this.connection = DriverManager.getConnection(
-                    "jdbc:mysql://" + this.credentials.getHost() + ":" + this.credentials.getPort() + "/" + this.credentials.getDatabaseName() + "?characterEncoding=latin1", this.credentials.getUserName(), this.credentials.getPassword());
+                    "jdbc:mysql://" + this.credentials.getHost() + ":" + this.credentials.getPort() + "/" + this.credentials.getDatabaseName(), this.credentials.getUserName(), this.credentials.getPassword());
         }
         return connection;
     }
