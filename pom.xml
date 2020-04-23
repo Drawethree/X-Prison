@@ -12,6 +12,7 @@
     <modules>
         <module>WildPrisonTokens</module>
         <module>WildPrisonEnchants</module>
+        <module>WildPrisonAutoSell</module>
     </modules>
 
     <name>WildPrisonCore</name>
