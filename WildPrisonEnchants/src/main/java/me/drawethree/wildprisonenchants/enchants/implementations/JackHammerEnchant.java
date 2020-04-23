@@ -1,6 +1,7 @@
 package me.drawethree.wildprisonenchants.enchants.implementations;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.drawethree.wildprisonautosell.WildPrisonAutoSell;
 import me.drawethree.wildprisonenchants.WildPrisonEnchants;
 import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisontokens.WildPrisonTokens;
@@ -13,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -47,26 +47,36 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
 
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
             List<ProtectedRegion> regions = plugin.getWorldGuard().getRegionContainer().get(e.getBlock().getWorld()).getApplicableRegions(e.getBlock().getLocation()).getRegions().stream().filter(reg -> reg.getId().startsWith("mine")).collect(Collectors.toList());
-            if (regions.size() == 1) {
+            if (regions.size() > 0) {
                 ProtectedRegion region = regions.get(0);
+                //List<BlockState> blocksAffected = new ArrayList<>();
+
+                long totalDeposit = 0;
                 int blockCount = 0;
-                int timesRan = 0;
+                int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(e.getPlayer(), 3);
+                int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                 for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
-                    List<Block> blocksToRemove = new ArrayList<>();
                     for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
-                        blocksToRemove.add(e.getBlock().getWorld().getBlockAt(x, e.getBlock().getY(), z));
+                        Block b = e.getBlock().getWorld().getBlockAt(x, e.getBlock().getY(), z);
+                        if (b != null && b.getType() != Material.AIR) {
+                            blockCount++;
+                            //blocksAffected.add(b.getState());
+                            if (WildPrisonAutoSell.getApi().hasAutoSellEnabled(e.getPlayer())) {
+                                totalDeposit += (WildPrisonAutoSell.getApi().getPriceForBrokenBlock(region, b) * amplifier);
+                                System.out.println(totalDeposit);
+                            } else {
+                                e.getPlayer().getInventory().addItem(new ItemStack(b.getType(), fortuneLevel + 1));
+                            }
+                            Schedulers.sync().run(() -> b.setType(Material.AIR));
+                        }
                     }
-                    blockCount += blocksToRemove.size();
-                    Schedulers.sync().runLater(() -> {
-                        blocksToRemove.stream().filter(b -> b != null && b.getType() != Material.AIR).forEach(b -> {
-                            b.setType(Material.AIR);
-                            WildPrisonEnchants.getEnchantsManager().handleBlockBreak(new BlockBreakEvent(b, e.getPlayer()));
-                        });
-                    }, timesRan * 1);
-                    timesRan++;
                 }
-                WildPrisonEnchants.getEnchantsManager().addBlocksBroken(e.getPlayer(), blockCount - 1);
-                WildPrisonTokens.getInstance().getTokensManager().addBlocksBroken(e.getPlayer(), blockCount - 1);
+
+                //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
+
+                WildPrisonEnchants.getEconomy().depositPlayer(e.getPlayer(), totalDeposit);
+                WildPrisonEnchants.getEnchantsManager().addBlocksBrokenToItem(e.getPlayer(), blockCount);
+                WildPrisonTokens.getInstance().getTokensManager().addBlocksBroken(e.getPlayer(), blockCount);
             }
         }
     }

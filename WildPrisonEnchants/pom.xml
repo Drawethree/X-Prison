@@ -103,6 +103,12 @@
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>me.drawethree</groupId>
+            <artifactId>WildPrisonAutoSell</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -115,14 +121,14 @@
             <artifactId>worldguard-bukkit</artifactId>
             <version>6.2.2-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/worldguard-6.2.jar</systemPath>
+            <systemPath>C:/Users/janci/OneDrive/Desktop/IntelliJ/IntelliJ Projects/WildPrisonCore/libs/worldguard-6.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>6.2.2-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/worldedit-bukkit-6.1.jar</systemPath>
+            <systemPath>C:/Users/janci/OneDrive/Desktop/IntelliJ/IntelliJ Projects/WildPrisonCore/libs/worldedit-bukkit-6.1.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

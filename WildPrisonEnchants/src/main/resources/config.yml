@@ -142,13 +142,11 @@ enchants:
       Enabled: true
       InGuiSlot: 34
   '9':
-    Radius2: 3
     Name: '&aExplosive'
     Enabled: true
     InGuiSlot: 35
     Increase-Cost-by: 125
     Max: 500
-    Radius: 1
     Chance: 0.2
     Cost: 125
     Description: '&7&o(( Explodes nearby blocks while mining ))'

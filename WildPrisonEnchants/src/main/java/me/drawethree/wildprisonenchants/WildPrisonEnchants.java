@@ -7,7 +7,6 @@ import me.drawethree.wildprisonenchants.api.WildPrisonEnchantsAPIImpl;
 import me.drawethree.wildprisonenchants.gui.DisenchantGUI;
 import me.drawethree.wildprisonenchants.gui.EnchantGUI;
 import me.drawethree.wildprisonenchants.managers.EnchantsManager;
-import me.drawethree.wildprisontokens.WildPrisonTokens;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -16,7 +15,6 @@ import me.lucko.helper.text.Text;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -43,9 +41,6 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
 
     private static HashMap<String, String> messages;
 
-    private long obsidianTokens;
-    private long endstoneTokens;
-
     @Override
     public void load() {
         instance = this;
@@ -54,12 +49,6 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
 
         saveDefaultConfig();
         loadMessages();
-        loadVariables();
-    }
-
-    private void loadVariables() {
-        this.obsidianTokens = getConfig().getLong("obsidian_tokens");
-        this.endstoneTokens = getConfig().getLong("endstone_tokens");
     }
 
     private void loadMessages() {
@@ -107,22 +96,20 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
                         ItemStack oldItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
                         ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
                         if (newItem != null && newItem.getType() == Material.DIAMOND_PICKAXE) {
-                            enchantsManager.onEquip(e.getPlayer(), newItem);
+                            enchantsManager.handlePickaxeEquip(e.getPlayer(), newItem);
                             if (!newItem.hasItemMeta() && !newItem.getItemMeta().hasLore()) {
                                 enchantsManager.applyLoreToPickaxe(newItem);
                             }
                         } else if (oldItem != null && oldItem.getType() == Material.DIAMOND_PICKAXE) {
-                            enchantsManager.onUnequip(e.getPlayer(), oldItem);
+                            enchantsManager.handlePickaxeUnequip(e.getPlayer(), oldItem);
                         }
                     }, 1);
                 }).bindWith(this);
         Events.subscribe(BlockBreakEvent.class)
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled())
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
-                    if (e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE) {
-                        enchantsManager.addBlocksBroken(e.getPlayer(), 1);
-                        enchantsManager.handleBlockBreak(e);
-                    }
+                    enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);
+                    enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand());
                 }).bindWith(this);
 
     }

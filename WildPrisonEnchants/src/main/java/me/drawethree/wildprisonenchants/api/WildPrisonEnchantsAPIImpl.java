@@ -3,6 +3,7 @@ package me.drawethree.wildprisonenchants.api;
 import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisonenchants.managers.EnchantsManager;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
@@ -16,8 +17,8 @@ public class WildPrisonEnchantsAPIImpl implements WildPrisonEnchantsAPI {
     }
 
     @Override
-    public HashMap<WildPrisonEnchantment, Integer> getPlayerEnchants(Player p) {
-        return this.enchantsManager.getPlayerEnchants(p);
+    public HashMap<WildPrisonEnchantment, Integer> getPlayerEnchants(ItemStack pickAxe) {
+        return this.enchantsManager.getPlayerEnchants(pickAxe);
     }
 
     @Override

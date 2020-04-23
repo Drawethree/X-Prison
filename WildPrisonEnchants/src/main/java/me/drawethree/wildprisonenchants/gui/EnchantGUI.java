@@ -8,7 +8,6 @@ import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
-import me.lucko.helper.menu.scheme.MenuScheme;
 import me.lucko.helper.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -56,10 +55,10 @@ public class EnchantGUI extends Gui {
                 continue;
             }
             int level = WildPrisonEnchants.getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment.getId());
-            this.setItem(enchantment.getGuiSlot(), (enchantment.getGuiItem(this, level)));
+            this.setItem(enchantment.getGuiSlot(), WildPrisonEnchants.getEnchantsManager().getGuiItem(enchantment, this, level));
         }
 
-        this.setItem(PICKAXE_ITEM_SLOT,Item.builder(pickAxe).build());
+        this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());
         this.getPlayer().setItemInHand(pickAxe);
     }
 }

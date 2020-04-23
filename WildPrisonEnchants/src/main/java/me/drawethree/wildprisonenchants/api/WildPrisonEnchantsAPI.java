@@ -2,13 +2,14 @@ package me.drawethree.wildprisonenchants.api;
 
 import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
 public interface WildPrisonEnchantsAPI {
 
 
-    HashMap<WildPrisonEnchantment, Integer> getPlayerEnchants(Player p);
+    HashMap<WildPrisonEnchantment, Integer> getPlayerEnchants(ItemStack itemStack);
 
     boolean hasEnchant(Player p, int id);
 
