@@ -1,0 +1,6 @@
+name: WildPrisonAutoSell
+version: ${project.version}
+main: me.drawethree.wildprisonautosell.WildPrisonAutoSell
+api-version: 1.13
+depend: [helper, Vault, WorldGuard]
+authors: [Drawethree]
