@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class TokensManager {
 
@@ -61,27 +60,6 @@ public class TokensManager {
         });
     }
 
-    private void addIntoTable(UUID uuid) {
-        Schedulers.async().run(() -> {
-            ResultSet set = this.plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.TOKENS_DB_NAME + " WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", uuid.toString());
-            try {
-                if (!set.next()) {
-                    this.plugin.getSqlDatabase().execute("INSERT INTO " + MySQLDatabase.TOKENS_DB_NAME + "(" + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + ") VALUES(?,?)", uuid.toString(), 0);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            set = this.plugin.getSqlDatabase().query("SELECT * FROM " + MySQLDatabase.BLOCKS_DB_NAME + " WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", uuid.toString());
-            try {
-                if (!set.next()) {
-                    this.plugin.getSqlDatabase().execute("INSERT INTO " + MySQLDatabase.BLOCKS_DB_NAME + "(" + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + ") VALUES(?,?)", uuid.toString(), 0);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     public void setTokens(OfflinePlayer p, long newAmount, CommandSender executor) {
         Schedulers.async().run(() -> {
             this.plugin.getSqlDatabase().execute("UPDATE " + MySQLDatabase.TOKENS_DB_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", newAmount, p.getPlayer().getUniqueId().toString());
@@ -106,7 +84,7 @@ public class TokensManager {
             int amount = Integer.parseInt(displayName);
             this.giveTokens(p, amount, null);
             if (item.getAmount() == 1) {
-                p.getInventory().remove(item);
+                p.setItemInHand(null);
             } else {
                 item.setAmount(item.getAmount() - 1);
             }
@@ -200,15 +178,15 @@ public class TokensManager {
         Schedulers.async().run(() -> {
             if (sender == target) {
                 if (tokens) {
-                    sender.sendMessage(WildPrisonTokens.getMessage("your_tokens").replace("%tokens%", String.valueOf(this.getPlayerTokens(target))));
+                    sender.sendMessage(WildPrisonTokens.getMessage("your_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))));
                 } else {
-                    sender.sendMessage(WildPrisonTokens.getMessage("your_blocks").replace("%blocks%", String.valueOf(this.getPlayerBrokenBlocks(target))));
+                    sender.sendMessage(WildPrisonTokens.getMessage("your_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))));
                 }
             } else {
                 if (tokens) {
-                    sender.sendMessage(WildPrisonTokens.getMessage("other_tokens").replace("%tokens%", String.valueOf(this.getPlayerTokens(target))).replace("%player%", target.getName()));
+                    sender.sendMessage(WildPrisonTokens.getMessage("other_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))).replace("%player%", target.getName()));
                 } else {
-                    sender.sendMessage(WildPrisonTokens.getMessage("other_blocks").replace("%blocks%", String.valueOf(this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
+                    sender.sendMessage(WildPrisonTokens.getMessage("other_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
                 }
             }
         });
