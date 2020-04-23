@@ -71,6 +71,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>sk89q-repo</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -79,7 +83,7 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/server.jar</systemPath>
+            <systemPath>C:/Users/janci/OneDrive/Desktop/IntelliJ/IntelliJ Projects/WildPrisonCore/libs/server.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>me.lucko</groupId>
@@ -106,6 +110,19 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+            <version>6.2.2-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/worldguard-6.2.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>6.2.2-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/worldedit-bukkit-6.1.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

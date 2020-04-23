@@ -46,6 +46,10 @@ messages:
   enchant_refunded: "&e&lREFUND &8» &7You have refunded &f%amount% &7levels of %enchant%"
   enchant_tokens_back: "&e&lREFUND &8» &7You have received &f%tokens% &7tokens back."
   enchant_no_level: "&e&l(!) &cYou do not have this enchant!"
+  charity_other: "&a&l+ $%amount% &7(From %player%'s Charity)"
+  charity_your: "&a&l+ $%amount% &7(From Your Charity)"
+  blessing_other: "&6&l+ %amount% TOKENS &7(From %player%'s Blessing)"
+  blessing_your: "&6&l+ %amount% TOKENS &7(From Your Blessing)"
 enchants:
   '1':
     Name: '&aEfficiency'
@@ -157,7 +161,6 @@ enchants:
     InGuiSlot: 36
     Increase-Cost-by: 200
     Max: 500
-    Radius: 5
     Chance: 4.0E-4
     Cost: 200
     Description: '&7&o(( Ability to break full layer of your mine while mining))'
@@ -174,11 +177,7 @@ enchants:
     Max-Money: 5000000000000
     Min-Money: 1000000000000
     Cost: 25
-    Description: '&7&o(( Chance to give to everyone online money while mining
-            ))'
-    Massage:
-      '1': '&a&l+ $%amount% &7(From %from player%''s Charity)'
-      '2': '&a&l+ $%amount% &7(From Your Charity)'
+    Description: '&7&o(( Chance to give to everyone online money while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 37
@@ -189,8 +188,8 @@ enchants:
     Increase-Cost-by: 35
     Max: 500
     Chance: 7.5E-4
-    Max-money: 5000000000000
-    Min-money: 2500000000000
+    Max-Money: 5000000000000
+    Min-Money: 2500000000000
     Cost: 35
     Description: '&7&o(( Ability to receive more money while mining ))'
     Refund:
@@ -206,11 +205,7 @@ enchants:
     Max-Tokens: 15000
     Min-Tokens: 5000
     Cost: 25
-    Description: '&7&o(( Chance to give to everyone online tokens while mining
-            ))'
-    Massage:
-      '1': '&6&l+ %amount% TOKENS &7(From %from player%''s Blessing)'
-      '2': '&6&l+ %amount% TOKENS &7(From Your Blessing)'
+    Description: '&7&o(( Chance to give to everyone online tokens while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 39
@@ -254,14 +249,14 @@ enchants:
     InGuiSlot: 42
     Increase-Cost-by: 175
     Max: 500
-    buycraft-Max: 0.25
-    buycraft-Min: 0.1
     Cost: 175
     Description: '&7&o(( Ability to find Store Coupons while mining. ))'
     Refund:
       Enabled: true
       InGuiSlot: 42
     Chance: 4.0E-7
+    Commands:
+      - voucher give Coupon 1 %player%
   '17':
     Name: '&dBooster'
     Enabled: true
@@ -309,21 +304,21 @@ Pickaxe:
     - '&8&m------------------------'
     - '&E&lBLOCKS MINED: &f%Blocks%'
     - '&8&m------------------------'
-    - '%Enchant-8%'
-    - '%Enchant-5%'
-    - '%Enchant-2%'
     - '%Enchant-1%'
+    - '%Enchant-2%'
+    - '%Enchant-3%'
+    - '%Enchant-4%'
+    - '%Enchant-5%'
+    - '%Enchant-6%'
+    - '%Enchant-7%'
+    - '%Enchant-8%'
+    - '%Enchant-9%'
+    - '%Enchant-10%'
+    - '%Enchant-11%'
+    - '%Enchant-12%'
+    - '%Enchant-13%'
     - '%Enchant-14%'
     - '%Enchant-15%'
     - '%Enchant-16%'
     - '%Enchant-17%'
-    - '%Enchant-9%'
-    - '%Enchant-4%'
-    - '%Enchant-12%'
-    - '%Enchant-3%'
-    - '%Enchant-6%'
-    - '%Enchant-13%'
-    - '%Enchant-10%'
-    - '%Enchant-7%'
     - '%Enchant-18%'
-    - '%Enchant-11%'

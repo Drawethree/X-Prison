@@ -2,6 +2,7 @@ package me.drawethree.wildprisonenchants.managers;
 
 import me.drawethree.wildprisonenchants.WildPrisonEnchants;
 import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
+import me.drawethree.wildprisontokens.WildPrisonTokens;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -21,6 +22,9 @@ public class EnchantsManager {
 
 
     private final WildPrisonEnchants plugin;
+
+    private static final long OBSIDIAN_TOKENS = WildPrisonEnchants.getInstance().getConfig().getLong("obsidian_tokens");
+    private static final long ENDSTONE_TOKENS = WildPrisonEnchants.getInstance().getConfig().getLong("endstone_tokens");
 
     private static List<String> PICKAXE_LORE = WildPrisonEnchants.getInstance().getConfig().getStringList("Pickaxe.lore");
 
@@ -73,7 +77,7 @@ public class EnchantsManager {
                     WildPrisonEnchantment enchantment = WildPrisonEnchantment.getEnchantById(enchId);
                     if (enchantment != null) {
                         int enchLvl = getEnchantLevel(item, enchId);
-                        if(enchLvl > 0) {
+                        if (enchLvl > 0) {
                             s = enchantment.getName() + " " + enchLvl;
                         } else {
                             continue;
@@ -105,7 +109,10 @@ public class EnchantsManager {
         return tag.getInt("blocks-broken");
     }
 
-    public void addBlocksBroken(Player p, int amount) {
+    public synchronized void addBlocksBroken(Player p, int amount) {
+        if (amount == 0) {
+            return;
+        }
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(p.getItemInHand());
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
@@ -119,7 +126,6 @@ public class EnchantsManager {
 
         p.setItemInHand(CraftItemStack.asBukkitCopy(nmsItem));
         applyLoreToPickaxe(p.getItemInHand());
-
     }
 
     public boolean hasEnchant(Player p, int id) {
@@ -130,7 +136,7 @@ public class EnchantsManager {
         return getEnchantLevel(item, id) != 0;
     }
 
-    public int getEnchantLevel(ItemStack itemStack, int id) {
+    public synchronized int getEnchantLevel(ItemStack itemStack, int id) {
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
@@ -140,7 +146,7 @@ public class EnchantsManager {
         return tag.getInt(WildPrisonEnchantment.NBT_TAG_INDETIFIER + id);
     }
 
-    public int getEnchantLevel(Player p, int id) {
+    public synchronized int getEnchantLevel(Player p, int id) {
         ItemStack item = findPickaxe(p);
         if (item == null) {
             return 0;
@@ -150,10 +156,51 @@ public class EnchantsManager {
 
     public void handleBlockBreak(BlockBreakEvent e) {
         Schedulers.async().run(() -> {
+            if (e.getBlock().getType() == Material.ENDER_STONE) {
+                WildPrisonTokens.getApi().addTokens(e.getPlayer(), ENDSTONE_TOKENS);
+            } else if (e.getBlock().getType() == Material.OBSIDIAN) {
+                WildPrisonTokens.getApi().addTokens(e.getPlayer(), OBSIDIAN_TOKENS);
+            }
             HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(e.getPlayer());
-           for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
-               enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
-           }
+            for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+                enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
+            }
         });
+    }
+
+    public void onEquip(Player p, ItemStack newItem) {
+        Schedulers.sync().runLater(() -> {
+            HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(p);
+            for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+                enchantment.onEquip(p, newItem, playerEnchants.get(enchantment));
+            }
+        }, 1);
+    }
+
+    public void onUnequip(Player p, ItemStack newItem) {
+        Schedulers.sync().runLater(() -> {
+            HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(p);
+            for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+                enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
+            }
+        }, 1);
+    }
+
+    public boolean addEnchant(Player p, int id, int level) {
+        WildPrisonEnchantment enchantment = WildPrisonEnchantment.getEnchantById(id);
+        if(enchantment == null || p.getItemInHand() == null) {
+            return false;
+        }
+        p.setItemInHand(enchantment.setEnchantToItem(p, p.getItemInHand(), level));
+        return true;
+    }
+
+    public boolean removeEnchant(Player p, int id) {
+        WildPrisonEnchantment enchantment = WildPrisonEnchantment.getEnchantById(id);
+        if(enchantment == null || p.getItemInHand() == null) {
+            return false;
+        }
+        p.setItemInHand(enchantment.setEnchantToItem(p, p.getItemInHand(), 0));
+        return true;
     }
 }

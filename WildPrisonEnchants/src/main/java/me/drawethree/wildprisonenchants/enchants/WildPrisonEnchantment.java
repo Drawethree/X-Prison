@@ -12,6 +12,7 @@ import me.lucko.helper.text.Text;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -62,8 +63,8 @@ public abstract class WildPrisonEnchantment implements Refundable {
     private boolean enabled;
     private int guiSlot;
     private int maxLevel;
-    private double cost;
-    private double increaseCost;
+    private long cost;
+    private long increaseCost;
 
 
     public WildPrisonEnchantment(WildPrisonEnchants plugin, int id) {
@@ -74,9 +75,12 @@ public abstract class WildPrisonEnchantment implements Refundable {
         this.enabled = this.plugin.getConfig().getBoolean("enchants." + id + ".Enabled");
         this.guiSlot = this.plugin.getConfig().getInt("enchants." + id + ".InGuiSlot");
         this.maxLevel = this.plugin.getConfig().getInt("enchants." + id + ".Max");
-        this.cost = this.plugin.getConfig().getDouble("enchants." + id + ".Cost");
-        this.increaseCost = this.plugin.getConfig().getDouble("enchants." + id + ".Increase-Cost-by");
+        this.cost = this.plugin.getConfig().getLong("enchants." + id + ".Cost");
+        this.increaseCost = this.plugin.getConfig().getLong("enchants." + id + ".Increase-Cost-by");
     }
+
+    public abstract void onEquip(Player p, ItemStack pickAxe, int level);
+    public abstract void onUnequip(Player p, ItemStack pickAxe, int level);
 
     public abstract void onBlockBreak(BlockBreakEvent e, int enchantLevel);
 
@@ -85,24 +89,30 @@ public abstract class WildPrisonEnchantment implements Refundable {
     }
 
 
-    public ItemStack setEnchantToItem(ItemStack itemStack, int level) {
+    public ItemStack setEnchantToItem(Player p,ItemStack itemStack, int level) {
+        this.onUnequip(p, itemStack,level);
+        this.onEquip(p, itemStack, level);
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
 
-        tag.setInt(NBT_TAG_INDETIFIER + this.id, level);
-        nmsItem.setTag(tag);
+        if(level > 0) {
+            tag.setInt(NBT_TAG_INDETIFIER + this.id, level);
+            nmsItem.setTag(tag);
+        }
+
 
         WildPrisonEnchants.getEnchantsManager().applyLoreToPickaxe(itemStack);
         return CraftItemStack.asBukkitCopy(nmsItem);
     }
 
-    private ItemStack removeEnchantFromItem(ItemStack itemStack, int level) {
+    private ItemStack removeEnchantFromItem(Player p, ItemStack itemStack, int level) {
+        this.onEquip(p, itemStack, level - 1);
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(itemStack);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
 
-        tag.setInt(NBT_TAG_INDETIFIER + this.id, level-1);
+        tag.setInt(NBT_TAG_INDETIFIER + this.id, level - 1);
         nmsItem.setTag(tag);
 
         WildPrisonEnchants.getEnchantsManager().applyLoreToPickaxe(itemStack);
@@ -127,7 +137,7 @@ public abstract class WildPrisonEnchantment implements Refundable {
 
             WildPrisonTokens.getApi().removeTokens(gui.getPlayer(), cost);
 
-            gui.setPickAxe(setEnchantToItem(gui.getPickAxe(), currentLevel + 1));
+            gui.setPickAxe(setEnchantToItem(gui.getPlayer(),gui.getPickAxe(), currentLevel + 1));
             WildPrisonEnchants.getEnchantsManager().applyLoreToPickaxe(gui.getPickAxe());
             gui.getPlayer().setItemInHand(gui.getPickAxe());
 
@@ -151,10 +161,10 @@ public abstract class WildPrisonEnchantment implements Refundable {
 
             WildPrisonTokens.getApi().addTokens(gui.getPlayer(), cost);
 
-            gui.setPickAxe(removeEnchantFromItem(gui.getPickAxe(), currentLevel));
+            gui.setPickAxe(removeEnchantFromItem(gui.getPlayer(), gui.getPickAxe(), currentLevel));
             WildPrisonEnchants.getEnchantsManager().applyLoreToPickaxe(gui.getPickAxe());
             gui.getPlayer().setItemInHand(gui.getPickAxe());
-            totalRefunded+=cost;
+            totalRefunded += cost;
         }
 
         gui.getPlayer().sendMessage(WildPrisonEnchants.getMessage("enchant_refunded").replace("%amount%", String.valueOf(substraction)).replace("%enchant%", this.name));
@@ -198,10 +208,10 @@ public abstract class WildPrisonEnchantment implements Refundable {
 
         return builder.buildConsumer(handler -> {
             if (handler.getClick() == ClickType.LEFT) {
-                this.disenchant(gui,level,1);
+                this.disenchant(gui, level, 1);
                 gui.redraw();
             } else if (handler.getClick() == ClickType.RIGHT) {
-                this.disenchant(gui,level,10);
+                this.disenchant(gui, level, 10);
                 gui.redraw();
             }
         });

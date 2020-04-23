@@ -1,5 +1,6 @@
 package me.drawethree.wildprisonenchants;
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
 import me.drawethree.wildprisonenchants.api.WildPrisonEnchantsAPI;
 import me.drawethree.wildprisonenchants.api.WildPrisonEnchantsAPIImpl;
@@ -13,12 +14,15 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.text.Text;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.HashMap;
@@ -92,30 +96,32 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
 
     private void registerEvents() {
         Events.subscribe(PlayerInteractEvent.class)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == Material.DIAMOND_PICKAXE && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK))
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getItem() != null && e.getItem().getType() == Material.DIAMOND_PICKAXE && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK))
                 .handler(e -> {
                     new EnchantGUI(e.getPlayer(), e.getItem()).open();
                 }).bindWith(this);
         Events.subscribe(PlayerItemHeldEvent.class)
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL)
                 .handler(e -> {
                     Schedulers.sync().runLater(() -> {
+                        ItemStack oldItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
                         ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
-                        if (newItem != null && newItem.getType() == Material.DIAMOND_PICKAXE && !newItem.hasItemMeta() && !newItem.getItemMeta().hasLore()) {
-                            enchantsManager.applyLoreToPickaxe(newItem);
+                        if (newItem != null && newItem.getType() == Material.DIAMOND_PICKAXE) {
+                            enchantsManager.onEquip(e.getPlayer(), newItem);
+                            if (!newItem.hasItemMeta() && !newItem.getItemMeta().hasLore()) {
+                                enchantsManager.applyLoreToPickaxe(newItem);
+                            }
+                        } else if (oldItem != null && oldItem.getType() == Material.DIAMOND_PICKAXE) {
+                            enchantsManager.onUnequip(e.getPlayer(), oldItem);
                         }
                     }, 1);
                 }).bindWith(this);
         Events.subscribe(BlockBreakEvent.class)
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled())
                 .handler(e -> {
                     if (e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE) {
                         enchantsManager.addBlocksBroken(e.getPlayer(), 1);
                         enchantsManager.handleBlockBreak(e);
-
-                        if (e.getBlock().getType() == Material.ENDER_STONE) {
-                            WildPrisonTokens.getApi().addTokens(e.getPlayer(), endstoneTokens);
-                        } else if (e.getBlock().getType() == Material.OBSIDIAN) {
-                            WildPrisonTokens.getApi().addTokens(e.getPlayer(), obsidianTokens);
-                        }
                     }
                 }).bindWith(this);
 
@@ -135,5 +141,14 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
         }
         economy = rsp.getProvider();
         return economy != null;
+    }
+
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null;
+        }
+
+        return (WorldGuardPlugin) plugin;
     }
 }
