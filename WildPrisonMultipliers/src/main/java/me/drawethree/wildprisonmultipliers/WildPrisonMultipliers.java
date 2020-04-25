@@ -8,7 +8,6 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.promise.Promise;
-import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.command.CommandSender;
@@ -130,7 +129,7 @@ public final class WildPrisonMultipliers extends ExtendedJavaPlugin {
         }, minutes, TimeUnit.MINUTES);
 
         onlinePlayer.sendMessage(messages.get("personal_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
-        sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &ePersonal Multiplier &ato &e%d &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));
+		sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &ePersonal Multiplier &ato &e%.2f &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));
     }
 
 
@@ -141,7 +140,7 @@ public final class WildPrisonMultipliers extends ExtendedJavaPlugin {
         }
 
         GLOBAL_MULTIPLIER = amount;
-        sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%d &afor &e%d &aminutes.", amount, time)));
+		sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
 
         if(task != null) {
             task.cancel();

@@ -4,12 +4,18 @@ messages:
   global_multi: "&eGlobal Multiplier - %multiplier%"
   personal_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Sell Multiplier x %multiplier% for %minutes% minutes."
 ranks:
-  deer: 0.1
-  zebra: 0.2
-  giraffe: 0.3
-  cheetah: 0.5
-  tiger: 0.6
-  lion: 0.7
-  dragon: 0.9
-  phoenix: 1.2
   wp: 1.5
+  phoenix: 1.2
+  dragon: 0.9
+  lion: 0.7
+  tiger: 0.6
+  cheetah: 0.5
+  giraffe: 0.3
+  zebra: 0.2
+  deer: 0.1
+
+
+
+
+
+
