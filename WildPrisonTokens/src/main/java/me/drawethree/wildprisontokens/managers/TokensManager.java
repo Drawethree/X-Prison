@@ -76,7 +76,7 @@ public class TokensManager {
             this.updateBlocksTop();
             this.updateTokensTop();
             this.updating = false;
-        }, 10, TimeUnit.SECONDS, 10, TimeUnit.SECONDS);
+		}, 1, TimeUnit.MINUTES, 1, TimeUnit.HOURS);
     }
 
     private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
