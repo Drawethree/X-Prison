@@ -245,7 +245,8 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
                             }
 
                             toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
-                            econ.depositPlayer(c.sender(), WildPrisonMultipliers.getApi().getTotalToDeposit(c.sender(), totalPrice));
+							totalPrice = (long) WildPrisonMultipliers.getApi().getTotalToDeposit(c.sender(), totalPrice);
+							econ.depositPlayer(c.sender(), totalPrice);
                             c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,d", totalPrice)));
                         }
                     }
