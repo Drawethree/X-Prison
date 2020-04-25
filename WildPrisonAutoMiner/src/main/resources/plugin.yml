@@ -1,0 +1,6 @@
+name: WildPrisonAutoMiner
+version: ${project.version}
+main: me.drawethree.wildprisonautominer.WildPrisonAutoMiner
+api-version: 1.13
+depend: [helper, Vault, WildPrisonTokens]
+authors: [Drawethree]
