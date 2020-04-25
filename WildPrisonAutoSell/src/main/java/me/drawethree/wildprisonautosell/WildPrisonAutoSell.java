@@ -6,6 +6,7 @@ import lombok.Getter;
 import me.drawethree.wildprisonautosell.api.WildPrisonAutoSellAPI;
 import me.drawethree.wildprisonautosell.api.WildPrisonAutoSellAPIImpl;
 import me.drawethree.wildprisonenchants.WildPrisonEnchants;
+import me.drawethree.wildprisonmultipliers.WildPrisonMultipliers;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -30,7 +31,7 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
 
     private static HashMap<ProtectedRegion, HashMap<Material, Integer>> regionsAutoSell;
     private static HashMap<String, String> messages;
-    private static HashMap<Player, Long> lastMinuteEarnings;
+    private static HashMap<UUID, Long> lastMinuteEarnings;
     @Getter
     private static WildPrisonAutoSellAPI api;
     private static List<UUID> disabledAutoSell;
@@ -93,14 +94,17 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
                 }
             }
             lastMinuteEarnings.clear();*/
-            Players.all().stream().filter(p -> lastMinuteEarnings.containsKey(p)).forEach(p -> {
-                long lastAmount = lastMinuteEarnings.get(p);
+            HashMap<UUID, Long> temp = new HashMap<>();
+            Players.all().stream().filter(p -> lastMinuteEarnings.containsKey(p.getUniqueId())).forEach(p -> {
+                long lastAmount = lastMinuteEarnings.get(p.getUniqueId());
                 long currentAmount = (long) econ.getBalance(p);
                 if (currentAmount > lastAmount) {
                     p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,d", currentAmount - lastAmount)));
                 }
-                lastMinuteEarnings.put(p, currentAmount);
+                temp.put(p.getUniqueId(), currentAmount);
             });
+            lastMinuteEarnings.clear();
+            lastMinuteEarnings = temp;
         }, 0, TimeUnit.SECONDS, 1, TimeUnit.MINUTES);
     }
 
@@ -121,16 +125,15 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
 
                         if (regionsAutoSell.containsKey(reg) && regionsAutoSell.get(reg).containsKey(e.getBlock().getType())) {
                             int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                            int amount = regionsAutoSell.get(reg).get(e.getBlock().getType()) * amplifier;
-                            System.out.println(amount);
+                            int amount = (int) WildPrisonMultipliers.getApi().getTotalToDeposit(e.getPlayer(), regionsAutoSell.get(reg).get(e.getBlock().getType()) * amplifier);
 
                             econ.depositPlayer(e.getPlayer(), amount);
 
-                            if (!lastMinuteEarnings.containsKey(e.getPlayer())) {
-                                lastMinuteEarnings.put(e.getPlayer(), (long) 0);
+                            if (!lastMinuteEarnings.containsKey(e.getPlayer().getUniqueId())) {
+                                lastMinuteEarnings.put(e.getPlayer().getUniqueId(), (long) 0);
                             }
 
-                            lastMinuteEarnings.put(e.getPlayer(), lastMinuteEarnings.get(e.getPlayer()) + amount);
+                            lastMinuteEarnings.put(e.getPlayer().getUniqueId(), lastMinuteEarnings.get(e.getPlayer().getUniqueId()) + amount);
 
                             e.getBlock().setType(Material.AIR);
                         }
@@ -242,7 +245,7 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
                             }
 
                             toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
-                            econ.depositPlayer(c.sender(), totalPrice);
+                            econ.depositPlayer(c.sender(), WildPrisonMultipliers.getApi().getTotalToDeposit(c.sender(), totalPrice));
                             c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,d", totalPrice)));
                         }
                     }
@@ -283,7 +286,7 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
     }
 
     public long getCurrentEarnings(Player player) {
-        return lastMinuteEarnings.containsKey(player) ? lastMinuteEarnings.get(player) : 0;
+        return lastMinuteEarnings.containsKey(player.getUniqueId()) ? lastMinuteEarnings.get(player.getUniqueId()) : 0;
     }
 
     public int getPriceForBrokenBlock(ProtectedRegion region, Block block) {

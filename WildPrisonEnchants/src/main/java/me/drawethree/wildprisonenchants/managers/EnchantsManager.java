@@ -5,7 +5,6 @@ import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisonenchants.gui.DisenchantGUI;
 import me.drawethree.wildprisonenchants.gui.EnchantGUI;
 import me.drawethree.wildprisontokens.WildPrisonTokens;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
@@ -162,35 +161,29 @@ public class EnchantsManager {
     }
 
     public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
-        Schedulers.async().run(() -> {
-            if (e.getBlock().getType() == Material.ENDER_STONE) {
-                WildPrisonTokens.getApi().addTokens(e.getPlayer(), ENDSTONE_TOKENS);
-            } else if (e.getBlock().getType() == Material.OBSIDIAN) {
-                WildPrisonTokens.getApi().addTokens(e.getPlayer(), OBSIDIAN_TOKENS);
-            }
-            HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
-            for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
-                enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
-            }
-        });
+        if (e.getBlock().getType() == Material.ENDER_STONE) {
+            WildPrisonTokens.getApi().addTokens(e.getPlayer(), ENDSTONE_TOKENS);
+        } else if (e.getBlock().getType() == Material.OBSIDIAN) {
+            WildPrisonTokens.getApi().addTokens(e.getPlayer(), OBSIDIAN_TOKENS);
+        }
+        HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
+        for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+            enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
+        }
     }
 
     public void handlePickaxeEquip(Player p, ItemStack newItem) {
-        Schedulers.sync().runLater(() -> {
-            HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
-            for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
-                enchantment.onEquip(p, newItem, playerEnchants.get(enchantment));
-            }
-        }, 1);
+        HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
+        for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+            enchantment.onEquip(p, newItem, playerEnchants.get(enchantment));
+        }
     }
 
     public void handlePickaxeUnequip(Player p, ItemStack newItem) {
-        Schedulers.sync().runLater(() -> {
-            HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
-            for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
-                enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
-            }
-        }, 1);
+        HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
+        for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+            enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
+        }
     }
 
     public boolean addEnchant(Player p, int id, int level) {

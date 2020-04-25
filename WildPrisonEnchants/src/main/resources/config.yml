@@ -146,6 +146,7 @@ enchants:
     Enabled: true
     InGuiSlot: 35
     Increase-Cost-by: 125
+    Cooldown: 0
     Max: 500
     Chance: 0.2
     Cost: 125
@@ -158,6 +159,7 @@ enchants:
     Enabled: true
     InGuiSlot: 36
     Increase-Cost-by: 200
+    Cooldown: 10
     Max: 500
     Chance: 4.0E-4
     Cost: 200

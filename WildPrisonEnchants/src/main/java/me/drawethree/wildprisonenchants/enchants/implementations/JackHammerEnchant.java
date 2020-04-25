@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.drawethree.wildprisonautosell.WildPrisonAutoSell;
 import me.drawethree.wildprisonenchants.WildPrisonEnchants;
 import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
+import me.drawethree.wildprisonmultipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisontokens.WildPrisonTokens;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.cooldown.Cooldown;
@@ -20,13 +21,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class JackHammerEnchant extends WildPrisonEnchantment {
-    private final double chance;
 
-    private static CooldownMap<Player> cooldownMap = CooldownMap.create(Cooldown.of(10, TimeUnit.SECONDS));
+    private final double chance;
+    private final int cooldown;
+    private final CooldownMap<Player> cooldownMap;
 
     public JackHammerEnchant(WildPrisonEnchants instance) {
         super(instance, 10);
         this.chance = plugin.getConfig().getDouble("enchants." + id + ".Chance");
+        this.cooldown = plugin.getConfig().getInt("enchants." + id + ".Cooldown");
+        this.cooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
     }
 
     @Override
@@ -46,37 +50,38 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
         }
 
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
-            List<ProtectedRegion> regions = plugin.getWorldGuard().getRegionContainer().get(e.getBlock().getWorld()).getApplicableRegions(e.getBlock().getLocation()).getRegions().stream().filter(reg -> reg.getId().startsWith("mine")).collect(Collectors.toList());
+            Block b = e.getBlock();
+            List<ProtectedRegion> regions = plugin.getWorldGuard().getRegionContainer().get(b.getWorld()).getApplicableRegions(b.getLocation()).getRegions().stream().filter(reg -> reg.getId().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
+                Player p = e.getPlayer();
                 ProtectedRegion region = regions.get(0);
                 //List<BlockState> blocksAffected = new ArrayList<>();
 
                 long totalDeposit = 0;
                 int blockCount = 0;
-                int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(e.getPlayer(), 3);
+                int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(p, 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                 for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
                     for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
-                        Block b = e.getBlock().getWorld().getBlockAt(x, e.getBlock().getY(), z);
-                        if (b != null && b.getType() != Material.AIR) {
+                        Block b1 = b.getWorld().getBlockAt(x, b.getY(), z);
+                        if (b1 != null && b1.getType() != Material.AIR) {
                             blockCount++;
-                            //blocksAffected.add(b.getState());
-                            if (WildPrisonAutoSell.getApi().hasAutoSellEnabled(e.getPlayer())) {
-                                totalDeposit += (WildPrisonAutoSell.getApi().getPriceForBrokenBlock(region, b) * amplifier);
-                                System.out.println(totalDeposit);
+                            //blocksAffected.add(b1.getState());
+                            if (WildPrisonAutoSell.getApi().hasAutoSellEnabled(p)) {
+                                totalDeposit += (WildPrisonAutoSell.getApi().getPriceForBrokenBlock(region, b1) * amplifier);
                             } else {
-                                e.getPlayer().getInventory().addItem(new ItemStack(b.getType(), fortuneLevel + 1));
+                                p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
                             }
-                            Schedulers.sync().run(() -> b.setType(Material.AIR));
+                            b1.setType(Material.AIR);
                         }
                     }
                 }
 
                 //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
 
-                WildPrisonEnchants.getEconomy().depositPlayer(e.getPlayer(), totalDeposit);
-                WildPrisonEnchants.getEnchantsManager().addBlocksBrokenToItem(e.getPlayer(), blockCount);
-                WildPrisonTokens.getInstance().getTokensManager().addBlocksBroken(e.getPlayer(), blockCount);
+                WildPrisonEnchants.getEconomy().depositPlayer(p, WildPrisonMultipliers.getApi().getTotalToDeposit(p, totalDeposit));
+                WildPrisonEnchants.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
+                WildPrisonTokens.getInstance().getTokensManager().addBlocksBroken(p, blockCount);
             }
         }
     }

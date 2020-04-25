@@ -61,8 +61,8 @@ public final class WildPrisonTokens extends ExtendedJavaPlugin {
 
     @Override
     protected void enable() {
-        this.tokensManager = new TokensManager(this);
         this.sqlDatabase = new MySQLDatabase(this);
+        this.tokensManager = new TokensManager(this, sqlDatabase);
         api = new WildPrisonTokensAPIImpl(this.tokensManager);
         this.registerCommands();
         this.registerEvents();
@@ -71,7 +71,9 @@ public final class WildPrisonTokens extends ExtendedJavaPlugin {
 
     @Override
     protected void disable() {
-
+        this.tokensManager.stopUpdating();
+        this.tokensManager.savePlayerDataOnDisable();
+        this.sqlDatabase.close();
     }
 
     private void registerEvents() {

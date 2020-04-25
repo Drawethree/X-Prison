@@ -1,6 +1,7 @@
 package me.drawethree.wildprisontokens.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.drawethree.wildprisonmultipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisontokens.WildPrisonTokens;
 import org.bukkit.entity.Player;
 
@@ -106,6 +107,8 @@ public class WildPrisonPlaceholder extends PlaceholderExpansion {
             return String.valueOf(plugin.getTokensManager().getPlayerTokens(player));
         } else if (identifier.equalsIgnoreCase("blocks")) {
             return String.valueOf(plugin.getTokensManager().getPlayerBrokenBlocks(player));
+        } else if (identifier.equalsIgnoreCase("multiplier")) {
+            return String.valueOf(WildPrisonMultipliers.getApi().getPlayerMultiplier(player));
         }
         return null;
     }

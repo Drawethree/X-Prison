@@ -23,6 +23,7 @@ messages:
   top_format_tokens: "&f&l#%position%. &e%player% &8» &7%amount% tokens"
   top_format_blocks: "&f&l#%position%. &e%player% &8» &7%amount% blocks"
   top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  top_updating: "&c&lLeaderboard is currently updating..."
 tokens:
   breaking:
     chance: 50
