@@ -74,14 +74,14 @@
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>/Users/kluka/IdeaProjects/WildPrison-Core/libs/server.jar</systemPath>
+            <systemPath>C:/Users/janci/OneDrive/Desktop/IntelliJ/IntelliJ Projects/WildPrisonCore/libs/server.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>worldguard</groupId>
             <artifactId>worldguard-api</artifactId>
             <version>6.2</version>
             <scope>system</scope>
-            <systemPath>/Users/kluka/IdeaProjects/WildPrison-Core/libs/worldguard-6.2.jar</systemPath>
+            <systemPath>C:/Users/janci/OneDrive/Desktop/IntelliJ/IntelliJ Projects/WildPrisonCore/libs/worldguard-6.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>me.lucko</groupId>

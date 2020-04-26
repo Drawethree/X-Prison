@@ -78,7 +78,8 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>C:/Users/janci/OneDrive/Desktop/IntelliJ/IntelliJ Projects/WildPrisonCore/libs/server.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
