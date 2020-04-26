@@ -117,7 +117,7 @@ public final class WildPrisonTokens extends ExtendedJavaPlugin {
                         this.tokensManager.sendInfoMessage(c.sender(), target,true);
                     }
                 })
-                .registerAndBind(this, "tokens");
+                .registerAndBind(this, "tokens", "token");
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 0) {
@@ -141,7 +141,7 @@ public final class WildPrisonTokens extends ExtendedJavaPlugin {
                         this.tokensManager.sendInfoMessage(c.sender(), target, false);
                     }
                 })
-                .registerAndBind(this, "blocks");
+                .registerAndBind(this, "blocks", "block");
     }
 
     private void loadMessages() {

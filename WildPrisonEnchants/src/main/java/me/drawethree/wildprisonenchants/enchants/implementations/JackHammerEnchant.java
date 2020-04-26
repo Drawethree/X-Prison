@@ -6,7 +6,6 @@ import me.drawethree.wildprisonenchants.WildPrisonEnchants;
 import me.drawethree.wildprisonenchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisonmultipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisontokens.WildPrisonTokens;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import org.bukkit.Material;
@@ -45,6 +44,9 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+        if (plugin.hasJackHammerDisabled(e.getPlayer())) {
+            return;
+        }
         if (!cooldownMap.test(e.getPlayer())) {
             return;
         }

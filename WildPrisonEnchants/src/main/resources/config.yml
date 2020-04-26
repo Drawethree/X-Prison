@@ -1,6 +1,7 @@
 enchant_menu:
   title: "&7Enchants Menu"
   empty_slots: STAINED_GLASS_PANE:7
+  lines: 6
   pickaxe_slot: 13
   item:
     material: BOOK
@@ -16,6 +17,7 @@ enchant_menu:
 disenchant_menu:
   title: "&7Disenchant Menu"
   empty_slots: STAINED_GLASS_PANE:7
+  lines: 6
   pickaxe_slot: 12
   item:
     material: BOOK
@@ -50,6 +52,10 @@ messages:
   charity_your: "&a&l+ $%amount% &7(From Your Charity)"
   blessing_other: "&6&l+ %amount% TOKENS &7(From %player%'s Blessing)"
   blessing_your: "&6&l+ %amount% TOKENS &7(From Your Blessing)"
+  jackhammer_disabled: "&e&l(!) &7You've &c&lDISABLED &7jackhammer."
+  jackhammer_enabled: "&e&l(!) &7You've &a&lENABLED &7jackhammer."
+  explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
+  explosive_enabled: "&e&l(!) &7You've &a&lENABLED &7explosive."
 enchants:
   '1':
     Name: '&aEfficiency'

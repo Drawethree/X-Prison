@@ -16,7 +16,17 @@ public class TokensWithdrawCommand extends TokensCommand {
                 WildPrisonTokens.getInstance().getTokensManager().withdrawTokens(p, amount, value);
                 return true;
             } catch (NumberFormatException e) {
-                sender.sendMessage(WildPrisonTokens.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0) + " or " + args.get(1))));
+                sender.sendMessage(WildPrisonTokens.getMessage("not_a_number").replace("%input%", args.get(0) + " or " + args.get(1)));
+            }
+        } else if (args.size() == 1 && sender instanceof Player) {
+            Player p = (Player) sender;
+            try {
+                long amount = Long.parseLong(args.get(0));
+                int value = 1;
+                WildPrisonTokens.getInstance().getTokensManager().withdrawTokens(p, amount, value);
+                return true;
+            } catch (NumberFormatException e) {
+                sender.sendMessage(WildPrisonTokens.getMessage("not_a_number").replace("%input%", args.get(0) + " or " + args.get(1)));
             }
         }
         return false;

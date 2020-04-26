@@ -8,6 +8,7 @@ import me.drawethree.wildprisonmultipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisontokens.WildPrisonTokens;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -45,6 +46,9 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+        if(plugin.hasExplosiveDisabled(e.getPlayer())) {
+            return;
+        }
         if (!cooldownMap.test(e.getPlayer())) {
             return;
         }
@@ -64,9 +68,10 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
                 int blockCount = 0;
                 int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(p, 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                for (int x = p.getLocation().getBlockX(); x > p.getLocation().getBlockX() - radius; x--) {
-                    for (int z = p.getLocation().getBlockZ(); z > p.getLocation().getBlockZ() - radius; z--) {
-                        for (int y = p.getLocation().getBlockY(); y > p.getLocation().getBlockY() - radius; y--) {
+                final Location startLocation = p.getLocation();
+                for (int x = startLocation.getBlockX() - (radius / 2); x <= startLocation.getBlockX() + (radius / 2); x++) {
+                    for (int z = startLocation.getBlockZ() - (radius / 2); z <= startLocation.getBlockZ() + (radius / 2); z++) {
+                        for (int y = startLocation.getBlockY() - (radius / 2); y <= startLocation.getBlockY() + (radius / 2); y++) {
                             Block b1 = b.getWorld().getBlockAt(x, y, z);
                             if (region.contains(x, y, z) && b1 != null && b1.getType() != Material.AIR) {
                                 blockCount++;

@@ -26,13 +26,15 @@ public class DisenchantGUI extends Gui {
 
     private static int HELP_ITEM_SLOT = WildPrisonEnchants.getInstance().getConfig().getInt("disenchant_menu.help_item.slot");
     private static int PICKAXE_ITEM_SLOT = WildPrisonEnchants.getInstance().getConfig().getInt("disenchant_menu.pickaxe_slot");
+    private static int GUI_LINES = WildPrisonEnchants.getInstance().getConfig().getInt("disenchant_menu.lines");
+
 
     @Getter
     @Setter
     private ItemStack pickAxe;
 
     public DisenchantGUI(Player player, ItemStack pickAxe) {
-        super(player, 6, GUI_TITLE);
+        super(player, GUI_LINES, GUI_TITLE);
         this.pickAxe = pickAxe;
 
         Events.subscribe(InventoryCloseEvent.class)

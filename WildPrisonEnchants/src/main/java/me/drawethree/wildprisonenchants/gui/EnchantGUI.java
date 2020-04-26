@@ -24,12 +24,14 @@ public class EnchantGUI extends Gui {
 
     private static int PICKAXE_ITEM_SLOT = WildPrisonEnchants.getInstance().getConfig().getInt("enchant_menu.pickaxe_slot");
 
+    private static int GUI_LINES = WildPrisonEnchants.getInstance().getConfig().getInt("enchant_menu.lines");
+
     @Getter
     @Setter
     private ItemStack pickAxe;
 
     public EnchantGUI(Player player, ItemStack pickAxe) {
-        super(player, 6, GUI_TITLE);
+        super(player, GUI_LINES, GUI_TITLE);
         this.pickAxe = pickAxe;
 
         Events.subscribe(InventoryCloseEvent.class)

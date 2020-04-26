@@ -15,6 +15,7 @@ import me.lucko.helper.text.Text;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -23,7 +24,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public final class WildPrisonEnchants extends ExtendedJavaPlugin {
 
@@ -40,6 +44,9 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
     private static Economy economy;
 
     private static HashMap<String, String> messages;
+
+    private static List<UUID> disabledJackHammer = new ArrayList<>();
+    private static List<UUID> disabledExplosive = new ArrayList<>();
 
     @Override
     public void load() {
@@ -81,6 +88,40 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
                     }
                     new DisenchantGUI(c.sender(), pickAxe).open();
                 }).registerAndBind(this, "disenchant", "dise");
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
+                        toggleExplosive(c.sender());
+                    }
+                }).registerAndBind(this, "explosive");
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
+                        toggleJackHammer(c.sender());
+                    }
+                }).registerAndBind(this, "jackhammer");
+    }
+
+    private void toggleJackHammer(Player sender) {
+        if (disabledJackHammer.contains(sender.getUniqueId())) {
+            sender.sendMessage(getMessage("jackhammer_enabled"));
+            disabledJackHammer.remove(sender.getUniqueId());
+        } else {
+            sender.sendMessage(getMessage("jackhammer_disabled"));
+            disabledJackHammer.add(sender.getUniqueId());
+        }
+    }
+
+    private void toggleExplosive(Player sender) {
+        if (disabledExplosive.contains(sender.getUniqueId())) {
+            sender.sendMessage(getMessage("explosive_enabled"));
+            disabledExplosive.remove(sender.getUniqueId());
+        } else {
+            sender.sendMessage(getMessage("explosive_disabled"));
+            disabledExplosive.add(sender.getUniqueId());
+        }
     }
 
     private void registerEvents() {
@@ -138,4 +179,13 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
 
         return (WorldGuardPlugin) plugin;
     }
+
+    public boolean hasJackHammerDisabled(Player p) {
+        return disabledJackHammer.contains(p.getUniqueId());
+    }
+
+    public boolean hasExplosiveDisabled(Player p) {
+        return disabledExplosive.contains(p.getUniqueId());
+    }
+
 }
