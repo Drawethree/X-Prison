@@ -1,35 +1,33 @@
-package me.drawethree.wildprisonmultipliers;
+package me.drawethree.wildprisonmultipliers.multiplier;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.promise.Promise;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Getter
 public class Multiplier {
 
-    private Promise<Void> task;
-    private UUID playerUUID;
+    protected Promise<Void> task;
     @Setter
-    private double multiplier;
-    private int duration;
-    private long startTime;
-    private long endTime;
+    protected double multiplier;
+    protected int duration;
 
-    public Multiplier(UUID playerUUID, double multiplier, int duration) {
-        this.playerUUID = playerUUID;
+    protected long startTime;
+    protected long endTime;
+
+    public Multiplier(double multiplier, int duration) {
         this.multiplier = multiplier;
         setDuration(duration);
     }
 
     public String getTimeLeft() {
 
-        if (duration == -1) {
+        if (System.currentTimeMillis() > endTime || duration == -1) {
             return "PERMANENT";
         }
+
 
         long timeLeft = endTime - System.currentTimeMillis();
 
@@ -51,22 +49,12 @@ public class Multiplier {
 
 
     public static final Multiplier getDefaultMultiplier() {
-        return new Multiplier(null, 0.0, -1);
+        return new Multiplier( 0.0, -1);
     }
 
     public void setDuration(int minutes) {
         this.duration = minutes;
         this.startTime = System.currentTimeMillis();
         this.endTime = duration == -1 ? startTime : startTime + TimeUnit.MINUTES.toMillis(duration);
-
-        if (task != null) {
-            task.cancel();
-        }
-
-        if (duration != -1) {
-            task = Schedulers.async().runLater(() -> {
-                WildPrisonMultipliers.removePersonalMultiplier(this.playerUUID);
-            }, duration, TimeUnit.MINUTES);
-        }
     }
 }

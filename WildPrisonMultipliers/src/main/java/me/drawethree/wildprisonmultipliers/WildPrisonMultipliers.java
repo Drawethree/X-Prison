@@ -3,6 +3,9 @@ package me.drawethree.wildprisonmultipliers;
 import lombok.Getter;
 import me.drawethree.wildprisonmultipliers.api.WildPrisonMultipliersAPI;
 import me.drawethree.wildprisonmultipliers.api.WildPrisonMultipliersAPIImpl;
+import me.drawethree.wildprisonmultipliers.multiplier.GlobalMultiplier;
+import me.drawethree.wildprisonmultipliers.multiplier.Multiplier;
+import me.drawethree.wildprisonmultipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
@@ -19,7 +22,7 @@ import java.util.UUID;
 
 public final class WildPrisonMultipliers extends ExtendedJavaPlugin {
 
-    private static Multiplier GLOBAL_MULTIPLIER = new Multiplier(null, 0.0, -1);
+    private static Multiplier GLOBAL_MULTIPLIER = new GlobalMultiplier(0.0, -1);
 
     @Getter
     private static WildPrisonMultipliersAPI api;
@@ -123,7 +126,7 @@ public final class WildPrisonMultipliers extends ExtendedJavaPlugin {
             multiplier.setMultiplier(amount);
             multiplier.setDuration(minutes);
         } else {
-            personalMultipliers.put(onlinePlayer.getUniqueId(), new Multiplier(onlinePlayer.getUniqueId(), amount, minutes));
+            personalMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes));
         }
 
         onlinePlayer.sendMessage(messages.get("personal_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
@@ -164,9 +167,9 @@ public final class WildPrisonMultipliers extends ExtendedJavaPlugin {
     private Multiplier calculateRankMultiplier(Player p) {
         for (String perm : permissionToMultiplier.keySet()) {
             if (p.hasPermission(perm)) {
-                return new Multiplier(p.getUniqueId(), permissionToMultiplier.get(perm), -1);
+                return new PlayerMultiplier(p.getUniqueId(), permissionToMultiplier.get(perm), -1);
             }
         }
-        return new Multiplier( p.getUniqueId(), 0.0, -1);
+        return new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
     }
 }

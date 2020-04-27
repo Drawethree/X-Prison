@@ -1,0 +1,21 @@
+messages:
+  vote_multi: "&eVote Multiplier - %multiplier% &7(&a%duration%&7)"
+  rank_multi: "&eRank Multiplier - %multiplier% &7(&aPERMAMENT&7)"
+  global_multi: "&eGlobal Multiplier - %multiplier% &7(&a%duration%&7)"
+  personal_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Sell Multiplier x %multiplier% for %minutes% minutes."
+ranks:
+  wp: 1.5
+  phoenix: 1.2
+  dragon: 0.9
+  lion: 0.7
+  tiger: 0.6
+  cheetah: 0.5
+  giraffe: 0.3
+  zebra: 0.2
+  deer: 0.1
+
+
+
+
+
+

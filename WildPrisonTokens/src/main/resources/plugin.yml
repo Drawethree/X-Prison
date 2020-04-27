@@ -1,6 +1,6 @@
 name: WildPrisonTokens
 version: ${project.version}
-main: me.drawethree.wildprisontokens.WildPrisonTokens
+main: me.drawethree.tokens.WildPrisonTokens
 authors: [Drawethree]
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, WildPrisonRankUp]
 depend: [helper]

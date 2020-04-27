@@ -1,6 +1,6 @@
 name: WildPrisonEnchants
 version: ${project.version}
-main: me.drawethree.wildprisonenchants.WildPrisonEnchants
+main: me.drawethree.enchants.WildPrisonEnchants
 depend: [helper, WildPrisonTokens, WildPrisonAutoSell, Vault, WorldGuard]
 softdepend: [PlaceholderAPI]
 authors: [Drawethree]
