@@ -1,11 +1,8 @@
 package me.drawethree.wildprisoncore.enchants.enchants.implementations;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.drawethree.wildprisoncore.autosell.WildPrisonAutoSell;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
-import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
-import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import org.bukkit.Material;
@@ -14,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +55,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
             if (regions.size() > 0) {
                 Player p = e.getPlayer();
                 ProtectedRegion region = regions.get(0);
-                //List<BlockState> blocksAffected = new ArrayList<>();
+                List<Block> blocksAffected = new ArrayList<>();
 
                 long totalDeposit = 0;
                 int blockCount = 0;
@@ -68,7 +66,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                         Block b1 = b.getWorld().getBlockAt(x, b.getY(), z);
                         if (b1 != null && b1.getType() != Material.AIR) {
                             blockCount++;
-                            //blocksAffected.add(b1.getState());
+                            blocksAffected.add(b1);
                             if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
                                 totalDeposit += (plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) * amplifier);
                             } else {
@@ -79,6 +77,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                     }
                 }
 
+                plugin.getCore().getJetsPrisonMines().getAPI().blockBreak(blocksAffected);
                 //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
 
                 plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));

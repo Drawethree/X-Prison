@@ -11,6 +11,7 @@ import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisoncore.placeholders.WildPrisonPlaceholder;
 import me.drawethree.wildprisoncore.ranks.WildPrisonRankup;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
+import me.jet315.prisonmines.JetsPrisonMines;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -23,6 +24,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
 
     private MySQLDatabase sqlDatabase;
     private Economy economy;
+    private JetsPrisonMines jetsPrisonMines;
     private FileManager fileManager;
 
     private WildPrisonTokens tokens;
@@ -46,6 +48,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoMiner = new WildPrisonAutoMiner(this);
 
         this.setupEconomy();
+        this.jetsPrisonMines = (JetsPrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines");
         this.registerPlaceholders();
 
         this.tokens.enable();

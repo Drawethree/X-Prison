@@ -88,6 +88,13 @@
             <systemPath>${project.basedir}/libs/worldguard-6.2.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>jets</groupId>
+            <artifactId>jets</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/JetsPrisonMines-3.3.1_1.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
