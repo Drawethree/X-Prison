@@ -37,7 +37,7 @@ public final class WildPrisonAutoMiner {
 
     public WildPrisonAutoMiner(WildPrisonCore wildPrisonCore) {
         this.core = wildPrisonCore;
-        this.config = wildPrisonCore.getFileManager().getConfig("autominer.yml").saveDefaultConfig();
+        this.config = wildPrisonCore.getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
     }
 
     public void enable() {

@@ -48,7 +48,7 @@ public class DisenchantGUI extends Gui {
     public void redraw() {
         // perform initial setup.
         if (isFirstDraw()) {
-            for (int i = 0; i < 54; i++) {
+            for (int i = 0; i < this.getHandle().getSize(); i++) {
                 this.setItem(i, EMPTY_SLOT_ITEM);
             }
 

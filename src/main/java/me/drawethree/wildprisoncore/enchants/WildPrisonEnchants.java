@@ -52,7 +52,7 @@ public final class WildPrisonEnchants {
 
     public WildPrisonEnchants(WildPrisonCore wildPrisonCore) {
         instance = this;
-        this.config = wildPrisonCore.getFileManager().getConfig("enchants.yml").saveDefaultConfig();
+        this.config = wildPrisonCore.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
         this.core = wildPrisonCore;
         this.enchantsManager = new EnchantsManager(this);
         this.api = new WildPrisonEnchantsAPIImpl(enchantsManager);

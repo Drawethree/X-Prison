@@ -49,7 +49,7 @@ public final class WildPrisonMultipliers {
     public WildPrisonMultipliers(WildPrisonCore wildPrisonCore) {
         instance = this;
         this.core = wildPrisonCore;
-        this.config = wildPrisonCore.getFileManager().getConfig("multipliers.yml").saveDefaultConfig();
+        this.config = wildPrisonCore.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
         this.rankMultipliers = new HashMap<>();
         this.personalMultipliers = new HashMap<>();
         this.loadMessages();

@@ -37,7 +37,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
     @Override
     protected void enable() {
         this.fileManager = new FileManager(this);
-        this.fileManager.getConfig("config.yml").saveDefaultConfig();
+        this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 
         this.sqlDatabase = new MySQLDatabase(this);
         this.tokens = new WildPrisonTokens(this);

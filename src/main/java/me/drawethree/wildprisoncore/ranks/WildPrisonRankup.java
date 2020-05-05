@@ -35,7 +35,7 @@ public final class WildPrisonRankup {
 
     public WildPrisonRankup(WildPrisonCore wildPrisonCore) {
         this.core = wildPrisonCore;
-        this.config = wildPrisonCore.getFileManager().getConfig("ranks.yml").saveDefaultConfig();
+        this.config = wildPrisonCore.getFileManager().getConfig("ranks.yml").copyDefaults(true).save();
     }
 
     public void enable() {

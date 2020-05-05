@@ -41,7 +41,7 @@ public final class WildPrisonAutoSell {
 
     public WildPrisonAutoSell(WildPrisonCore wildPrisonCore) {
         this.core = wildPrisonCore;
-        this.config = wildPrisonCore.getFileManager().getConfig("autosell.yml").saveDefaultConfig();
+        this.config = wildPrisonCore.getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
         this.api = new WildPrisonAutoSellAPIImpl(this);
         this.disabledAutoSell = new ArrayList<>();
         this.lastMinuteEarnings = new HashMap<>();

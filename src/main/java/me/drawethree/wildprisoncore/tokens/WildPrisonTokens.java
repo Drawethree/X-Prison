@@ -52,7 +52,7 @@ public final class WildPrisonTokens {
     public WildPrisonTokens(WildPrisonCore wildPrisonCore) {
         instance = this;
         this.core = wildPrisonCore;
-        this.config = wildPrisonCore.getFileManager().getConfig("tokens.yml").saveDefaultConfig();
+        this.config = wildPrisonCore.getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
         this.loadMessages();
         this.loadVariables();
         this.tokensManager = new TokensManager(this);
