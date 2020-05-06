@@ -18,10 +18,10 @@ public class TokensPayCommand extends TokensCommand {
         if (args.size() == 2 && sender instanceof Player) {
             Player p = (Player) sender;
             try {
-                long amount = Long.parseLong(args.get(0));
+                long amount = Long.parseLong(args.get(0).replace(",", ""));
                 OfflinePlayer target = Players.getOfflineNullable(args.get(1));
 
-                if(!target.isOnline()) {
+                if (!target.isOnline()) {
                     sender.sendMessage(plugin.getMessage("player_not_online").replace("%player%", target.getName()));
                     return true;
                 }

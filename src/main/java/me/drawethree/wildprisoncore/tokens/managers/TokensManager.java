@@ -162,7 +162,7 @@ public class TokensManager {
             } else {
                 tokensCache.put(p.getUniqueId(), newAmount);
             }
-            executor.sendMessage(plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.valueOf(newAmount)));
+            executor.sendMessage(plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d",newAmount)));
         });
     }
 
@@ -175,23 +175,23 @@ public class TokensManager {
                 tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + amount);
             }
             if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.valueOf(amount)));
+                executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d",amount)));
             }
         });
     }
 
     public void redeemTokens(Player p, ItemStack item, boolean shiftClick) {
         String displayName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
-        displayName = displayName.replace(" TOKENS", "");
+        displayName = displayName.replace(" TOKENS", "").replace(",", "");
         try {
             int amount = Integer.parseInt(displayName);
             this.giveTokens(p, amount, null);
             if (item.getAmount() == 1) {
                 p.setItemInHand(null);
-                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.valueOf(amount)));
+                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", amount)));
             } else {
                 item.setAmount(item.getAmount() - 1);
-                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.valueOf(amount)));
+                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", amount)));
                 if (shiftClick && item != null && item.getAmount() >= 1) {
                     redeemTokens(p, item, true);
                 }
@@ -208,9 +208,9 @@ public class TokensManager {
             if (getPlayerTokens(executor) >= amount) {
                 this.removeTokens(executor, amount, null);
                 this.giveTokens(target, amount, null);
-                executor.sendMessage(plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.valueOf(amount)));
+                executor.sendMessage(plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
                 if (target.isOnline()) {
-                    ((Player) target).sendMessage(plugin.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.valueOf(amount)));
+                    ((Player) target).sendMessage(plugin.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.format("%,d", amount)));
                 }
             } else {
                 executor.sendMessage(plugin.getMessage("not_enough_tokens"));
@@ -232,7 +232,7 @@ public class TokensManager {
             ItemStack item = createTokenItem(amount, value);
             executor.getInventory().addItem(item);
 
-            executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.valueOf(amount)).replace("%value%", String.valueOf(value)));
+            executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d,", amount)).replace("%value%", String.format("%,d", value)));
         });
     }
 
@@ -287,13 +287,13 @@ public class TokensManager {
                 tokensCache.put(p.getUniqueId(), finalTokens);
             }
             if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.valueOf(amount)));
+                executor.sendMessage(plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
             }
         });
     }
 
     public static ItemStack createTokenItem(long amount, int value) {
-        return ItemStackBuilder.of(Material.DOUBLE_PLANT).amount(value).name("&e&l" + amount + " TOKENS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+        return ItemStackBuilder.of(Material.DOUBLE_PLANT).amount(value).name("&e&l" + String.format("%,d", amount) + " TOKENS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
     }
 
     public void sendInfoMessage(CommandSender sender, OfflinePlayer target, boolean tokens) {

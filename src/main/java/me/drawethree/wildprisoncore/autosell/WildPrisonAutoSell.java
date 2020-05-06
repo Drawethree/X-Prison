@@ -14,13 +14,11 @@ import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -113,7 +111,9 @@ public final class WildPrisonAutoSell {
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer(), 3);
                     if (disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
-                        e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
+                        if (e.getBlock().getType() != Material.ENDER_STONE) {
+                            e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
+                        }
                         e.getBlock().setType(Material.AIR);
                     } else {
                         ProtectedRegion reg = getFirstRegionAtLocation(e.getBlock().getLocation());

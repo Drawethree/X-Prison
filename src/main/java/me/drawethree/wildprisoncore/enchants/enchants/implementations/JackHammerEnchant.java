@@ -70,7 +70,9 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                             if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
                                 totalDeposit += (plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) * amplifier);
                             } else {
-                                p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
+                                if (b1.getType() != Material.ENDER_STONE) {
+                                    p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
+                                }
                             }
                             b1.setType(Material.AIR);
                         }

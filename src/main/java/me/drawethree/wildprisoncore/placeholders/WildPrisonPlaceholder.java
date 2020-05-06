@@ -103,9 +103,9 @@ public class WildPrisonPlaceholder extends PlaceholderExpansion {
 
 
         if (identifier.equalsIgnoreCase("tokens")) {
-            return String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(player));
+            return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(player));
         } else if (identifier.equalsIgnoreCase("blocks")) {
-            return String.valueOf(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+            return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
         } else if (identifier.equalsIgnoreCase("multiplier")) {
             return String.valueOf(plugin.getMultipliers().getApi().getPlayerMultiplier(player));
         } else if (identifier.equalsIgnoreCase("rankup")) {
