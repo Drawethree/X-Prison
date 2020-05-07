@@ -41,7 +41,6 @@ public class AutoMinerRegion {
 					}
 				}
 			}
-
 		}, 20, 20);
 	}
 

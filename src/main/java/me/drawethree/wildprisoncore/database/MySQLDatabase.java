@@ -28,6 +28,7 @@ public class MySQLDatabase {
     public static final String BLOCKS_DB_NAME = "WildPrison_BlocksBroken";
     public static final String MULTIPLIERS_DB_NAME = "WildPrison_Multipliers";
     public static final String GLOBAL_MULTIPLIER_DB_NAME = "WildPrison_GlobalMultiplier";
+    public static final String AUTOMINER_DB_NAME = "WildPrison_AutoMiner";
 
     public static final String RANKS_UUID_COLNAME = "UUID";
     public static final String RANKS_RANK_COLNAME = "id_rank";
@@ -45,6 +46,9 @@ public class MySQLDatabase {
 
     public static final String GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME = "multiplier";
     public static final String GLOBAL_MULTIPLIER_TIMELEFT_COLNAME = "timeleft";
+
+    public static final String AUTOMINER_UUID_COLNAME = "UUID";
+    public static final String AUTOMINER_TIMELEFT_COLNAME = "timeleft";
 
     @Getter
     private WildPrisonCore parent;
@@ -110,6 +114,8 @@ public class MySQLDatabase {
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + GLOBAL_MULTIPLIER_DB_NAME + "(multiplier double, timeleft long)");
+            execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL, timeleft long, primary key (UUID))");
+
         });
     }
 

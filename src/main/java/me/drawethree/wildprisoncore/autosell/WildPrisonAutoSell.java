@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -106,6 +107,12 @@ public final class WildPrisonAutoSell {
     }
 
     private void registerListeners() {
+        Events.subscribe(PlayerJoinEvent.class)
+                .handler(e -> {
+                    if (!disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
+                        e.getPlayer().sendMessage(getMessage("autosell_enable"));
+                    }
+                });
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {

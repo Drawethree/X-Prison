@@ -5,19 +5,22 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
+import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.lucko.helper.Commands;
-import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -43,8 +46,80 @@ public final class WildPrisonAutoMiner {
     public void enable() {
         autoMinerTimes = new HashMap<>();
         this.registerCommands();
+        this.registerEvents();
         this.loadMessages();
         this.loadAutoMinerRegion();
+        this.loadPlayersAutoMiner();
+    }
+
+    private void registerEvents() {
+        Events.subscribe(PlayerQuitEvent.class)
+                .filter(e -> this.autoMinerTimes.containsKey(e.getPlayer().getUniqueId()))
+                .handler(e -> {
+                    this.saveAutoMiner(e.getPlayer(), true);
+                }).bindWith(this.core);
+        Events.subscribe(PlayerJoinEvent.class)
+                .handler(e -> {
+                    this.loadAutoMiner(e.getPlayer());
+                }).bindWith(this.core);
+    }
+
+    private void loadPlayersAutoMiner() {
+        Players.all().forEach(p -> loadAutoMiner(p));
+    }
+
+    private void loadAutoMiner(Player p) {
+        Schedulers.async().run(() -> {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_UUID_COLNAME + "=?")) {
+                statement.setString(1, p.getUniqueId().toString());
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
+                        long timeLeft = set.getLong(MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME);
+                        if (timeLeft > 0) {
+                            this.autoMinerTimes.put(p.getUniqueId(), (int) timeLeft);
+                            this.core.getLogger().info(String.format("Loaded %s's AutoMiner time (%d seconds)", p.getName(), timeLeft));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void saveAutoMiner(Player p, boolean async) {
+
+        if (!autoMinerTimes.containsKey(p.getUniqueId())) {
+            return;
+        }
+
+        int timeLeft = autoMinerTimes.get(p.getUniqueId());
+
+        if (async) {
+            Schedulers.async().run(() -> {
+                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + "=?")) {
+                    statement.setString(1, p.getUniqueId().toString());
+                    statement.setLong(2, timeLeft);
+                    statement.setLong(3, timeLeft);
+                    statement.execute();
+                    this.autoMinerTimes.remove(p.getUniqueId());
+                    this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + "=?")) {
+                statement.setString(1, p.getUniqueId().toString());
+                statement.setLong(2, timeLeft);
+                statement.setLong(3, timeLeft);
+                statement.execute();
+                this.autoMinerTimes.remove(p.getUniqueId());
+                this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void loadAutoMinerRegion() {
@@ -71,7 +146,7 @@ public final class WildPrisonAutoMiner {
     }
 
     public void disable() {
-
+        Players.all().forEach(p -> saveAutoMiner(p, false));
     }
 
     private void registerCommands() {
