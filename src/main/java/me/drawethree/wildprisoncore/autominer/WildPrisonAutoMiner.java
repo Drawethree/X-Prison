@@ -166,7 +166,7 @@ public final class WildPrisonAutoMiner {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        c.sender().sendMessage(messages.get("auto_miner_time").replace("%time%", String.valueOf(autoMinerTimes.getOrDefault(c.sender().getUniqueId(), 0))));
+                        c.sender().sendMessage(messages.get("auto_miner_time").replace("%time%", this.getTimeLeft(c.sender())));
                     }
                 }).registerAndBind(core, "miner", "autominer");
 
@@ -208,4 +208,30 @@ public final class WildPrisonAutoMiner {
     public String getMessage(String key) {
         return messages.get(key.toLowerCase());
     }
+
+    public String getTimeLeft(Player p) {
+
+        if (!autoMinerTimes.containsKey(p.getUniqueId())) {
+            return "0s";
+        }
+
+        int secondsLeft = autoMinerTimes.get(p.getUniqueId());
+        int timeLeft = secondsLeft;
+
+        long days = timeLeft / (24 * 60 * 60);
+        timeLeft -= days * (24 * 60 * 60);
+
+        long hours = timeLeft / (60 * 60);
+        timeLeft -= hours * (60 * 60);
+
+        long minutes = timeLeft / (60);
+        timeLeft -= minutes * (60);
+
+        long seconds = timeLeft;
+
+        timeLeft -= seconds;
+
+        return new StringBuilder().append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").toString();
+    }
+
 }

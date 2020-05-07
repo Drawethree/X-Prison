@@ -109,9 +109,11 @@ public final class WildPrisonAutoSell {
     private void registerListeners() {
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
-                    if (!disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
-                        e.getPlayer().sendMessage(getMessage("autosell_enable"));
-                    }
+                    Schedulers.async().runLater(() -> {
+                        if (!disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
+                            e.getPlayer().sendMessage(getMessage("autosell_enable"));
+                        }
+                    }, 20);
                 });
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)

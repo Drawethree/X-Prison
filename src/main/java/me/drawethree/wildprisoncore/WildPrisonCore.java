@@ -2,6 +2,7 @@ package me.drawethree.wildprisoncore;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
+import me.drawethree.wildprisoncore.autojoin.WildPrisonAutoJoin;
 import me.drawethree.wildprisoncore.autominer.WildPrisonAutoMiner;
 import me.drawethree.wildprisoncore.autosell.WildPrisonAutoSell;
 import me.drawethree.wildprisoncore.config.FileManager;
@@ -33,6 +34,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
     private WildPrisonEnchants enchants;
     private WildPrisonAutoSell autoSell;
     private WildPrisonAutoMiner autoMiner;
+    private WildPrisonAutoJoin autoJoin;
 
     @Override
     protected void enable() {
@@ -46,6 +48,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.enchants = new WildPrisonEnchants(this);
         this.autoSell = new WildPrisonAutoSell(this);
         this.autoMiner = new WildPrisonAutoMiner(this);
+        this.autoJoin = new WildPrisonAutoJoin(this);
 
         this.setupEconomy();
         this.jetsPrisonMines = (JetsPrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines");
@@ -57,6 +60,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.enchants.enable();
         this.autoSell.enable();
         this.autoMiner.enable();
+        this.autoJoin.enable();
 
     }
 
@@ -68,6 +72,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.enchants.disable();
         this.autoSell.disable();
         this.autoMiner.disable();
+        this.autoJoin.disable();
 
         this.sqlDatabase.close();
     }

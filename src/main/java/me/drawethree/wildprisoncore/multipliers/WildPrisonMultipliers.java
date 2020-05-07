@@ -170,11 +170,9 @@ public final class WildPrisonMultipliers {
     private void saveGlobalMultiplier(boolean async) {
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO  " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " VALUES(?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
-                    statement.setDouble(1, GLOBAL_MULTIPLIER.getMultiplier());
-                    statement.setLong(2, GLOBAL_MULTIPLIER.getEndTime());
-                    statement.setLong(3, GLOBAL_MULTIPLIER.getEndTime());
-                    statement.setDouble(4, GLOBAL_MULTIPLIER.getMultiplier());
+                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " SET " +  MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
+                    statement.setLong(1, GLOBAL_MULTIPLIER.getEndTime());
+                    statement.setDouble(2, GLOBAL_MULTIPLIER.getMultiplier());
                     statement.execute();
                     this.core.getLogger().info("Saved Global Multiplier into database");
                 } catch (SQLException e) {
@@ -182,11 +180,9 @@ public final class WildPrisonMultipliers {
                 }
             });
         } else {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO  " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " VALUES(?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
-                statement.setDouble(1, GLOBAL_MULTIPLIER.getMultiplier());
-                statement.setLong(2, GLOBAL_MULTIPLIER.getEndTime());
-                statement.setLong(3, GLOBAL_MULTIPLIER.getEndTime());
-                statement.setDouble(4, GLOBAL_MULTIPLIER.getMultiplier());
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " SET " +  MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
+                statement.setLong(1, GLOBAL_MULTIPLIER.getEndTime());
+                statement.setDouble(2, GLOBAL_MULTIPLIER.getMultiplier());
                 statement.execute();
                 this.core.getLogger().info("Saved Global Multiplier into database");
             } catch (SQLException e) {
