@@ -15,6 +15,11 @@ public class PlayerMultiplier extends Multiplier {
         this.playerUUID = playerUUID;
     }
 
+    public PlayerMultiplier(UUID playerUUID, double multiplier, long timeLeft) {
+        super(multiplier, timeLeft);
+        this.playerUUID = playerUUID;
+    }
+
     @Override
     public void setDuration(int minutes) {
         super.setDuration(minutes);

@@ -3,6 +3,7 @@ package me.drawethree.wildprisoncore.multipliers;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
+import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.multipliers.api.WildPrisonMultipliersAPI;
 import me.drawethree.wildprisoncore.multipliers.api.WildPrisonMultipliersAPIImpl;
 import me.drawethree.wildprisoncore.multipliers.multiplier.GlobalMultiplier;
@@ -10,19 +11,23 @@ import me.drawethree.wildprisoncore.multipliers.multiplier.Multiplier;
 import me.drawethree.wildprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
-import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
+import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class WildPrisonMultipliers {
 
@@ -72,22 +77,164 @@ public final class WildPrisonMultipliers {
         api = new WildPrisonMultipliersAPIImpl(this);
         this.registerCommands();
         this.registerEvents();
+        this.removeExpiredMultipliers();
+        this.loadOnlineMultipliers();
+        this.loadGlobalMultiplier();
+    }
+
+    private void loadOnlineMultipliers() {
+        Players.all().forEach(p -> {
+            rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
+            this.loadPersonalMultiplier(p);
+        });
     }
 
     private void registerEvents() {
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
                     rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
+                    this.loadPersonalMultiplier(e.getPlayer());
                 }).bindWith(core);
         Events.subscribe(PlayerQuitEvent.class)
                 .handler(e -> {
                     rankMultipliers.remove(e.getPlayer().getUniqueId());
+                    this.savePersonalMultiplier(e.getPlayer(), true);
                 }).bindWith(core);
+    }
+
+    private void savePersonalMultiplier(Player player, boolean async) {
+
+        if (!personalMultipliers.containsKey(player.getUniqueId())) {
+            return;
+        }
+
+        Multiplier multiplier = personalMultipliers.get(player.getUniqueId());
+
+        if (async) {
+            Schedulers.async().run(() -> {
+                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
+                    statement.setString(1, player.getUniqueId().toString());
+                    statement.setDouble(2, multiplier.getMultiplier());
+                    statement.setLong(3, multiplier.getEndTime());
+                    statement.setDouble(4, multiplier.getMultiplier());
+                    statement.setLong(5, multiplier.getEndTime());
+
+                    statement.execute();
+                    this.personalMultipliers.remove(player.getUniqueId());
+                    this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
+
+                } catch (SQLException e) {
+                    this.core.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
+                statement.setString(1, player.getUniqueId().toString());
+                statement.setDouble(2, multiplier.getMultiplier());
+                statement.setLong(3, multiplier.getEndTime());
+                statement.setDouble(4, multiplier.getMultiplier());
+                statement.setLong(5, multiplier.getEndTime());
+
+                statement.execute();
+                this.personalMultipliers.remove(player.getUniqueId());
+                this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
+
+            } catch (SQLException e) {
+                this.core.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadGlobalMultiplier() {
+        Schedulers.async().run(() -> {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + ", " + MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + " FROM " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME)) {
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
+                        double multiplier = set.getDouble(MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME);
+                        long timeLeft = set.getLong(MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME);
+                        if (timeLeft > Time.nowMillis()) {
+                            GLOBAL_MULTIPLIER.setMultiplier(multiplier);
+                            GLOBAL_MULTIPLIER.setDuration((int) TimeUnit.MILLISECONDS.toMinutes(timeLeft - Time.nowMillis()));
+                            this.core.getLogger().info(String.format("Loaded Global Multiplier %.2fx", multiplier));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void saveGlobalMultiplier(boolean async) {
+        if (async) {
+            Schedulers.async().run(() -> {
+                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO  " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " VALUES(?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
+                    statement.setDouble(1, GLOBAL_MULTIPLIER.getMultiplier());
+                    statement.setLong(2, GLOBAL_MULTIPLIER.getEndTime());
+                    statement.setLong(3, GLOBAL_MULTIPLIER.getEndTime());
+                    statement.setDouble(4, GLOBAL_MULTIPLIER.getMultiplier());
+                    statement.execute();
+                    this.core.getLogger().info("Saved Global Multiplier into database");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            });
+        } else {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO  " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " VALUES(?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
+                statement.setDouble(1, GLOBAL_MULTIPLIER.getMultiplier());
+                statement.setLong(2, GLOBAL_MULTIPLIER.getEndTime());
+                statement.setLong(3, GLOBAL_MULTIPLIER.getEndTime());
+                statement.setDouble(4, GLOBAL_MULTIPLIER.getMultiplier());
+                statement.execute();
+                this.core.getLogger().info("Saved Global Multiplier into database");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void loadPersonalMultiplier(Player player) {
+        Schedulers.async().run(() -> {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.MULTIPLIERS_DB_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_UUID_COLNAME + "=?")) {
+                statement.setString(1, player.getUniqueId().toString());
+                try (ResultSet set = statement.executeQuery()) {
+                    if (set.next()) {
+                        double multiplier = set.getDouble(MySQLDatabase.MULTIPLIERS_VOTE_COLNAME);
+                        long endTime = set.getLong(MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME);
+                        if (endTime > Time.nowMillis()) {
+                            personalMultipliers.put(player.getUniqueId(), new PlayerMultiplier(player.getUniqueId(), multiplier, endTime));
+                            this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier, player.getName()));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                this.core.getLogger().warning("Could not load multiplier for player " + player.getName() + "!");
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void removeExpiredMultipliers() {
+        Schedulers.async().run(() -> {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.MULTIPLIERS_DB_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + " < " + Time.nowMillis())) {
+                statement.execute();
+                this.core.getLogger().info("Removed expired multipliers from database");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 
     public void disable() {
+        this.saveAllMultipliers();
+    }
 
+    private void saveAllMultipliers() {
+        Players.all().forEach(p -> savePersonalMultiplier(p, false));
+        this.saveGlobalMultiplier(false);
     }
 
     private void loadMessages() {

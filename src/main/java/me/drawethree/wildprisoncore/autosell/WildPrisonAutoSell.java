@@ -107,11 +107,11 @@ public final class WildPrisonAutoSell {
 
     private void registerListeners() {
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && e.getBlock().getType() != Material.OBSIDIAN && e.getBlock().getType() != Material.ENDER_STONE)
+                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer(), 3);
                     if (disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
-                        if (e.getBlock().getType() != Material.ENDER_STONE) {
+                        if (e.getBlock().getType() != Material.ENDER_STONE && e.getBlock().getType() != Material.OBSIDIAN) {
                             e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
                         }
                         e.getBlock().setType(Material.AIR);

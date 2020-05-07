@@ -24,6 +24,13 @@ public class Multiplier {
         setDuration(duration);
     }
 
+    public Multiplier(double multiplier, long endTime) {
+        this.multiplier = multiplier;
+        this.startTime = System.currentTimeMillis();
+        this.endTime = endTime;
+        this.duration = (int) TimeUnit.MILLISECONDS.toMinutes(endTime - startTime);
+    }
+
     public String getTimeLeft() {
 
         if (System.currentTimeMillis() > endTime || duration == -1) {

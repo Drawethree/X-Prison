@@ -11,6 +11,10 @@ public class GlobalMultiplier extends Multiplier {
         super(multiplier, duration);
     }
 
+    public GlobalMultiplier(double multiplier, long timeLeft) {
+        super(multiplier,timeLeft);
+    }
+
     @Override
     public void setDuration(int minutes) {
         super.setDuration(minutes);
