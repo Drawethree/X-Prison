@@ -48,6 +48,7 @@ public final class WildPrisonAutoMiner {
         this.registerCommands();
         this.registerEvents();
         this.loadMessages();
+        this.removeExpiredAutoMiners();
         this.loadAutoMinerRegion();
         this.loadPlayersAutoMiner();
     }
@@ -66,6 +67,17 @@ public final class WildPrisonAutoMiner {
 
     private void loadPlayersAutoMiner() {
         Players.all().forEach(p -> loadAutoMiner(p));
+    }
+
+    private void removeExpiredAutoMiners() {
+        Schedulers.async().run(() -> {
+            try(Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + " <= 0")) {
+                statement.execute();
+                this.core.getLogger().info("Removed expired AutoMiners from database");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void loadAutoMiner(Player p) {
