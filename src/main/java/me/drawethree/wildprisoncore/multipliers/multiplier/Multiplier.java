@@ -5,13 +5,13 @@ import lombok.Setter;
 import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.lucko.helper.promise.Promise;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Getter
 public class Multiplier {
 
     protected Promise<Void> task;
-    private WildPrisonMultipliers plugin;
     @Setter
     protected double multiplier;
     protected int duration;
@@ -61,8 +61,31 @@ public class Multiplier {
         return new Multiplier(0.0, -1);
     }
 
+    public static PlayerMultiplier getDefaultPlayerMultiplier(UUID uuid) {
+        return new PlayerMultiplier(uuid, 0.0, -1);
+    }
+
+    public static PlayerMultiplier getDefaultPlayerMultiplier() {
+        return new PlayerMultiplier(null, 0.0, -1);
+    }
+
+
     public void setDuration(int minutes) {
         this.duration = minutes;
+        this.startTime = System.currentTimeMillis();
+        this.endTime = duration == -1 ? startTime : startTime + TimeUnit.MINUTES.toMillis(duration);
+    }
+
+    public void addMultiplier(double amount, double maxMultiplier) {
+        if ((this.multiplier + amount) > maxMultiplier) {
+            this.multiplier = maxMultiplier;
+        } else {
+            this.multiplier += amount;
+        }
+    }
+
+    public void addDuration(int minutes) {
+        this.duration += minutes;
         this.startTime = System.currentTimeMillis();
         this.endTime = duration == -1 ? startTime : startTime + TimeUnit.MINUTES.toMillis(duration);
     }

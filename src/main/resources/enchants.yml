@@ -56,6 +56,9 @@ messages:
   jackhammer_enabled: "&e&l(!) &7You've &a&lENABLED &7jackhammer."
   explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
   explosive_enabled: "&e&l(!) &7You've &a&lENABLED &7explosive."
+  value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.wildprison.net&7."
+  value_no_pickaxe: "&e&lVALUE &8» &7You must hold an pickaxe in your hand."
+  value_value: "&e&lVALUE &8» &f%player%'s &7Pickaxe Value: &f%tokens% Tokens&7."
 enchants:
   '1':
     Name: '&aEfficiency'

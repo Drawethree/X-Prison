@@ -100,6 +100,20 @@ public final class WildPrisonEnchants {
                         toggleJackHammer(c.sender());
                     }
                 }).registerAndBind(core, "jackhammer");
+        Commands.create()
+                .assertPlayer()
+                .assertPermission("wildprison.value", this.getMessage("value_no_permission"))
+                .handler(c -> {
+                    ItemStack pickAxe = c.sender().getItemInHand();
+
+                    if (pickAxe == null || pickAxe.getType() != Material.DIAMOND_PICKAXE) {
+                        c.sender().sendMessage(getMessage("value_no_pickaxe"));
+                        return;
+                    }
+
+                    c.sender().sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%",String.valueOf(this.enchantsManager.getPickaxeValue(pickAxe))));
+
+                }).registerAndBind(core, "value");
     }
 
     private void toggleJackHammer(Player sender) {

@@ -111,8 +111,6 @@ public class TokensManager {
             }
             tokensCache.clear();
             blocksCache.clear();
-            tokensCache = null;
-            blocksCache = null;
             this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database");
         });
     }

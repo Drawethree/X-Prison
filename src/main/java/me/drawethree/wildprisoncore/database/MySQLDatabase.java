@@ -44,11 +44,11 @@ public class MySQLDatabase {
     public static final String MULTIPLIERS_VOTE_COLNAME = "vote_multiplier";
     public static final String MULTIPLIERS_VOTE_TIMELEFT_COLNAME = "vote_multiplier_timeleft";
 
-    public static final String GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME = "multiplier";
-    public static final String GLOBAL_MULTIPLIER_TIMELEFT_COLNAME = "timeleft";
+    //public static final String GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME = "multiplier";
+    //public static final String GLOBAL_MULTIPLIER_TIMELEFT_COLNAME = "timeleft";
 
-    //public static final String AUTOMINER_UUID_COLNAME = "UUID";
-    //public static final String AUTOMINER_TIMELEFT_COLNAME = "timeleft";
+    public static final String AUTOMINER_UUID_COLNAME = "UUID";
+    public static final String AUTOMINER_TIMELEFT_COLNAME = "timeleft";
 
     @Getter
     private WildPrisonCore parent;

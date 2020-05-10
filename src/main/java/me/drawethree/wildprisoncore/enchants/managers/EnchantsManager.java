@@ -347,4 +347,15 @@ public class EnchantsManager {
         }
         return newList;
     }
+
+    public long getPickaxeValue(ItemStack pickAxe) {
+        long sum = 0;
+        HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
+        for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
+            for (int i = 1 ; i <= playerEnchants.get(enchantment); i++) {
+                sum += enchantment.getCostOfLevel(i);
+            }
+        }
+        return sum;
+    }
 }

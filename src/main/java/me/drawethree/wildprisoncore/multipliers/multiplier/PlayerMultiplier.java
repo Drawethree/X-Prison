@@ -29,4 +29,14 @@ public class PlayerMultiplier extends Multiplier {
             }, duration, TimeUnit.MINUTES);
         }
     }
+
+    @Override
+    public void addDuration(int minutes) {
+        super.addDuration(minutes);
+        if (duration != -1) {
+            task = Schedulers.async().runLater(() -> {
+                WildPrisonMultipliers.getInstance().removePersonalMultiplier(playerUUID);
+            }, duration, TimeUnit.MINUTES);
+        }
+    }
 }

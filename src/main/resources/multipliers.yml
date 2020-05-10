@@ -13,6 +13,9 @@ ranks:
   giraffe: 0.3
   zebra: 0.2
   deer: 0.1
+global-multiplier:
+  multiplier: 0.0
+  timeLeft: -1
 
 
 

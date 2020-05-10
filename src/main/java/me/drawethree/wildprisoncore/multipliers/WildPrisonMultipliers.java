@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class WildPrisonMultipliers {
 
-    private static Multiplier GLOBAL_MULTIPLIER = new GlobalMultiplier(0.0, -1);
+    private static GlobalMultiplier GLOBAL_MULTIPLIER = new GlobalMultiplier(0.0, -1);
 
     @Getter
     private static WildPrisonMultipliers instance;
@@ -43,7 +43,7 @@ public final class WildPrisonMultipliers {
     private WildPrisonMultipliersAPI api;
 
     private HashMap<UUID, Multiplier> rankMultipliers;
-    private HashMap<UUID, Multiplier> personalMultipliers;
+    private HashMap<UUID, PlayerMultiplier> personalMultipliers;
 
     private HashMap<String, String> messages;
     private LinkedHashMap<String, Double> permissionToMultiplier;
@@ -108,7 +108,7 @@ public final class WildPrisonMultipliers {
             return;
         }
 
-        Multiplier multiplier = personalMultipliers.get(player.getUniqueId());
+        PlayerMultiplier multiplier = personalMultipliers.get(player.getUniqueId());
 
         if (async) {
             Schedulers.async().run(() -> {
@@ -148,7 +148,15 @@ public final class WildPrisonMultipliers {
     }
 
     private void loadGlobalMultiplier() {
-        Schedulers.async().run(() -> {
+        double multi = this.config.get().getDouble("global-multiplier.multiplier");
+        long timeLeft = this.config.get().getLong("global-multiplier.timeLeft");
+
+        GLOBAL_MULTIPLIER.setMultiplier(multi);
+        GLOBAL_MULTIPLIER.setDuration((int) TimeUnit.MILLISECONDS.toMinutes(timeLeft - Time.nowMillis()));
+
+        this.core.getLogger().info(String.format("Loaded Global Multiplier %.2fx", multi));
+
+        /*Schedulers.async().run(() -> {
             try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + ", " + MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + " FROM " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME)) {
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
@@ -164,11 +172,16 @@ public final class WildPrisonMultipliers {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        });
+        });*/
     }
 
-    private void saveGlobalMultiplier(boolean async) {
-        if (async) {
+    private void saveGlobalMultiplier() {
+        this.config.set("global-multiplier.multiplier",GLOBAL_MULTIPLIER.getMultiplier());
+        this.config.set("global-multiplier.timeLeft", GLOBAL_MULTIPLIER.getEndTime());
+        this.config.save();
+        this.core.getLogger().info("Saved Global Multiplier into multipliers.yml");
+
+        /*if (async) {
             Schedulers.async().run(() -> {
                 try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("UPDATE " + MySQLDatabase.GLOBAL_MULTIPLIER_DB_NAME + " SET " +  MySQLDatabase.GLOBAL_MULTIPLIER_TIMELEFT_COLNAME + "=?, " + MySQLDatabase.GLOBAL_MULTIPLIER_MULTIPLIER_COLNAME + "=?")) {
                     statement.setLong(1, GLOBAL_MULTIPLIER.getEndTime());
@@ -188,7 +201,8 @@ public final class WildPrisonMultipliers {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
+
     }
 
     private void loadPersonalMultiplier(Player player) {
@@ -230,7 +244,7 @@ public final class WildPrisonMultipliers {
 
     private void saveAllMultipliers() {
         Players.all().forEach(p -> savePersonalMultiplier(p, false));
-        this.saveGlobalMultiplier(false);
+        this.saveGlobalMultiplier();
     }
 
     private void loadMessages() {
@@ -265,7 +279,7 @@ public final class WildPrisonMultipliers {
                 .handler(c -> {
                     c.sender().sendMessage(messages.get("global_multi").replace("%multiplier%", String.valueOf(GLOBAL_MULTIPLIER.getMultiplier())).replace("%duration%", GLOBAL_MULTIPLIER.getTimeLeft()));
                     c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", String.valueOf(rankMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultMultiplier()).getMultiplier())));
-                    c.sender().sendMessage(messages.get("vote_multi").replace("%multiplier%", String.valueOf(personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultMultiplier()).getMultiplier())).replace("%duration%", personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultMultiplier()).getTimeLeft()));
+                    c.sender().sendMessage(messages.get("vote_multi").replace("%multiplier%", String.valueOf(personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getMultiplier())).replace("%duration%", personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getTimeLeft()));
                 }).registerAndBind(core, "multiplier", "multi");
     }
 
@@ -280,9 +294,9 @@ public final class WildPrisonMultipliers {
         }
 
         if (personalMultipliers.containsValue(onlinePlayer.getUniqueId())) {
-            Multiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
-            multiplier.setMultiplier(amount);
-            multiplier.setDuration(minutes);
+            PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
+            multiplier.addMultiplier(amount, 1.5);
+            multiplier.addDuration(minutes);
         } else {
             personalMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes));
         }
@@ -298,8 +312,8 @@ public final class WildPrisonMultipliers {
             return;
         }
 
-        GLOBAL_MULTIPLIER.setMultiplier(amount);
-        GLOBAL_MULTIPLIER.setDuration(time);
+        GLOBAL_MULTIPLIER.addMultiplier(amount, 3.0);
+        GLOBAL_MULTIPLIER.addDuration(time);
         sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
     }
 
@@ -309,7 +323,7 @@ public final class WildPrisonMultipliers {
     }
 
     public double getPersonalMultiplier(Player p) {
-        return personalMultipliers.getOrDefault(p.getUniqueId(), Multiplier.getDefaultMultiplier()).getMultiplier();
+        return personalMultipliers.getOrDefault(p.getUniqueId(), Multiplier.getDefaultPlayerMultiplier(p.getUniqueId())).getMultiplier();
     }
 
     public double getRankMultiplier(Player p) {
