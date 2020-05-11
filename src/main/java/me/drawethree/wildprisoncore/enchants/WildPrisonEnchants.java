@@ -11,8 +11,11 @@ import me.drawethree.wildprisoncore.enchants.managers.EnchantsManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.cooldown.Cooldown;
+import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.text.Text;
+import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class WildPrisonEnchants {
 
@@ -49,6 +53,7 @@ public final class WildPrisonEnchants {
     private HashMap<String, String> messages;
     private List<UUID> disabledJackHammer = new ArrayList<>();
     private List<UUID> disabledExplosive = new ArrayList<>();
+    private CooldownMap<Player> valueCooldown = CooldownMap.create(Cooldown.of(30, TimeUnit.SECONDS));
 
     public WildPrisonEnchants(WildPrisonCore wildPrisonCore) {
         instance = this;
@@ -85,7 +90,7 @@ public final class WildPrisonEnchants {
                         return;
                     }
                     new DisenchantGUI(c.sender(), pickAxe).open();
-                }).registerAndBind(core, "disenchant", "dise");
+                }).registerAndBind(core, "disenchant", "dise", "de");
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
@@ -104,6 +109,10 @@ public final class WildPrisonEnchants {
                 .assertPlayer()
                 .assertPermission("wildprison.value", this.getMessage("value_no_permission"))
                 .handler(c -> {
+                    if (!valueCooldown.test(c.sender())) {
+                        c.sender().sendMessage(this.getMessage("value_cooldown").replace("%time%", String.valueOf(valueCooldown.remainingTime(c.sender(), TimeUnit.SECONDS))));
+                        return;
+                    }
                     ItemStack pickAxe = c.sender().getItemInHand();
 
                     if (pickAxe == null || pickAxe.getType() != Material.DIAMOND_PICKAXE) {
@@ -111,7 +120,7 @@ public final class WildPrisonEnchants {
                         return;
                     }
 
-                    c.sender().sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%",String.valueOf(this.enchantsManager.getPickaxeValue(pickAxe))));
+                    Players.all().forEach(p -> p.sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%",String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe)))));
 
                 }).registerAndBind(core, "value");
     }

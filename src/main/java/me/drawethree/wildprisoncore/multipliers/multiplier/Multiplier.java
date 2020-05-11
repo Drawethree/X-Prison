@@ -9,31 +9,30 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public class Multiplier {
+public abstract class Multiplier {
 
     protected Promise<Void> task;
     @Setter
     protected double multiplier;
-    protected int duration;
 
     protected long startTime;
-    protected long endTime;
+    @Setter protected long endTime;
 
     public Multiplier(double multiplier, int duration) {
         this.multiplier = multiplier;
-        setDuration(duration);
+        this.startTime = System.currentTimeMillis();
+        this.endTime = duration == 0 ? 0 : startTime + TimeUnit.MINUTES.toMillis(duration);
     }
 
     public Multiplier(double multiplier, long endTime) {
         this.multiplier = multiplier;
         this.startTime = System.currentTimeMillis();
         this.endTime = endTime;
-        this.duration = (int) TimeUnit.MILLISECONDS.toMinutes(endTime - startTime);
     }
 
     public String getTimeLeft() {
 
-        if (System.currentTimeMillis() > endTime || duration == -1) {
+        if (System.currentTimeMillis() > endTime) {
             return "PERMANENT";
         }
 
@@ -57,36 +56,28 @@ public class Multiplier {
     }
 
 
-    public static final Multiplier getDefaultMultiplier() {
-        return new Multiplier(0.0, -1);
+    public static final GlobalMultiplier getDefaultGlobalMultiplier() {
+        return new GlobalMultiplier(0.0, 0);
     }
 
     public static PlayerMultiplier getDefaultPlayerMultiplier(UUID uuid) {
-        return new PlayerMultiplier(uuid, 0.0, -1);
+        return new PlayerMultiplier(uuid, 0.0, 0);
     }
 
     public static PlayerMultiplier getDefaultPlayerMultiplier() {
-        return new PlayerMultiplier(null, 0.0, -1);
+        return new PlayerMultiplier(null, 0.0, 0);
     }
 
 
-    public void setDuration(int minutes) {
-        this.duration = minutes;
-        this.startTime = System.currentTimeMillis();
-        this.endTime = duration == -1 ? startTime : startTime + TimeUnit.MINUTES.toMillis(duration);
-    }
+    public abstract void setDuration(long endTime);
 
     public void addMultiplier(double amount, double maxMultiplier) {
-        if ((this.multiplier + amount) > maxMultiplier) {
+        if ( (this.multiplier + amount) > maxMultiplier) {
             this.multiplier = maxMultiplier;
         } else {
             this.multiplier += amount;
         }
     }
 
-    public void addDuration(int minutes) {
-        this.duration += minutes;
-        this.startTime = System.currentTimeMillis();
-        this.endTime = duration == -1 ? startTime : startTime + TimeUnit.MINUTES.toMillis(duration);
-    }
+    public abstract void addDuration(int minutes);
 }

@@ -47,6 +47,7 @@ messages:
   enchant_bought: "&c&l-%tokens% TOKENS"
   enchant_refunded: "&e&lREFUND &8» &7You have refunded &f%amount% &7levels of %enchant%"
   enchant_tokens_back: "&e&lREFUND &8» &7You have received &f%tokens% &7tokens back."
+  enchant_cant_disenchant: "&c&l(!) &cThis enchant can't be disenchanted."
   enchant_no_level: "&e&l(!) &cYou do not have this enchant!"
   charity_other: "&a&l+ $%amount% &7(From %player%'s Charity)"
   charity_your: "&a&l+ $%amount% &7(From Your Charity)"
@@ -59,6 +60,7 @@ messages:
   value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.wildprison.net&7."
   value_no_pickaxe: "&e&lVALUE &8» &7You must hold an pickaxe in your hand."
   value_value: "&e&lVALUE &8» &f%player%'s &7Pickaxe Value: &f%tokens% Tokens&7."
+  value_cooldown: "&e&lVALUE &8» &7Please wait &f%time% Seconds&7 before using this command again."
 enchants:
   '1':
     Name: '&aEfficiency'

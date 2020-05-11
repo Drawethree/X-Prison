@@ -308,11 +308,12 @@ public class EnchantsManager {
     }
 
     public Item getRefundGuiItem(WildPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
-        ItemStackBuilder builder = ItemStackBuilder.of(DISENCHANT_GUI_ITEM_MATERIAL);
+        Material m = enchantment.isRefundEnabled() ? DISENCHANT_GUI_ITEM_MATERIAL : Material.BARRIER;
+        ItemStackBuilder builder = ItemStackBuilder.of(m);
         builder.name(enchantment.getName());
         builder.lore(translateLore(enchantment, DISENCHANT_GUI_ITEM_LORE, level));
 
-        return builder.buildConsumer(handler -> {
+        return enchantment.isRefundEnabled() ? builder.buildConsumer(handler -> {
             if (handler.getClick() == ClickType.LEFT) {
                 this.disenchant(enchantment, gui, level, 1);
                 gui.redraw();
@@ -320,7 +321,7 @@ public class EnchantsManager {
                 this.disenchant(enchantment, gui, level, 10);
                 gui.redraw();
             }
-        });
+        }) : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
     }
 
     public Item getGuiItem(WildPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
@@ -343,7 +344,7 @@ public class EnchantsManager {
     private List<String> translateLore(WildPrisonEnchantment enchantment, List<String> guiItemLore, int currentLevel) {
         List<String> newList = new ArrayList<>();
         for (String s : guiItemLore) {
-            newList.add(s.replace("%description%", enchantment.getDescription()).replace("%cost%", String.valueOf(enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel))).replace("%max_level%", String.valueOf(enchantment.getMaxLevel())).replace("%current_level%", String.valueOf(currentLevel)));
+            newList.add(s.replace("%description%", enchantment.getDescription()).replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel))).replace("%max_level%", String.format("%,d", enchantment.getMaxLevel())).replace("%current_level%", String.format("%,d", currentLevel)));
         }
         return newList;
     }
@@ -352,7 +353,7 @@ public class EnchantsManager {
         long sum = 0;
         HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
         for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
-            for (int i = 1 ; i <= playerEnchants.get(enchantment); i++) {
+            for (int i = 1; i <= playerEnchants.get(enchantment); i++) {
                 sum += enchantment.getCostOfLevel(i);
             }
         }

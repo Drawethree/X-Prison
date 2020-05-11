@@ -67,8 +67,6 @@ public class RankManager {
             this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.RANKS_DB_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", onlinePlayersRanks.get(uuid), onlinePlayersPrestige.get(uuid), uuid.toString());
         }
         this.plugin.getCore().getLogger().info("Saved players ranks and prestiges!");
-        this.onlinePlayersRanks.clear();
-        this.onlinePlayersPrestige.clear();
     }
 
     public void loadAllData() {

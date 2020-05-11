@@ -38,7 +38,7 @@ public class BlessingEnchant extends WildPrisonEnchantment {
 
             for (Player p : Players.all()) {
                 randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-                plugin.getCore().getEconomy().depositPlayer(p, randAmount);
+                plugin.getCore().getTokens().getTokensManager().giveTokens(p, randAmount, null);
                 if (p.equals(e.getPlayer())) {
                     p.sendMessage(plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d",randAmount)));
                 } else {

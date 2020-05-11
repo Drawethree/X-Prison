@@ -56,9 +56,9 @@ public class DisenchantGUI extends Gui {
         }
 
         for (WildPrisonEnchantment enchantment : WildPrisonEnchantment.all()) {
-            if (!enchantment.isRefundEnabled()) {
+            /*if (!enchantment.isRefundEnabled()) {
                 continue;
-            }
+            }*/
             int level = WildPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment.getId());
             this.setItem(enchantment.refundGuiSlot(), WildPrisonEnchants.getInstance().getEnchantsManager().getRefundGuiItem(enchantment,this,level));
         }
