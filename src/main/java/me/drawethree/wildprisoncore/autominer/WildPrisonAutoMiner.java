@@ -137,8 +137,8 @@ public final class WildPrisonAutoMiner {
     private void loadAutoMinerRegion() {
         String world = getConfig().get().getString("auto-miner-region.world");
         String regionName = getConfig().get().getString("auto-miner-region.name");
-        int moneyPerSec = getConfig().get().getInt("auto-miner-region.money");
-        int tokensPerSec = getConfig().get().getInt("auto-miner-region.tokens");
+        long moneyPerSec = getConfig().get().getLong("auto-miner-region.money");
+        long tokensPerSec = getConfig().get().getLong("auto-miner-region.tokens");
 
         ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(Bukkit.getWorld(world)).getRegion(regionName);
         if (region == null) {

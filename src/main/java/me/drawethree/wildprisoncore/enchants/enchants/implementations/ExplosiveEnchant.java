@@ -44,7 +44,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        if(plugin.hasExplosiveDisabled(e.getPlayer())) {
+        if (plugin.hasExplosiveDisabled(e.getPlayer())) {
             return;
         }
         if (!cooldownMap.test(e.getPlayer())) {
@@ -56,7 +56,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
             if (regions.size() > 0) {
                 Player p = e.getPlayer();
                 ProtectedRegion region = regions.get(0);
-                int radius = 2 + (enchantLevel / 100);
+                int radius = enchantLevel <= 300 ? 3 : enchantLevel <= 400 ? 4 : 5;
 
                 b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
 
@@ -66,7 +66,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
                 int blockCount = 0;
                 int fortuneLevel = plugin.getApi().getEnchantLevel(p, 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                final Location startLocation = p.getLocation();
+                final Location startLocation = e.getBlock().getLocation();
                 for (int x = startLocation.getBlockX() - (radius / 2); x <= startLocation.getBlockX() + (radius / 2); x++) {
                     for (int z = startLocation.getBlockZ() - (radius / 2); z <= startLocation.getBlockZ() + (radius / 2); z++) {
                         for (int y = startLocation.getBlockY() - (radius / 2); y <= startLocation.getBlockY() + (radius / 2); y++) {

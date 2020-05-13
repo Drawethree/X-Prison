@@ -15,13 +15,13 @@ public class AutoMinerRegion {
 
 	private WildPrisonAutoMiner parent;
 	private ProtectedRegion region;
-	private int moneyPerSecond;
-	private int tokensPerSecond;
+	private long moneyPerSecond;
+	private long tokensPerSecond;
 
 	private Task autoMinerTask;
 
 
-	public AutoMinerRegion(WildPrisonAutoMiner parent, ProtectedRegion region, int moneyPerSecond, int tokensPerSecond) {
+	public AutoMinerRegion(WildPrisonAutoMiner parent, ProtectedRegion region, long moneyPerSecond, long tokensPerSecond) {
 		this.parent = parent;
 		this.region = region;
 		this.moneyPerSecond = moneyPerSecond;

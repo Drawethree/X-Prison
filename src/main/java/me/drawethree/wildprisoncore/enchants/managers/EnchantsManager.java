@@ -310,8 +310,8 @@ public class EnchantsManager {
     public Item getRefundGuiItem(WildPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
         Material m = enchantment.isRefundEnabled() ? DISENCHANT_GUI_ITEM_MATERIAL : Material.BARRIER;
         ItemStackBuilder builder = ItemStackBuilder.of(m);
-        builder.name(enchantment.getName());
-        builder.lore(translateLore(enchantment, DISENCHANT_GUI_ITEM_LORE, level));
+        builder.name(enchantment.isRefundEnabled() ? enchantment.getName() : this.plugin.getMessage("enchant_cant_disenchant"));
+        builder.lore(enchantment.isRefundEnabled() ? translateLore(enchantment, DISENCHANT_GUI_ITEM_LORE, level) : new ArrayList<>());
 
         return enchantment.isRefundEnabled() ? builder.buildConsumer(handler -> {
             if (handler.getClick() == ClickType.LEFT) {
