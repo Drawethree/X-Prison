@@ -10,6 +10,7 @@ import me.drawethree.wildprisoncore.tokens.commands.TokensCommand;
 import me.drawethree.wildprisoncore.tokens.managers.TokensManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
+import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
@@ -87,6 +88,7 @@ public final class WildPrisonTokens {
                 })
                 .bindWith(core);
         Events.subscribe(BlockBreakEvent.class)
+                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
                     tokensManager.addBlocksBroken(e.getPlayer(), 1);

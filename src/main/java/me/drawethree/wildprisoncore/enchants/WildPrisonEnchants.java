@@ -13,6 +13,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
+import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
@@ -168,6 +169,7 @@ public final class WildPrisonEnchants {
                     }, 1);
                 }).bindWith(core);
         Events.subscribe(BlockBreakEvent.class)
+                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
                     enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);

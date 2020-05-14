@@ -110,6 +110,7 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
 
     private void registerListeners() {
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
+                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && e.getBlock().getType() != Material.OBSIDIAN && e.getBlock().getType() != Material.ENDER_STONE)
                 .handler(e -> {
                     int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(e.getPlayer(), 3);

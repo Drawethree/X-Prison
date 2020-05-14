@@ -147,6 +147,7 @@ public final class WildPrisonEnchants extends ExtendedJavaPlugin {
                     }, 1);
                 }).bindWith(this);
         Events.subscribe(BlockBreakEvent.class)
+                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
                     enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);

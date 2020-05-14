@@ -58,6 +58,7 @@ public class TokensManager {
         Events.subscribe(PlayerQuitEvent.class)
                 .handler(e -> {
                     this.savePlayerData(e.getPlayer(), true, true);
+                    e.get
                 }).bindWith(plugin);
         this.loadPlayerDataOnEnable();
         this.updateTop10();

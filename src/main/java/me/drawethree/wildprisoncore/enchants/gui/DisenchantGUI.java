@@ -41,6 +41,7 @@ public class DisenchantGUI extends Gui {
                 .filter(e -> e.getInventory().equals(this.getHandle()))
                 .handler(e -> {
                     e.getPlayer().setItemInHand(this.pickAxe);
+                    ((Player) e.getPlayer()).updateInventory();
                 }).bindWith(this);
     }
 

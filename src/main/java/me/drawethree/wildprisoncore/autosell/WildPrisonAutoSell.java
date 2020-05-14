@@ -10,6 +10,7 @@ import me.drawethree.wildprisoncore.config.FileManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.*;
@@ -116,6 +117,7 @@ public final class WildPrisonAutoSell {
                     }, 20);
                 });
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
+                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer(), 3);

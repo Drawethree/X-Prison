@@ -86,6 +86,7 @@ public final class WildPrisonTokens extends ExtendedJavaPlugin {
                 })
                 .bindWith(this);
         Events.subscribe(BlockBreakEvent.class)
+                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
                     tokensManager.addBlocksBroken(e.getPlayer(),1);

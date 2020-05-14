@@ -28,3 +28,7 @@ tokens:
     name: "&e&l%amount% TOKENS"
     lore:
       - "&7Right-Click to Redeem"
+block-rewards:
+  1000:
+    - tokens give 5000 %player%
+    - aam give 300 %player%
