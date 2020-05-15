@@ -14,12 +14,12 @@ public class WildPrisonAutoSellAPIImpl implements WildPrisonAutoSellAPI {
     }
 
     @Override
-    public long getCurrentEarnings(Player player) {
+    public double getCurrentEarnings(Player player) {
         return plugin.getCurrentEarnings(player);
     }
 
     @Override
-    public int getPriceForBrokenBlock(ProtectedRegion region, Block block) {
+    public long getPriceForBrokenBlock(ProtectedRegion region, Block block) {
         return plugin.getPriceForBrokenBlock(region, block);
     }
 

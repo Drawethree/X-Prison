@@ -27,13 +27,13 @@ public class WildPrisonEnchantsAPIImpl implements WildPrisonEnchantsAPI {
     }
 
     @Override
-    public synchronized int getEnchantLevel(Player p, int id) {
-        return this.enchantsManager.getEnchantLevel(p, id);
+    public synchronized int getEnchantLevel(ItemStack item, int id) {
+        return this.enchantsManager.getEnchantLevel(item, id);
     }
 
     @Override
-    public boolean addEnchant(Player p, int id, int level) {
-        return this.enchantsManager.addEnchant(p,id,level);
+    public boolean addEnchant(ItemStack item, Player p, int id, int level) {
+        return this.enchantsManager.addEnchant(p,item, id,level);
     }
 
     @Override

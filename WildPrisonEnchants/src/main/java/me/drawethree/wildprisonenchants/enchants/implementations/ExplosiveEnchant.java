@@ -64,7 +64,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
 
                 //List<BlockState> blocksAffected = new ArrayList<>();
                 //int move = (radius / 2 - 1) + (radius % 2 == 0 ? 0 : 1);
-                long totalDeposit = 0;
+                double totalDeposit = 0;
                 int blockCount = 0;
                 int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(p, 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;

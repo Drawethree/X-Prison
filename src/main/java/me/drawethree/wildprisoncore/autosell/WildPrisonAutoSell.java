@@ -21,6 +21,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -32,7 +33,7 @@ public final class WildPrisonAutoSell {
 
     private HashMap<ProtectedRegion, HashMap<Material, Integer>> regionsAutoSell;
     private HashMap<String, String> messages;
-    private HashMap<UUID, Long> lastMinuteEarnings;
+    private HashMap<UUID, Double> lastMinuteEarnings;
     @Getter
     private WildPrisonAutoSellAPI api;
     private List<UUID> disabledAutoSell;
@@ -93,12 +94,12 @@ public final class WildPrisonAutoSell {
                 }
             }
             lastMinuteEarnings.clear();*/
-            HashMap<UUID, Long> temp = new HashMap<>();
+            HashMap<UUID, Double> temp = new HashMap<>();
             Players.all().stream().filter(p -> lastMinuteEarnings.containsKey(p.getUniqueId())).forEach(p -> {
-                long lastAmount = lastMinuteEarnings.get(p.getUniqueId());
-                long currentAmount = (long) core.getEconomy().getBalance(p);
+                double lastAmount = lastMinuteEarnings.get(p.getUniqueId());
+                double currentAmount = (long) core.getEconomy().getBalance(p);
                 if (currentAmount > lastAmount) {
-                    p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,d", currentAmount - lastAmount)));
+                    p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,.0f", currentAmount - lastAmount)));
                 }
                 temp.put(p.getUniqueId(), currentAmount);
             });
@@ -120,7 +121,7 @@ public final class WildPrisonAutoSell {
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
                 .handler(e -> {
-                    int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer(), 3);
+                    int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
                     if (disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
                         if (e.getBlock().getType() != Material.ENDER_STONE && e.getBlock().getType() != Material.OBSIDIAN) {
                             e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
@@ -135,12 +136,12 @@ public final class WildPrisonAutoSell {
 
                         if (regionsAutoSell.containsKey(reg) && regionsAutoSell.get(reg).containsKey(e.getBlock().getType())) {
                             int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                            int amount = (int) core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), regionsAutoSell.get(reg).get(e.getBlock().getType()) * amplifier);
+                            double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
 
                             core.getEconomy().depositPlayer(e.getPlayer(), amount);
 
                             if (!lastMinuteEarnings.containsKey(e.getPlayer().getUniqueId())) {
-                                lastMinuteEarnings.put(e.getPlayer().getUniqueId(), (long) 0);
+                                lastMinuteEarnings.put(e.getPlayer().getUniqueId(), 0.0);
                             }
 
                             lastMinuteEarnings.put(e.getPlayer().getUniqueId(), lastMinuteEarnings.get(e.getPlayer().getUniqueId()) + amount);
@@ -242,7 +243,7 @@ public final class WildPrisonAutoSell {
 
                         if (regionsAutoSell.containsKey(region)) {
 
-                            long totalPrice = 0;
+                            double totalPrice = 0;
 
                             List<ItemStack> toRemove = new ArrayList<>();
 
@@ -256,7 +257,7 @@ public final class WildPrisonAutoSell {
                             toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
                             totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
                             core.getEconomy().depositPlayer(c.sender(), totalPrice);
-                            c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,d", totalPrice)));
+                            c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
                         }
                     }
                 }).registerAndBind(core, "sellall");
@@ -281,8 +282,8 @@ public final class WildPrisonAutoSell {
         return messages.get(key.toLowerCase());
     }
 
-    public long getCurrentEarnings(Player player) {
-        return lastMinuteEarnings.containsKey(player.getUniqueId()) ? lastMinuteEarnings.get(player.getUniqueId()) : 0;
+    public double getCurrentEarnings(Player player) {
+        return lastMinuteEarnings.containsKey(player.getUniqueId()) ? lastMinuteEarnings.get(player.getUniqueId()) : 0.0;
     }
 
     public int getPriceForBrokenBlock(ProtectedRegion region, Block block) {

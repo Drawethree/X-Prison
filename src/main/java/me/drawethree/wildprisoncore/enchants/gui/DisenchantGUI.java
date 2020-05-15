@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
 import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -35,13 +36,19 @@ public class DisenchantGUI extends Gui {
 
     public DisenchantGUI(Player player, ItemStack pickAxe) {
         super(player, GUI_LINES, GUI_TITLE);
+
         this.pickAxe = pickAxe;
 
         Events.subscribe(InventoryCloseEvent.class)
                 .filter(e -> e.getInventory().equals(this.getHandle()))
                 .handler(e -> {
-                    e.getPlayer().setItemInHand(this.pickAxe);
-                    ((Player) e.getPlayer()).updateInventory();
+                    if (!this.getPlayer().getItemInHand().equals(this.pickAxe)) {
+                        this.getPlayer().getInventory().remove(this.pickAxe);
+                    }
+                    this.getPlayer().setItemInHand(this.pickAxe);
+                    Schedulers.async().runLater(() -> {
+                        ((Player) e.getPlayer()).updateInventory();
+                    }, 5);
                 }).bindWith(this);
     }
 
@@ -61,7 +68,7 @@ public class DisenchantGUI extends Gui {
                 continue;
             }*/
             int level = WildPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment.getId());
-            this.setItem(enchantment.refundGuiSlot(), WildPrisonEnchants.getInstance().getEnchantsManager().getRefundGuiItem(enchantment,this,level));
+            this.setItem(enchantment.refundGuiSlot(), WildPrisonEnchants.getInstance().getEnchantsManager().getRefundGuiItem(enchantment, this, level));
         }
 
         this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());

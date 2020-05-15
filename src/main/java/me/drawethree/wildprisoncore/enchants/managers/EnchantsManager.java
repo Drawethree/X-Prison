@@ -4,9 +4,11 @@ import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.wildprisoncore.enchants.gui.EnchantGUI;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
+import me.lucko.helper.utils.Players;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
@@ -20,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class EnchantsManager {
 
@@ -44,6 +47,7 @@ public class EnchantsManager {
         this.OBSIDIAN_TOKENS = plugin.getConfig().get().getLong("obsidian_tokens");
         this.ENDSTONE_TOKENS = plugin.getConfig().get().getLong("endstone_tokens");
         this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");
+
     }
 
 
@@ -153,14 +157,6 @@ public class EnchantsManager {
         return tag.getInt(NBT_TAG_INDETIFIER + id);
     }
 
-    public synchronized int getEnchantLevel(Player p, int id) {
-        ItemStack item = findPickaxe(p);
-        if (item == null) {
-            return 0;
-        }
-        return getEnchantLevel(item, id);
-    }
-
     public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
         if (e.getBlock().getType() == Material.ENDER_STONE) {
             plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), ENDSTONE_TOKENS);
@@ -181,22 +177,25 @@ public class EnchantsManager {
     }
 
     public void handlePickaxeUnequip(Player p, ItemStack newItem) {
+        p.getActivePotionEffects().forEach(effect -> p.removePotionEffect(effect.getType()));
         HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
         for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {
             enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
         }
     }
 
-    public boolean addEnchant(Player p, int id, int level) {
+    public boolean addEnchant(Player p, ItemStack item, int id, int level) {
         WildPrisonEnchantment enchantment = WildPrisonEnchantment.getEnchantById(id);
 
-        if (enchantment == null || p.getItemInHand() == null) {
+        if (enchantment == null || item == null) {
             return false;
         }
 
-        ItemStack item = p.getItemInHand();
-        enchantment.onUnequip(p, item, level);
-        enchantment.onEquip(p, item, level);
+        if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
+            enchantment.onUnequip(p, item, level);
+            enchantment.onEquip(p, item, level);
+        }
+
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
@@ -212,8 +211,8 @@ public class EnchantsManager {
         return true;
     }
 
-    public boolean addEnchant(Player p, WildPrisonEnchantment enchantment, int level) {
-        return addEnchant(p, enchantment.getId(), level);
+    public boolean addEnchant(Player p, ItemStack item, WildPrisonEnchantment enchantment, int level) {
+        return addEnchant(p, item, enchantment.getId(), level);
     }
 
     public boolean removeEnchant(Player p, int id) {
@@ -223,7 +222,9 @@ public class EnchantsManager {
         }
 
         ItemStack item = p.getItemInHand();
-        enchantment.onEquip(p, item, 0);
+        if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
+            enchantment.onEquip(p, item, 0);
+        }
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
@@ -244,7 +245,9 @@ public class EnchantsManager {
         }
 
         ItemStack item = p.getItemInHand();
-        enchantment.onEquip(p, item, level - 1);
+        if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
+            enchantment.onEquip(p, item, level - 1);
+        }
         net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
@@ -275,7 +278,7 @@ public class EnchantsManager {
 
             plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), cost);
 
-            this.addEnchant(gui.getPlayer(), enchantment.getId(), currentLevel + 1);
+            this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + 1);
             gui.setPickAxe(gui.getPlayer().getItemInHand());
             gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(cost)));
         }

@@ -59,7 +59,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                 ProtectedRegion region = regions.get(0);
                 //List<BlockState> blocksAffected = new ArrayList<>();
 
-                long totalDeposit = 0;
+                double totalDeposit = 0;
                 int blockCount = 0;
                 int fortuneLevel = WildPrisonEnchants.getApi().getEnchantLevel(p, 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;

@@ -57,9 +57,9 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                 ProtectedRegion region = regions.get(0);
                 List<Block> blocksAffected = new ArrayList<>();
 
-                long totalDeposit = 0;
+                double totalDeposit = 0;
                 int blockCount = 0;
-                int fortuneLevel = plugin.getApi().getEnchantLevel(p, 3);
+                int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                 for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
                     for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
@@ -68,7 +68,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                             blockCount++;
                             blocksAffected.add(b1);
                             if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
-                                totalDeposit += (plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) * amplifier);
+                                totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) + 0.0) * amplifier);
                             } else {
                                 if (b1.getType() != Material.ENDER_STONE) {
                                     p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));

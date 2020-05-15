@@ -126,7 +126,7 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
 
                         if (regionsAutoSell.containsKey(reg) && regionsAutoSell.get(reg).containsKey(e.getBlock().getType())) {
                             int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                            int amount = (int) WildPrisonMultipliers.getApi().getTotalToDeposit(e.getPlayer(), regionsAutoSell.get(reg).get(e.getBlock().getType()) * amplifier);
+                            double amount = (int) WildPrisonMultipliers.getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
 
                             econ.depositPlayer(e.getPlayer(), amount);
 
@@ -234,7 +234,7 @@ public final class WildPrisonAutoSell extends ExtendedJavaPlugin {
 
                         if (regionsAutoSell.containsKey(region)) {
 
-                            long totalPrice = 0;
+                            double totalPrice = 0;
 
                             List<ItemStack> toRemove = new ArrayList<>();
 

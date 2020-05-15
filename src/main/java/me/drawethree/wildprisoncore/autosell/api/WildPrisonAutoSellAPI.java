@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 
 public interface WildPrisonAutoSellAPI {
 
-    long getCurrentEarnings(Player player);
+    double getCurrentEarnings(Player player);
 
-    int getPriceForBrokenBlock(ProtectedRegion region, Block block);
+    long getPriceForBrokenBlock(ProtectedRegion region, Block block);
 
     boolean hasAutoSellEnabled(Player p);
 }

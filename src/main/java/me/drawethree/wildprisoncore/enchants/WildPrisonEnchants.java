@@ -14,20 +14,16 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
-import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +34,7 @@ public final class WildPrisonEnchants {
 
     @Getter
     private static WildPrisonEnchants instance;
+    private final HashMap<UUID, ItemStack> currentPickaxes = new HashMap<>();
 
     @Getter
     private WildPrisonEnchantsAPI api;
@@ -63,6 +60,35 @@ public final class WildPrisonEnchants {
         this.enchantsManager = new EnchantsManager(this);
         this.api = new WildPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();
+
+        Schedulers.async().runRepeating(() -> {
+            Players.all().stream().forEach(player -> {
+                ItemStack inHand = player.getItemInHand();
+                ItemStack lastEquipped = currentPickaxes.get(player.getUniqueId());
+
+                if (lastEquipped == null && inHand != null && inHand.getType() == Material.DIAMOND_PICKAXE && !player.getWorld().getName().equalsIgnoreCase("pvp")) {
+                    currentPickaxes.put(player.getUniqueId(), inHand);
+                    Schedulers.sync().run(() -> this.enchantsManager.handlePickaxeEquip(player, inHand));
+                    return;
+                }
+
+                if (lastEquipped != null) {
+                    if (inHand != null && inHand.getType() == Material.DIAMOND_PICKAXE) {
+                        //Check if they are not the same
+                        if (!areItemsSame(inHand, lastEquipped)) {
+                            Schedulers.sync().run(() -> {
+                                this.enchantsManager.handlePickaxeUnequip(player, lastEquipped);
+                                this.enchantsManager.handlePickaxeEquip(player, inHand);
+                            });
+                            currentPickaxes.put(player.getUniqueId(), inHand);
+                        }
+                    } else if (inHand == null || inHand.getType() != Material.DIAMOND_PICKAXE) {
+                        Schedulers.sync().run(() -> this.enchantsManager.handlePickaxeUnequip(player, lastEquipped));
+                        currentPickaxes.remove(player.getUniqueId());
+                    }
+                }
+            });
+        }, 20, 20);
     }
 
     private void loadMessages() {
@@ -86,10 +112,12 @@ public final class WildPrisonEnchants {
                 .assertPlayer()
                 .handler(c -> {
                     ItemStack pickAxe = c.sender().getItemInHand();
+
                     if (pickAxe == null || pickAxe.getType() != Material.DIAMOND_PICKAXE) {
                         c.sender().sendMessage(getMessage("no_pickaxe_found"));
                         return;
                     }
+
                     new DisenchantGUI(c.sender(), pickAxe).open();
                 }).registerAndBind(core, "disenchant", "dise", "de");
         Commands.create()
@@ -121,7 +149,7 @@ public final class WildPrisonEnchants {
                         return;
                     }
 
-                    Players.all().forEach(p -> p.sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%",String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe)))));
+                    Players.all().forEach(p -> p.sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe)))));
 
                 }).registerAndBind(core, "value");
     }
@@ -148,12 +176,50 @@ public final class WildPrisonEnchants {
 
     private void registerEvents() {
         Events.subscribe(PlayerInteractEvent.class)
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getItem() != null && e.getItem().getType() == Material.DIAMOND_PICKAXE && (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK))
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getItem() != null && e.getItem().getType() == Material.DIAMOND_PICKAXE && e.getAction() == Action.RIGHT_CLICK_AIR)
                 .handler(e -> {
-                    new EnchantGUI(e.getPlayer(), e.getItem()).open();
+                    ItemStack pickAxe = e.getItem();
+                    new EnchantGUI(e.getPlayer(), pickAxe).open();
                 }).bindWith(core);
+        /*Events.subscribe(InventoryClickEvent.class)
+                .filter(e -> e.getCurrentItem() != null && e.getWhoClicked().getItemInHand() != null && e.getCurrentItem().getType() == Material.DIAMOND_PICKAXE && e.getCurrentItem().equals(e.getWhoClicked().getItemInHand()))
+                .handler(e -> {
+                    if (e.getWhoClicked().getItemInHand().getType() == Material.DIAMOND_PICKAXE) {
+                        this.enchantsManager.handlePickaxeUnequip((Player) e.getWhoClicked(), e.getCurrentItem());
+                    }
+                }).bindWith(core);
+        Events.subscribe(InventoryClickEvent.class)
+                .filter(e -> e.getCursor() != null && e.getCursor().getType() == Material.DIAMOND_PICKAXE)
+                .handler(e -> {
+                    Schedulers.sync().runLater(() -> {
+                        if (e.getWhoClicked().getItemInHand().equals(e.getCursor())) {
+                            this.enchantsManager.handlePickaxeEquip((Player) e.getWhoClicked(), e.getCursor());
+                        }
+                    }, 5l);
+                }).bindWith(core);
+        Events.subscribe(PlayerDropItemEvent.class)
+                .filter(e -> e.getItemDrop().getItemStack() != null && e.getItemDrop().getItemStack().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp"))
+                .handler(e -> {
+                    ItemStack dropped = e.getItemDrop().getItemStack();
+                    enchantsManager.handlePickaxeUnequip(e.getPlayer(), dropped);
+                }).bindWith(this.core);
+        Events.subscribe(PlayerPickupItemEvent.class)
+                .filter(e -> e.getItem().getItemStack() != null && e.getItem().getItemStack().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp"))
+                .handler(e -> {
+                    ItemStack equipped = e.getItem().getItemStack();
+                    Schedulers.sync().runLater(() -> {
+                        if (e.getPlayer().getItemInHand().equals(equipped)) {
+                            this.enchantsManager.handlePickaxeEquip(e.getPlayer(), equipped);
+                        }
+                    }, 5l);
+                }).bindWith(this.core);
+        Events.subscribe(PlayerChangedWorldEvent.class)
+                .filter(e -> e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp"))
+                .handler(e -> {
+                    e.getPlayer().getActivePotionEffects().forEach(effect -> e.getPlayer().removePotionEffect(effect.getType()));
+                }).bindWith(this.core);
         Events.subscribe(PlayerItemHeldEvent.class)
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL)
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp"))
                 .handler(e -> {
                     Schedulers.sync().runLater(() -> {
                         ItemStack oldItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
@@ -167,7 +233,7 @@ public final class WildPrisonEnchants {
                             enchantsManager.handlePickaxeUnequip(e.getPlayer(), oldItem);
                         }
                     }, 1);
-                }).bindWith(core);
+                }).bindWith(core);*/
         Events.subscribe(BlockBreakEvent.class)
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
@@ -188,6 +254,18 @@ public final class WildPrisonEnchants {
 
     public boolean hasExplosiveDisabled(Player p) {
         return disabledExplosive.contains(p.getUniqueId());
+    }
+
+    private boolean areItemsSame(ItemStack pick1, ItemStack pick2) {
+        List<String> lore = pick1.getItemMeta().getLore();
+        List<String> lore1 = pick2.getItemMeta().getLore();
+
+        for (int i = 0; i < 3; i++) {
+            lore.remove(0);
+            lore1.remove(0);
+        }
+
+        return lore.equals(lore1);
     }
 
 }

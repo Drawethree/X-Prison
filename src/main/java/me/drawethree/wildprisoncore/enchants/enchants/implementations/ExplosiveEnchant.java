@@ -62,9 +62,9 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
 
                 List<Block> blocksAffected = new ArrayList<>();
                 //int move = (radius / 2 - 1) + (radius % 2 == 0 ? 0 : 1);
-                long totalDeposit = 0;
+                double totalDeposit = 0;
                 int blockCount = 0;
-                int fortuneLevel = plugin.getApi().getEnchantLevel(p, 3);
+                int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                 final Location startLocation = e.getBlock().getLocation();
                 for (int x = startLocation.getBlockX() - (radius / 2); x <= startLocation.getBlockX() + (radius / 2); x++) {
@@ -75,7 +75,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
                                 blockCount++;
                                 blocksAffected.add(b1);
                                 if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
-                                    totalDeposit += (plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) * amplifier);
+                                    totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) + 0.0) * amplifier);
                                 } else {
                                     if (b1.getType() != Material.ENDER_STONE) {
                                         p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
