@@ -1,6 +1,0 @@
-name: WildPrisonRankup
-version: ${project.version}
-main: me.drawethree.ranks.WildPrisonRankup
-api-version: 1.13
-depend: [Vault, helper, WildPrisonTokens]
-authors: [Drawethree]

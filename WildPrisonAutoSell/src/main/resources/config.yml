@@ -1,7 +1,0 @@
-messages:
-  autosell_enable: "&e&l(!) &7You've &a&lENABLED &7Autosell."
-  autosell_disable: "&e&l(!) &7You've &c&lDISABLED &7Autosell."
-  not_in_region: "&e&l(!) &cYou must be in region to use /sellall"
-  sell_all_complete: "&e&lSELLALL &8>> &7You've sold your inventory for &a$%price%"
-  last_minute_earn: "&e&lINFO &8>> &7You've earn &a$%amount% &7in last minute."
-regions: {}

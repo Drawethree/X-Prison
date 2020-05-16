@@ -24,7 +24,7 @@ tokens:
     max: 35
     min: 1
   item:
-    material: DOUBLE_PLANT
+    material: SUNFLOWER
     name: "&e&l%amount% TOKENS"
     lore:
       - "&7Right-Click to Redeem"

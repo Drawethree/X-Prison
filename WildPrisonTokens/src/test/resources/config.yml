@@ -1,6 +1,0 @@
-sql:
-  host: localhost
-  database: test
-  username: test
-  password: test
-  port: 3306

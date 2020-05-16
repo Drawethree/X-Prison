@@ -1,6 +1,7 @@
 package me.drawethree.wildprisoncore.enchants;
 
 import lombok.Getter;
+import lombok.NonNull;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.enchants.api.WildPrisonEnchantsAPI;
@@ -75,7 +76,7 @@ public final class WildPrisonEnchants {
                 if (lastEquipped != null) {
                     if (inHand != null && inHand.getType() == Material.DIAMOND_PICKAXE) {
                         //Check if they are not the same
-                        if (!areItemsSame(inHand, lastEquipped)) {
+                        if (!areItemsSame(lastEquipped, inHand)) {
                             Schedulers.sync().run(() -> {
                                 this.enchantsManager.handlePickaxeUnequip(player, lastEquipped);
                                 this.enchantsManager.handlePickaxeEquip(player, inHand);
@@ -256,16 +257,20 @@ public final class WildPrisonEnchants {
         return disabledExplosive.contains(p.getUniqueId());
     }
 
-    private boolean areItemsSame(ItemStack pick1, ItemStack pick2) {
-        List<String> lore = pick1.getItemMeta().getLore();
-        List<String> lore1 = pick2.getItemMeta().getLore();
+    private boolean areItemsSame(@NonNull ItemStack last, @NonNull ItemStack current) {
+        List<String> loreLast = last.getItemMeta().getLore();
+        List<String> loreCurrent = current.getItemMeta().getLore();
 
-        for (int i = 0; i < 3; i++) {
-            lore.remove(0);
-            lore1.remove(0);
+        if (loreLast == null || loreCurrent == null) {
+            return false;
         }
 
-        return lore.equals(lore1);
+        for (int i = 0; i < 3; i++) {
+            loreLast.remove(0);
+            loreCurrent.remove(0);
+        }
+
+        return loreLast.equals(loreCurrent);
     }
 
 }

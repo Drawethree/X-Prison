@@ -67,9 +67,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <groupId>spigot</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.12.2</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/server.jar</systemPath>
         </dependency>
@@ -82,10 +82,10 @@
         </dependency>
         <dependency>
             <groupId>worldguard</groupId>
-            <artifactId>worldguard-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <artifactId>worldguard</artifactId>
+            <version>1.8.8</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/worldguard-6.2.jar</systemPath>
+            <systemPath>${project.basedir}/libs/worldguard-bukkit-6.2.2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>jets</groupId>

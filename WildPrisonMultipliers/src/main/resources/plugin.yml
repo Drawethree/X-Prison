@@ -1,7 +1,0 @@
-name: WildPrisonMultipliers
-version: ${project.version}
-main: me.drawethree.multipliers.WildPrisonMultipliers
-api-version: 1.13
-authors: [Drawethree]
-depend:
-  - helper

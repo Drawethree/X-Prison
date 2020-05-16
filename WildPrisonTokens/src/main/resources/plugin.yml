@@ -1,6 +1,0 @@
-name: WildPrisonTokens
-version: ${project.version}
-main: me.drawethree.tokens.WildPrisonTokens
-authors: [Drawethree]
-softdepend: [PlaceholderAPI, WildPrisonRankUp]
-depend: [helper]
