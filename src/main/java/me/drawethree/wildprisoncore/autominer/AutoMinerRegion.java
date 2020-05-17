@@ -7,15 +7,14 @@ import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.utils.Players;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.server.v1_12_R1.ChatComponentText;
-import net.minecraft.server.v1_12_R1.PacketPlayOutChat;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 @Getter
 public class AutoMinerRegion {
 
 	private WildPrisonAutoMiner parent;
+	private World world;
 	private ProtectedRegion region;
 	private long moneyPerSecond;
 	private long tokensPerSecond;
@@ -23,14 +22,20 @@ public class AutoMinerRegion {
 	private Task autoMinerTask;
 
 
-	public AutoMinerRegion(WildPrisonAutoMiner parent, ProtectedRegion region, long moneyPerSecond, long tokensPerSecond) {
+	public AutoMinerRegion(WildPrisonAutoMiner parent, World world, ProtectedRegion region, long moneyPerSecond, long tokensPerSecond) {
 		this.parent = parent;
+		this.world = world;
 		this.region = region;
 		this.moneyPerSecond = moneyPerSecond;
 		this.tokensPerSecond = tokensPerSecond;
 
 		this.autoMinerTask = Schedulers.async().runRepeating(() -> {
 			for (Player p : Players.all()) {
+
+				if (!p.getWorld().equals(this.world)) {
+					continue;
+				}
+
 				if (region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
 					if (!parent.hasAutoMinerTime(p)) {
 						sendActionBar(p, parent.getMessage("auto_miner_disabled"));

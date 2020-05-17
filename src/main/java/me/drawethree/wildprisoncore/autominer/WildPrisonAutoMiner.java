@@ -12,6 +12,7 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -71,7 +72,7 @@ public final class WildPrisonAutoMiner {
 
     private void removeExpiredAutoMiners() {
         Schedulers.async().run(() -> {
-            try(Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + " <= 0")) {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + " <= 0")) {
                 statement.execute();
                 this.core.getLogger().info("Removed expired AutoMiners from database");
             } catch (SQLException e) {
@@ -135,17 +136,19 @@ public final class WildPrisonAutoMiner {
     }
 
     private void loadAutoMinerRegion() {
-        String world = getConfig().get().getString("auto-miner-region.world");
+        String worldName = getConfig().get().getString("auto-miner-region.world");
         String regionName = getConfig().get().getString("auto-miner-region.name");
         long moneyPerSec = getConfig().get().getLong("auto-miner-region.money");
         long tokensPerSec = getConfig().get().getLong("auto-miner-region.tokens");
 
-        ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(Bukkit.getWorld(world)).getRegion(regionName);
+        World world = Bukkit.getWorld(worldName);
+
+        ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(world).getRegion(regionName);
         if (region == null) {
             core.getLogger().warning(String.format("There is no such region named %s in world %s!", regionName, world));
             return;
         }
-        this.region = new AutoMinerRegion(this, region, moneyPerSec, tokensPerSec);
+        this.region = new AutoMinerRegion(this, world, region, moneyPerSec, tokensPerSec);
         core.getLogger().info("AutoMiner region loaded!");
 
     }
