@@ -27,7 +27,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public final class WildPrisonMultipliers {
 
@@ -342,11 +341,19 @@ public final class WildPrisonMultipliers {
 
 
     private Multiplier calculateRankMultiplier(Player p) {
+        PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
+
+        if (p.hasPermission("Store.Multiplier")) {
+            toReturn.addMultiplier(2.0,3.5);
+        }
+
         for (String perm : permissionToMultiplier.keySet()) {
             if (p.hasPermission(perm)) {
-                return new PlayerMultiplier(p.getUniqueId(), permissionToMultiplier.get(perm), -1);
+                toReturn.addMultiplier(permissionToMultiplier.get(perm), 3.5);
+                break;
             }
         }
-        return new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
+
+        return toReturn;
     }
 }

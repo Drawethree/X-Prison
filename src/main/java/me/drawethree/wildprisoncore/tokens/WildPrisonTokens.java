@@ -89,7 +89,7 @@ public final class WildPrisonTokens {
                 .bindWith(core);
         Events.subscribe(BlockBreakEvent.class)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp") && !e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
                 .handler(e -> {
                     tokensManager.addBlocksBroken(e.getPlayer(), 1);
                     if (chance >= ThreadLocalRandom.current().nextDouble()) {

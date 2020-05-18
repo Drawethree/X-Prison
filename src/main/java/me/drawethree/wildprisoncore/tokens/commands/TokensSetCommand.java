@@ -14,6 +14,11 @@ public class TokensSetCommand extends TokensCommand {
 
     @Override
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
+
+        if(!sender.isOp()) {
+            return false;
+        }
+
         if(args.size() == 2) {
             try {
                 long amount = Long.parseLong(args.get(0));

@@ -119,7 +119,7 @@ public final class WildPrisonAutoSell {
                 });
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
+                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp") && !e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
                     if (disabledAutoSell.contains(e.getPlayer().getUniqueId())) {

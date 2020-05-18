@@ -237,7 +237,7 @@ public final class WildPrisonEnchants {
                 }).bindWith(core);*/
         Events.subscribe(BlockBreakEvent.class)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE)
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp") && !e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
                 .handler(e -> {
                     enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);
                     enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand());
