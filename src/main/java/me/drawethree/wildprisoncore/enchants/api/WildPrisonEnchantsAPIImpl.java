@@ -32,12 +32,12 @@ public class WildPrisonEnchantsAPIImpl implements WildPrisonEnchantsAPI {
     }
 
     @Override
-    public boolean addEnchant(ItemStack item, Player p, int id, int level) {
-        return this.enchantsManager.addEnchant(p,item, id,level);
+    public ItemStack addEnchant(ItemStack item, Player p, int id, int level) {
+        return this.enchantsManager.addEnchant(p, item, id, level);
     }
 
     @Override
-    public boolean removeEnchnt(Player p, int id) {
-        return this.enchantsManager.removeEnchant(p,id);
+    public ItemStack removeEnchant(ItemStack item, Player p, int id) {
+        return this.enchantsManager.removeEnchant(item, p, id, 0);
     }
 }

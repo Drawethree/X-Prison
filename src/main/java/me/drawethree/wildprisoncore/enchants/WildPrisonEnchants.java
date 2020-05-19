@@ -119,6 +119,7 @@ public final class WildPrisonEnchants {
                         return;
                     }
 
+                    c.sender().setItemInHand(null);
                     new DisenchantGUI(c.sender(), pickAxe).open();
                 }).registerAndBind(core, "disenchant", "dise", "de");
         Commands.create()
@@ -180,6 +181,7 @@ public final class WildPrisonEnchants {
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getItem() != null && e.getItem().getType() == Material.DIAMOND_PICKAXE && e.getAction() == Action.RIGHT_CLICK_AIR)
                 .handler(e -> {
                     ItemStack pickAxe = e.getItem();
+                    e.getPlayer().setItemInHand(null);
                     new EnchantGUI(e.getPlayer(), pickAxe).open();
                 }).bindWith(core);
         /*Events.subscribe(InventoryClickEvent.class)

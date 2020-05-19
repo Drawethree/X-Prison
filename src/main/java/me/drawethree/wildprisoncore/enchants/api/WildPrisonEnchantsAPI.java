@@ -15,8 +15,8 @@ public interface WildPrisonEnchantsAPI {
 
     int getEnchantLevel(ItemStack item, int id);
 
-    boolean addEnchant(ItemStack item, Player p, int id, int level);
+    ItemStack addEnchant(ItemStack item, Player p, int id, int level);
 
-    boolean removeEnchnt(Player p, int id);
+    ItemStack removeEnchant(ItemStack item, Player p, int id);
 
 }

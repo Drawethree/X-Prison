@@ -302,6 +302,7 @@ public final class WildPrisonMultipliers {
             PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
             multiplier.addMultiplier(amount, 1.5);
             multiplier.addDuration(minutes);
+            personalMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
         } else {
             personalMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes));
         }
@@ -344,7 +345,7 @@ public final class WildPrisonMultipliers {
         PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
 
         if (p.hasPermission("Store.Multiplier")) {
-            toReturn.addMultiplier(2.0,3.5);
+            toReturn.addMultiplier(2.0, 3.5);
         }
 
         for (String perm : permissionToMultiplier.keySet()) {

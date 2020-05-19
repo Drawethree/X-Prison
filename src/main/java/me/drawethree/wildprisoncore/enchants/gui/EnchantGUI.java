@@ -45,7 +45,7 @@ public class EnchantGUI extends Gui {
                     this.getPlayer().setItemInHand(this.pickAxe);
                     Schedulers.async().runLater(() -> {
                         ((Player) e.getPlayer()).updateInventory();
-                    },5);
+                    }, 5);
                 }).bindWith(this);
     }
 
@@ -69,6 +69,6 @@ public class EnchantGUI extends Gui {
         }
 
         this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());
-        this.getPlayer().setItemInHand(pickAxe);
+        //this.getPlayer().setItemInHand(pickAxe);
     }
 }

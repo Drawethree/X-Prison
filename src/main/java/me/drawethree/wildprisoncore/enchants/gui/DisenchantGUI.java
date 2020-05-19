@@ -72,6 +72,6 @@ public class DisenchantGUI extends Gui {
         }
 
         this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());
-        this.getPlayer().setItemInHand(pickAxe);
+        //this.getPlayer().setItemInHand(pickAxe);
     }
 }

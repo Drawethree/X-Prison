@@ -73,7 +73,7 @@ public class EnchantsManager {
         return null;
     }
 
-    public void applyLoreToPickaxe(ItemStack item) {
+    private void applyLoreToPickaxe(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = new ArrayList<>();
 
@@ -181,11 +181,11 @@ public class EnchantsManager {
         }
     }
 
-    public boolean addEnchant(Player p, ItemStack item, int id, int level) {
+    public ItemStack addEnchant(Player p, ItemStack item, int id, int level) {
         WildPrisonEnchantment enchantment = WildPrisonEnchantment.getEnchantById(id);
 
         if (enchantment == null || item == null) {
-            return false;
+            return item;
         }
 
         if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
@@ -203,12 +203,15 @@ public class EnchantsManager {
         }
 
 
-        p.setItemInHand(CraftItemStack.asBukkitCopy(nmsItem));
-        this.applyLoreToPickaxe(p.getItemInHand());
-        return true;
+        item = CraftItemStack.asBukkitCopy(nmsItem);
+        this.applyLoreToPickaxe(item);
+        return item;
+        //p.setItemInHand(CraftItemStack.asBukkitCopy(nmsItem));
+        //this.applyLoreToPickaxe(p.getItemInHand());
+        //return true;
     }
 
-    public boolean addEnchant(Player p, ItemStack item, WildPrisonEnchantment enchantment, int level) {
+    public ItemStack addEnchant(Player p, ItemStack item, WildPrisonEnchantment enchantment, int level) {
         return addEnchant(p, item, enchantment.getId(), level);
     }
 
@@ -234,17 +237,17 @@ public class EnchantsManager {
         return true;
     }
 
-    public boolean removeEnchant(Player p, int id, int level) {
+    public ItemStack removeEnchant(ItemStack item, Player p, int id, int level) {
         WildPrisonEnchantment enchantment = WildPrisonEnchantment.getEnchantById(id);
 
-        if (enchantment == null || p.getItemInHand() == null || level == 0) {
-            return false;
+        if (enchantment == null || item == null || level == 0) {
+            return item;
         }
 
-        ItemStack item = p.getItemInHand();
         if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
             enchantment.onEquip(p, item, level - 1);
         }
+
         net.minecraft.server.v1_12_R1.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
 
         NBTTagCompound tag = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
@@ -252,9 +255,13 @@ public class EnchantsManager {
         tag.setInt(NBT_TAG_INDETIFIER + id, level - 1);
         nmsItem.setTag(tag);
 
-        p.setItemInHand(CraftItemStack.asBukkitCopy(nmsItem));
-        applyLoreToPickaxe(item);
-        return true;
+
+        item = CraftItemStack.asBukkitCopy(nmsItem);
+        this.applyLoreToPickaxe(item);
+        return item;
+        //p.setItemInHand(CraftItemStack.asBukkitCopy(nmsItem));
+        //applyLoreToPickaxe(item);
+        //return true;
     }
 
     public boolean buyEnchnant(WildPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
@@ -275,8 +282,8 @@ public class EnchantsManager {
 
             plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), cost);
 
-            this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + 1);
-            gui.setPickAxe(gui.getPlayer().getItemInHand());
+            ItemStack item = this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + 1);
+            gui.setPickAxe(item);
             gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(cost)));
         }
         return true;
@@ -285,6 +292,7 @@ public class EnchantsManager {
     public boolean disenchant(WildPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
         long totalRefunded = 0;
+
         for (int i = 0; i < substraction; i++, currentLevel--) {
 
             if (currentLevel == 0) {
@@ -296,9 +304,8 @@ public class EnchantsManager {
 
             plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), cost);
 
-            this.removeEnchant(gui.getPlayer(), enchantment.getId(), currentLevel);
-            this.applyLoreToPickaxe(gui.getPlayer().getItemInHand());
-            gui.setPickAxe(gui.getPlayer().getItemInHand());
+            ItemStack item = this.removeEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), currentLevel);
+            gui.setPickAxe(item);
             totalRefunded += cost;
         }
 
