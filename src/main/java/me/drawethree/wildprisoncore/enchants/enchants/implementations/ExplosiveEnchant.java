@@ -56,7 +56,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
             if (regions.size() > 0) {
                 Player p = e.getPlayer();
                 ProtectedRegion region = regions.get(0);
-                int radius = enchantLevel <= 300 ? 3 : enchantLevel <= 400 ? 4 : 5;
+                int radius = enchantLevel <= 300 ? 3 : enchantLevel <= 499 ? 4 : 5;
 
                 b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
 
@@ -67,9 +67,10 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
                 int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                 final Location startLocation = e.getBlock().getLocation();
-                for (int x = startLocation.getBlockX() - (radius / 2); x <= startLocation.getBlockX() + (radius / 2); x++) {
-                    for (int z = startLocation.getBlockZ() - (radius / 2); z <= startLocation.getBlockZ() + (radius / 2); z++) {
-                        for (int y = startLocation.getBlockY() - (radius / 2); y <= startLocation.getBlockY() + (radius / 2); y++) {
+
+                for (int x = startLocation.getBlockX() - (radius == 4 ? 0 : (radius / 2)); x <= startLocation.getBlockX() + (radius == 4 ? radius-1 : (radius / 2)); x++) {
+                    for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius-1 : (radius / 2)); z++) {
+                        for (int y = startLocation.getBlockY() - (radius == 4 ? 3 : (radius / 2)); y <= startLocation.getBlockY() + (radius == 4 ? 0 : (radius / 2)); y++) {
                             Block b1 = b.getWorld().getBlockAt(x, y, z);
                             if (region.contains(x, y, z) && b1 != null && b1.getType() != Material.AIR) {
                                 blockCount++;
