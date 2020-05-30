@@ -19,6 +19,11 @@ public class TokensPayCommand extends TokensCommand {
             Player p = (Player) sender;
             try {
                 long amount = Long.parseLong(args.get(0).replace(",", ""));
+
+                if (0 >= amount) {
+                    return false;
+                }
+
                 OfflinePlayer target = Players.getOfflineNullable(args.get(1));
 
                 if (!target.isOnline()) {
