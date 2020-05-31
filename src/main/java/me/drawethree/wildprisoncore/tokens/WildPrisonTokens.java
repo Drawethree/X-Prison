@@ -16,14 +16,11 @@ import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -36,6 +33,9 @@ public final class WildPrisonTokens {
 
     @Getter
     private FileManager.Config config;
+
+    @Getter
+    private FileManager.Config blockRewardsConfig;
 
     @Getter
     private WildPrisonTokensAPI api;
@@ -54,6 +54,7 @@ public final class WildPrisonTokens {
         instance = this;
         this.core = wildPrisonCore;
         this.config = wildPrisonCore.getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
+        this.blockRewardsConfig = wildPrisonCore.getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
         this.loadMessages();
         this.loadVariables();
         this.tokensManager = new TokensManager(this);

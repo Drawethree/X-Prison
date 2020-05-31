@@ -1,5 +1,7 @@
 package me.drawethree.wildprisoncore.tokens.managers;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
 import me.lucko.helper.Events;
@@ -8,6 +10,7 @@ import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -25,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +43,7 @@ public class TokensManager {
     private HashMap<UUID, Long> blocksCache = new HashMap<>();
     private LinkedHashMap<UUID, Long> top10Tokens = new LinkedHashMap<>();
     private LinkedHashMap<UUID, Long> top10Blocks = new LinkedHashMap<>();
+    private LinkedHashMap<Long, BlockReward> blockRewards = new LinkedHashMap<>();
     private Task task;
     private boolean updating;
 
@@ -60,7 +65,18 @@ public class TokensManager {
                 }).bindWith(plugin.getCore());
 
         this.loadPlayerDataOnEnable();
+        this.loadBlockRewards();
         this.updateTop10();
+    }
+
+    private void loadBlockRewards() {
+        this.blockRewards = new LinkedHashMap<>();
+        for (String key : this.plugin.getBlockRewardsConfig().get().getConfigurationSection("block-rewards").getKeys(false)) {
+            long blocksNeeded = Long.valueOf(key);
+            String message = Text.colorize(this.plugin.getBlockRewardsConfig().get().getString("blocks-rewards." + key + ".message"));
+            List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("blocks-rewards." + key + ".commands");
+            this.blockRewards.put(blocksNeeded, new BlockReward(blocksNeeded, commands, message));
+        }
     }
 
     public void stopUpdating() {
@@ -161,7 +177,7 @@ public class TokensManager {
             } else {
                 tokensCache.put(p.getUniqueId(), newAmount);
             }
-            executor.sendMessage(plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d",newAmount)));
+            executor.sendMessage(plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", newAmount)));
         });
     }
 
@@ -174,7 +190,7 @@ public class TokensManager {
                 tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + amount);
             }
             if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d",amount)));
+                executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
             }
         });
     }
@@ -316,10 +332,15 @@ public class TokensManager {
     public void addBlocksBroken(Player player, int amount) {
         Schedulers.async().run(() -> {
             long currentBroken = getPlayerBrokenBlocks(player);
+            BlockReward nextReward = getNextBlockReward(player);
             if (!player.isOnline()) {
                 this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBroken + amount, player.getUniqueId().toString());
             } else {
                 blocksCache.put(player.getUniqueId(), currentBroken + amount);
+
+                if  (nextReward.getBlocksRequired() <= currentBroken + amount) {
+                    nextReward.giveTo(player);
+                }
             }
         });
     }
@@ -406,4 +427,35 @@ public class TokensManager {
         });
     }
 
+    public BlockReward getNextBlockReward(OfflinePlayer p) {
+        long blocksBroken = this.getPlayerBrokenBlocks(p);
+
+        for (long l : this.blockRewards.keySet()) {
+            if (blocksBroken > l) {
+                return this.blockRewards.get(l);
+            }
+        }
+
+        return null;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    private class BlockReward {
+
+        private long blocksRequired;
+        private List<String> commandsToRun;
+        private String message;
+
+        public void giveTo(Player p) {
+
+            for (String s : this.commandsToRun) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+            }
+
+            p.sendMessage(this.message);
+        }
+
+
+    }
 }
