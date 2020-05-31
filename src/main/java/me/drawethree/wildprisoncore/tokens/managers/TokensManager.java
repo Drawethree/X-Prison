@@ -77,6 +77,7 @@ public class TokensManager {
             List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("blocks-rewards." + key + ".commands");
             this.blockRewards.put(blocksNeeded, new BlockReward(blocksNeeded, commands, message));
         }
+        this.plugin.getCore().getLogger().info("Loaded " + this.blockRewards.keySet().size() + " Block Rewards!");
     }
 
     public void stopUpdating() {
