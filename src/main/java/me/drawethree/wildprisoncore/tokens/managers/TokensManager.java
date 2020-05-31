@@ -73,8 +73,8 @@ public class TokensManager {
         this.blockRewards = new LinkedHashMap<>();
         for (String key : this.plugin.getBlockRewardsConfig().get().getConfigurationSection("block-rewards").getKeys(false)) {
             long blocksNeeded = Long.valueOf(key);
-            String message = Text.colorize(this.plugin.getBlockRewardsConfig().get().getString("blocks-rewards." + key + ".message"));
-            List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("blocks-rewards." + key + ".commands");
+            String message = Text.colorize(this.plugin.getBlockRewardsConfig().get().getString("block-rewards." + key + ".message"));
+            List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("block-rewards." + key + ".commands");
             this.blockRewards.put(blocksNeeded, new BlockReward(blocksNeeded, commands, message));
         }
         this.plugin.getCore().getLogger().info("Loaded " + this.blockRewards.keySet().size() + " Block Rewards!");
@@ -339,7 +339,7 @@ public class TokensManager {
             } else {
                 blocksCache.put(player.getUniqueId(), currentBroken + amount);
 
-                if  (nextReward.getBlocksRequired() <= currentBroken + amount) {
+                if (nextReward != null && nextReward.getBlocksRequired() <= currentBroken + amount) {
                     nextReward.giveTo(player);
                 }
             }
@@ -432,11 +432,10 @@ public class TokensManager {
         long blocksBroken = this.getPlayerBrokenBlocks(p);
 
         for (long l : this.blockRewards.keySet()) {
-            if (blocksBroken > l) {
+            if (l > blocksBroken) {
                 return this.blockRewards.get(l);
             }
         }
-
         return null;
     }
 
@@ -450,9 +449,11 @@ public class TokensManager {
 
         public void giveTo(Player p) {
 
-            for (String s : this.commandsToRun) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
-            }
+            Schedulers.sync().run(() -> {
+                for (String s : this.commandsToRun) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+                }
+            });
 
             p.sendMessage(this.message);
         }
