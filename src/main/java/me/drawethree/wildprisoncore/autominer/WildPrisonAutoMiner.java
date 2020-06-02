@@ -2,6 +2,7 @@ package me.drawethree.wildprisoncore.autominer;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
@@ -23,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 public final class WildPrisonAutoMiner {
@@ -32,7 +34,10 @@ public final class WildPrisonAutoMiner {
     private FileManager.Config config;
 
     private HashMap<String, String> messages;
-    private HashMap<UUID, Integer> autoMinerTimes;
+    private HashMap<UUID, Long> autoMinerFuels;
+    private LinkedHashMap<UUID, Integer> autoMinerLevels;
+    private LinkedHashMap<Integer, AutoMinerFuelLevel> fuelLevels;
+    private AutoMinerFuelLevel lastLevel;
 
     @Getter
     private AutoMinerRegion region;
@@ -45,18 +50,42 @@ public final class WildPrisonAutoMiner {
     }
 
     public void enable() {
-        autoMinerTimes = new HashMap<>();
+        this.autoMinerFuels = new HashMap<>();
+        this.autoMinerLevels = new LinkedHashMap<>();
         this.registerCommands();
         this.registerEvents();
         this.loadMessages();
-        this.removeExpiredAutoMiners();
+        //this.removeExpiredAutoMiners();
+        this.loadFuelLevels();
         this.loadAutoMinerRegion();
         this.loadPlayersAutoMiner();
     }
 
+    private void loadFuelLevels() {
+        this.fuelLevels = new LinkedHashMap<>();
+        for (String key : this.config.get().getConfigurationSection("levels").getKeys(false)) {
+            try {
+                int level = Integer.parseInt(key);
+                long cost = this.config.get().getLong("levels." + key + ".cost");
+                long treshold = this.config.get().getLong("levels." + key + ".treshold");
+                long fuelConsume = this.config.get().getLong("levels." + key + ".fuel_consume");
+                double moneyPerSec = this.config.get().getDouble("levels." + key + ".money_per_sec");
+                double tokensPerSec = this.config.get().getDouble("levels." + key + ".tokens_per_sec");
+
+                AutoMinerFuelLevel autoMinerFuelLevel = new AutoMinerFuelLevel(level, cost, treshold, fuelConsume, moneyPerSec, tokensPerSec);
+                this.fuelLevels.put(level, autoMinerFuelLevel);
+                this.lastLevel = autoMinerFuelLevel;
+                this.core.getLogger().info("Loaded AutoMinerFuelLevel " + key + " !");
+            } catch (Exception e) {
+                this.core.getLogger().warning("Unable to load AutoMinerFuelLevel " + key + " !");
+                continue;
+            }
+        }
+    }
+
     private void registerEvents() {
         Events.subscribe(PlayerQuitEvent.class)
-                .filter(e -> this.autoMinerTimes.containsKey(e.getPlayer().getUniqueId()))
+                .filter(e -> this.autoMinerFuels.containsKey(e.getPlayer().getUniqueId()))
                 .handler(e -> {
                     this.saveAutoMiner(e.getPlayer(), true);
                 }).bindWith(this.core);
@@ -72,7 +101,7 @@ public final class WildPrisonAutoMiner {
 
     private void removeExpiredAutoMiners() {
         Schedulers.async().run(() -> {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + " <= 0")) {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + " <= 0")) {
                 statement.execute();
                 this.core.getLogger().info("Removed expired AutoMiners from database");
             } catch (SQLException e) {
@@ -87,11 +116,11 @@ public final class WildPrisonAutoMiner {
                 statement.setString(1, p.getUniqueId().toString());
                 try (ResultSet set = statement.executeQuery()) {
                     if (set.next()) {
-                        long timeLeft = set.getLong(MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME);
-                        if (timeLeft > 0) {
-                            this.autoMinerTimes.put(p.getUniqueId(), (int) timeLeft);
-                            this.core.getLogger().info(String.format("Loaded %s's AutoMiner time (%d seconds)", p.getName(), timeLeft));
-                        }
+                        long fuelLeft = set.getLong(MySQLDatabase.AUTOMINER_FUEL_COLNAME);
+                        int level = set.getInt(MySQLDatabase.AUTOMINER_LEVEL_COLNAME);
+                        this.autoMinerFuels.put(p.getUniqueId(), fuelLeft);
+                        this.autoMinerLevels.put(p.getUniqueId(), level);
+                        this.core.getLogger().info(String.format("Loaded %s's AutoMiner fuel (%d fuel, %d level)", p.getName(), fuelLeft, level));
                     }
                 }
             } catch (SQLException e) {
@@ -102,33 +131,40 @@ public final class WildPrisonAutoMiner {
 
     private void saveAutoMiner(Player p, boolean async) {
 
-        if (!autoMinerTimes.containsKey(p.getUniqueId())) {
+        if (!autoMinerFuels.containsKey(p.getUniqueId())) {
             return;
         }
 
-        int timeLeft = autoMinerTimes.get(p.getUniqueId());
+        long fuelLeft = autoMinerFuels.get(p.getUniqueId());
+        int fuelLevel = this.getPlayerLevel(p);
 
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + "=?")) {
+                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_LEVEL_COLNAME + "=?")) {
                     statement.setString(1, p.getUniqueId().toString());
-                    statement.setLong(2, timeLeft);
-                    statement.setLong(3, timeLeft);
+                    statement.setLong(2, fuelLeft);
+                    statement.setInt(3, fuelLevel);
+                    statement.setLong(4, fuelLeft);
+                    statement.setInt(5, fuelLevel);
                     statement.execute();
-                    this.autoMinerTimes.remove(p.getUniqueId());
-                    this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
+                    this.autoMinerFuels.remove(p.getUniqueId());
+                    this.autoMinerLevels.remove(p.getUniqueId());
+                    this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and level.", p.getName()));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             });
         } else {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIMELEFT_COLNAME + "=?")) {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_LEVEL_COLNAME + "=?")) {
                 statement.setString(1, p.getUniqueId().toString());
-                statement.setLong(2, timeLeft);
-                statement.setLong(3, timeLeft);
+                statement.setLong(2, fuelLeft);
+                statement.setInt(3, fuelLevel);
+                statement.setLong(4, fuelLeft);
+                statement.setInt(5, fuelLevel);
                 statement.execute();
-                this.autoMinerTimes.remove(p.getUniqueId());
-                this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
+                this.autoMinerFuels.remove(p.getUniqueId());
+                this.autoMinerLevels.remove(p.getUniqueId());
+                this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and level.", p.getName()));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -165,13 +201,13 @@ public final class WildPrisonAutoMiner {
     }
 
     private void registerCommands() {
-        Commands.create()
+        /*Commands.create()
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         c.sender().sendMessage(messages.get("auto_miner_time").replace("%time%", this.getTimeLeft(c.sender())));
                     }
-                }).registerAndBind(core, "miner", "autominer");
+                }).registerAndBind(core, "miner", "autominer");*/
 
         // /adminautominer give {Player} {Amount of time}
         Commands.create()
@@ -179,40 +215,80 @@ public final class WildPrisonAutoMiner {
                 .handler(c -> {
                     if (c.args().size() == 3 && c.rawArg(0).equalsIgnoreCase("give")) {
                         Player target = Players.getNullable(c.rawArg(1));
-                        int time = c.arg(2).parseOrFail(Integer.class).intValue();
-                        givePlayerAutoMinerTime(c.sender(), target, time);
+                        long fuel = c.arg(2).parseOrFail(Long.class).longValue();
+                        givePlayerAutoMinerFuel(c.sender(), target, fuel);
                     }
 
                 }).registerAndBind(core, "adminautominer", "aam");
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
+                        c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
+                    }
+
+                }).registerAndBind(core, "fueltank", "miner", "autominer");
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
+                        tryBuyNextLevel(c.sender());
+                    }
+
+                }).registerAndBind(core, "autominerlevelup");
     }
 
-    private void givePlayerAutoMinerTime(CommandSender sender, Player p, int seconds) {
+    private void tryBuyNextLevel(Player player) {
+
+        if (this.isAtMaxLevel(player)) {
+            player.sendMessage(this.messages.get("last_level"));
+            return;
+        }
+
+        AutoMinerFuelLevel nextLevel = this.getNextLevel(player);
+
+        if (this.core.getTokens().getTokensManager().getPlayerTokens(player) >= nextLevel.getCost()) {
+            this.core.getTokens().getTokensManager().removeTokens(player, nextLevel.getCost(), null);
+            this.autoMinerLevels.put(player.getUniqueId(), nextLevel.getLevel());
+            player.sendMessage(this.messages.get("level_bought").replace("%level%", String.format("%,d", nextLevel.getLevel())));
+        } else {
+            player.sendMessage(this.messages.get("not_enough_tokens").replace("%tokens%", String.format("%,d", nextLevel.getCost())));
+        }
+
+    }
+
+    private boolean isAtMaxLevel(Player player) {
+        return this.getPlayerLevel(player) == lastLevel.getLevel();
+    }
+
+    private void givePlayerAutoMinerFuel(CommandSender sender, Player p, long fuel) {
 
         if (p == null || !p.isOnline()) {
             sender.sendMessage(Text.colorize("&cPlayer is not online!"));
             return;
         }
 
-        int currentSecs = autoMinerTimes.getOrDefault(p.getUniqueId(), 0);
-        currentSecs += seconds;
+        long currentFuel = autoMinerFuels.getOrDefault(p.getUniqueId(), 0L);
+        currentFuel += fuel;
 
-        autoMinerTimes.put(p.getUniqueId(), currentSecs);
-        sender.sendMessage(messages.get("auto_miner_time_add").replace("%time%", String.valueOf(seconds)).replace("%player%", p.getName()));
+        autoMinerFuels.put(p.getUniqueId(), currentFuel);
+        sender.sendMessage(messages.get("auto_miner_fuel_add").replace("%fuel%", String.valueOf(fuel)).replace("%player%", p.getName()));
     }
 
-    public boolean hasAutoMinerTime(Player p) {
-        return autoMinerTimes.containsKey(p.getUniqueId()) && autoMinerTimes.get(p.getUniqueId()) > 0;
+    public boolean hasAutoMinerFuel(Player p) {
+        return autoMinerFuels.containsKey(p.getUniqueId()) && autoMinerFuels.get(p.getUniqueId()) > 0;
     }
 
-    public void decrementTime(Player p) {
-        autoMinerTimes.put(p.getUniqueId(), autoMinerTimes.get(p.getUniqueId()) - 1);
+    public void decrementFuel(Player p, long amount) {
+        long newAmount = autoMinerFuels.get(p.getUniqueId()) - amount;
+        autoMinerFuels.put(p.getUniqueId(), newAmount);
     }
 
     public String getMessage(String key) {
         return messages.get(key.toLowerCase());
     }
 
-    public String getTimeLeft(Player p) {
+    /*public String getTimeLeft(Player p) {
 
         if (!autoMinerTimes.containsKey(p.getUniqueId())) {
             return "0s";
@@ -235,6 +311,43 @@ public final class WildPrisonAutoMiner {
         timeLeft -= seconds;
 
         return new StringBuilder().append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").toString();
+    }*/
+
+    public long getPlayerFuel(Player p) {
+        return this.autoMinerFuels.getOrDefault(p.getUniqueId(), 0L);
     }
 
+    public int getPlayerLevel(Player p) {
+        return this.autoMinerLevels.getOrDefault(p.getUniqueId(), 1);
+    }
+
+    public AutoMinerFuelLevel getAutoMinerFuelLevel(Player p) {
+
+        long currentFuel = this.getPlayerFuel(p);
+        int maxLevel = this.getPlayerLevel(p);
+
+        for (int i = maxLevel; i > 0; i--) {
+            AutoMinerFuelLevel level = this.fuelLevels.get(i);
+            if (currentFuel >= level.getTreshold()) {
+                return level;
+            }
+        }
+
+        return this.fuelLevels.get(1);
+    }
+
+    public AutoMinerFuelLevel getNextLevel(Player p) {
+        return this.fuelLevels.get(this.getPlayerLevel(p) + 1);
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public class AutoMinerFuelLevel {
+        private int level;
+        private long cost;
+        private long treshold;
+        private long fuelConsume;
+        private double moneyPerSec;
+        private double tokensPerSec;
+    }
 }
