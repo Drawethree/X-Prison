@@ -52,7 +52,9 @@ public class LevelAutoMinerGui extends Gui {
 				this.setItem(level.getGuiItemSlot(), ItemStackBuilder.of(level.getGuiItem()).buildItem().build());
 			} else if (level.getLevel() == playerLevel + 1) {
 				this.setItem(level.getGuiItemSlot(), ItemStackBuilder.of(this.getNextLevelItem()).build(() -> {
-					this.getPlayer().performCommand("autominerlevelup");
+					if (WildPrisonAutoMiner.getInstance().tryBuyNextLevel(this.getPlayer())) {
+						this.redraw();
+					}
 				}));
 			} else {
 				this.setItem(level.getGuiItemSlot(), ItemStackBuilder.of(LOCKED_ITEM).buildItem().build());

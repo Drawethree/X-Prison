@@ -21,10 +21,10 @@ levels:
     gui_item:
       material: COAL
       slot: 10
-      name: "LEVEL 1"
+      name: "&f&lLEVEL 1"
       lore:
-        - "Money per sec: 5"
-        - "Tokens per sec: 5"
+        - "&7Money per sec&8: &2$&a5"
+        - "&7Tokens per sec&8: &e5 Tokens"
   2:
     cost: 500000
     treshold: 100000
@@ -34,10 +34,10 @@ levels:
     gui_item:
       material: IRON_INGOT
       slot: 11
-      name: "LEVEL 2"
+      name: "&f&lLEVEL 2"
       lore:
-        - "Money per sec: 10"
-        - "Tokens per sec: 10"
+        - "&7Money per sec&8: &2$&a10"
+        - "&7Tokens per sec&8: &e10 Tokens"
   3:
     cost: 1000000
     treshold: 500000
@@ -47,10 +47,10 @@ levels:
     gui_item:
       material: GOLD_INGOT
       slot: 12
-      name: "LEVEL 3"
+      name: "&f&lLEVEL 3"
       lore:
-        - "Money per sec: 15"
-        - "Tokens per sec: 15"
+        - "&7Money per sec&8: &2$&a15"
+        - "&7Tokens per sec&8: &e15 Tokens"
 main_gui:
   title: "AutoMiner"
   lines: 3
@@ -68,12 +68,12 @@ main_gui:
     name: "&6&lAUTO-MINER"
     lore:
       - " "
-      - "&7Current Fuel: %fuel%"
-      - "&7Current Level: &e%level%"
-      - "&7Current Rewards Level: &e%rewards_level%"
+      - "&7Current Fuel&8: &e%fuel%"
+      - "&7Current Level&8: &e%level%"
+      - "&7Current Rewards Level&8: &e%rewards_level%"
       - " "
   level_up_misc_item:
-    material: ENCHANTING_TABLE
+    material: ENCHANTMENT_TABLE
     slot: 15
     name: "&6&lLEVEL UP REWARDS"
     lore:

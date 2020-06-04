@@ -79,7 +79,7 @@ public final class WildPrisonAutoMiner {
                 long fuelConsume = this.config.get().getLong("levels." + key + ".fuel_consume");
                 double moneyPerSec = this.config.get().getDouble("levels." + key + ".money_per_sec");
                 double tokensPerSec = this.config.get().getDouble("levels." + key + ".tokens_per_sec");
-                ItemStack guiItem = ItemStackBuilder.of(Material.getMaterial(this.config.get().getString("levels." + key + ".gui_item.material"))).name(this.config.get().getString("levels." + key + ".gui_item.material")).lore(this.config.get().getStringList("levels." + key + ".gui_item.lore")).build();
+                ItemStack guiItem = ItemStackBuilder.of(Material.getMaterial(this.config.get().getString("levels." + key + ".gui_item.material"))).name(this.config.get().getString("levels." + key + ".gui_item.name")).lore(this.config.get().getStringList("levels." + key + ".gui_item.lore")).build();
                 int guiItemSlot = this.config.get().getInt("levels." + key + ".gui_item.slot");
 
                 AutoMinerFuelLevel autoMinerFuelLevel = new AutoMinerFuelLevel(level, cost, treshold, fuelConsume, moneyPerSec, tokensPerSec, guiItem, guiItemSlot);
@@ -249,11 +249,11 @@ public final class WildPrisonAutoMiner {
                 }).registerAndBind(core, "autominerlevelup");
     }
 
-    private void tryBuyNextLevel(Player player) {
+    public boolean tryBuyNextLevel(Player player) {
 
         if (this.isAtMaxLevel(player)) {
             player.sendMessage(this.messages.get("last_level"));
-            return;
+            return false;
         }
 
         AutoMinerFuelLevel nextLevel = this.getNextLevel(player);
@@ -262,8 +262,10 @@ public final class WildPrisonAutoMiner {
             this.core.getTokens().getTokensManager().removeTokens(player, nextLevel.getCost(), null);
             this.autoMinerLevels.put(player.getUniqueId(), nextLevel.getLevel());
             player.sendMessage(this.messages.get("level_bought").replace("%level%", String.format("%,d", nextLevel.getLevel())));
+            return true;
         } else {
             player.sendMessage(this.messages.get("not_enough_tokens").replace("%tokens%", String.format("%,d", nextLevel.getCost())));
+            return false;
         }
 
     }
