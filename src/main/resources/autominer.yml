@@ -23,6 +23,7 @@ levels:
       slot: 10
       name: "&f&lLEVEL 1"
       lore:
+        - "&7Fuel consume &8: &e100/s"
         - "&7Money per sec&8: &2$&a5"
         - "&7Tokens per sec&8: &e5 Tokens"
   2:
@@ -36,6 +37,7 @@ levels:
       slot: 11
       name: "&f&lLEVEL 2"
       lore:
+        - "&7Fuel consume &8: &e200/s"
         - "&7Money per sec&8: &2$&a10"
         - "&7Tokens per sec&8: &e10 Tokens"
   3:
@@ -49,6 +51,7 @@ levels:
       slot: 12
       name: "&f&lLEVEL 3"
       lore:
+        - "&7Fuel consume &8: &e300/s"
         - "&7Money per sec&8: &2$&a15"
         - "&7Tokens per sec&8: &e15 Tokens"
 main_gui:
@@ -100,7 +103,7 @@ level_up_gui:
     material: BARRIER
     name: "&c&lLOCKED"
     lore:
-      - "Cost: %cost% Tokens"
+      - "&7Cost&8: &e%cost% Tokens"
       - " "
       - "&7&o(( &f&oClick to unlock&7&o ))"
   help_item:

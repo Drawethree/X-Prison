@@ -81,7 +81,6 @@ public final class WildPrisonAutoMiner {
                 double tokensPerSec = this.config.get().getDouble("levels." + key + ".tokens_per_sec");
                 ItemStack guiItem = ItemStackBuilder.of(Material.getMaterial(this.config.get().getString("levels." + key + ".gui_item.material"))).name(this.config.get().getString("levels." + key + ".gui_item.name")).lore(this.config.get().getStringList("levels." + key + ".gui_item.lore")).build();
                 int guiItemSlot = this.config.get().getInt("levels." + key + ".gui_item.slot");
-
                 AutoMinerFuelLevel autoMinerFuelLevel = new AutoMinerFuelLevel(level, cost, treshold, fuelConsume, moneyPerSec, tokensPerSec, guiItem, guiItemSlot);
                 this.fuelLevels.put(level, autoMinerFuelLevel);
                 this.lastLevel = autoMinerFuelLevel;
@@ -234,11 +233,18 @@ public final class WildPrisonAutoMiner {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        //c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
                         new MainAutoMinerGui(c.sender()).open();
                     }
 
-                }).registerAndBind(core, "fueltank", "miner", "autominer");
+				}).registerAndBind(core, "miner", "autominer");
+		Commands.create()
+				.assertPlayer()
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
+					}
+
+				}).registerAndBind(core, "fueltank", "fuel");
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
