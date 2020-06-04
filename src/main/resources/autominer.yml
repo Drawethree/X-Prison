@@ -30,5 +30,41 @@ levels:
     fuel_consume: 300
     money_per_sec: 15
     tokens_per_sec: 15
+main_gui:
+  title: "AutoMiner"
+  lines: 3
+  empty_slots: STAINED_GLASS_PANE:7
+  level_up_item:
+    material: DIAMOND_PICKAXE
+    slot: 11
+    name: "&6&lLEVEL UP AUTOMINER"
+    lore:
+      - " "
+      - "&7&o(( &f&oClick&7 ))"
+  autominer_item:
+    material: EYE_OF_ENDER
+    slot: 13
+    name: "&6&lAUTO-MINER"
+    lore:
+      - " "
+      - "Current Level: %level%"
+      - "Current Rewards Level: %rewards_level%"
+      - " "
+  level_up_misc_item:
+    material: ENCHANTING_TABLE
+    slot: 15
+    name: "&6&lLEVEL UP REWARDS"
+    lore:
+      - " "
+      - "&7&o(( &f&oClick&7 ))"
+  help_item:
+    material: NAME_TAG
+    slot: 26
+    name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - " "
+      - "&7&o(( &f&oClick&7 ))"
+
 
 

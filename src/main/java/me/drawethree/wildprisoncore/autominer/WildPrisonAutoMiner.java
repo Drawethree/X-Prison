@@ -31,6 +31,8 @@ public final class WildPrisonAutoMiner {
 
 
     @Getter
+    private static WildPrisonAutoMiner instance;
+    @Getter
     private FileManager.Config config;
 
     private HashMap<String, String> messages;
@@ -50,6 +52,7 @@ public final class WildPrisonAutoMiner {
     }
 
     public void enable() {
+        instance = this;
         this.autoMinerFuels = new HashMap<>();
         this.autoMinerLevels = new LinkedHashMap<>();
         this.registerCommands();
