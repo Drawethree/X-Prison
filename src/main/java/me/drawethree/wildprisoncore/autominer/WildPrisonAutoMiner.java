@@ -5,24 +5,29 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
+import me.drawethree.wildprisoncore.autominer.gui.MainAutoMinerGui;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -74,8 +79,10 @@ public final class WildPrisonAutoMiner {
                 long fuelConsume = this.config.get().getLong("levels." + key + ".fuel_consume");
                 double moneyPerSec = this.config.get().getDouble("levels." + key + ".money_per_sec");
                 double tokensPerSec = this.config.get().getDouble("levels." + key + ".tokens_per_sec");
+                ItemStack guiItem = ItemStackBuilder.of(Material.getMaterial(this.config.get().getString("levels." + key + ".gui_item.material"))).name(this.config.get().getString("levels." + key + ".gui_item.material")).lore(this.config.get().getStringList("levels." + key + ".gui_item.lore")).build();
+                int guiItemSlot = this.config.get().getInt("levels." + key + ".gui_item.slot");
 
-                AutoMinerFuelLevel autoMinerFuelLevel = new AutoMinerFuelLevel(level, cost, treshold, fuelConsume, moneyPerSec, tokensPerSec);
+                AutoMinerFuelLevel autoMinerFuelLevel = new AutoMinerFuelLevel(level, cost, treshold, fuelConsume, moneyPerSec, tokensPerSec, guiItem, guiItemSlot);
                 this.fuelLevels.put(level, autoMinerFuelLevel);
                 this.lastLevel = autoMinerFuelLevel;
                 this.core.getLogger().info("Loaded AutoMinerFuelLevel " + key + " !");
@@ -227,7 +234,8 @@ public final class WildPrisonAutoMiner {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
+                        //c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
+                        new MainAutoMinerGui(c.sender()).open();
                     }
 
                 }).registerAndBind(core, "fueltank", "miner", "autominer");
@@ -339,6 +347,10 @@ public final class WildPrisonAutoMiner {
         return this.fuelLevels.get(1);
     }
 
+    public Collection<AutoMinerFuelLevel> getFuelLevels() {
+        return this.fuelLevels.values();
+    }
+
     public AutoMinerFuelLevel getNextLevel(Player p) {
         return this.fuelLevels.get(this.getPlayerLevel(p) + 1);
     }
@@ -352,5 +364,7 @@ public final class WildPrisonAutoMiner {
         private long fuelConsume;
         private double moneyPerSec;
         private double tokensPerSec;
+        private ItemStack guiItem;
+        private int guiItemSlot;
     }
 }

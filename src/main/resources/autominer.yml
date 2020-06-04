@@ -18,18 +18,39 @@ levels:
     fuel_consume: 100
     money_per_sec: 5
     tokens_per_sec: 5
+    gui_item:
+      material: COAL
+      slot: 10
+      name: "LEVEL 1"
+      lore:
+        - "Money per sec: 5"
+        - "Tokens per sec: 5"
   2:
     cost: 500000
     treshold: 100000
     fuel_consume: 200
     money_per_sec: 10
     tokens_per_sec: 10
+    gui_item:
+      material: IRON_INGOT
+      slot: 11
+      name: "LEVEL 2"
+      lore:
+        - "Money per sec: 10"
+        - "Tokens per sec: 10"
   3:
     cost: 1000000
     treshold: 500000
     fuel_consume: 300
     money_per_sec: 15
     tokens_per_sec: 15
+    gui_item:
+      material: GOLD_INGOT
+      slot: 12
+      name: "LEVEL 3"
+      lore:
+        - "Money per sec: 15"
+        - "Tokens per sec: 15"
 main_gui:
   title: "AutoMiner"
   lines: 3
@@ -37,18 +58,19 @@ main_gui:
   level_up_item:
     material: DIAMOND_PICKAXE
     slot: 11
-    name: "&6&lLEVEL UP AUTOMINER"
+    name: "&6&lLEVEL UP AUTO-MINER"
     lore:
       - " "
-      - "&7&o(( &f&oClick&7 ))"
+      - "&7&o(( &f&oClick to open GUI&7&o ))"
   autominer_item:
     material: EYE_OF_ENDER
     slot: 13
     name: "&6&lAUTO-MINER"
     lore:
       - " "
-      - "Current Level: %level%"
-      - "Current Rewards Level: %rewards_level%"
+      - "&7Current Fuel: %fuel%"
+      - "&7Current Level: &e%level%"
+      - "&7Current Rewards Level: &e%rewards_level%"
       - " "
   level_up_misc_item:
     material: ENCHANTING_TABLE
@@ -56,7 +78,7 @@ main_gui:
     name: "&6&lLEVEL UP REWARDS"
     lore:
       - " "
-      - "&7&o(( &f&oClick&7 ))"
+      - "&7&o(( &f&oClick to open GUI&7&o ))"
   help_item:
     material: NAME_TAG
     slot: 26
@@ -64,7 +86,31 @@ main_gui:
     lore:
       - " "
       - " "
-      - "&7&o(( &f&oClick&7 ))"
+      - "&7&o(( &f&oClick&7&o ))"
+level_up_gui:
+  title: "AutoMiner"
+  lines: 3
+  empty_slots: STAINED_GLASS_PANE:7
+  locked_item:
+    material: BARRIER
+    name: "&c&lLOCKED"
+    lore:
+      - " "
+  locked_next_item:
+    material: BARRIER
+    name: "&c&lLOCKED"
+    lore:
+      - "Cost: %cost% Tokens"
+      - " "
+      - "&7&o(( &f&oClick to unlock&7&o ))"
+  help_item:
+    material: NAME_TAG
+    slot: 26
+    name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - " "
+      - "&7&o(( &f&oClick&7&o ))"
 
 
 
