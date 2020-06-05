@@ -54,6 +54,26 @@ levels:
         - "&7Fuel consume &8: &e300/s"
         - "&7Money per sec&8: &2$&a15"
         - "&7Tokens per sec&8: &e15 Tokens"
+command_rewards:
+  1:
+    cost: 0
+    rewards: []
+    gui_item:
+      material: COAL
+      slot: 10
+      name: "&f&lLEVEL 1"
+      lore:
+        - "&7&oNo rewards"
+  2:
+    cost: 100000
+    rewards:
+      - "aam give %player% 1000;0.005"
+    gui_item:
+      material: EYE_OF_ENDER
+      slot: 11
+      name: "&f&lLEVEL 2"
+      lore:
+        - "&7&o1000 Fuel, Chance: 0.005%"
 main_gui:
   title: "AutoMiner"
   lines: 3
@@ -92,6 +112,30 @@ main_gui:
       - "&7&o(( &f&oClick&7&o ))"
 level_up_gui:
   title: "AutoMiner"
+  lines: 3
+  empty_slots: STAINED_GLASS_PANE:7
+  locked_item:
+    material: BARRIER
+    name: "&c&lLOCKED"
+    lore:
+      - " "
+  locked_next_item:
+    material: BARRIER
+    name: "&c&lLOCKED"
+    lore:
+      - "&7Cost&8: &e%cost% Tokens"
+      - " "
+      - "&7&o(( &f&oClick to unlock&7&o ))"
+  help_item:
+    material: NAME_TAG
+    slot: 26
+    name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - " "
+      - "&7&o(( &f&oClick&7&o ))"
+level_up_misc_gui:
+  title: "Command Rewards"
   lines: 3
   empty_slots: STAINED_GLASS_PANE:7
   locked_item:

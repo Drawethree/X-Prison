@@ -39,15 +39,20 @@ public class AutoMinerRegion {
                 if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
 
                     WildPrisonAutoMiner.AutoMinerFuelLevel levelToGive = this.parent.getAutoMinerFuelLevel(p);
+                    WildPrisonAutoMiner.AutoMinerCommandLevel commandLevel = this.parent.getAutoMinerCommandLevel(p);
 
                     if (!this.parent.hasAutoMinerFuel(p) || this.parent.getPlayerFuel(p) < levelToGive.getFuelConsume()) {
                         sendActionBar(p, this.parent.getMessage("auto_miner_disabled"));
                         continue;
                     } else {
                         sendActionBar(p, this.parent.getMessage("auto_miner_enabled"));
+
                         this.parent.getCore().getTokens().getApi().addTokens(p, (long) levelToGive.getTokensPerSec());
                         this.parent.getCore().getEconomy().depositPlayer(p, levelToGive.getMoneyPerSec());
                         this.parent.decrementFuel(p, levelToGive.getFuelConsume());
+
+                        commandLevel.giveRewards(p);
+
                     }
                 }
             }

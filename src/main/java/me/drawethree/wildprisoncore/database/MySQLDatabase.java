@@ -50,6 +50,7 @@ public class MySQLDatabase {
     public static final String AUTOMINER_UUID_COLNAME = "UUID";
     public static final String AUTOMINER_FUEL_COLNAME = "fuel";
     public static final String AUTOMINER_LEVEL_COLNAME = "level";
+    public static final String AUTOMINER_COMMAND_LEVEL_COLNAME = "command_level";
 
     @Getter
     private WildPrisonCore parent;
@@ -115,7 +116,7 @@ public class MySQLDatabase {
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
             //execute("CREATE TABLE IF NOT EXISTS " + GLOBAL_MULTIPLIER_DB_NAME + "(multiplier double default 0.0, timeleft long default 0)");
-            execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL, fuel long, level int, primary key (UUID))");
+            execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL, fuel long, level int, command_level int, primary key (UUID))");
 
         });
     }

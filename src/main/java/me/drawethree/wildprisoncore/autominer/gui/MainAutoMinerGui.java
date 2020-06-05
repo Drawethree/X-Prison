@@ -56,7 +56,7 @@ public class MainAutoMinerGui extends Gui {
             }));
             this.setItem(LEVEL_UP_MISC_ITEM_SLOT, ItemStackBuilder.of(LEVEL_UP_MISC_ITEM).build(() -> {
                 this.close();
-                new LevelMiscAutoMinerGui(this.getPlayer()).open();
+                new LevelCommandAutoMinerGui(this.getPlayer()).open();
             }));
             this.setItem(AUTOMINER_ITEM_SLOT, ItemStackBuilder.of(this.getAutominerItem()).buildItem().build());
             this.setItem(HELP_ITEM_SLOT, ItemStackBuilder.of(HELP_ITEM).buildItem().build());
@@ -71,6 +71,7 @@ public class MainAutoMinerGui extends Gui {
         for (int i = 0; i < lore.size(); i++) {
             lore.set(i, lore.get(i)
                     .replace("%level%", String.format("%,d", WildPrisonAutoMiner.getInstance().getPlayerLevel(this.getPlayer())))
+                    .replace("%rewards_level%", String.format("%,d", WildPrisonAutoMiner.getInstance().getPlayerCommandLevel(this.getPlayer())))
                     .replace("%fuel%", String.format("%,d", WildPrisonAutoMiner.getInstance().getPlayerFuel(this.getPlayer()))));
         }
         meta.setLore(lore);

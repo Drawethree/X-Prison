@@ -27,10 +27,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class WildPrisonAutoMiner {
 
@@ -41,10 +39,16 @@ public final class WildPrisonAutoMiner {
     private FileManager.Config config;
 
     private HashMap<String, String> messages;
+
     private HashMap<UUID, Long> autoMinerFuels;
-    private LinkedHashMap<UUID, Integer> autoMinerLevels;
+    private HashMap<UUID, Integer> autoMinerLevels;
+    private HashMap<UUID, Integer> autoMinerCommandLevels;
+
     private LinkedHashMap<Integer, AutoMinerFuelLevel> fuelLevels;
+    private LinkedHashMap<Integer, AutoMinerCommandLevel> commandLevels;
+
     private AutoMinerFuelLevel lastLevel;
+    private AutoMinerCommandLevel lastLevelCommand;
 
     @Getter
     private AutoMinerRegion region;
@@ -59,12 +63,14 @@ public final class WildPrisonAutoMiner {
     public void enable() {
         instance = this;
         this.autoMinerFuels = new HashMap<>();
-        this.autoMinerLevels = new LinkedHashMap<>();
+        this.autoMinerLevels = new HashMap<>();
+        this.autoMinerCommandLevels = new HashMap<>();
         this.registerCommands();
         this.registerEvents();
         this.loadMessages();
         //this.removeExpiredAutoMiners();
         this.loadFuelLevels();
+        this.loadCommandLevels();
         this.loadAutoMinerRegion();
         this.loadPlayersAutoMiner();
     }
@@ -92,16 +98,42 @@ public final class WildPrisonAutoMiner {
         }
     }
 
+    private void loadCommandLevels() {
+        this.commandLevels = new LinkedHashMap<>();
+        for (String key : this.config.get().getConfigurationSection("command_rewards").getKeys(false)) {
+            try {
+                int level = Integer.parseInt(key);
+                long cost = this.config.get().getLong("command_rewards." + key + ".cost");
+
+                ItemStack guiItem = ItemStackBuilder.of(Material.getMaterial(this.config.get().getString("command_rewards." + key + ".gui_item.material"))).name(this.config.get().getString("command_rewards." + key + ".gui_item.name")).lore(this.config.get().getStringList("command_rewards." + key + ".gui_item.lore")).build();
+                int guiItemSlot = this.config.get().getInt("command_rewards." + key + ".gui_item.slot");
+
+                List<String> commandsRaw = this.config.get().getStringList("command_rewards." + key + ".rewards");
+                List<CommandReward> rewards = new ArrayList<>();
+
+                for (String s : commandsRaw) {
+                    String[] split = s.split(";");
+                    String cmd = split[0];
+                    double chance = Double.parseDouble(split[1]);
+                    rewards.add(new CommandReward(cmd, chance));
+                }
+
+                AutoMinerCommandLevel autoMinerCommandLevel = new AutoMinerCommandLevel(level, cost, rewards, guiItem, guiItemSlot);
+                this.commandLevels.put(level, autoMinerCommandLevel);
+                this.lastLevelCommand = autoMinerCommandLevel;
+                this.core.getLogger().info("Loaded AutoMinerCommandLevel " + key + " !");
+            } catch (Exception e) {
+                this.core.getLogger().warning("Unable to load AutoMinerCommandLevel " + key + " !");
+                continue;
+            }
+        }
+    }
+
     private void registerEvents() {
         Events.subscribe(PlayerQuitEvent.class)
-                .filter(e -> this.autoMinerFuels.containsKey(e.getPlayer().getUniqueId()))
-                .handler(e -> {
-                    this.saveAutoMiner(e.getPlayer(), true);
-                }).bindWith(this.core);
+                .handler(e -> this.saveAutoMiner(e.getPlayer(), true)).bindWith(this.core);
         Events.subscribe(PlayerJoinEvent.class)
-                .handler(e -> {
-                    this.loadAutoMiner(e.getPlayer());
-                }).bindWith(this.core);
+                .handler(e -> this.loadAutoMiner(e.getPlayer())).bindWith(this.core);
     }
 
     private void loadPlayersAutoMiner() {
@@ -127,9 +159,11 @@ public final class WildPrisonAutoMiner {
                     if (set.next()) {
                         long fuelLeft = set.getLong(MySQLDatabase.AUTOMINER_FUEL_COLNAME);
                         int level = set.getInt(MySQLDatabase.AUTOMINER_LEVEL_COLNAME);
+                        int commandLevel = set.getInt(MySQLDatabase.AUTOMINER_COMMAND_LEVEL_COLNAME);
                         this.autoMinerFuels.put(p.getUniqueId(), fuelLeft);
+                        this.autoMinerCommandLevels.put(p.getUniqueId(), commandLevel);
                         this.autoMinerLevels.put(p.getUniqueId(), level);
-                        this.core.getLogger().info(String.format("Loaded %s's AutoMiner fuel (%d fuel, %d level)", p.getName(), fuelLeft, level));
+                        this.core.getLogger().info(String.format("Loaded %s's AutoMiner fuel (%d fuel, %d level, %d command level)", p.getName(), fuelLeft, level, commandLevel));
                     }
                 }
             } catch (SQLException e) {
@@ -140,44 +174,51 @@ public final class WildPrisonAutoMiner {
 
     private void saveAutoMiner(Player p, boolean async) {
 
-        if (!autoMinerFuels.containsKey(p.getUniqueId())) {
-            return;
-        }
-
-        long fuelLeft = autoMinerFuels.get(p.getUniqueId());
+        long fuelLeft = autoMinerFuels.getOrDefault(p.getUniqueId(), 0L);
         int fuelLevel = this.getPlayerLevel(p);
+        int commandLevel = this.getPlayerCommandLevel(p);
 
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_LEVEL_COLNAME + "=?")) {
+                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_LEVEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_COMMAND_LEVEL_COLNAME + "=?")) {
                     statement.setString(1, p.getUniqueId().toString());
                     statement.setLong(2, fuelLeft);
                     statement.setInt(3, fuelLevel);
-                    statement.setLong(4, fuelLeft);
-                    statement.setInt(5, fuelLevel);
+                    statement.setInt(4, commandLevel);
+                    statement.setLong(5, fuelLeft);
+                    statement.setInt(6, fuelLevel);
+                    statement.setInt(7, commandLevel);
                     statement.execute();
                     this.autoMinerFuels.remove(p.getUniqueId());
                     this.autoMinerLevels.remove(p.getUniqueId());
-                    this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and level.", p.getName()));
+                    this.autoMinerCommandLevels.remove(p.getUniqueId() );
+                    this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and levels.", p.getName()));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             });
         } else {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_LEVEL_COLNAME + "=?")) {
+            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_FUEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_LEVEL_COLNAME + "=?," + MySQLDatabase.AUTOMINER_COMMAND_LEVEL_COLNAME + "=?")) {
                 statement.setString(1, p.getUniqueId().toString());
                 statement.setLong(2, fuelLeft);
                 statement.setInt(3, fuelLevel);
-                statement.setLong(4, fuelLeft);
-                statement.setInt(5, fuelLevel);
+                statement.setInt(4, commandLevel);
+                statement.setLong(5, fuelLeft);
+                statement.setInt(6, fuelLevel);
+                statement.setInt(7, commandLevel);
                 statement.execute();
                 this.autoMinerFuels.remove(p.getUniqueId());
                 this.autoMinerLevels.remove(p.getUniqueId());
-                this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and level.", p.getName()));
+                this.autoMinerCommandLevels.remove(p.getUniqueId() );
+                this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and levels.", p.getName()));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getPlayerCommandLevel(Player p) {
+        return this.autoMinerCommandLevels.getOrDefault(p.getUniqueId(), 1);
     }
 
     private void loadAutoMinerRegion() {
@@ -236,15 +277,15 @@ public final class WildPrisonAutoMiner {
                         new MainAutoMinerGui(c.sender()).open();
                     }
 
-				}).registerAndBind(core, "miner", "autominer");
-		Commands.create()
-				.assertPlayer()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
-					}
+                }).registerAndBind(core, "miner", "autominer");
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
+                        c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
+                    }
 
-				}).registerAndBind(core, "fueltank", "fuel");
+                }).registerAndBind(core, "fueltank", "fuel");
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
@@ -273,11 +314,35 @@ public final class WildPrisonAutoMiner {
             player.sendMessage(this.messages.get("not_enough_tokens").replace("%tokens%", String.format("%,d", nextLevel.getCost())));
             return false;
         }
+    }
+
+    public boolean tryBuyNextCommandLevel(Player player) {
+
+        if (this.isAtMaxCommandLevel(player)) {
+            player.sendMessage(this.messages.get("last_level"));
+            return false;
+        }
+
+        AutoMinerCommandLevel nextLevel = this.getNextCommandLevel(player);
+
+        if (this.core.getTokens().getTokensManager().getPlayerTokens(player) >= nextLevel.getCost()) {
+            this.core.getTokens().getTokensManager().removeTokens(player, nextLevel.getCost(), null);
+            this.autoMinerCommandLevels.put(player.getUniqueId(), nextLevel.getLevel());
+            player.sendMessage(this.messages.get("level_bought").replace("%level%", String.format("%,d", nextLevel.getLevel())));
+            return true;
+        } else {
+            player.sendMessage(this.messages.get("not_enough_tokens").replace("%tokens%", String.format("%,d", nextLevel.getCost())));
+            return false;
+        }
 
     }
 
     private boolean isAtMaxLevel(Player player) {
         return this.getPlayerLevel(player) == lastLevel.getLevel();
+    }
+
+    private boolean isAtMaxCommandLevel(Player player) {
+        return this.getPlayerCommandLevel(player) == lastLevelCommand.getLevel();
     }
 
     private void givePlayerAutoMinerFuel(CommandSender sender, Player p, long fuel) {
@@ -355,13 +420,26 @@ public final class WildPrisonAutoMiner {
         return this.fuelLevels.get(1);
     }
 
+    public AutoMinerCommandLevel getAutoMinerCommandLevel(Player p) {
+        return this.commandLevels.get(this.getPlayerCommandLevel(p));
+    }
+
     public Collection<AutoMinerFuelLevel> getFuelLevels() {
         return this.fuelLevels.values();
+    }
+
+    public Collection<AutoMinerCommandLevel> getCommandLevels() {
+        return this.commandLevels.values();
     }
 
     public AutoMinerFuelLevel getNextLevel(Player p) {
         return this.fuelLevels.get(this.getPlayerLevel(p) + 1);
     }
+
+    public AutoMinerCommandLevel getNextCommandLevel(Player p) {
+        return this.commandLevels.get(this.getPlayerCommandLevel(p) + 1);
+    }
+
 
     @AllArgsConstructor
     @Getter
@@ -374,5 +452,32 @@ public final class WildPrisonAutoMiner {
         private double tokensPerSec;
         private ItemStack guiItem;
         private int guiItemSlot;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public class AutoMinerCommandLevel {
+        private int level;
+        private long cost;
+        private List<CommandReward> commandRewards;
+        private ItemStack guiItem;
+        private int guiItemSlot;
+
+        public void giveRewards(Player p) {
+            Schedulers.sync().run(() -> {
+                for (CommandReward reward : this.commandRewards) {
+                    if (ThreadLocalRandom.current().nextDouble(100.0) <= reward.getChance()) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),reward.getCommand().replace("%player%", p.getName()));
+                    }
+                }
+            });
+        }
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public class CommandReward {
+        private String command;
+        private double chance;
     }
 }
