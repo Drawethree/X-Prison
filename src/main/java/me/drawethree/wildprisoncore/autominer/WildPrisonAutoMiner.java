@@ -47,7 +47,9 @@ public final class WildPrisonAutoMiner {
     private LinkedHashMap<Integer, AutoMinerFuelLevel> fuelLevels;
     private LinkedHashMap<Integer, AutoMinerCommandLevel> commandLevels;
 
+    @Getter
     private AutoMinerFuelLevel lastLevel;
+    @Getter
     private AutoMinerCommandLevel lastLevelCommand;
 
     @Getter

@@ -32,14 +32,17 @@ public class AutoMinerRegion {
         this.autoMinerTask = Schedulers.async().runRepeating(() -> {
             for (Player p : Players.all()) {
 
-                if (!p.getWorld().equals(this.world)) {
-                    continue;
+                WildPrisonAutoMiner.AutoMinerCommandLevel commandLevel = this.parent.getAutoMinerCommandLevel(p);
+
+                if (commandLevel.getLevel() != parent.getLastLevelCommand().getLevel()) {
+                    if (!p.getWorld().equals(this.world)) {
+                        continue;
+                    }
                 }
 
-                if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
+                if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()) || commandLevel.getLevel() == parent.getLastLevelCommand().getLevel()) {
 
                     WildPrisonAutoMiner.AutoMinerFuelLevel levelToGive = this.parent.getAutoMinerFuelLevel(p);
-                    WildPrisonAutoMiner.AutoMinerCommandLevel commandLevel = this.parent.getAutoMinerCommandLevel(p);
 
                     if (!this.parent.hasAutoMinerFuel(p) || this.parent.getPlayerFuel(p) < levelToGive.getFuelConsume()) {
                         sendActionBar(p, this.parent.getMessage("auto_miner_disabled"));
