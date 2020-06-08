@@ -134,6 +134,14 @@ level_up_gui:
       - " "
       - " "
       - "&7&o(( &f&oClick&7&o ))"
+  back_item:
+    material: ARROW
+    slot: 25
+    name: "&c&lBACK"
+    lore:
+      - " "
+      - " "
+      - "&7&o(( &f&oClick&7&o ))"
 level_up_misc_gui:
   title: "Command Rewards"
   lines: 3
@@ -154,6 +162,14 @@ level_up_misc_gui:
     material: NAME_TAG
     slot: 26
     name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - " "
+      - "&7&o(( &f&oClick&7&o ))"
+  back_item:
+    material: ARROW
+    slot: 25
+    name: "&c&lBACK"
     lore:
       - " "
       - " "

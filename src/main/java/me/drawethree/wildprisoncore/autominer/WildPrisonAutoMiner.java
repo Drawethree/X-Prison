@@ -193,7 +193,7 @@ public final class WildPrisonAutoMiner {
                     statement.execute();
                     this.autoMinerFuels.remove(p.getUniqueId());
                     this.autoMinerLevels.remove(p.getUniqueId());
-                    this.autoMinerCommandLevels.remove(p.getUniqueId() );
+                    this.autoMinerCommandLevels.remove(p.getUniqueId());
                     this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and levels.", p.getName()));
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -211,7 +211,7 @@ public final class WildPrisonAutoMiner {
                 statement.execute();
                 this.autoMinerFuels.remove(p.getUniqueId());
                 this.autoMinerLevels.remove(p.getUniqueId());
-                this.autoMinerCommandLevels.remove(p.getUniqueId() );
+                this.autoMinerCommandLevels.remove(p.getUniqueId());
                 this.core.getLogger().info(String.format("Saved %s's AutoMiner fuel and levels.", p.getName()));
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -423,7 +423,15 @@ public final class WildPrisonAutoMiner {
     }
 
     public AutoMinerCommandLevel getAutoMinerCommandLevel(Player p) {
-        return this.commandLevels.get(this.getPlayerCommandLevel(p));
+
+        int autoMinerLevel = this.getAutoMinerFuelLevel(p).getLevel();
+        int maxLevel = this.getPlayerCommandLevel(p);
+
+        if (maxLevel > autoMinerLevel) {
+            maxLevel = autoMinerLevel;
+        }
+
+        return this.commandLevels.get(maxLevel);
     }
 
     public Collection<AutoMinerFuelLevel> getFuelLevels() {
@@ -469,7 +477,7 @@ public final class WildPrisonAutoMiner {
             Schedulers.sync().run(() -> {
                 for (CommandReward reward : this.commandRewards) {
                     if (ThreadLocalRandom.current().nextDouble(100.0) <= reward.getChance()) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),reward.getCommand().replace("%player%", p.getName()));
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), reward.getCommand().replace("%player%", p.getName()));
                     }
                 }
             });

@@ -70,7 +70,7 @@ public class MainAutoMinerGui extends Gui {
         List<String> lore = meta.getLore();
         for (int i = 0; i < lore.size(); i++) {
             lore.set(i, lore.get(i)
-                    .replace("%level%", String.format("%,d", WildPrisonAutoMiner.getInstance().getPlayerLevel(this.getPlayer())))
+                    .replace("%level%", String.format("%,d", WildPrisonAutoMiner.getInstance().getAutoMinerFuelLevel(this.getPlayer()).getLevel()))
                     .replace("%rewards_level%", String.format("%,d", WildPrisonAutoMiner.getInstance().getPlayerCommandLevel(this.getPlayer())))
                     .replace("%fuel%", String.format("%,d", WildPrisonAutoMiner.getInstance().getPlayerFuel(this.getPlayer()))));
         }

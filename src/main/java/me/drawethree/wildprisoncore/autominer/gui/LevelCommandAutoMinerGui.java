@@ -23,6 +23,9 @@ public class LevelCommandAutoMinerGui extends Gui {
 	private static final ItemStack HELP_ITEM = ItemStackBuilder.of(Material.valueOf(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.help_item.material")))
 			.name(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.help_item.name")).lore(WildPrisonAutoMiner.getInstance().getConfig().get().getStringList("level_up_misc_gui.help_item.lore")).build();
 
+	private static final ItemStack BACK_ITEM = ItemStackBuilder.of(Material.valueOf(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.back_item.material")))
+			.name(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.back_item.name")).lore(WildPrisonAutoMiner.getInstance().getConfig().get().getStringList("level_up_misc_gui.back_item.lore")).build();
+
 	private static final ItemStack LOCKED_ITEM = ItemStackBuilder.of(Material.valueOf(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.locked_item.material")))
 			.name(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.locked_item.name")).lore(WildPrisonAutoMiner.getInstance().getConfig().get().getStringList("level_up_misc_gui.locked_item.lore")).build();
 
@@ -30,6 +33,7 @@ public class LevelCommandAutoMinerGui extends Gui {
 			.name(WildPrisonAutoMiner.getInstance().getConfig().get().getString("level_up_misc_gui.locked_next_item.name")).lore(WildPrisonAutoMiner.getInstance().getConfig().get().getStringList("level_up_misc_gui.locked_next_item.lore")).build();
 
 	private static int HELP_ITEM_SLOT = WildPrisonAutoMiner.getInstance().getConfig().get().getInt("level_up_misc_gui.help_item.slot");
+	private static int BACK_ITEM_SLOT = WildPrisonAutoMiner.getInstance().getConfig().get().getInt("level_up_misc_gui.back_item.slot");
 
 	public LevelCommandAutoMinerGui(Player player) {
 		super(player, LINES, TITLE);
@@ -46,6 +50,10 @@ public class LevelCommandAutoMinerGui extends Gui {
 				this.setItem(i, ItemStackBuilder.of(EMPTY_SLOT_ITEM).buildItem().build());
 			}
 			this.setItem(HELP_ITEM_SLOT, ItemStackBuilder.of(HELP_ITEM).buildItem().build());
+			this.setItem(BACK_ITEM_SLOT, ItemStackBuilder.of(BACK_ITEM).build(() -> {
+				this.close();
+				new MainAutoMinerGui(this.getPlayer()).open();
+			}));
 		}
 
 		for (WildPrisonAutoMiner.AutoMinerCommandLevel level : WildPrisonAutoMiner.getInstance().getCommandLevels()) {

@@ -126,6 +126,21 @@ public final class WildPrisonTokens {
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 0) {
+                        this.tokensManager.sendBlocksTopWeekly(c.sender());
+                    }
+                })
+                .registerAndBind(core, "blockstopweekly", "blockstopw");
+        Commands.create()
+                .assertOp()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
+                        this.tokensManager.resetBlocksTopWeekly(c.sender());
+                    }
+                })
+                .registerAndBind(core, "blockstopweeklyreset");
+        Commands.create()
+                .handler(c -> {
+                    if (c.args().size() == 0) {
                         this.tokensManager.sendTokensTop(c.sender());
                     }
                 })
