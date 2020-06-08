@@ -26,10 +26,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class TokensManager {
@@ -270,7 +267,13 @@ public class TokensManager {
             removeTokens(executor, totalAmount, null);
 
             ItemStack item = createTokenItem(amount, value);
-            executor.getInventory().addItem(item);
+            Collection<ItemStack> notFit = executor.getInventory().addItem(item).values();
+
+            if (!notFit.isEmpty()) {
+                notFit.forEach(itemStack ->  {
+                    this.giveTokens(executor,amount * item.getAmount(),null);
+                });
+            }
 
             executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d,", amount)).replace("%value%", String.format("%,d", value)));
         });
