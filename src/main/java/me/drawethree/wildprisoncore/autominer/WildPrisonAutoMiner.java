@@ -95,6 +95,7 @@ public final class WildPrisonAutoMiner {
                 this.core.getLogger().info("Loaded AutoMinerFuelLevel " + key + " !");
             } catch (Exception e) {
                 this.core.getLogger().warning("Unable to load AutoMinerFuelLevel " + key + " !");
+                e.printStackTrace();
                 continue;
             }
         }
@@ -126,6 +127,7 @@ public final class WildPrisonAutoMiner {
                 this.core.getLogger().info("Loaded AutoMinerCommandLevel " + key + " !");
             } catch (Exception e) {
                 this.core.getLogger().warning("Unable to load AutoMinerCommandLevel " + key + " !");
+                e.printStackTrace();
                 continue;
             }
         }

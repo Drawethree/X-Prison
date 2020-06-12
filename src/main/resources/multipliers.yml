@@ -4,6 +4,7 @@ messages:
   global_multi: "&eGlobal Multiplier - %multiplier% &7(&a%duration%&7)"
   personal_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Sell Multiplier x %multiplier% for %minutes% minutes."
 ranks:
+  wpplus: 2.5
   wp: 1.5
   phoenix: 1.2
   dragon: 0.9

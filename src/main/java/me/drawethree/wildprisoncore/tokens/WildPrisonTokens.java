@@ -76,6 +76,7 @@ public final class WildPrisonTokens {
 
     public void disable() {
         this.tokensManager.stopUpdating();
+        this.tokensManager.saveWeeklyReset();
         this.tokensManager.savePlayerDataOnDisable();
     }
 

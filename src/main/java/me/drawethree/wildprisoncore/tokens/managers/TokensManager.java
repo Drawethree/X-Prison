@@ -9,6 +9,7 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
+import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,12 +46,14 @@ public class TokensManager {
     private LinkedHashMap<Long, BlockReward> blockRewards = new LinkedHashMap<>();
     private Task task;
     private boolean updating;
+    private long nextResetWeekly;
 
     public TokensManager(WildPrisonTokens plugin) {
         this.plugin = plugin;
         this.SPACER_LINE = plugin.getMessage("top_spacer_line");
         this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
         this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
+        this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
@@ -270,8 +273,8 @@ public class TokensManager {
             Collection<ItemStack> notFit = executor.getInventory().addItem(item).values();
 
             if (!notFit.isEmpty()) {
-                notFit.forEach(itemStack ->  {
-                    this.giveTokens(executor,amount * item.getAmount(),null);
+                notFit.forEach(itemStack -> {
+                    this.giveTokens(executor, amount * item.getAmount(), null);
                 });
             }
 
@@ -494,6 +497,8 @@ public class TokensManager {
     public void sendBlocksTopWeekly(CommandSender sender) {
         Schedulers.async().run(() -> {
             sender.sendMessage(Text.colorize(SPACER_LINE));
+            sender.sendMessage(plugin.getMessage("top_weekly_reset").replace("%time%", this.getTimeLeftUntilWeeklyReset()));
+            sender.sendMessage(Text.colorize(SPACER_LINE));
 
             if (this.updating || top10BlocksWeekly.isEmpty()) {
                 sender.sendMessage(this.plugin.getMessage("top_updating"));
@@ -536,6 +541,7 @@ public class TokensManager {
         Schedulers.async().run(() -> {
             sender.sendMessage(Text.colorize("&7&oStarting to reset BlocksTop - Weekly. This may take a while..."));
             this.top10BlocksWeekly.clear();
+            this.nextResetWeekly = Time.nowMillis() + TimeUnit.DAYS.toMillis(7);
             try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME)) {
                 statement.execute();
                 sender.sendMessage(Text.colorize("&aBlocksTop - Weekly - Resetted!"));
@@ -543,6 +549,36 @@ public class TokensManager {
                 e.printStackTrace();
             }
         });
+    }
+
+    private String getTimeLeftUntilWeeklyReset() {
+
+        if (System.currentTimeMillis() > nextResetWeekly) {
+            return "RESET SOON";
+        }
+
+
+        long timeLeft = nextResetWeekly - System.currentTimeMillis();
+
+        long days = timeLeft / (24 * 60 * 60 * 1000);
+        timeLeft -= days * (24 * 60 * 60 * 1000);
+
+        long hours = timeLeft / (60 * 60 * 1000);
+        timeLeft -= hours * (60 * 60 * 1000);
+
+        long minutes = timeLeft / (60 * 1000);
+        timeLeft -= minutes * (60 * 1000);
+
+        long seconds = timeLeft / (1000);
+
+        timeLeft -= seconds * 1000;
+
+        return new StringBuilder().append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").toString();
+    }
+
+    public void saveWeeklyReset() {
+        this.plugin.getConfig().set("next-reset-weekly", this.nextResetWeekly).save();
+
     }
 
     @AllArgsConstructor

@@ -18,6 +18,7 @@ messages:
   top_format_blocks: "&f&l#%position%. &e%player% &8» &7%amount% blocks"
   top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   top_updating: "&c&lLeaderboard is currently updating..."
+  top_weekly_reset: "&7&oTime Left: %time%"
 tokens:
   breaking:
     chance: 50
@@ -32,3 +33,4 @@ block-rewards:
   1000:
     - tokens give 5000 %player%
     - aam give 300 %player%
+next-reset-weekly: 0
