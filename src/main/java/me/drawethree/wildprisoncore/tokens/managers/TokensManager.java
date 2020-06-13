@@ -224,22 +224,24 @@ public class TokensManager {
         String displayName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
         displayName = displayName.replace(" TOKENS", "").replace(",", "");
         try {
-            int amount = Integer.parseInt(displayName);
-            this.giveTokens(p, amount, null);
-            if (item.getAmount() == 1) {
+            int tokenAmount = Integer.parseInt(displayName);
+            int itemAmount = item.getAmount();
+            if (shiftClick) {
                 p.setItemInHand(null);
-                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", amount)));
+                this.giveTokens(p, tokenAmount * itemAmount, null);
+                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
             } else {
-                item.setAmount(item.getAmount() - 1);
-                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", amount)));
-                if (shiftClick && item != null && item.getAmount() >= 1) {
-                    redeemTokens(p, item, true);
+                this.giveTokens(p, tokenAmount, null);
+                if (item.getAmount() == 1) {
+                    p.setItemInHand(null);
+                } else {
+                    item.setAmount(item.getAmount() - 1);
                 }
+                p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
             }
         } catch (Exception e) {
             //Not a token item
             p.sendMessage(plugin.getMessage("not_token_item"));
-            return;
         }
     }
 
