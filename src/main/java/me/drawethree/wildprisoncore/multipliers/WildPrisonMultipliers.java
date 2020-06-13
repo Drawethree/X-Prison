@@ -345,12 +345,12 @@ public final class WildPrisonMultipliers {
         PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
 
         if (p.hasPermission("Store.Multiplier")) {
-            toReturn.addMultiplier(2.0, 3.5);
+			toReturn.addMultiplier(2.0, 10.0);
         }
 
         for (String perm : permissionToMultiplier.keySet()) {
             if (p.hasPermission(perm)) {
-                toReturn.addMultiplier(permissionToMultiplier.get(perm), 3.5);
+				toReturn.addMultiplier(permissionToMultiplier.get(perm), 10.0);
                 break;
             }
         }
