@@ -40,7 +40,9 @@ public class PlayerMultiplier extends Multiplier {
         this.endTime = endTime;
 
         if (endTime > Time.nowMillis()) {
-            if (task != null) task.cancel();
+            if (task != null) {
+                task.cancel();
+            }
             task = Schedulers.async().runLater(() -> {
                 WildPrisonMultipliers.getInstance().removePersonalMultiplier(this.playerUUID);
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
@@ -51,15 +53,12 @@ public class PlayerMultiplier extends Multiplier {
     public void addDuration(int minutes) {
 
         this.startTime = System.currentTimeMillis();
-
-        if (this.endTime == 0) {
-            this.endTime = this.startTime;
-        }
-
         this.endTime += TimeUnit.MINUTES.toMillis(minutes);
 
         if (endTime > Time.nowMillis()) {
-            if (task != null) task.cancel();
+            if (task != null) {
+                task.cancel();
+            }
             task = Schedulers.async().runLater(() -> {
                 WildPrisonMultipliers.getInstance().removePersonalMultiplier(this.playerUUID);
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
