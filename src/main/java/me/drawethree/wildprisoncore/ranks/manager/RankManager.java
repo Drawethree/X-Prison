@@ -30,6 +30,11 @@ public class RankManager {
     private LinkedHashMap<Integer, Rank> ranksById;
     private LinkedHashMap<Integer, Prestige> prestigeById;
 
+    private int minPrestigeLevel;
+    private int maxPrestigeLevel;
+    private double prestigeIncreaseCost;
+    private List<String> prestigeCommands;
+
     private HashMap<UUID, Integer> onlinePlayersRanks = new HashMap<>();
     private HashMap<UUID, Integer> onlinePlayersPrestige = new HashMap<>();
     private WildPrisonRankup plugin;
@@ -77,7 +82,7 @@ public class RankManager {
 
     private void savePlayerRankAndPrestige(Player player) {
         Schedulers.async().run(() -> {
-            this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.RANKS_DB_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", getPlayerRank(player).getId(), getPlayerPrestige(player).getId(), player.getUniqueId().toString());
+            this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.RANKS_DB_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", getPlayerRank(player).getId(), getPlayerPrestige(player), player.getUniqueId().toString());
             this.onlinePlayersPrestige.remove(player.getUniqueId());
             this.onlinePlayersRanks.remove(player.getUniqueId());
             this.plugin.getCore().getLogger().info("Saved " + player.getName() + "'s rank and prestige to database.");
@@ -122,7 +127,7 @@ public class RankManager {
     }
 
     private void loadPrestiges() {
-        this.prestigeById = new LinkedHashMap<>();
+        /*this.prestigeById = new LinkedHashMap<>();
         for (String key : this.plugin.getConfig().get().getConfigurationSection("Prestige").getKeys(false)) {
             int id = Integer.parseInt(key);
             String prefix = Text.colorize(this.plugin.getConfig().get().getString("Prestige." + key + ".Prefix"));
@@ -133,6 +138,12 @@ public class RankManager {
             this.maxPrestige = p;
         }
         this.plugin.getCore().getLogger().info(String.format("Loaded %d prestiges!", this.prestigeById.keySet().size()));
+         */
+
+        this.prestigeIncreaseCost = this.plugin.getConfig().get().getDouble("Prestiges.increase-per-prestige");
+        this.minPrestigeLevel = this.plugin.getConfig().get().getInt("Prestiges.min");
+        this.maxPrestigeLevel = this.plugin.getConfig().get().getInt("Prestiges.max");
+        this.prestigeCommands = this.plugin.getConfig().get().getStringList("Prestiges.commands");
     }
 
     public Rank getNextRank(int id) {
@@ -143,8 +154,8 @@ public class RankManager {
         return this.ranksById.getOrDefault(id - 1, null);
     }
 
-    public Prestige getNextPrestige(int id) {
-        return this.prestigeById.getOrDefault(id + 1, null);
+    public int getNextPrestige(int id) {
+        return id + 1;
     }
 
     public Prestige getPreviousPrestige(int id) {
@@ -155,8 +166,8 @@ public class RankManager {
         return this.ranksById.getOrDefault(this.onlinePlayersRanks.get(p.getUniqueId()), this.ranksById.get(1));
     }
 
-    public Prestige getPlayerPrestige(Player p) {
-        return this.prestigeById.getOrDefault(this.onlinePlayersPrestige.get(p.getUniqueId()), this.prestigeById.get(0));
+    public int getPlayerPrestige(Player p) {
+        return this.onlinePlayersPrestige.getOrDefault(p.getUniqueId(), this.minPrestigeLevel);
     }
 
     public boolean isMaxRank(Player p) {
@@ -164,7 +175,7 @@ public class RankManager {
     }
 
     public boolean isMaxPrestige(Player p) {
-        return this.getPlayerPrestige(p).getId() == this.maxPrestige.getId();
+        return this.getPlayerPrestige(p) == this.maxPrestigeLevel;
     }
 
     public boolean buyNextRank(Player p) {
@@ -189,7 +200,7 @@ public class RankManager {
         return true;
     }
 
-    public boolean buyNextPrestige(Player p) {
+    public boolean buyNextPrestige(Player p, boolean sendMessage) {
 
         if (!isMaxRank(p)) {
             p.sendMessage(this.plugin.getMessage("not_last_rank"));
@@ -201,18 +212,30 @@ public class RankManager {
             return false;
         }
 
-        Prestige currentPrestige = this.getPlayerPrestige(p);
-        Prestige toBuy = getNextPrestige(currentPrestige.getId());
+        int currentPrestige = this.getPlayerPrestige(p);
+        int toBuy = getNextPrestige(currentPrestige);
 
-        if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-            p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,d", toBuy.getCost())));
+        if (!this.plugin.getCore().getEconomy().has(p, toBuy * prestigeIncreaseCost)) {
+            p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", (double) toBuy * prestigeIncreaseCost)));
             return false;
         }
 
-        this.plugin.getCore().getEconomy().withdrawPlayer(p, toBuy.getCost());
-        toBuy.runCommands(p);
-        this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy.getId());
-        p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige-2%", toBuy.getPrefix()));
+        this.plugin.getCore().getEconomy().withdrawPlayer(p, toBuy * prestigeIncreaseCost);
+
+            /*
+            for (String s : this.prestigeCommands) {
+                Schedulers.sync().run(() -> {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+                });
+            }
+             */
+
+        this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy);
+
+        if (sendMessage) {
+            p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige-2%", this.plugin.getApi().getPrestigePrefix(toBuy)));
+        }
+
         return true;
     }
 
@@ -270,5 +293,46 @@ public class RankManager {
             e.printStackTrace();
         }
         this.plugin.getCore().getLogger().info("PrestigeTop updated!");
+    }
+
+    public boolean buyMaxPrestige(Player p) {
+
+        if (!isMaxRank(p)) {
+            p.sendMessage(this.plugin.getMessage("not_last_rank"));
+            return false;
+        }
+
+        if (isMaxPrestige(p)) {
+            p.sendMessage(this.plugin.getMessage("last_prestige"));
+            return false;
+        }
+
+        double totalMoney = 0;
+        int boughtTotal = 0;
+
+        int startPrestige = this.getPlayerPrestige(p);
+        int currentPrestige = this.getPlayerPrestige(p);
+
+        while (!isMaxPrestige(p) && this.plugin.getCore().getEconomy().has(p, totalMoney + (currentPrestige + boughtTotal + 1) * prestigeIncreaseCost)) {
+
+            totalMoney += (currentPrestige + boughtTotal + 1) * prestigeIncreaseCost;
+            boughtTotal++;
+
+            if (boughtTotal % 50 == 0) {
+                this.plugin.getCore().getEconomy().withdrawPlayer(p, totalMoney);
+                totalMoney = 0;
+                this.onlinePlayersPrestige.put(p.getUniqueId(), this.onlinePlayersPrestige.get(p.getUniqueId()) + boughtTotal);
+                boughtTotal = 0;
+                currentPrestige = this.onlinePlayersPrestige.get(p.getUniqueId());
+            }
+        }
+
+        this.plugin.getCore().getEconomy().withdrawPlayer(p, totalMoney);
+
+        this.onlinePlayersPrestige.put(p.getUniqueId(), this.onlinePlayersPrestige.get(p.getUniqueId()) + boughtTotal);
+
+        p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige, this.onlinePlayersPrestige.get(p.getUniqueId()))));
+
+        return true;
     }
 }

@@ -13049,3 +13049,8 @@ Prestige:
       - tokens give 50000000 %player%
       - cc give virtual Crystal 1 %player%
       - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+Prestiges:
+  min: 0
+  max: 10000000
+  increase-per-prestige: 100
+

@@ -111,7 +111,7 @@ public class WildPrisonPlaceholder extends PlaceholderExpansion {
         } else if (identifier.equalsIgnoreCase("rankup")) {
             return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
         } else if (identifier.equalsIgnoreCase("prestige")) {
-            return plugin.getRanks().getApi().getPlayerPrestige(player).getPrefix();
+			return plugin.getRanks().getApi().getPrestigePrefix(plugin.getRanks().getApi().getPlayerPrestige(player));
         }
         return null;
     }

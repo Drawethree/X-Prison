@@ -21,10 +21,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public final class WildPrisonAutoSell {
 
@@ -186,13 +187,14 @@ public final class WildPrisonAutoSell {
     }
 
     private void registerCommands() {
-        Commands.create()
+        /*Commands.create()
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         toggleAutoSell(c.sender());
                     }
                 }).registerAndBind(core, "autosell");
+         */
         Commands.create()
                 .assertPlayer()
                 .assertPermission("wildprison.sellprice")
@@ -229,7 +231,7 @@ public final class WildPrisonAutoSell {
                         c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%d &ain region &e%s", type.name(), price, region.getId())));
                     }
                 }).registerAndBind(core, "sellprice");
-        Commands.create()
+        /*Commands.create()
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
@@ -261,6 +263,8 @@ public final class WildPrisonAutoSell {
                         }
                     }
                 }).registerAndBind(core, "sellall");
+
+         */
     }
 
     private void toggleAutoSell(Player player) {

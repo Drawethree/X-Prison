@@ -74,7 +74,7 @@ public class TokensManager {
     private void loadBlockRewards() {
         this.blockRewards = new LinkedHashMap<>();
         for (String key : this.plugin.getBlockRewardsConfig().get().getConfigurationSection("block-rewards").getKeys(false)) {
-            long blocksNeeded = Long.valueOf(key);
+            long blocksNeeded = Long.parseLong(key);
             String message = Text.colorize(this.plugin.getBlockRewardsConfig().get().getString("block-rewards." + key + ".message"));
             List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("block-rewards." + key + ".commands");
             this.blockRewards.put(blocksNeeded, new BlockReward(blocksNeeded, commands, message));

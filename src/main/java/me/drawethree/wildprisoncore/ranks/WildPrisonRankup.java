@@ -3,19 +3,17 @@ package me.drawethree.wildprisoncore.ranks;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
-import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.ranks.api.WildPrisonRankupAPI;
 import me.drawethree.wildprisoncore.ranks.api.WildPrisonRankupAPIImpl;
 import me.drawethree.wildprisoncore.ranks.manager.RankManager;
 import me.lucko.helper.Commands;
-import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 public final class WildPrisonRankup {
@@ -30,6 +28,8 @@ public final class WildPrisonRankup {
 
     private HashMap<String, String> messages;
 
+    private List<UUID> prestigingPlayers;
+
     @Getter
     private WildPrisonCore core;
 
@@ -42,6 +42,7 @@ public final class WildPrisonRankup {
         this.loadMessages();
         this.rankManager = new RankManager(this);
         api = new WildPrisonRankupAPIImpl(this);
+        this.prestigingPlayers = new ArrayList<>(10);
         this.registerCommands();
         this.rankManager.loadAllData();
     }
@@ -85,19 +86,23 @@ public final class WildPrisonRankup {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        this.rankManager.buyNextPrestige(c.sender());
+                        this.rankManager.buyNextPrestige(c.sender(), true);
                     }
                 }).registerAndBind(core, "prestige");
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        int amount = 0;
-                        boolean buy = this.rankManager.buyNextPrestige(c.sender());
-                        while (buy && 50 > amount) {
-                            buy = this.rankManager.buyNextPrestige(c.sender());
-                            amount++;
+
+                        if (this.prestigingPlayers.contains(c.sender().getUniqueId())) {
+                            return;
                         }
+
+                        Schedulers.async().run(() -> {
+                            this.prestigingPlayers.add(c.sender().getUniqueId());
+                            this.rankManager.buyMaxPrestige(c.sender());
+                            this.prestigingPlayers.remove(c.sender().getUniqueId());
+                        });
                     }
                 }).registerAndBind(core, "maxprestige", "autoprestige");
         Commands.create()

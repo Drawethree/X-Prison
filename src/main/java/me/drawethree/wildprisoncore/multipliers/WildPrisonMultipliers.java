@@ -289,8 +289,8 @@ public final class WildPrisonMultipliers {
     }
 
     private void setupPersonalMultiplier(CommandSender sender, Player onlinePlayer, double amount, int minutes) {
-        if (amount > 1.5) {
-            sender.sendMessage(Text.colorize("&cPersonal multiplier must be max 1.5!"));
+        if (amount > 15.0) {
+            sender.sendMessage(Text.colorize("&cPersonal multiplier must be max 15!"));
             return;
         }
         if (onlinePlayer == null || !onlinePlayer.isOnline()) {
@@ -300,7 +300,7 @@ public final class WildPrisonMultipliers {
 
         if (personalMultipliers.containsKey(onlinePlayer.getUniqueId())) {
             PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
-            multiplier.addMultiplier(amount, 1.5);
+            multiplier.addMultiplier(amount, 15.0);
             multiplier.addDuration(minutes);
             personalMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
         } else {
@@ -313,12 +313,12 @@ public final class WildPrisonMultipliers {
 
 
     private void setupGlobalMultiplier(CommandSender sender, int time, double amount) {
-        if (amount > 3.0) {
-            sender.sendMessage(Text.colorize("&cGlobal multiplier must be max 3.0!"));
+        if (amount > 10.0) {
+            sender.sendMessage(Text.colorize("&cGlobal multiplier must be max 10.0!"));
             return;
         }
 
-        GLOBAL_MULTIPLIER.addMultiplier(amount, 3.0);
+        GLOBAL_MULTIPLIER.addMultiplier(amount, 10.0);
         GLOBAL_MULTIPLIER.addDuration(time);
         sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
     }
@@ -345,12 +345,12 @@ public final class WildPrisonMultipliers {
         PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
 
         if (p.hasPermission("Store.Multiplier")) {
-			toReturn.addMultiplier(2.0, 10.0);
+            toReturn.addMultiplier(10.0, 35.0);
         }
 
         for (String perm : permissionToMultiplier.keySet()) {
             if (p.hasPermission(perm)) {
-				toReturn.addMultiplier(permissionToMultiplier.get(perm), 10.0);
+                toReturn.addMultiplier(permissionToMultiplier.get(perm), 35.0);
                 break;
             }
         }

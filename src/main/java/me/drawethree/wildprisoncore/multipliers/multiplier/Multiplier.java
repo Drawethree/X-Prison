@@ -2,7 +2,6 @@ package me.drawethree.wildprisoncore.multipliers.multiplier;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.lucko.helper.promise.Promise;
 
 import java.util.UUID;
@@ -33,7 +32,7 @@ public abstract class Multiplier {
     public String getTimeLeft() {
 
         if (System.currentTimeMillis() > endTime) {
-            return "PERMANENT";
+            return "";
         }
 
 
