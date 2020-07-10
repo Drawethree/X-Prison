@@ -53,7 +53,7 @@ public class AutoMinerRegion {
                         this.parent.getCore().getEconomy().depositPlayer(p, levelToGive.getMoneyPerSec());
                         this.parent.decrementFuel(p, levelToGive.getFuelConsume());
 
-                        if (commandLevel != null) commandLevel.giveRewards(p);
+                        commandLevel.giveRewards(p);
 
                     }
                 }

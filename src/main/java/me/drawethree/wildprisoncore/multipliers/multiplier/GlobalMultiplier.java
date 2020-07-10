@@ -10,6 +10,9 @@ public class GlobalMultiplier extends Multiplier {
     public GlobalMultiplier(double multiplier, int duration) {
         super(multiplier, duration);
         if (endTime > Time.nowMillis()) {
+            if (task != null) {
+                task.cancel();
+            }
             task = Schedulers.async().runLater(() -> {
                 setMultiplier(0.0);
                 setEndTime(0);
@@ -20,6 +23,9 @@ public class GlobalMultiplier extends Multiplier {
     public GlobalMultiplier(double multiplier, long timeLeft) {
         super(multiplier, timeLeft);
         if (endTime > Time.nowMillis()) {
+            if (task != null) {
+                task.cancel();
+            }
             task = Schedulers.async().runLater(() -> {
                 setMultiplier(0.0);
                 setEndTime(0);
@@ -34,6 +40,9 @@ public class GlobalMultiplier extends Multiplier {
         this.endTime = endTime;
 
         if (endTime > Time.nowMillis()) {
+            if (task != null) {
+                task.cancel();
+            }
             task = Schedulers.async().runLater(() -> {
                 setMultiplier(0.0);
                 setEndTime(0);
@@ -54,6 +63,9 @@ public class GlobalMultiplier extends Multiplier {
         this.endTime += TimeUnit.MINUTES.toMillis(minutes);
 
         if (endTime > Time.nowMillis()) {
+            if (task != null) {
+                task.cancel();
+            }
             task = Schedulers.async().runLater(() -> {
                 setMultiplier(0.0);
                 setEndTime(0);

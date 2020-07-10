@@ -427,13 +427,13 @@ public final class WildPrisonAutoMiner {
     public AutoMinerCommandLevel getAutoMinerCommandLevel(Player p) {
 
         int autoMinerLevel = this.getAutoMinerFuelLevel(p).getLevel();
-        int maxLevel = this.getPlayerCommandLevel(p);
+        int commandLevel = this.getPlayerCommandLevel(p);
 
-        if (maxLevel > autoMinerLevel) {
-            maxLevel = autoMinerLevel;
+        if (commandLevel > autoMinerLevel) {
+            commandLevel = autoMinerLevel;
         }
 
-        return this.commandLevels.get(maxLevel);
+        return this.commandLevels.get(commandLevel);
     }
 
     public Collection<AutoMinerFuelLevel> getFuelLevels() {
