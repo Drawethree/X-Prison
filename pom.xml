@@ -92,7 +92,7 @@
             <artifactId>jets</artifactId>
             <version>LATEST</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/JetsPrisonMines-3.3.1_1.jar</systemPath>
+            <systemPath>${project.basedir}/libs/PrisonMines_2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -136,6 +136,12 @@
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.luckperms</groupId>
+            <artifactId>api</artifactId>
+            <version>5.1</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

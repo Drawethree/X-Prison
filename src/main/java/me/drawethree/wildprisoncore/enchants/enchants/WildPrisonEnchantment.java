@@ -88,8 +88,8 @@ public abstract class WildPrisonEnchantment implements Refundable {
         allEnchantments.put(13, new BlessingEnchant(WildPrisonEnchants.getInstance()));
         allEnchantments.put(14, new TokenatorEnchant(WildPrisonEnchants.getInstance()));
         allEnchantments.put(15, new KeyFinderEnchant(WildPrisonEnchants.getInstance()));
-        allEnchantments.put(16, new MillionaireEnchant(WildPrisonEnchants.getInstance()));
+        allEnchantments.put(16, new PrestigeFinderEnchant(WildPrisonEnchants.getInstance()));
         allEnchantments.put(17, new BoosterEnchant(WildPrisonEnchants.getInstance()));
-        allEnchantments.put(18, new KeyallsEnchant(WildPrisonEnchants.getInstance()));
+        allEnchantments.put(18, new FuelEnchant(WildPrisonEnchants.getInstance()));
     }
 }

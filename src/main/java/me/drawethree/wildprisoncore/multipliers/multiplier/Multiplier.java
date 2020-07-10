@@ -3,6 +3,7 @@ package me.drawethree.wildprisoncore.multipliers.multiplier;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.promise.Promise;
+import org.bukkit.ChatColor;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +52,7 @@ public abstract class Multiplier {
 
         timeLeft -= seconds * 1000;
 
-        return new StringBuilder().append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").toString();
+        return new StringBuilder().append(ChatColor.GRAY + "(" + ChatColor.WHITE).append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").append(ChatColor.GRAY + ")").toString();
     }
 
 

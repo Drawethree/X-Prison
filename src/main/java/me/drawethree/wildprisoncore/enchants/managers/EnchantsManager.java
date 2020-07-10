@@ -320,15 +320,18 @@ public class EnchantsManager {
         builder.name(enchantment.isRefundEnabled() ? enchantment.getName() : this.plugin.getMessage("enchant_cant_disenchant"));
         builder.lore(enchantment.isRefundEnabled() ? translateLore(enchantment, DISENCHANT_GUI_ITEM_LORE, level) : new ArrayList<>());
 
-        return enchantment.isRefundEnabled() ? builder.buildConsumer(handler -> {
-            if (handler.getClick() == ClickType.LEFT) {
+        return enchantment.isRefundEnabled() ? builder.buildItem().bind(handler -> {
+            if (handler.isShiftClick()) {
+                this.disenchant(enchantment, gui, level, 100);
+                gui.redraw();
+            } else if (handler.getClick() == ClickType.LEFT) {
                 this.disenchant(enchantment, gui, level, 1);
                 gui.redraw();
             } else if (handler.getClick() == ClickType.RIGHT) {
                 this.disenchant(enchantment, gui, level, 10);
                 gui.redraw();
             }
-        }) : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
+        }, ClickType.SHIFT_RIGHT, ClickType.LEFT, ClickType.RIGHT).build() : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
     }
 
     public Item getGuiItem(WildPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
@@ -337,15 +340,18 @@ public class EnchantsManager {
         builder.name(enchantment.getName());
         builder.lore(translateLore(enchantment, ENCHANT_GUI_ITEM_LORE, currentLevel));
 
-        return builder.buildConsumer(handler -> {
-            if (handler.getClick() == ClickType.LEFT) {
+        return builder.buildItem().bind(handler -> {
+            if (handler.getClick() == ClickType.SHIFT_RIGHT) {
+                this.buyEnchnant(enchantment, gui, currentLevel, 100);
+                gui.redraw();
+            } else if (handler.getClick() == ClickType.LEFT) {
                 this.buyEnchnant(enchantment, gui, currentLevel, 1);
                 gui.redraw();
             } else if (handler.getClick() == ClickType.RIGHT) {
                 this.buyEnchnant(enchantment, gui, currentLevel, 10);
                 gui.redraw();
             }
-        });
+        }, ClickType.SHIFT_RIGHT, ClickType.RIGHT, ClickType.LEFT).build();
     }
 
     private List<String> translateLore(WildPrisonEnchantment enchantment, List<String> guiItemLore, int currentLevel) {

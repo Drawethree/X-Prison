@@ -1,5 +1,5 @@
 name: WildPrisonCore
 version: ${project.version}
 main: me.drawethree.wildprisoncore.WildPrisonCore
-depend: [helper, Vault, PlaceholderAPI, WorldGuard, WorldEdit, JetsPrisonMines]
+depend: [helper, Vault, PlaceholderAPI, WorldGuard, WorldEdit, PrisonMines, LuckPerms]
 authors: [Drawethree]

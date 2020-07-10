@@ -156,7 +156,7 @@ public final class WildPrisonMultipliers {
         if (timeLeft > Time.nowMillis()) {
             GLOBAL_MULTIPLIER.setDuration(timeLeft);
         } else {
-            GLOBAL_MULTIPLIER.setDuration((long) 0);
+            GLOBAL_MULTIPLIER.setDuration(0);
         }
 
         this.core.getLogger().info(String.format("Loaded Global Multiplier %.2fx", multi));

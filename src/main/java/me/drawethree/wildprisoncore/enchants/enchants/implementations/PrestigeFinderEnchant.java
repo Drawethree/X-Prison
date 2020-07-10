@@ -2,22 +2,23 @@ package me.drawethree.wildprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class KeyallsEnchant extends WildPrisonEnchantment {
-    private final double chance;
-    private final List<String> commandsToExecute;
+public class PrestigeFinderEnchant extends WildPrisonEnchantment {
 
-    public KeyallsEnchant(WildPrisonEnchants instance) {
-        super(instance, 18);
+    private final double chance;
+    private final int minLevels;
+    private final int maxLevels;
+
+    public PrestigeFinderEnchant(WildPrisonEnchants instance) {
+        super(instance, 16);
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
+        this.minLevels = plugin.getConfig().get().getInt("enchants." + id + ".Min-Levels");
+        this.maxLevels = plugin.getConfig().get().getInt("enchants." + id + ".Max-Levels");
     }
 
     @Override
@@ -32,9 +33,9 @@ public class KeyallsEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        if (chance * enchantLevel > ThreadLocalRandom.current().nextDouble()) {
-            String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+            int levels = ThreadLocalRandom.current().nextInt(this.minLevels, this.maxLevels);
+            this.plugin.getCore().getRanks().getRankManager().givePrestige(e.getPlayer(), levels);
         }
     }
 }

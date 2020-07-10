@@ -9,6 +9,7 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import net.luckperms.api.node.Node;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,16 +20,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class RankManager {
 
     private LinkedHashMap<Integer, Rank> ranksById;
     private LinkedHashMap<Integer, Prestige> prestigeById;
+	private LinkedHashMap<Long, List<String>> prestigeRewards;
 
     private int minPrestigeLevel;
     private int maxPrestigeLevel;
@@ -54,6 +53,7 @@ public class RankManager {
         this.TOP_FORMAT_PRESTIGE = plugin.getMessage("top_format_prestige");
         this.loadRanks();
         this.loadPrestiges();
+		this.loadPrestigeRewards();
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
@@ -66,6 +66,24 @@ public class RankManager {
 
         this.updateTop10();
     }
+
+	private void loadPrestigeRewards() {
+		this.prestigeRewards = new LinkedHashMap<>();
+		this.prestigeRewards.put(1000L, Arrays.asList("essentials.warps.p1k", "essentials.warps.p1000"));
+		this.prestigeRewards.put(2500L, Arrays.asList("essentials.warps.p2.5k", "essentials.warps.p2500"));
+		this.prestigeRewards.put(5000L, Arrays.asList("essentials.warps.p5k", "essentials.warps.p5000"));
+		this.prestigeRewards.put(15000L, Arrays.asList("essentials.warps.p15k", "essentials.warps.p15000"));
+		this.prestigeRewards.put(25000L, Arrays.asList("essentials.warps.p25k", "essentials.warps.p25000"));
+		this.prestigeRewards.put(40000L, Arrays.asList("essentials.warps.p40k", "essentials.warps.p40000"));
+		this.prestigeRewards.put(50000L, Arrays.asList("essentials.warps.p50k", "essentials.warps.p50000"));
+		this.prestigeRewards.put(75000L, Arrays.asList("essentials.warps.p75k", "essentials.warps.p75000"));
+		this.prestigeRewards.put(100000L, Arrays.asList("essentials.warps.p100k", "essentials.warps.p100000"));
+		this.prestigeRewards.put(150000L, Arrays.asList("essentials.warps.p150k", "essentials.warps.p150000"));
+		this.prestigeRewards.put(200000L, Arrays.asList("essentials.warps.p200k", "essentials.warps.p200000"));
+		this.prestigeRewards.put(350000L, Arrays.asList("essentials.warps.p350k", "essentials.warps.p350000"));
+		this.prestigeRewards.put(500000L, Arrays.asList("essentials.warps.p500k", "essentials.warps.p500000"));
+		this.prestigeRewards.put(750000L, Arrays.asList("essentials.warps.p750k", "essentials.warps.p750000"));
+	}
 
     public void saveAllDataSync() {
         for (UUID uuid : this.onlinePlayersRanks.keySet()) {
@@ -200,7 +218,7 @@ public class RankManager {
         return true;
     }
 
-    public boolean buyNextPrestige(Player p, boolean sendMessage) {
+	public boolean buyNextPrestige(Player p) {
 
         if (!isMaxRank(p)) {
             p.sendMessage(this.plugin.getMessage("not_last_rank"));
@@ -232,9 +250,13 @@ public class RankManager {
 
         this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy);
 
-        if (sendMessage) {
-            p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige-2%", this.plugin.getApi().getPrestigePrefix(toBuy)));
-        }
+		if (this.prestigeRewards.get(toBuy) != null) {
+			for (String s : this.prestigeRewards.get(toBuy)) {
+				this.plugin.getCore().getLuckPerms().getUserManager().getUser(p.getUniqueId()).data().add(Node.builder(s).build());
+			}
+		}
+
+		p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige-2%", this.plugin.getApi().getPrestigePrefix(toBuy)));
 
         return true;
     }
@@ -313,6 +335,11 @@ public class RankManager {
         int startPrestige = this.getPlayerPrestige(p);
         int currentPrestige = this.getPlayerPrestige(p);
 
+		if (!this.plugin.getCore().getEconomy().has(p, (startPrestige + 1) * prestigeIncreaseCost)) {
+			p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", (double) (startPrestige + 1) * prestigeIncreaseCost)));
+			return false;
+		}
+
         while (!isMaxPrestige(p) && this.plugin.getCore().getEconomy().has(p, totalMoney + (currentPrestige + boughtTotal + 1) * prestigeIncreaseCost)) {
 
             totalMoney += (currentPrestige + boughtTotal + 1) * prestigeIncreaseCost;
@@ -331,8 +358,34 @@ public class RankManager {
 
         this.onlinePlayersPrestige.put(p.getUniqueId(), this.onlinePlayersPrestige.get(p.getUniqueId()) + boughtTotal);
 
-        p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige, this.onlinePlayersPrestige.get(p.getUniqueId()))));
+		for (long l : this.prestigeRewards.keySet()) {
+			if (this.onlinePlayersPrestige.get(p.getUniqueId()) >= l) {
+				for (String s : this.prestigeRewards.get(l)) {
+					this.plugin.getCore().getLuckPerms().getUserManager().getUser(p.getUniqueId()).data().add(Node.builder(s).build());
+				}
+			}
+		}
+
+		if (startPrestige < this.onlinePlayersPrestige.get(p.getUniqueId())) {
+			p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige, this.onlinePlayersPrestige.get(p.getUniqueId()))));
+		}
 
         return true;
     }
+
+	public void givePrestige(Player player, int levels) {
+
+		if (!isMaxRank(player) || isMaxPrestige(player)) {
+			return;
+		}
+
+		int currentPrestige = this.getPlayerPrestige(player);
+
+		if (currentPrestige + levels > this.maxPrestigeLevel) {
+			this.onlinePlayersPrestige.put(player.getUniqueId(), this.maxPrestigeLevel);
+		} else {
+			this.onlinePlayersPrestige.put(player.getUniqueId(), this.onlinePlayersPrestige.get(player.getUniqueId()) + levels);
+		}
+		player.sendMessage(Text.colorize("&e&lPRESTIGE FINDER &8» &7You've just found a &fX" + levels + " Prestige Level &7while mining."));
+	}
 }

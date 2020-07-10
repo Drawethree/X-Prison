@@ -86,7 +86,7 @@ public final class WildPrisonRankup {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        this.rankManager.buyNextPrestige(c.sender(), true);
+						this.rankManager.buyNextPrestige(c.sender());
                     }
                 }).registerAndBind(core, "prestige");
         Commands.create()

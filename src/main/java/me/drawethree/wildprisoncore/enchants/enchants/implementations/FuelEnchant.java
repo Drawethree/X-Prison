@@ -10,14 +10,15 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MillionaireEnchant extends WildPrisonEnchantment {
-    private final double chance;
-    private final List<String> commands;
+public class FuelEnchant extends WildPrisonEnchantment {
 
-    public MillionaireEnchant(WildPrisonEnchants instance) {
-        super(instance, 16);
+    private final double chance;
+    private final List<String> commandsToExecute;
+
+    public FuelEnchant(WildPrisonEnchants instance) {
+        super(instance, 18);
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.commands = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
+        this.commandsToExecute = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
     }
 
     @Override
@@ -32,9 +33,9 @@ public class MillionaireEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
-            String cmdToRun = commands.get(ThreadLocalRandom.current().nextInt(commands.size()));
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmdToRun.replace("%player%", e.getPlayer().getName()));
+        if (chance * enchantLevel > ThreadLocalRandom.current().nextDouble()) {
+            String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
         }
     }
 }

@@ -9,15 +9,15 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TokenatorEnchant extends WildPrisonEnchantment {
-    private final long maxAmount;
-    private final long minAmount;
+	//private final long maxAmount;
+	//private final long minAmount;
     private final double chance;
 
 
     public TokenatorEnchant(WildPrisonEnchants instance) {
         super(instance, 14);
-        this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
-        this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
+		//this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
+		//this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
@@ -34,6 +34,8 @@ public class TokenatorEnchant extends WildPrisonEnchantment {
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+			int minAmount = 20 * ((enchantLevel / 100) + 1);
+			int maxAmount = minAmount + 100;
             long randAmount;
             randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
             plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), randAmount);

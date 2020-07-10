@@ -8,12 +8,16 @@ import me.drawethree.wildprisoncore.autosell.WildPrisonAutoSell;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
+import me.drawethree.wildprisoncore.events.WildPrisonEvent;
+import me.drawethree.wildprisoncore.events.impl.KeyAllEvent;
 import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisoncore.placeholders.WildPrisonPlaceholder;
 import me.drawethree.wildprisoncore.ranks.WildPrisonRankup;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
-import me.jet315.prisonmines.JetsPrisonMines;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import net.lightshard.prisonmines.PrisonMines;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -25,8 +29,9 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
 
     private MySQLDatabase sqlDatabase;
     private Economy economy;
-    private JetsPrisonMines jetsPrisonMines;
+    private PrisonMines prisonMines;
     private FileManager fileManager;
+    private LuckPerms luckPerms;
 
     private WildPrisonTokens tokens;
     private WildPrisonRankup ranks;
@@ -35,6 +40,8 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
     private WildPrisonAutoSell autoSell;
     private WildPrisonAutoMiner autoMiner;
     private WildPrisonAutoJoin autoJoin;
+
+    private WildPrisonEvent keyAllEvent;
 
     @Override
     protected void enable() {
@@ -50,8 +57,12 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoMiner = new WildPrisonAutoMiner(this);
         this.autoJoin = new WildPrisonAutoJoin(this);
 
+        this.keyAllEvent = KeyAllEvent.getInstance();
+
         this.setupEconomy();
-        this.jetsPrisonMines = (JetsPrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines");
+        this.luckPerms = LuckPermsProvider.get();
+        this.prisonMines = PrisonMines.getInstance();
+        //this.jetsPrisonMines = (PrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines");
         this.registerPlaceholders();
 
         this.tokens.enable();
@@ -62,7 +73,9 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoMiner.enable();
         this.autoJoin.enable();
 
+        this.startEvents();
     }
+
 
     @Override
     protected void disable() {
@@ -75,6 +88,10 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoJoin.disable();
 
         this.sqlDatabase.close();
+    }
+
+    private void startEvents() {
+        this.keyAllEvent.start();
     }
 
     private void registerPlaceholders() {

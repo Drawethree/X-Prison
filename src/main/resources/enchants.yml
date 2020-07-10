@@ -255,19 +255,19 @@ enchants:
       Enabled: true
       InGuiSlot: 41
   '16':
-    Name: '&aMillionaire'
+    Name: '&aPrestige Finder'
     Enabled: true
+    Min-Levels: 1
+    Max-Levels: 10
     InGuiSlot: 42
     Increase-Cost-by: 175
     Max: 500
     Cost: 175
-    Description: '&7&o(( Ability to find Store Coupons while mining. ))'
+    Description: '&7&o(( Ability to find prestige levels while mining. ))'
     Refund:
       Enabled: true
       InGuiSlot: 42
     Chance: 4.0E-7
-    Commands:
-      - voucher give Coupon 1 %player%
   '17':
     Name: '&dBooster'
     Enabled: true

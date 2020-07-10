@@ -47,6 +47,10 @@ public class GlobalMultiplier extends Multiplier {
 
         this.startTime = System.currentTimeMillis();
 
+		if (this.endTime < this.startTime) {
+			this.endTime = this.startTime;
+		}
+
         this.endTime += TimeUnit.MINUTES.toMillis(minutes);
 
         if (endTime > Time.nowMillis()) {
