@@ -11,14 +11,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CharityEnchant extends WildPrisonEnchantment {
 
-   /*private final double chance;
+    private final double chance;
+    /*
     private final long minAmount;
     private final long maxAmount;
     */
 
     public CharityEnchant(WildPrisonEnchants instance) {
         super(instance, 11);
-        /*this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        /*
         this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Money");
         this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Money");
          */
@@ -37,10 +39,9 @@ public class CharityEnchant extends WildPrisonEnchantment {
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-        double chance = enchantLevel < 25 ? 0.000025 : enchantLevel < 50 ? 0.000022 : enchantLevel < 75 ? 0.00002 : enchantLevel < 100 ? 0.000018 : 0.0000167;
+        //double chance = enchantLevel < 25 ? 0.000025 : enchantLevel < 50 ? 0.000022 : enchantLevel < 75 ? 0.00002 : enchantLevel < 100 ? 0.000018 : 0.0000167;
 
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
-
+        if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             double selfAmount = enchantLevel < 25 ? 100000000000000000.0 : enchantLevel < 50 ? 250000000000000000.0 : enchantLevel < 75 ? 500000000000000000.0 : enchantLevel < 100 ? 750000000000000000.0 : 1000000000000000000.0;
             double othersAmount = selfAmount / 10;
 

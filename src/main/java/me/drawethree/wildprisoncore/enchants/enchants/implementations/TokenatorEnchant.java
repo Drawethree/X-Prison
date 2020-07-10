@@ -33,7 +33,7 @@ public class TokenatorEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 			int minAmount = 20 * ((enchantLevel / 100) + 1);
 			int maxAmount = minAmount + 100;
             long randAmount;

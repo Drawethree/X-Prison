@@ -10,15 +10,17 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlessingEnchant extends WildPrisonEnchantment {
-   /* private final double chance;
+    private final double chance;
+    /*
     private final long minAmount;
     private final long maxAmount;
-
     */
 
     public BlessingEnchant(WildPrisonEnchants instance) {
         super(instance, 13);
-        /*this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+
+        /*
         this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
         this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
 
@@ -38,11 +40,11 @@ public class BlessingEnchant extends WildPrisonEnchantment {
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-        double chance = enchantLevel < 25 ? 0.00002 : enchantLevel < 50 ? 0.0000167 : enchantLevel < 75 ? 0.0000143 : enchantLevel < 100 ? 0.0000125 : 0.00001;
+        //double chance = enchantLevel < 25 ? 0.00002 : enchantLevel < 50 ? 0.0000167 : enchantLevel < 75 ? 0.0000143 : enchantLevel < 100 ? 0.0000125 : 0.00001;
 
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+        if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 
-            long selfAmount = enchantLevel < 25 ? 10000000 : enchantLevel < 50 ? 20000000 : enchantLevel < 75 ? 30000000 : enchantLevel < 100 ? 40000000 : 50000000;
+            long selfAmount = enchantLevel < 25 ? 2000000 : enchantLevel < 50 ? 4000000 : enchantLevel < 75 ? 6000000 : enchantLevel < 100 ? 8000000 : 10000000;
             long othersAmount = selfAmount / 10;
 
             for (Player p : Players.all()) {

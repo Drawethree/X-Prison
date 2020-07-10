@@ -33,7 +33,7 @@ public class PrestigeFinderEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             int levels = ThreadLocalRandom.current().nextInt(this.minLevels, this.maxLevels);
             this.plugin.getCore().getRanks().getRankManager().givePrestige(e.getPlayer(), levels);
         }

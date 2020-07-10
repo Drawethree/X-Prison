@@ -10,14 +10,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class SalaryEnchant extends WildPrisonEnchantment {
 
-    private double minAmount;
-    private double maxAmount;
+    private long minAmount;
+    private long maxAmount;
     private double chance;
 
     public SalaryEnchant(WildPrisonEnchants instance) {
         super(instance, 12);
-        this.minAmount = instance.getConfig().get().getInt("enchants." + id + ".Min-Money");
-        this.maxAmount = instance.getConfig().get().getInt("enchants." + id + ".Max-Money");
+        this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Money");
+        this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Money");
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
@@ -34,12 +34,10 @@ public class SalaryEnchant extends WildPrisonEnchantment {
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-        if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
-
-            double randAmount = ThreadLocalRandom.current().nextDouble(minAmount, maxAmount);
+        if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+            double randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
 
             plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
-            e.getPlayer().sendMessage("Debug Message: Salary enchant triggered, giving you " + String.format("$%,.0f", randAmount));
         }
 
     }

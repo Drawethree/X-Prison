@@ -50,7 +50,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
             return;
         }
 
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             Block b = e.getBlock();
             List<ProtectedRegion> regions = plugin.getCore().getWorldGuard().getRegionContainer().get(b.getWorld()).getApplicableRegions(b.getLocation()).getRegions().stream().filter(reg -> reg.getId().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {

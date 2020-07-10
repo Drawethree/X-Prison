@@ -32,7 +32,7 @@ public class BoosterEnchant extends WildPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
             /*for (String s : this.commandsToExecute) {
