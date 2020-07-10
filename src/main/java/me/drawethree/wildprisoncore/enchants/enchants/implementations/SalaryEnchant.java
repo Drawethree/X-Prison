@@ -39,6 +39,7 @@ public class SalaryEnchant extends WildPrisonEnchantment {
             double randAmount = ThreadLocalRandom.current().nextDouble(minAmount, maxAmount);
 
             plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
+            e.getPlayer().sendMessage("Debug Message: Salary enchant triggered, giving you " + String.format("$%,.0f", randAmount));
         }
 
     }
