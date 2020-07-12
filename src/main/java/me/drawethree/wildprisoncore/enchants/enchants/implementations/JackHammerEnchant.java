@@ -5,7 +5,6 @@ import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
-import net.lightshard.prisonmines.mine.Mine;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -80,9 +79,10 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                     }
                 }
 
-                Mine mine = plugin.getCore().getPrisonMines().getAPI().getByLocation(e.getBlock().getLocation());
-                plugin.getCore().getPrisonMines().getAPI().onBlockBreak(mine, blocksAffected.size());
-                //plugin.getCore().getJetsPrisonMines().getAPI().blockBreak(blocksAffected);
+                //Mine mine = plugin.getCore().getPrisonMines().getAPI().getByLocation(e.getBlock().getLocation());
+                //plugin.getCore().getPrisonMines().getAPI().onBlockBreak(mine, blocksAffected.size());
+
+                plugin.getCore().getJetsPrisonMines().getAPI().blockBreak(blocksAffected);
                 //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
 
                 plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));

@@ -14,8 +14,8 @@ import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisoncore.placeholders.WildPrisonPlaceholder;
 import me.drawethree.wildprisoncore.ranks.WildPrisonRankup;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
+import me.jet315.prisonmines.JetsPrisonMines;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
-import net.lightshard.prisonmines.PrisonMines;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.milkbowl.vault.economy.Economy;
@@ -29,7 +29,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
 
     private MySQLDatabase sqlDatabase;
     private Economy economy;
-    private PrisonMines prisonMines;
+    private JetsPrisonMines jetsPrisonMines;
     private FileManager fileManager;
     private LuckPerms luckPerms;
 
@@ -61,8 +61,8 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
 
         this.setupEconomy();
         this.luckPerms = LuckPermsProvider.get();
-        this.prisonMines = PrisonMines.getInstance();
-        //this.jetsPrisonMines = (PrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines");
+         // this.prisonMines = PrisonMines.getInstance();
+        this.jetsPrisonMines = (JetsPrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines");
         this.registerPlaceholders();
 
         this.tokens.enable();
