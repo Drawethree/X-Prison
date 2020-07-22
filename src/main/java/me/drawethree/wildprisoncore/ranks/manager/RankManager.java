@@ -386,6 +386,15 @@ public class RankManager {
 		} else {
 			this.onlinePlayersPrestige.put(player.getUniqueId(), this.onlinePlayersPrestige.get(player.getUniqueId()) + levels);
 		}
+
+        for (long l : this.prestigeRewards.keySet()) {
+            if (this.onlinePlayersPrestige.get(player.getUniqueId()) >= l) {
+                for (String s : this.prestigeRewards.get(l)) {
+                    this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()).data().add(Node.builder(s).build());
+                }
+            }
+        }
+
 		player.sendMessage(Text.colorize("&e&lPRESTIGE FINDER &8» &7You've just found a &fX" + levels + " Prestige Level &7while mining."));
 	}
 }
