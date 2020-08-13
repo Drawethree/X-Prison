@@ -224,7 +224,7 @@ public class TokensManager {
         String displayName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
         displayName = displayName.replace(" TOKENS", "").replace(",", "");
         try {
-            int tokenAmount = Integer.parseInt(displayName);
+            long tokenAmount = Long.parseLong(displayName);
             int itemAmount = item.getAmount();
             if (shiftClick) {
                 p.setItemInHand(null);
@@ -386,7 +386,7 @@ public class TokensManager {
             long currentBroken = getPlayerBrokenBlocks(player);
             long currentBrokenWeekly = getPlayerBrokenBlocksWeekly(player);
 
-            BlockReward nextReward = getNextBlockReward(player);
+            BlockReward nextReward = this.getNextBlockReward(player);
 
             if (!player.isOnline()) {
                 this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBroken + amount, player.getUniqueId().toString());
@@ -395,10 +395,14 @@ public class TokensManager {
                 blocksCache.put(player.getUniqueId(), currentBroken + amount);
                 blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + amount);
 
-                if (nextReward != null && nextReward.getBlocksRequired() <= currentBroken + amount) {
+                player.sendMessage(String.format("DEBUG: %,d / %,d Blocks", blocksCache.get(player.getUniqueId()), nextReward.getBlocksRequired()));
+
+                if (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
+                    player.sendMessage(String.format("REWARDS TRIGGERED"));
                     nextReward.giveTo(player);
                 }
             }
+
         });
     }
 

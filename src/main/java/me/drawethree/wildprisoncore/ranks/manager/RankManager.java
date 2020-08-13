@@ -253,6 +253,7 @@ public class RankManager {
 		if (this.prestigeRewards.get(toBuy) != null) {
 			for (String s : this.prestigeRewards.get(toBuy)) {
 				this.plugin.getCore().getLuckPerms().getUserManager().getUser(p.getUniqueId()).data().add(Node.builder(s).build());
+                this.plugin.getCore().getLuckPerms().getUserManager().saveUser(this.plugin.getCore().getLuckPerms().getUserManager().getUser(p.getUniqueId()));
 			}
 		}
 
@@ -362,6 +363,7 @@ public class RankManager {
 			if (this.onlinePlayersPrestige.get(p.getUniqueId()) >= l) {
 				for (String s : this.prestigeRewards.get(l)) {
 					this.plugin.getCore().getLuckPerms().getUserManager().getUser(p.getUniqueId()).data().add(Node.builder(s).build());
+					this.plugin.getCore().getLuckPerms().getUserManager().saveUser(this.plugin.getCore().getLuckPerms().getUserManager().getUser(p.getUniqueId()));
 				}
 			}
 		}
@@ -391,6 +393,7 @@ public class RankManager {
             if (this.onlinePlayersPrestige.get(player.getUniqueId()) >= l) {
                 for (String s : this.prestigeRewards.get(l)) {
                     this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()).data().add(Node.builder(s).build());
+                    this.plugin.getCore().getLuckPerms().getUserManager().saveUser(this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()));
                 }
             }
         }

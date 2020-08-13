@@ -131,7 +131,7 @@ public final class WildPrisonTokens {
                         this.tokensManager.sendBlocksTopWeekly(c.sender());
                     }
                 })
-                .registerAndBind(core, "blockstopweekly", "blockstopw");
+                .registerAndBind(core, "blockstopweekly", "blockstopw", "btw");
         Commands.create()
                 .assertOp()
                 .handler(c -> {

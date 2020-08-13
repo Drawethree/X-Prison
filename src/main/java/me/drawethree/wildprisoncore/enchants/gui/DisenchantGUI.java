@@ -45,7 +45,13 @@ public class DisenchantGUI extends Gui {
                     if (!this.getPlayer().getItemInHand().equals(this.pickAxe)) {
                         this.getPlayer().getInventory().remove(this.pickAxe);
                     }
+                    ItemStack inHand = this.getPlayer().getItemInHand();
                     this.getPlayer().setItemInHand(this.pickAxe);
+
+                    if (inHand != null) {
+                        this.getPlayer().getInventory().addItem(inHand);
+                    }
+
                     Schedulers.async().runLater(() -> {
                         ((Player) e.getPlayer()).updateInventory();
                     }, 5);
