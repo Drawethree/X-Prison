@@ -291,13 +291,18 @@ public class EnchantsManager {
 
     public boolean disenchant(WildPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
+
+        if (currentLevel <= 0) {
+            gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
+            return false;
+        }
+
         long totalRefunded = 0;
 
         for (int i = 0; i < substraction; i++, currentLevel--) {
 
-            if (currentLevel == 0) {
-                gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
-                return false;
+            if (currentLevel <= 0) {
+                break;
             }
 
             long cost = enchantment.getCostOfLevel(currentLevel);

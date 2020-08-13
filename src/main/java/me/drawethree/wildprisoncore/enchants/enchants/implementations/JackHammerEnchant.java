@@ -87,7 +87,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
 
                 plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
-                plugin.getCore().getTokens().getTokensManager().addBlocksBroken(p, blockCount);
+                plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
             }
         }
     }
