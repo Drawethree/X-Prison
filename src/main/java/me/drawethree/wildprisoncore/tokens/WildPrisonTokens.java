@@ -94,7 +94,7 @@ public final class WildPrisonTokens {
                 .filter(e -> this.core.getWorldGuard().getRegionManager(e.getBlock().getWorld()).getApplicableRegions(e.getBlock().getLocation()).getRegions().stream().filter(region -> region.getId().toLowerCase().startsWith("mine")).findAny().isPresent())
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp") && !e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
                 .handler(e -> {
-                    tokensManager.addBlocksBroken(e.getPlayer(), 1);
+					tokensManager.addBlocksBroken(null, e.getPlayer(), 1);
                     if (chance >= ThreadLocalRandom.current().nextDouble()) {
                         long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
                         tokensManager.giveTokens(e.getPlayer(), randAmount, null);
@@ -157,6 +157,33 @@ public final class WildPrisonTokens {
                     }
                 })
                 .registerAndBind(core, "blocks", "block");
+		Commands.create()
+				.assertOp()
+				.handler(c -> {
+					if (c.args().size() == 3) {
+
+						Player target = c.arg(1).parseOrFail(Player.class);
+						long amount = c.arg(2).parseOrFail(Long.class);
+
+						switch (c.rawArg(0).toLowerCase()) {
+							case "add":
+								this.tokensManager.addBlocksBroken(c.sender(), target, amount);
+								break;
+							case "remove":
+								this.tokensManager.removeBlocksBroken(c.sender(), target, amount);
+								break;
+							case "set":
+								this.tokensManager.setBlocksBroken(c.sender(), target, amount);
+								break;
+							default:
+								c.sender().sendMessage(Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
+								break;
+						}
+					} else {
+						c.sender().sendMessage(Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
+					}
+				})
+				.registerAndBind(core, "blocksadmin", "blocksa");
     }
 
     private void loadMessages() {

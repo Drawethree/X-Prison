@@ -36,6 +36,7 @@ public class TokensManager {
     private WildPrisonTokens plugin;
     private String SPACER_LINE;
     private String TOP_FORMAT_BLOCKS;
+	private String TOP_FORMAT_BLOCKS_YOUR;
     private String TOP_FORMAT_TOKENS;
     private HashMap<UUID, Long> tokensCache = new HashMap<>();
     private HashMap<UUID, Long> blocksCache = new HashMap<>();
@@ -52,6 +53,7 @@ public class TokensManager {
         this.plugin = plugin;
         this.SPACER_LINE = plugin.getMessage("top_spacer_line");
         this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
+		this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
         this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
         this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 
@@ -380,7 +382,15 @@ public class TokensManager {
         });
     }
 
-    public void addBlocksBroken(Player player, int amount) {
+	public void addBlocksBroken(CommandSender sender, Player player, long amount) {
+
+		if (amount <= 0) {
+			if (sender != null) {
+				sender.sendMessage(Text.colorize("&cPlease specify amount greater than 0!"));
+			}
+			return;
+		}
+
         Schedulers.async().run(() -> {
 
             long currentBroken = getPlayerBrokenBlocks(player);
@@ -395,16 +405,87 @@ public class TokensManager {
                 blocksCache.put(player.getUniqueId(), currentBroken + amount);
                 blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + amount);
 
-                player.sendMessage(String.format("DEBUG: %,d / %,d Blocks", blocksCache.get(player.getUniqueId()), nextReward.getBlocksRequired()));
-
-                if (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-                    player.sendMessage(String.format("REWARDS TRIGGERED"));
+				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
+					player.sendMessage(String.format("REWARD %,d TRIGGERED", nextReward.getBlocksRequired()));
                     nextReward.giveTo(player);
+					nextReward = this.getNextBlockReward(nextReward);
                 }
             }
 
+			if (sender != null) {
+				sender.sendMessage(plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+			}
         });
     }
+
+	private BlockReward getNextBlockReward(BlockReward oldReward) {
+		boolean next = false;
+		for (long l : blockRewards.keySet()) {
+			if (next) {
+				return blockRewards.get(l);
+			}
+			if (l == oldReward.getBlocksRequired()) {
+				next = true;
+			}
+		}
+
+		return null;
+	}
+
+	public void removeBlocksBroken(CommandSender sender, Player player, long amount) {
+
+		if (amount <= 0) {
+			sender.sendMessage(Text.colorize("&cPlease specify amount greater than 0!"));
+			return;
+		}
+
+		Schedulers.async().run(() -> {
+
+			long currentBroken = getPlayerBrokenBlocks(player);
+			long currentBrokenWeekly = getPlayerBrokenBlocksWeekly(player);
+
+			if (!player.isOnline()) {
+				this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBroken - amount, player.getUniqueId().toString());
+				this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBrokenWeekly - amount, player.getUniqueId().toString());
+			} else {
+				blocksCache.put(player.getUniqueId(), currentBroken - amount);
+				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly - amount);
+			}
+
+			sender.sendMessage(plugin.getMessage("admin_remove_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+
+		});
+	}
+
+	public void setBlocksBroken(CommandSender sender, Player player, long amount) {
+
+		if (amount < 0) {
+			sender.sendMessage(Text.colorize("&cPlease specify positive amount!"));
+			return;
+		}
+
+		Schedulers.async().run(() -> {
+
+			BlockReward nextReward = this.getNextBlockReward(player);
+
+			if (!player.isOnline()) {
+				this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", amount, player.getUniqueId().toString());
+				this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", amount, player.getUniqueId().toString());
+			} else {
+				blocksCache.put(player.getUniqueId(), amount);
+				blocksCacheWeekly.put(player.getUniqueId(), amount);
+
+				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
+					player.sendMessage(String.format("REWARD %,d TRIGGERED", nextReward.getBlocksRequired()));
+					nextReward.giveTo(player);
+					nextReward = this.getNextBlockReward(nextReward);
+				}
+			}
+
+			sender.sendMessage(plugin.getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+
+		});
+	}
 
     private void updateTokensTop() {
         top10Tokens = new LinkedHashMap<>();
@@ -435,7 +516,7 @@ public class TokensManager {
     private void updateBlocksTopWeekly() {
         top10BlocksWeekly = new LinkedHashMap<>();
         this.plugin.getCore().getLogger().info("Starting updating BlocksTop - Weekly");
-        try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+		try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC").executeQuery()) {
             while (set.next()) {
                 top10BlocksWeekly.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
             }
@@ -529,9 +610,24 @@ public class TokensManager {
                     break;
                 }
             }
+			if (sender instanceof Player) {
+				Player p = (Player) sender;
+				sender.sendMessage(TOP_FORMAT_BLOCKS_YOUR.replace("%position%", String.valueOf(this.getBlocksTopWeeklyPosition(p))).replace("%amount%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId()))));
+			}
             sender.sendMessage(Text.colorize(SPACER_LINE));
         });
     }
+
+
+	public int getBlocksTopWeeklyPosition(Player p) {
+		for (int i = 0; i < top10BlocksWeekly.keySet().size(); i++) {
+			UUID uuid = (UUID) top10BlocksWeekly.keySet().toArray()[i];
+			if (uuid.equals(p.getUniqueId())) {
+				return i + 1;
+			}
+		}
+		return -1;
+	}
 
     public BlockReward getNextBlockReward(OfflinePlayer p) {
         long blocksBroken = this.getPlayerBrokenBlocks(p);
