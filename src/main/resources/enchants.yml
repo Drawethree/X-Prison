@@ -170,9 +170,7 @@ enchants:
     Enabled: true
     InGuiSlot: 36
     Increase-Cost-by: 200
-    Cooldown: 10
     Max: 500
-    Chance: 4.0E-4
     Cost: 200
     Description: '&7&o(( Ability to break full layer of your mine while mining))'
     Refund:

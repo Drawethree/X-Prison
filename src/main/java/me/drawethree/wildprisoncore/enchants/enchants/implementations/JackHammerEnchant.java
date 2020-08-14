@@ -3,8 +3,6 @@ package me.drawethree.wildprisoncore.enchants.enchants.implementations;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
-import me.lucko.helper.cooldown.Cooldown;
-import me.lucko.helper.cooldown.CooldownMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -12,22 +10,18 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class JackHammerEnchant extends WildPrisonEnchantment {
 
-    private final double chance;
-    private final int cooldown;
-    private final CooldownMap<Player> cooldownMap;
+
+    private final HashMap<UUID, Integer> progress = new HashMap<>();
 
     public JackHammerEnchant(WildPrisonEnchants instance) {
         super(instance, 10);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.cooldown = plugin.getConfig().get().getInt("enchants." + id + ".Cooldown");
-        this.cooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
     }
 
     @Override
@@ -45,11 +39,11 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
         if (plugin.hasJackHammerDisabled(e.getPlayer())) {
             return;
         }
-        if (!cooldownMap.test(e.getPlayer())) {
-            return;
-        }
 
-        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+        int currentProgress = this.progress.getOrDefault(e.getPlayer().getUniqueId(), 0);
+
+
+        if (currentProgress + 1 >= this.getRequiredBlocks(enchantLevel)) {
             Block b = e.getBlock();
             List<ProtectedRegion> regions = plugin.getCore().getWorldGuard().getRegionContainer().get(b.getWorld()).getApplicableRegions(b.getLocation()).getRegions().stream().filter(reg -> reg.getId().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
@@ -86,10 +80,29 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                 //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
 
                 plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
-                plugin.getCore().getAutoSell().addToCurrentEarnings(p,plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
+                plugin.getCore().getAutoSell().addToCurrentEarnings(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
             }
+        } else {
+            this.progress.put(e.getPlayer().getUniqueId(), currentProgress + 1);
+        }
+    }
+
+
+    public int getRequiredBlocks(int enchantLevel) {
+        if (enchantLevel <= 100) {
+            return 1800;
+        } else if (enchantLevel <= 200) {
+            return 1500;
+        } else if (enchantLevel <= 300) {
+            return 1200;
+        } else if (enchantLevel <= 400) {
+            return 900;
+        } else if (enchantLevel <= 499) {
+            return 600;
+        } else {
+            return 300;
         }
     }
 }
