@@ -44,18 +44,73 @@ public class BlessingEnchant extends WildPrisonEnchantment {
 
         if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 
-            long selfAmount = enchantLevel < 25 ? 2000000 : enchantLevel < 50 ? 4000000 : enchantLevel < 75 ? 6000000 : enchantLevel < 100 ? 8000000 : 10000000;
-            long othersAmount = selfAmount / 10;
+            //long selfAmount = enchantLevel < 25 ? 2000000 : enchantLevel < 50 ? 4000000 : enchantLevel < 75 ? 6000000 : enchantLevel < 100 ? 8000000 : 10000000;
+            //long othersAmount = selfAmount / 10;
+
+            long selfAmount = this.getSelfAmount(enchantLevel);
+            long othersAmount = this.getOthersAmount(enchantLevel);
 
             for (Player p : Players.all()) {
                 if (p.equals(e.getPlayer())) {
                     plugin.getCore().getTokens().getTokensManager().giveTokens(p, selfAmount, null);
                     p.sendMessage(plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d", selfAmount)));
                 } else {
-                    plugin.getCore().getTokens().getTokensManager().giveTokens(p, othersAmount, null);
-                    p.sendMessage(plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", othersAmount)).replace("%player%", e.getPlayer().getName()));
+                    if (othersAmount > 0) {
+                        plugin.getCore().getTokens().getTokensManager().giveTokens(p, othersAmount, null);
+                        p.sendMessage(plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", othersAmount)).replace("%player%", e.getPlayer().getName()));
+                    }
                 }
             }
+        }
+    }
+
+    public long getSelfAmount(int enchantLevel) {
+        if (enchantLevel <= 20) {
+            return 700000;
+        } else if (enchantLevel <= 30) {
+            return 1400000;
+        } else if (enchantLevel <= 40) {
+            return 2100000;
+        } else if (enchantLevel <= 50) {
+            return 2800000;
+        } else if (enchantLevel <= 60) {
+            return 3500000;
+        } else if (enchantLevel <= 70) {
+            return 4200000;
+        } else if (enchantLevel <= 80) {
+            return 4900000;
+        } else if (enchantLevel <= 90) {
+            return 5600000;
+        } else if (enchantLevel <= 99) {
+            return 6300000;
+        } else {
+            return 7000000;
+        }
+    }
+
+    public long getOthersAmount(int enchantLevel) {
+        if (enchantLevel <= 10) {
+            return 0;
+        } else if (enchantLevel <= 20) {
+            return 35000;
+        } else if (enchantLevel <= 30) {
+            return 70000;
+        } else if (enchantLevel <= 40) {
+            return 105000;
+        } else if (enchantLevel <= 50) {
+            return 140000;
+        } else if (enchantLevel <= 60) {
+            return 175000;
+        } else if (enchantLevel <= 70) {
+            return 210000;
+        } else if (enchantLevel <= 80) {
+            return 245000;
+        } else if (enchantLevel <= 90) {
+            return 280000;
+        } else if (enchantLevel <= 99) {
+            return 315000;
+        } else {
+            return 350000;
         }
     }
 }
