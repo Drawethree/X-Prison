@@ -51,6 +51,7 @@ public class AutoMinerRegion {
 
                         this.parent.getCore().getTokens().getApi().addTokens(p, (long) levelToGive.getTokensPerSec());
                         this.parent.getCore().getEconomy().depositPlayer(p, levelToGive.getMoneyPerSec());
+                        this.parent.getCore().getAutoSell().addToCurrentEarnings(p, levelToGive.getMoneyPerSec());
                         this.parent.decrementFuel(p, levelToGive.getFuelConsume());
 
                         commandLevel.giveRewards(p);

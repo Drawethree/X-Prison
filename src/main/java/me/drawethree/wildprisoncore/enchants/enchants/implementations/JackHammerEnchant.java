@@ -86,6 +86,7 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
                 //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
 
                 plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
+                plugin.getCore().getAutoSell().addToCurrentEarnings(p,plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
             }

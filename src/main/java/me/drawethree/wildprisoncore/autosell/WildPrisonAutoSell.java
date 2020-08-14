@@ -89,23 +89,11 @@ public final class WildPrisonAutoSell {
 
     private void runBroadcastTask() {
         Schedulers.async().runRepeating(() -> {
-            /*for (Player p : lastMinuteEarnings.keySet()) {
-                if (lastMinuteEarnings.get(p) > 0) {
-                    p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,d", lastMinuteEarnings.get(p))));
-                }
-            }
-            lastMinuteEarnings.clear();*/
-            HashMap<UUID, Double> temp = new HashMap<>();
             Players.all().stream().filter(p -> lastMinuteEarnings.containsKey(p.getUniqueId())).forEach(p -> {
                 double lastAmount = lastMinuteEarnings.get(p.getUniqueId());
-                double currentAmount = (long) core.getEconomy().getBalance(p);
-                if (currentAmount > lastAmount) {
-                    p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,.0f", currentAmount - lastAmount)));
-                }
-                temp.put(p.getUniqueId(), currentAmount);
+                p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,.0f", lastAmount)));
             });
             lastMinuteEarnings.clear();
-            lastMinuteEarnings = temp;
         }, 0, TimeUnit.SECONDS, 1, TimeUnit.MINUTES);
     }
 
@@ -140,12 +128,7 @@ public final class WildPrisonAutoSell {
                             double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
 
                             core.getEconomy().depositPlayer(e.getPlayer(), amount);
-
-                            if (!lastMinuteEarnings.containsKey(e.getPlayer().getUniqueId())) {
-                                lastMinuteEarnings.put(e.getPlayer().getUniqueId(), 0.0);
-                            }
-
-                            lastMinuteEarnings.put(e.getPlayer().getUniqueId(), lastMinuteEarnings.get(e.getPlayer().getUniqueId()) + amount);
+                            core.getAutoSell().addToCurrentEarnings(e.getPlayer(),amount);
 
                             e.getBlock().setType(Material.AIR);
                         }
@@ -296,5 +279,11 @@ public final class WildPrisonAutoSell {
 
     public boolean hasAutoSellEnabled(Player p) {
         return !disabledAutoSell.contains(p.getUniqueId());
+    }
+
+    public void addToCurrentEarnings(Player p, double amount) {
+        double current = this.lastMinuteEarnings.getOrDefault(p.getUniqueId(), 0.0);
+
+        this.lastMinuteEarnings.put(p.getUniqueId(), current + amount);
     }
 }

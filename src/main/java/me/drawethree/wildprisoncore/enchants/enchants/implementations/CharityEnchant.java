@@ -48,9 +48,11 @@ public class CharityEnchant extends WildPrisonEnchantment {
             for (Player p : Players.all()) {
                 if (p.equals(e.getPlayer())) {
                     plugin.getCore().getEconomy().depositPlayer(p, selfAmount);
+                    plugin.getCore().getAutoSell().addToCurrentEarnings(p,selfAmount);
                     p.sendMessage(plugin.getMessage("charity_your").replace("%amount%", String.format("%,.0f", selfAmount)));
                 } else {
                     plugin.getCore().getEconomy().depositPlayer(p, othersAmount);
+                    plugin.getCore().getAutoSell().addToCurrentEarnings(p,othersAmount);
                     p.sendMessage(plugin.getMessage("charity_other").replace("%amount%", String.format("%,.0f", othersAmount)).replace("%player%", e.getPlayer().getName()));
                 }
             }

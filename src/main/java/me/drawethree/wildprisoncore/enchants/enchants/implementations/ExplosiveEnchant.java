@@ -95,6 +95,7 @@ public class ExplosiveEnchant extends WildPrisonEnchantment {
 
                 //Bukkit.getPluginManager().callEvent(new ExplosionTriggerEvent(e.getPlayer(), region, blocksAffected));
                 plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
+                plugin.getCore().getAutoSell().addToCurrentEarnings(p,plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
 				plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
             }
