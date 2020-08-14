@@ -10,6 +10,7 @@ import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.events.WildPrisonEvent;
 import me.drawethree.wildprisoncore.events.impl.KeyAllEvent;
+import me.drawethree.wildprisoncore.gems.WildPrisonGems;
 import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisoncore.placeholders.WildPrisonPlaceholder;
 import me.drawethree.wildprisoncore.ranks.WildPrisonRankup;
@@ -34,6 +35,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
     private LuckPerms luckPerms;
 
     private WildPrisonTokens tokens;
+    private WildPrisonGems gems;
     private WildPrisonRankup ranks;
     private WildPrisonMultipliers multipliers;
     private WildPrisonEnchants enchants;
@@ -50,6 +52,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
 
         this.sqlDatabase = new MySQLDatabase(this);
         this.tokens = new WildPrisonTokens(this);
+        this.gems = new WildPrisonGems(this);
         this.ranks = new WildPrisonRankup(this);
         this.multipliers = new WildPrisonMultipliers(this);
         this.enchants = new WildPrisonEnchants(this);
@@ -66,6 +69,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.registerPlaceholders();
 
         this.tokens.enable();
+        this.gems.enable();
         this.ranks.enable();
         this.multipliers.enable();
         this.enchants.enable();
@@ -80,6 +84,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
     @Override
     protected void disable() {
         this.tokens.disable();
+        this.gems.disable();
         this.ranks.disable();
         this.multipliers.disable();
         this.enchants.disable();

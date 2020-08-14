@@ -406,7 +406,6 @@ public class TokensManager {
                 blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + amount);
 
 				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					player.sendMessage(String.format("REWARD %,d TRIGGERED", nextReward.getBlocksRequired()));
                     nextReward.giveTo(player);
 					nextReward = this.getNextBlockReward(nextReward);
                 }
@@ -476,7 +475,6 @@ public class TokensManager {
 				blocksCacheWeekly.put(player.getUniqueId(), amount);
 
 				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					player.sendMessage(String.format("REWARD %,d TRIGGERED", nextReward.getBlocksRequired()));
 					nextReward.giveTo(player);
 					nextReward = this.getNextBlockReward(nextReward);
 				}

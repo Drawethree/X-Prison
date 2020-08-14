@@ -1,13 +1,14 @@
-package me.drawethree.wildprisoncore.tokens.commands;
+package me.drawethree.wildprisoncore.gems.commands;
 
 import com.google.common.collect.ImmutableList;
+import me.drawethree.wildprisoncore.gems.WildPrisonGems;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
 import me.lucko.helper.text.Text;
 import org.bukkit.command.CommandSender;
 
-public class TokensHelpCommand extends TokensCommand {
+public class GemsHelpCommand extends GemsCommand {
 
-    public TokensHelpCommand(WildPrisonTokens plugin) {
+    public GemsHelpCommand(WildPrisonGems plugin) {
         super(plugin);
     }
 
@@ -15,15 +16,13 @@ public class TokensHelpCommand extends TokensCommand {
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
         if (args.isEmpty()) {
             sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-            sender.sendMessage(Text.colorize("&e&lTOKEN HELP MENU "));
+            sender.sendMessage(Text.colorize("&e&lGEMS HELP MENU "));
             sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-            sender.sendMessage(Text.colorize("&e/tokens pay [amount] [name]"));
-            sender.sendMessage(Text.colorize("&e/tokens withdraw [amount] [value]"));
-            sender.sendMessage(Text.colorize("&e/tokens [player]"));
-            if (sender.hasPermission(WildPrisonTokens.TOKENS_ADMIN_PERM)) {
-                sender.sendMessage(Text.colorize("&e/tokens give [amount] [player]"));
-                sender.sendMessage(Text.colorize("&e/tokens remove [amount] [player]"));
-                sender.sendMessage(Text.colorize("&e/tokens set [amount] [player]"));
+            sender.sendMessage(Text.colorize("&e/gems [player]"));
+            if (sender.hasPermission(WildPrisonGems.GEMS_ADMIN_PERM)) {
+                sender.sendMessage(Text.colorize("&e/gems give [amount] [player]"));
+                sender.sendMessage(Text.colorize("&e/gems remove [amount] [player]"));
+                sender.sendMessage(Text.colorize("&e/gems set [amount] [player]"));
             }
             sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
             return true;

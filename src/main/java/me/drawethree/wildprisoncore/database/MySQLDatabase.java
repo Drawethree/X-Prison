@@ -25,6 +25,7 @@ public class MySQLDatabase {
 
     public static final String RANKS_DB_NAME = "WildPrison_Ranks";
     public static final String TOKENS_DB_NAME = "WildPrison_Tokens";
+    public static final String GEMS_DB_NAME = "WildPrison_Gems";
     public static final String BLOCKS_DB_NAME = "WildPrison_BlocksBroken";
     public static final String BLOCKS_WEEKLY_DB_NAME = "WildPrison_BlocksBrokenWeekly";
     public static final String MULTIPLIERS_DB_NAME = "WildPrison_Multipliers";
@@ -37,6 +38,9 @@ public class MySQLDatabase {
 
     public static final String TOKENS_UUID_COLNAME = "UUID";
     public static final String TOKENS_TOKENS_COLNAME = "Tokens";
+
+    public static final String GEMS_UUID_COLNAME = "UUID";
+    public static final String GEMS_GEMS_COLNAME = "Gems";
 
     public static final String BLOCKS_UUID_COLNAME = "UUID";
     public static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
@@ -114,6 +118,7 @@ public class MySQLDatabase {
         Schedulers.async().run(() -> {
             execute("CREATE TABLE IF NOT EXISTS " + RANKS_DB_NAME + "(UUID varchar(36) NOT NULL, id_rank int, id_prestige int, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + TOKENS_DB_NAME + "(UUID varchar(36) NOT NULL, Tokens bigint, primary key (UUID))");
+            execute("CREATE TABLE IF NOT EXISTS " + GEMS_DB_NAME + "(UUID varchar(36) NOT NULL, Gems bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
