@@ -4,6 +4,7 @@ package me.drawethree.wildprisoncore.tokens;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
+import me.drawethree.wildprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.wildprisoncore.tokens.api.WildPrisonTokensAPI;
 import me.drawethree.wildprisoncore.tokens.api.WildPrisonTokensAPIImpl;
 import me.drawethree.wildprisoncore.tokens.commands.TokensCommand;
@@ -96,7 +97,11 @@ public final class WildPrisonTokens {
                 .handler(e -> {
 					tokensManager.addBlocksBroken(null, e.getPlayer(), 1);
                     if (chance >= ThreadLocalRandom.current().nextDouble()) {
+                        boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+
                         long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+                        randAmount = luckyBooster ? randAmount * 2 : randAmount;
+
                         tokensManager.giveTokens(e.getPlayer(), randAmount, null);
                     }
                 }).bindWith(core);

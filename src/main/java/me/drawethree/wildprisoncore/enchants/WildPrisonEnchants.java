@@ -6,6 +6,7 @@ import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.enchants.api.WildPrisonEnchantsAPI;
 import me.drawethree.wildprisoncore.enchants.api.WildPrisonEnchantsAPIImpl;
+import me.drawethree.wildprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.wildprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.wildprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.wildprisoncore.enchants.managers.EnchantsManager;
@@ -109,6 +110,17 @@ public final class WildPrisonEnchants {
     }
 
     private void registerCommands() {
+
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    if (LuckyBoosterEnchant.hasLuckyBoosterRunning(c.sender())) {
+                        c.sender().sendMessage(getMessage("lucky_mode_timeleft").replace("%timeleft%", LuckyBoosterEnchant.getTimeLeft(c.sender())));
+                    } else {
+                        c.sender().sendMessage(getMessage("lucky_mode_disabled"));
+                    }
+                }).registerAndBind(core, "luckybooster");
+
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {

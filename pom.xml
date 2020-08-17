@@ -92,7 +92,7 @@
             <artifactId>jets</artifactId>
             <version>LATEST</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/JetsPrisonMines-3.3.1_1.jar</systemPath>
+            <systemPath>${project.basedir}/libs/WildMines.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

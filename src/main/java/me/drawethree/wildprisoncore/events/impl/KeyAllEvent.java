@@ -28,7 +28,7 @@ public class KeyAllEvent implements WildPrisonEvent {
 				randomKeyAmount = ThreadLocalRandom.current().nextInt(MIN_MINUTES, MAX_MINUTES);
 			}
 
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "cr give all MINER " + randomKeyAmount);
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "wildcrates givecrateall miner " + randomKeyAmount);
 
 			this.lastKeysGiven = randomKeyAmount;
 			this.start();

@@ -7,6 +7,7 @@ import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.autosell.api.WildPrisonAutoSellAPI;
 import me.drawethree.wildprisoncore.autosell.api.WildPrisonAutoSellAPIImpl;
 import me.drawethree.wildprisoncore.config.FileManager;
+import me.drawethree.wildprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -127,8 +128,9 @@ public final class WildPrisonAutoSell {
                             int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                             double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
 
-                            core.getEconomy().depositPlayer(e.getPlayer(), amount);
-                            core.getAutoSell().addToCurrentEarnings(e.getPlayer(),amount);
+                            boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+                            core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
+                            core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
 
                             e.getBlock().setType(Material.AIR);
                         }

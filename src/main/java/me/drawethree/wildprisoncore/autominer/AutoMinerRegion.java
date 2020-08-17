@@ -49,7 +49,8 @@ public class AutoMinerRegion {
                     } else {
                         sendActionBar(p, this.parent.getMessage("auto_miner_enabled"));
 
-                        this.parent.getCore().getTokens().getApi().addTokens(p, (long) levelToGive.getTokensPerSec());
+						//Autominer should not be affected by LuckyBooster enchant
+						this.parent.getCore().getTokens().getApi().addTokens(p, (long) levelToGive.getTokensPerSec());
                         this.parent.getCore().getEconomy().depositPlayer(p, levelToGive.getMoneyPerSec());
                         this.parent.getCore().getAutoSell().addToCurrentEarnings(p, levelToGive.getMoneyPerSec());
                         this.parent.decrementFuel(p, levelToGive.getFuelConsume());

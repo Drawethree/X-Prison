@@ -3,6 +3,7 @@ package me.drawethree.wildprisoncore.enchants.enchants.implementations;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
+import me.nonetaken.wildmines.mines.Mine;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -75,12 +76,19 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
 
                 //Mine mine = plugin.getCore().getPrisonMines().getAPI().getByLocation(e.getBlock().getLocation());
                 //plugin.getCore().getPrisonMines().getAPI().onBlockBreak(mine, blocksAffected.size());
-
-                plugin.getCore().getJetsPrisonMines().getAPI().blockBreak(blocksAffected);
+                //plugin.getCore().getJetsPrisonMines().getAPI().blockBreak(blocksAffected);
                 //Bukkit.getPluginManager().callEvent(new JackHammerTriggerEvent(e.getPlayer(), region, blocksAffected));
 
-                plugin.getCore().getEconomy().depositPlayer(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
-                plugin.getCore().getAutoSell().addToCurrentEarnings(p, plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit));
+                Mine mine = plugin.getCore().getWildMinesAPI().getMine(e.getBlock().getLocation());
+                if (mine != null) {
+                    plugin.getCore().getWildMinesAPI().getMine(e.getBlock().getLocation()).blockBreak(blocksAffected.size());
+                }
+
+                boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+                double total = luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit);
+
+                plugin.getCore().getEconomy().depositPlayer(p, total);
+                plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
 

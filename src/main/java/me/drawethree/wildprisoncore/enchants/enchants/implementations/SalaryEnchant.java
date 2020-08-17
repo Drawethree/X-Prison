@@ -37,8 +37,10 @@ public class SalaryEnchant extends WildPrisonEnchantment {
         if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             double randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
 
-            plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
-            plugin.getCore().getAutoSell().addToCurrentEarnings(e.getPlayer(),randAmount);
+			boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+
+			plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
+			plugin.getCore().getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
         }
 
     }
