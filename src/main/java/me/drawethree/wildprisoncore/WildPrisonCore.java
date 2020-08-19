@@ -10,6 +10,7 @@ import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.events.WildPrisonEvent;
 import me.drawethree.wildprisoncore.events.impl.KeyAllEvent;
+import me.drawethree.wildprisoncore.gangpoints.WildPrisonGangPoints;
 import me.drawethree.wildprisoncore.gems.WildPrisonGems;
 import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisoncore.placeholders.WildPrisonPlaceholder;
@@ -43,11 +44,13 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
     private WildPrisonAutoSell autoSell;
     private WildPrisonAutoMiner autoMiner;
     private WildPrisonAutoJoin autoJoin;
+	private WildPrisonGangPoints gangPoints;
 
     private WildPrisonEvent keyAllEvent;
 
     @Override
     protected void enable() {
+
         this.fileManager = new FileManager(this);
         this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 
@@ -60,6 +63,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoSell = new WildPrisonAutoSell(this);
         this.autoMiner = new WildPrisonAutoMiner(this);
         this.autoJoin = new WildPrisonAutoJoin(this);
+		this.gangPoints = new WildPrisonGangPoints(this);
 
         this.keyAllEvent = KeyAllEvent.getInstance();
 
@@ -78,6 +82,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoSell.enable();
         this.autoMiner.enable();
         this.autoJoin.enable();
+		this.gangPoints.enable();
 
         this.startEvents();
     }
@@ -93,6 +98,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoSell.disable();
         this.autoMiner.disable();
         this.autoJoin.disable();
+		this.gangPoints.disable();
 
         this.sqlDatabase.close();
     }

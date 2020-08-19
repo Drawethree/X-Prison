@@ -132,6 +132,7 @@ public final class WildPrisonAutoSell {
                             core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
                             core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
 
+							e.setDropItems(false);
                             e.getBlock().setType(Material.AIR);
                         }
                     }

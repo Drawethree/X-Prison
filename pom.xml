@@ -95,6 +95,13 @@
             <systemPath>${project.basedir}/libs/WildMines.jar</systemPath>
         </dependency>
         <dependency>
+            <groupId>gangs</groupId>
+            <artifactId>gangs</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/GangsPlus-2.8.2.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>

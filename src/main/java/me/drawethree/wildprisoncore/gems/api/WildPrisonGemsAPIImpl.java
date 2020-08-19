@@ -14,22 +14,22 @@ public class WildPrisonGemsAPIImpl implements WildPrisonGemsAPI {
     }
 
     @Override
-    public long getPlayerTokens(OfflinePlayer p) {
+	public long getPlayerGems(OfflinePlayer p) {
         return this.manager.getPlayerGems(p);
     }
 
     @Override
     public boolean hasEnough(OfflinePlayer p, long amount) {
-        return this.getPlayerTokens(p) > amount;
+		return this.getPlayerGems(p) >= amount;
     }
 
     @Override
-    public void removeTokens(OfflinePlayer p, long amount) {
+	public void removeGems(OfflinePlayer p, long amount) {
         this.manager.removeGems(p, amount, null);
     }
 
     @Override
-    public void addTokens(OfflinePlayer p, long amount) {
+	public void addGems(OfflinePlayer p, long amount) {
         this.manager.giveGems(p, amount, null);
     }
 }

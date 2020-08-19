@@ -29,6 +29,7 @@ public class MySQLDatabase {
     public static final String BLOCKS_DB_NAME = "WildPrison_BlocksBroken";
     public static final String BLOCKS_WEEKLY_DB_NAME = "WildPrison_BlocksBrokenWeekly";
     public static final String MULTIPLIERS_DB_NAME = "WildPrison_Multipliers";
+	public static final String GANG_POINTS_DB_NAME = "WildPrison_GangPoints";
     //public static final String GLOBAL_MULTIPLIER_DB_NAME = "WildPrison_GlobalMultiplier";
     public static final String AUTOMINER_DB_NAME = "WildPrison_AutoMiner";
 
@@ -44,6 +45,9 @@ public class MySQLDatabase {
 
     public static final String BLOCKS_UUID_COLNAME = "UUID";
     public static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
+
+	public static final String GANG_POINTS_UUID_COLNAME = "gang_id";
+	public static final String GANG_POINTS_POINTS_COLNAME = "Points";
 
     public static final String MULTIPLIERS_UUID_COLNAME = "UUID";
     public static final String MULTIPLIERS_VOTE_COLNAME = "vote_multiplier";
@@ -121,6 +125,7 @@ public class MySQLDatabase {
             execute("CREATE TABLE IF NOT EXISTS " + GEMS_DB_NAME + "(UUID varchar(36) NOT NULL, Gems bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + GANG_POINTS_DB_NAME + "(gang_id varchar(20) NOT NULL, Points bigint, primary key (gang_id))");
             execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
             //execute("CREATE TABLE IF NOT EXISTS " + GLOBAL_MULTIPLIER_DB_NAME + "(multiplier double default 0.0, timeleft long default 0)");
             execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL, fuel long, level int, command_level int, primary key (UUID))");

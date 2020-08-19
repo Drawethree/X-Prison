@@ -104,19 +104,24 @@ public class WildPrisonPlaceholder extends PlaceholderExpansion {
 
         if (identifier.equalsIgnoreCase("tokens")) {
             return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(player));
-        } else if (identifier.equalsIgnoreCase("gems")) {
-            return String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(player));
-        } else if (identifier.equalsIgnoreCase("blocks")) {
-            return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
-        } else if (identifier.equalsIgnoreCase("multiplier")) {
-            return String.format("%.2f", plugin.getMultipliers().getApi().getPlayerMultiplier(player));
-        } else if (identifier.equalsIgnoreCase("rankup")) {
-            return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
-        } else if (identifier.equalsIgnoreCase("prestige")) {
+		} else if (identifier.equalsIgnoreCase("gems")) {
+			return String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(player));
+		} else if (identifier.equalsIgnoreCase("gems1")) {
+			return String.format("%d", plugin.getGems().getGemsManager().getPlayerGems(player));
+		} else if (identifier.equalsIgnoreCase("blocks")) {
+			return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+		} else if (identifier.equalsIgnoreCase("multiplier")) {
+			return String.format("%.2f", plugin.getMultipliers().getApi().getPlayerMultiplier(player));
+		} else if (identifier.equalsIgnoreCase("rankup")) {
+			return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
+		} else if (identifier.equalsIgnoreCase("prestige")) {
 			return plugin.getRanks().getApi().getPrestigePrefix(plugin.getRanks().getApi().getPlayerPrestige(player));
-        } else if (identifier.equalsIgnoreCase("fuel")) {
-            return String.format("%,d",plugin.getAutoMiner().getPlayerFuel(player));
-        }
-        return null;
+		} else if (identifier.equalsIgnoreCase("fuel")) {
+			return String.format("%,d",plugin.getAutoMiner().getPlayerFuel(player));
+		} else if (identifier.equalsIgnoreCase("gangpoints")) {
+			return String.format("%,d", plugin.getGangPoints().getApi().getGangPoints(player));
+		}
+
+		return null;
     }
 }

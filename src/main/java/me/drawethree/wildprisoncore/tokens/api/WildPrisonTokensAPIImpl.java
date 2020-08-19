@@ -20,7 +20,7 @@ public class WildPrisonTokensAPIImpl implements WildPrisonTokensAPI {
 
     @Override
     public boolean hasEnough(OfflinePlayer p, long amount) {
-        return this.getPlayerTokens(p) > amount;
+		return this.getPlayerTokens(p) >= amount;
     }
 
     @Override
