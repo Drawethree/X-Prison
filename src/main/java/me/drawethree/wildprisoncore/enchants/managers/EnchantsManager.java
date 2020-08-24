@@ -26,9 +26,7 @@ public class EnchantsManager {
     public static final String NBT_TAG_INDETIFIER = "wild-prison-ench-";
 
     private final WildPrisonEnchants plugin;
-    private Material ENCHANT_GUI_ITEM_MATERIAL;
     private List<String> ENCHANT_GUI_ITEM_LORE;
-    private Material DISENCHANT_GUI_ITEM_MATERIAL;
     private List<String> DISENCHANT_GUI_ITEM_LORE;
     private List<String> PICKAXE_LORE;
     private long OBSIDIAN_TOKENS;
@@ -37,9 +35,7 @@ public class EnchantsManager {
 
     public EnchantsManager(WildPrisonEnchants plugin) {
         this.plugin = plugin;
-        this.ENCHANT_GUI_ITEM_MATERIAL = Material.valueOf(plugin.getConfig().get().getString("enchant_menu.item.material"));
         this.ENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("enchant_menu.item.lore");
-        this.DISENCHANT_GUI_ITEM_MATERIAL = Material.valueOf(plugin.getConfig().get().getString("disenchant_menu.item.material"));
         this.DISENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("disenchant_menu.item.lore");
         this.OBSIDIAN_TOKENS = plugin.getConfig().get().getLong("obsidian_tokens");
         this.ENDSTONE_TOKENS = plugin.getConfig().get().getLong("endstone_tokens");
@@ -320,7 +316,7 @@ public class EnchantsManager {
     }
 
     public Item getRefundGuiItem(WildPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
-        Material m = enchantment.isRefundEnabled() ? DISENCHANT_GUI_ITEM_MATERIAL : Material.BARRIER;
+        Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : Material.BARRIER;
         ItemStackBuilder builder = ItemStackBuilder.of(m);
         builder.name(enchantment.isRefundEnabled() ? enchantment.getName() : this.plugin.getMessage("enchant_cant_disenchant"));
         builder.lore(enchantment.isRefundEnabled() ? translateLore(enchantment, DISENCHANT_GUI_ITEM_LORE, level) : new ArrayList<>());
@@ -341,7 +337,7 @@ public class EnchantsManager {
 
     public Item getGuiItem(WildPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
-        ItemStackBuilder builder = ItemStackBuilder.of(ENCHANT_GUI_ITEM_MATERIAL);
+        ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getMaterial());
         builder.name(enchantment.getName());
         builder.lore(translateLore(enchantment, ENCHANT_GUI_ITEM_LORE, currentLevel));
 

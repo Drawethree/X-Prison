@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.implementations.*;
 import me.lucko.helper.text.Text;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,6 +25,7 @@ public abstract class WildPrisonEnchantment implements Refundable {
 
     protected final int id;
     private String name;
+    private Material material;
     private String description;
     private boolean enabled;
     private int guiSlot;
@@ -35,6 +37,7 @@ public abstract class WildPrisonEnchantment implements Refundable {
         this.plugin = plugin;
         this.id = id;
         this.name = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
+        this.material = Material.valueOf(this.plugin.getConfig().get().getString("enchants." + id + ".Material"));
         this.description = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Description"));
         this.enabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Enabled");
         this.guiSlot = this.plugin.getConfig().get().getInt("enchants." + id + ".InGuiSlot");

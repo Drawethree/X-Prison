@@ -20,6 +20,7 @@ import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -255,6 +256,16 @@ public final class WildPrisonEnchants {
                 .handler(e -> {
                     enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);
                     enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand());
+                }).bindWith(core);
+
+        //Breaking blocks in Plots with fortune
+        Events.subscribe(BlockBreakEvent.class)
+                .filter(EventFilters.ignoreCancelled())
+                .filter(e -> e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
+                .filter(e -> e.getPlayer().getItemInHand().hasItemMeta() && e.getPlayer().getItemInHand().getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_BLOCKS))
+                .filter(e -> e.getBlock().getType().name().contains("ORE") || e.getBlock().getType() == Material.WHEAT || e.getBlock().getType() == Material.CROPS || e.getBlock().getType().name().contains("SEEDS"))
+                .handler(e -> {
+                    e.setCancelled(true);
                 }).bindWith(core);
 
     }
