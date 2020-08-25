@@ -47,9 +47,9 @@ public class BlessingEnchant extends WildPrisonEnchantment {
             //long selfAmount = enchantLevel < 25 ? 2000000 : enchantLevel < 50 ? 4000000 : enchantLevel < 75 ? 6000000 : enchantLevel < 100 ? 8000000 : 10000000;
             //long othersAmount = selfAmount / 10;
 
-            boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-            long selfAmount = luckyBooster ? this.getSelfAmount(enchantLevel) * 2 : this.getSelfAmount(enchantLevel);
-            long othersAmount = luckyBooster ? this.getOthersAmount(enchantLevel) * 2 : this.getOthersAmount(enchantLevel);
+            //boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+            long selfAmount = this.getSelfAmount(enchantLevel);
+            long othersAmount = this.getOthersAmount(enchantLevel);
 
             for (Player p : Players.all()) {
                 if (p.equals(e.getPlayer())) {

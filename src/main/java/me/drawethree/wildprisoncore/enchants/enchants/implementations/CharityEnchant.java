@@ -45,9 +45,9 @@ public class CharityEnchant extends WildPrisonEnchantment {
             //double selfAmount = enchantLevel < 25 ? 100000000000000000.0 : enchantLevel < 50 ? 250000000000000000.0 : enchantLevel < 75 ? 500000000000000000.0 : enchantLevel < 100 ? 750000000000000000.0 : 1000000000000000000.0;
             //double othersAmount = selfAmount / 10;
 
-			boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-			double selfAmount = luckyBooster ? this.getSelfAmount(enchantLevel) * 2 : this.getSelfAmount(enchantLevel);
-			double othersAmount = luckyBooster ? this.getOthersAmount(enchantLevel) * 2 : this.getOthersAmount(enchantLevel);
+            //boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+            double selfAmount = this.getSelfAmount(enchantLevel);
+            double othersAmount = this.getOthersAmount(enchantLevel);
 
             for (Player p : Players.all()) {
                 if (p.equals(e.getPlayer())) {

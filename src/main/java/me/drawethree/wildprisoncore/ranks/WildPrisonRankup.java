@@ -104,7 +104,7 @@ public final class WildPrisonRankup {
                             this.prestigingPlayers.remove(c.sender().getUniqueId());
                         });
                     }
-                }).registerAndBind(core, "maxprestige", "autoprestige");
+                }).registerAndBind(core, "maxprestige", "maxp", "mp");
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 0) {
