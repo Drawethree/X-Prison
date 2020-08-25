@@ -102,17 +102,17 @@ public class JackHammerEnchant extends WildPrisonEnchantment {
 
     public int getRequiredBlocks(int enchantLevel) {
         if (enchantLevel <= 100) {
-            return 1800;
-        } else if (enchantLevel <= 200) {
-            return 1500;
-        } else if (enchantLevel <= 300) {
-            return 1200;
-        } else if (enchantLevel <= 400) {
             return 900;
-        } else if (enchantLevel <= 499) {
+        } else if (enchantLevel <= 200) {
+            return 750;
+        } else if (enchantLevel <= 300) {
             return 600;
-        } else {
+        } else if (enchantLevel <= 400) {
+            return 450;
+        } else if (enchantLevel <= 499) {
             return 300;
+        } else {
+            return 150;
         }
     }
 }
