@@ -9,6 +9,7 @@ import me.drawethree.wildprisoncore.ranks.manager.RankManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,5 +112,34 @@ public final class WildPrisonRankup {
                         this.rankManager.sendPrestigeTop(c.sender());
                     }
                 }).registerAndBind(core, "prestigetop");
+        Commands.create()
+                .assertOp()
+                .handler(c -> {
+                    if (c.args().size() == 3) {
+
+                        Player target = c.arg(1).parseOrFail(Player.class);
+                        int amount = c.arg(2).parseOrFail(Integer.class);
+
+                        switch (c.rawArg(0).toLowerCase()) {
+                            case "set":
+                                this.rankManager.setPlayerPrestige(c.sender(), target, amount);
+                                break;
+                            case "add":
+                                this.rankManager.addPlayerPrestige(c.sender(), target, amount);
+                                break;
+                            case "remove":
+                                this.rankManager.removePlayerPrestige(c.sender(), target, amount);
+                            default:
+                                c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                                c.sender().sendMessage(Text.colorize("&e&lPRESTIGE ADMIN HELP MENU "));
+                                c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                                c.sender().sendMessage(Text.colorize("&e/prestigeadmin add [player] [amount]"));
+                                c.sender().sendMessage(Text.colorize("&e/prestigeadmin remove [player] [amount]"));
+                                c.sender().sendMessage(Text.colorize("&e/prestigeadmin set [player] [amount]"));
+                                c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                                break;
+                        }
+                    }
+                }).registerAndBind(core, "prestigeadmin", "prestigea");
     }
 }

@@ -9,7 +9,6 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
-import net.luckperms.api.node.Node;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -404,4 +403,87 @@ public class RankManager {
 
         player.sendMessage(Text.colorize("&e&lPRESTIGE FINDER &8» &7You've just found a &fX" + levels + " Prestige Level &7while mining."));
     }
+
+	public void addPlayerPrestige(CommandSender sender, Player target, int amount) {
+
+		if (0 > amount) {
+			return;
+		}
+
+		if (isMaxPrestige(target)) {
+			return;
+		}
+
+		int currentPrestige = this.getPlayerPrestige(target);
+
+		if (currentPrestige + amount > this.maxPrestigeLevel) {
+			this.onlinePlayersPrestige.put(target.getUniqueId(), this.maxPrestigeLevel);
+		} else {
+			this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) + amount);
+		}
+
+		for (long l : this.prestigeRewards.keySet()) {
+			if (this.onlinePlayersPrestige.get(target.getUniqueId()) >= l) {
+				for (String s : this.prestigeRewards.get(l)) {
+                    /*this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()).data().add(Node.builder(s).build());
+                    this.plugin.getCore().getLuckPerms().getUserManager().saveUser(this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()));*/
+					Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " perm set " + s));
+				}
+			}
+		}
+
+		sender.sendMessage(this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+	}
+
+	public void setPlayerPrestige(CommandSender sender, Player target, int amount) {
+
+		if (0 > amount) {
+			return;
+		}
+
+		if (amount > this.maxPrestigeLevel) {
+			this.onlinePlayersPrestige.put(target.getUniqueId(), this.maxPrestigeLevel);
+		} else {
+			this.onlinePlayersPrestige.put(target.getUniqueId(), amount);
+		}
+
+		for (long l : this.prestigeRewards.keySet()) {
+			if (this.onlinePlayersPrestige.get(target.getUniqueId()) >= l) {
+				for (String s : this.prestigeRewards.get(l)) {
+                    /*this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()).data().add(Node.builder(s).build());
+                    this.plugin.getCore().getLuckPerms().getUserManager().saveUser(this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()));*/
+					Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " perm set " + s));
+				}
+			}
+		}
+
+		sender.sendMessage(this.plugin.getMessage("prestige_set").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+	}
+
+	public void removePlayerPrestige(CommandSender sender, Player target, int amount) {
+
+		if (0 > amount) {
+			return;
+		}
+
+		int currentPrestige = this.getPlayerPrestige(target);
+
+		if (currentPrestige - amount < 0) {
+			this.onlinePlayersPrestige.put(target.getUniqueId(), 0);
+		} else {
+			this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) - amount);
+		}
+
+		for (long l : this.prestigeRewards.keySet()) {
+			if (this.onlinePlayersPrestige.get(target.getUniqueId()) < l) {
+				for (String s : this.prestigeRewards.get(l)) {
+                    /*this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()).data().add(Node.builder(s).build());
+                    this.plugin.getCore().getLuckPerms().getUserManager().saveUser(this.plugin.getCore().getLuckPerms().getUserManager().getUser(player.getUniqueId()));*/
+					Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp user " + target.getName() + " perm remove " + s));
+				}
+			}
+		}
+
+		sender.sendMessage(this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+	}
 }
