@@ -55,6 +55,8 @@ messages:
   jackhammer_enabled: "&e&l(!) &7You've &a&lENABLED &7jackhammer."
   lucky_booster_on: "&e&lENCHANT &8» &fLucky Mode &7has &Aactivated&7, &FX2 Money & Tokens &7for &a&l5:00"
   lucky_booster_off: "&e&lENCHANT &8» &fLucky Mode &7has &cDeactivated&7."
+  block_booster_on: "&e&lENCHANT &8» &fBlock Booster &7has &Aactivated&7, &FX2 Blocks &7for &a&l5:00"
+  block_booster_off: "&e&lENCHANT &8» &fBlock Booster &7has &cDeactivated&7."
   lucky_mode_timeleft: "&e&lENCHANT &8» &fLucky Mode Activated&7 For: &a&l%timeleft%&7."
   lucky_mode_disabled: "&e&lENCHANT &8» &fLucky Mode &CDisabled&7."
   explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
@@ -286,7 +288,7 @@ enchants:
       InGuiSlot: 42
     Chance: 4.0E-7
   '17':
-    Name: '&dBooster'
+    Name: '&dBlock Booster'
     Material: BOOK
     Enabled: true
     InGuiSlot: 43

@@ -2,6 +2,7 @@ package me.drawethree.wildprisoncore.tokens.managers;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.drawethree.wildprisoncore.api.events.WildPrisonBlockBreakEvent;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
 import me.lucko.helper.Events;
@@ -384,12 +385,26 @@ public class TokensManager {
 
 	public void addBlocksBroken(CommandSender sender, Player player, long amount) {
 
+
+        WildPrisonBlockBreakEvent event = new WildPrisonBlockBreakEvent(player, amount);
+
+        Events.call(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+
+        amount = event.getAmount();
+
+
 		if (amount <= 0) {
 			if (sender != null) {
 				sender.sendMessage(Text.colorize("&cPlease specify amount greater than 0!"));
 			}
 			return;
 		}
+
+        long finalAmount = amount;
 
         Schedulers.async().run(() -> {
 
@@ -399,11 +414,11 @@ public class TokensManager {
             BlockReward nextReward = this.getNextBlockReward(player);
 
             if (!player.isOnline()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBroken + amount, player.getUniqueId().toString());
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBrokenWeekly + amount, player.getUniqueId().toString());
+                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBroken + finalAmount, player.getUniqueId().toString());
+                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", currentBrokenWeekly + finalAmount, player.getUniqueId().toString());
             } else {
-                blocksCache.put(player.getUniqueId(), currentBroken + amount);
-                blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + amount);
+                blocksCache.put(player.getUniqueId(), currentBroken + finalAmount);
+                blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
 
 				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
                     nextReward.giveTo(player);
@@ -412,7 +427,7 @@ public class TokensManager {
             }
 
 			if (sender != null) {
-				sender.sendMessage(plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+                sender.sendMessage(plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
 			}
         });
     }

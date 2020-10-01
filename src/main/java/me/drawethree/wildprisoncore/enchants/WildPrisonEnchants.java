@@ -263,7 +263,7 @@ public final class WildPrisonEnchants {
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
                 .filter(e -> e.getPlayer().getItemInHand().hasItemMeta() && e.getPlayer().getItemInHand().getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_BLOCKS))
-                .filter(e -> e.getBlock().getType().name().contains("ORE") || e.getBlock().getType() == Material.WHEAT || e.getBlock().getType() == Material.CROPS || e.getBlock().getType().name().contains("SEEDS"))
+                .filter(e -> e.getBlock().getType().name().contains("ORE") || e.getBlock().getType() == Material.WHEAT || e.getBlock().getType() == Material.CROPS || e.getBlock().getType().name().contains("SEEDS") || e.getBlock().getType().name().contains("GRASS"))
                 .handler(e -> {
                     e.setCancelled(true);
                 }).bindWith(core);
