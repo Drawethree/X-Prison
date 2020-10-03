@@ -6,6 +6,7 @@ import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.enchants.api.WildPrisonEnchantsAPI;
 import me.drawethree.wildprisoncore.enchants.api.WildPrisonEnchantsAPIImpl;
+import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.wildprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.wildprisoncore.enchants.gui.EnchantGUI;
@@ -93,6 +94,13 @@ public final class WildPrisonEnchants {
             });
         }, 20, 20);
     }
+
+	public void reload() {
+		this.config.reload();
+		this.loadMessages();
+		this.enchantsManager.reloadConfig();
+		WildPrisonEnchantment.loadEnchantments();
+	}
 
     private void loadMessages() {
         messages = new HashMap<>();

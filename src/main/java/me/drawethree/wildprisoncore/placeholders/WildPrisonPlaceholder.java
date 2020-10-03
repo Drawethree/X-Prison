@@ -4,6 +4,9 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * This class will be registered through the register-method in the
  * plugins onEnable-method.
@@ -103,13 +106,13 @@ public class WildPrisonPlaceholder extends PlaceholderExpansion {
 
 
         if (identifier.equalsIgnoreCase("tokens")) {
-            return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(player));
+			return formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
 		} else if (identifier.equalsIgnoreCase("gems")) {
-			return String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(player));
+			return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
 		} else if (identifier.equalsIgnoreCase("gems1")) {
-			return String.format("%d", plugin.getGems().getGemsManager().getPlayerGems(player));
+			return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
 		} else if (identifier.equalsIgnoreCase("blocks")) {
-			return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+			return formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
 		} else if (identifier.equalsIgnoreCase("multiplier")) {
 			return String.format("%.2f", plugin.getMultipliers().getApi().getPlayerMultiplier(player));
 		} else if (identifier.equalsIgnoreCase("rankup")) {
@@ -117,11 +120,27 @@ public class WildPrisonPlaceholder extends PlaceholderExpansion {
 		} else if (identifier.equalsIgnoreCase("prestige")) {
 			return plugin.getRanks().getApi().getPrestigePrefix(plugin.getRanks().getApi().getPlayerPrestige(player));
 		} else if (identifier.equalsIgnoreCase("fuel")) {
-			return String.format("%,d",plugin.getAutoMiner().getPlayerFuel(player));
+			return formatNumber(plugin.getAutoMiner().getPlayerFuel(player));
 		} else if (identifier.equalsIgnoreCase("gangpoints")) {
-			return String.format("%,d", plugin.getGangPoints().getApi().getGangPoints(player));
+			return formatNumber(plugin.getGangPoints().getApi().getGangPoints(player));
 		}
 
 		return null;
     }
+
+	public static String formatNumber(double amount) {
+		if (amount <= 1000.0D)
+			return String.valueOf(amount);
+		ArrayList<String> suffixes = new ArrayList<>(Arrays.asList(new String[]{
+				"", "K", "M", "B", "T", "Q", "QT", "S", "SP", "O",
+				"N", "D"}));
+		double chunks = Math.floor(Math.floor(Math.log10(amount) / 3.0D));
+		amount /= Math.pow(10.0D, chunks * 3.0D - 1.0D);
+		amount /= 10.0D;
+		String suffix = suffixes.get((int) chunks);
+		String format = String.valueOf(amount);
+		if (format.replace(".", "").length() > 5)
+			format = format.substring(0, 5);
+		return format + suffix;
+	}
 }

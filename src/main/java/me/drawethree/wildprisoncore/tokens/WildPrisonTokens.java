@@ -64,6 +64,15 @@ public final class WildPrisonTokens {
         this.api = new WildPrisonTokensAPIImpl(this.tokensManager);
     }
 
+
+    public void reload() {
+        this.config.reload();
+        this.blockRewardsConfig.reload();
+        this.loadMessages();
+        this.loadVariables();
+        this.tokensManager.reloadConfig();
+    }
+
     private void loadVariables() {
         this.chance = getConfig().get().getDouble("tokens.breaking.chance");
         this.minAmount = getConfig().get().getLong("tokens.breaking.min");

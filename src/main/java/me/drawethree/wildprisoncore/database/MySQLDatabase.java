@@ -5,6 +5,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.text.Text;
+import org.bukkit.command.CommandSender;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,6 +25,7 @@ public class MySQLDatabase {
     private static final long CONNECTION_TIMEOUT = TimeUnit.SECONDS.toMillis(10); // 10 seconds
     private static final long LEAK_DETECTION_THRESHOLD = TimeUnit.SECONDS.toMillis(10); // 10 seconds
 
+
     public static final String RANKS_DB_NAME = "WildPrison_Ranks";
     public static final String TOKENS_DB_NAME = "WildPrison_Tokens";
     public static final String GEMS_DB_NAME = "WildPrison_Gems";
@@ -32,6 +35,17 @@ public class MySQLDatabase {
 	public static final String GANG_POINTS_DB_NAME = "WildPrison_GangPoints";
     //public static final String GLOBAL_MULTIPLIER_DB_NAME = "WildPrison_GlobalMultiplier";
     public static final String AUTOMINER_DB_NAME = "WildPrison_AutoMiner";
+
+    private static final String[] ALL_TABLES = new String[]{
+            RANKS_DB_NAME,
+            TOKENS_DB_NAME,
+            GEMS_DB_NAME,
+            BLOCKS_DB_NAME,
+            BLOCKS_WEEKLY_DB_NAME,
+            MULTIPLIERS_DB_NAME,
+            GANG_POINTS_DB_NAME,
+            AUTOMINER_DB_NAME,
+    };
 
     public static final String RANKS_UUID_COLNAME = "UUID";
     public static final String RANKS_RANK_COLNAME = "id_rank";
@@ -156,4 +170,12 @@ public class MySQLDatabase {
         }
     }
 
+    public void resetAllTables(CommandSender sender) {
+        Schedulers.async().run(() -> {
+            for (String table : ALL_TABLES) {
+                execute("TRUNCATE " + table);
+            }
+            sender.sendMessage(Text.colorize("&aWildPrisonCore - All SQL Tables have been reset."));
+        });
+    }
 }

@@ -16,6 +16,7 @@ public abstract class GemsCommand {
         commands.put("remove", new GemsRemoveCommand(WildPrisonGems.getInstance()));
         commands.put("set", new GemsSetCommand(WildPrisonGems.getInstance()));
         commands.put("help", new GemsHelpCommand(WildPrisonGems.getInstance()));
+        commands.put("pay", new GemsPayCommand(WildPrisonGems.getInstance()));
     }
 
     protected WildPrisonGems plugin;

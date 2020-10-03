@@ -16,13 +16,18 @@ import me.drawethree.wildprisoncore.multipliers.WildPrisonMultipliers;
 import me.drawethree.wildprisoncore.placeholders.WildPrisonPlaceholder;
 import me.drawethree.wildprisoncore.ranks.WildPrisonRankup;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
+import me.drawethree.wildprisoncore.utils.gui.ClearDBGui;
+import me.lucko.helper.Commands;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
+import me.lucko.helper.text.Text;
 import me.nonetaken.wildmines.Main;
 import me.nonetaken.wildmines.WildMinesAPI;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
@@ -63,7 +68,7 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoSell = new WildPrisonAutoSell(this);
         this.autoMiner = new WildPrisonAutoMiner(this);
         this.autoJoin = new WildPrisonAutoJoin(this);
-		this.gangPoints = new WildPrisonGangPoints(this);
+        this.gangPoints = new WildPrisonGangPoints(this);
 
         this.keyAllEvent = KeyAllEvent.getInstance();
 
@@ -82,9 +87,32 @@ public final class WildPrisonCore extends ExtendedJavaPlugin {
         this.autoSell.enable();
         this.autoMiner.enable();
         this.autoJoin.enable();
-		this.gangPoints.enable();
+        this.gangPoints.enable();
 
         this.startEvents();
+        this.registerMainCommand();
+    }
+
+    private void registerMainCommand() {
+        Commands.create()
+                .assertOp()
+                .handler(c -> {
+                    if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload")) {
+                        this.reload(c.sender());
+                    } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb")) {
+                        if (c.sender() instanceof Player) {
+                            new ClearDBGui(this.sqlDatabase, (Player) c.sender()).open();
+                        } else {
+                            this.sqlDatabase.resetAllTables(c.sender());
+                        }
+                    }
+                }).registerAndBind(this, "wildprisoncore", "wildcore", "core");
+    }
+
+    private void reload(CommandSender sender) {
+        this.enchants.reload();
+        this.tokens.reload();
+        sender.sendMessage(Text.colorize("&aWildPrisonCore - Reloaded."));
     }
 
 

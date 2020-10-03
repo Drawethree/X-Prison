@@ -699,6 +699,15 @@ public class TokensManager {
 
     }
 
+    public void reloadConfig() {
+        this.SPACER_LINE = plugin.getMessage("top_spacer_line");
+        this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
+        this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
+        this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
+        this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
+        this.loadBlockRewards();
+    }
+
     @AllArgsConstructor
     @Getter
     private class BlockReward {

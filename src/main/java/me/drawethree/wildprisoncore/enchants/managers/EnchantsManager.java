@@ -40,7 +40,6 @@ public class EnchantsManager {
         this.OBSIDIAN_TOKENS = plugin.getConfig().get().getLong("obsidian_tokens");
         this.ENDSTONE_TOKENS = plugin.getConfig().get().getLong("endstone_tokens");
         this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");
-
     }
 
 
@@ -373,4 +372,12 @@ public class EnchantsManager {
         }
         return sum;
     }
+
+	public void reloadConfig() {
+		this.ENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("enchant_menu.item.lore");
+		this.DISENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("disenchant_menu.item.lore");
+		this.OBSIDIAN_TOKENS = plugin.getConfig().get().getLong("obsidian_tokens");
+		this.ENDSTONE_TOKENS = plugin.getConfig().get().getLong("endstone_tokens");
+		this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");
+	}
 }

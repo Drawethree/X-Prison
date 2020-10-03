@@ -16,8 +16,8 @@ public class KeyAllEvent implements WildPrisonEvent {
 
 	private static KeyAllEvent instance;
 
-	private static final int MIN_MINUTES = 1;
-	private static final int MAX_MINUTES = 5;
+	private static final int MIN_KEYS = 1;
+	private static final int MAX_KEYS = 5;
 
 	private int lastKeysGiven;
 
@@ -27,17 +27,17 @@ public class KeyAllEvent implements WildPrisonEvent {
 	@Override
 	public void start() {
 		Schedulers.sync().runLater(() -> {
-			int randomKeyAmount = ThreadLocalRandom.current().nextInt(MIN_MINUTES, MAX_MINUTES);
+			int randomKeyAmount = ThreadLocalRandom.current().nextInt(MIN_KEYS, MAX_KEYS);
 
 			while (randomKeyAmount == this.lastKeysGiven) {
-				randomKeyAmount = ThreadLocalRandom.current().nextInt(MIN_MINUTES, MAX_MINUTES);
+				randomKeyAmount = ThreadLocalRandom.current().nextInt(MIN_KEYS, MAX_KEYS);
 			}
 
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "wildcrates givecrateall " + getRandomKey() + " " + randomKeyAmount);
 
 			this.lastKeysGiven = randomKeyAmount;
 			this.start();
-		}, 1, TimeUnit.MINUTES);
+		}, 3, TimeUnit.MINUTES);
 	}
 
 	@Override

@@ -27,7 +27,11 @@ public class BlockBoosterEnchant extends WildPrisonEnchantment {
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
 
         Events.subscribe(WildPrisonBlockBreakEvent.class)
-                .handler(e -> e.setAmount(e.getAmount() + 1)).bindWith(instance.getCore());
+                .handler(e -> {
+                    if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
+                        e.setAmount(e.getAmount() * 2);
+                    }
+                }).bindWith(instance.getCore());
     }
 
     @Override
@@ -57,7 +61,7 @@ public class BlockBoosterEnchant extends WildPrisonEnchantment {
                     e.getPlayer().sendMessage(this.plugin.getMessage("block_booster_off"));
                 }
                 boostedPlayers.remove(e.getPlayer().getUniqueId());
-            }, 1, TimeUnit.MINUTES);
+            }, 5, TimeUnit.MINUTES);
         }
 
     }

@@ -10,6 +10,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @Getter
 public class AutoMinerRegion {
 
@@ -18,6 +22,7 @@ public class AutoMinerRegion {
     private ProtectedRegion region;
     private long moneyPerSecond;
     private long tokensPerSecond;
+	private List<UUID> playersInRegion;
 
     private Task autoMinerTask;
 
@@ -28,6 +33,7 @@ public class AutoMinerRegion {
         this.region = region;
         this.moneyPerSecond = moneyPerSecond;
         this.tokensPerSecond = tokensPerSecond;
+		this.playersInRegion = new ArrayList<>();
 
         this.autoMinerTask = Schedulers.async().runRepeating(() -> {
             for (Player p : Players.all()) {
@@ -41,25 +47,43 @@ public class AutoMinerRegion {
                     }
                 }
 
-                if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()) || levelToGive.getLevel() == parent.getLastLevel().getLevel()) {
+				if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
 
-                    if (!this.parent.hasAutoMinerFuel(p) || this.parent.getPlayerFuel(p) < levelToGive.getFuelConsume()) {
-                        sendActionBar(p, this.parent.getMessage("auto_miner_disabled"));
-                        continue;
-                    } else {
-                        sendActionBar(p, this.parent.getMessage("auto_miner_enabled"));
+					if (!this.playersInRegion.contains(p.getUniqueId())) {
+						for (Player p1 : Players.all()) {
+							if (p1 != p) {
+								Schedulers.sync().run(() -> p1.hidePlayer(this.parent.getCore(), p));
+							}
+						}
+						this.playersInRegion.add(p.getUniqueId());
+					}
+
+					if (!this.parent.hasAutoMinerFuel(p) || this.parent.getPlayerFuel(p) < levelToGive.getFuelConsume()) {
+						sendActionBar(p, this.parent.getMessage("auto_miner_disabled"));
+						continue;
+					} else {
+						sendActionBar(p, this.parent.getMessage("auto_miner_enabled"));
 
 						//Autominer should not be affected by LuckyBooster enchant
 						this.parent.getCore().getTokens().getApi().addTokens(p, (long) levelToGive.getTokensPerSec());
-                        this.parent.getCore().getEconomy().depositPlayer(p, levelToGive.getMoneyPerSec());
-                        this.parent.getCore().getAutoSell().addToCurrentEarnings(p, levelToGive.getMoneyPerSec());
-                        this.parent.decrementFuel(p, levelToGive.getFuelConsume());
+						this.parent.getCore().getEconomy().depositPlayer(p, levelToGive.getMoneyPerSec());
+						this.parent.getCore().getAutoSell().addToCurrentEarnings(p, levelToGive.getMoneyPerSec());
+						this.parent.decrementFuel(p, levelToGive.getFuelConsume());
 
-                        commandLevel.giveRewards(p);
+						commandLevel.giveRewards(p);
 
-                    }
-                }
-            }
+					}
+				} else {
+					if (this.playersInRegion.contains(p.getUniqueId())) {
+						for (Player p1 : Players.all()) {
+							if (p1 != p) {
+								Schedulers.sync().run(() -> p1.showPlayer(this.parent.getCore(), p));
+							}
+						}
+						this.playersInRegion.remove(p.getUniqueId());
+					}
+				}
+			}
         }, 20, 20);
     }
 
