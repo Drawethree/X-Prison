@@ -1,24 +1,26 @@
-package me.drawethree.wildprisoncore.api.events;
+package me.drawethree.wildprisoncore.api.events.player;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@Getter
-@Setter
-public class WildPrisonBlockBreakEvent extends Event implements Cancellable {
+public class WildPrisonPlayerTokensReceiveEvent extends WildPrisonPlayerEvent implements Cancellable {
+
 
 	private static final HandlerList handlers = new HandlerList();
 
-	private Player player;
+	@Getter
+	@Setter
 	private long amount;
+
+	@Getter
+	@Setter
 	private boolean cancelled;
 
-	public WildPrisonBlockBreakEvent(Player player, long amount) {
-		this.player = player;
+	public WildPrisonPlayerTokensReceiveEvent(OfflinePlayer player, long amount) {
+		super(player);
 		this.amount = amount;
 	}
 
@@ -30,4 +32,5 @@ public class WildPrisonBlockBreakEvent extends Event implements Cancellable {
 	public static HandlerList getHandlerList() {
 		return handlers;
 	}
+
 }

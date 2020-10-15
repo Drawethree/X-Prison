@@ -3,6 +3,7 @@ package me.drawethree.wildprisoncore.tokens.managers;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.api.events.WildPrisonBlockBreakEvent;
+import me.drawethree.wildprisoncore.api.events.player.WildPrisonPlayerTokensReceiveEvent;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
 import me.lucko.helper.Events;
@@ -212,13 +213,25 @@ public class TokensManager {
     public void giveTokens(OfflinePlayer p, long amount, CommandSender executor) {
         Schedulers.async().run(() -> {
             long currentTokens = getPlayerTokens(p);
+
+            WildPrisonPlayerTokensReceiveEvent event = new WildPrisonPlayerTokensReceiveEvent(p, amount);
+
+            Events.call(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
+            long finalAmount = event.getAmount();
+
             if (!p.isOnline()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.TOKENS_DB_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", amount + currentTokens, p.getUniqueId().toString());
+                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.TOKENS_DB_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", finalAmount + currentTokens, p.getUniqueId().toString());
             } else {
-                tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + amount);
+                tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
+                p.getPlayer().sendMessage(plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor.getName()));
             }
             if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
+                executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
             }
         });
     }

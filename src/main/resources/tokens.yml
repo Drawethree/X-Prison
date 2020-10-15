@@ -15,6 +15,7 @@ messages:
   tokens_redeem: "&e&l(!) &eYou redeemed &f%tokens% &etoken(s)"
   tokens_send: "&eYou have sent %tokens% to %player%"
   tokens_received: "&eYou received %tokens% from %player%."
+  tokens_received_console: "&e&lTOKENS &8» &7You have received &f%tokens% tokens&7."
   not_a_number: "&c%input% is not a number!"
   player_not_online: "&cPlayer &e%player% &cis not online!"
   top_format_tokens: "&f&l#%position%. &e%player% &8» &7%amount% tokens"

@@ -1,5 +1,6 @@
 package me.drawethree.wildprisoncore.gems.managers;
 
+import me.drawethree.wildprisoncore.api.events.player.WildPrisonPlayerGemsReceiveEvent;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.gems.WildPrisonGems;
 import me.lucko.helper.Events;
@@ -145,13 +146,24 @@ public class GemsManager {
     public void giveGems(OfflinePlayer p, long amount, CommandSender executor) {
         Schedulers.async().run(() -> {
             long currentgems = getPlayerGems(p);
+
+            WildPrisonPlayerGemsReceiveEvent event = new WildPrisonPlayerGemsReceiveEvent(p, amount);
+
+            Events.call(event);
+
+            if (event.isCancelled()) {
+                return;
+            }
+
+            long finalAmount = event.getAmount();
+
             if (!p.isOnline()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_UUID_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", amount + currentgems, p.getUniqueId().toString());
+                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_UUID_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", finalAmount + currentgems, p.getUniqueId().toString());
             } else {
-                gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + amount);
+                gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
             }
             if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", amount)));
+                executor.sendMessage(plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", finalAmount)));
             }
         });
     }

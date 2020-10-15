@@ -1,9 +1,11 @@
 package me.drawethree.wildprisoncore.enchants.managers;
 
+import me.drawethree.wildprisoncore.api.events.player.WildPrisonPlayerEnchantEvent;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
 import me.drawethree.wildprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.wildprisoncore.enchants.gui.EnchantGUI;
+import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
@@ -269,6 +271,16 @@ public class EnchantsManager {
             }
 
             long cost = enchantment.getCostOfLevel(currentLevel + 1);
+
+            WildPrisonPlayerEnchantEvent event = new WildPrisonPlayerEnchantEvent(gui.getPlayer(), cost, currentLevel + 1);
+
+            Events.call(event);
+
+            if (event.isCancelled()) {
+                return false;
+            }
+
+            cost = event.getTokenCost();
 
             if (!plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), cost)) {
                 gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));

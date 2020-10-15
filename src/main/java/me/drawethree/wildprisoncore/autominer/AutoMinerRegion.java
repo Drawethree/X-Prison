@@ -47,9 +47,9 @@ public class AutoMinerRegion {
                     }
                 }
 
-				if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
+				if (this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ()) || levelToGive.getLevel() == parent.getLastLevel().getLevel()) {
 
-					if (!this.playersInRegion.contains(p.getUniqueId())) {
+					if (!this.playersInRegion.contains(p.getUniqueId()) && this.region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
 						for (Player p1 : Players.all()) {
 							if (p1 != p) {
 								Schedulers.sync().run(() -> p1.hidePlayer(this.parent.getCore(), p));
