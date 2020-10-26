@@ -3,6 +3,7 @@ package me.drawethree.wildprisoncore.tokens;
 
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.wildprisoncore.tokens.api.WildPrisonTokensAPI;
@@ -117,7 +118,7 @@ public final class WildPrisonTokens {
                         long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
                         randAmount = luckyBooster ? randAmount * 2 : randAmount;
 
-                        tokensManager.giveTokens(e.getPlayer(), randAmount, null);
+                        tokensManager.giveTokens(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
                     }
                 }).bindWith(core);
     }
@@ -136,8 +137,14 @@ public final class WildPrisonTokens {
                         OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
                         this.tokensManager.sendInfoMessage(c.sender(), target, true);
                     }
-                })
-                .registerAndBind(core, "tokens", "token");
+                }).registerAndBind(core, "tokens", "token");
+
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    this.tokensManager.toggleTokenMessage(c.sender());
+                }).registerAndBind(core, "tokenmessage");
+
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 0) {

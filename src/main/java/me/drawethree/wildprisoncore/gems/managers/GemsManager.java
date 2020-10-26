@@ -1,5 +1,6 @@
 package me.drawethree.wildprisoncore.gems.managers;
 
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.api.events.player.WildPrisonPlayerGemsReceiveEvent;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
 import me.drawethree.wildprisoncore.gems.WildPrisonGems;
@@ -143,11 +144,11 @@ public class GemsManager {
         });
     }
 
-    public void giveGems(OfflinePlayer p, long amount, CommandSender executor) {
+    public void giveGems(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
         Schedulers.async().run(() -> {
             long currentgems = getPlayerGems(p);
 
-            WildPrisonPlayerGemsReceiveEvent event = new WildPrisonPlayerGemsReceiveEvent(p, amount);
+            WildPrisonPlayerGemsReceiveEvent event = new WildPrisonPlayerGemsReceiveEvent(cause, p, amount);
 
             Events.call(event);
 
@@ -176,10 +177,10 @@ public class GemsManager {
             int itemAmount = item.getAmount();
             if (shiftClick) {
                 p.setItemInHand(null);
-                this.giveGems(p, tokenAmount * itemAmount, null);
+                this.giveGems(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
                 p.sendMessage(plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount * itemAmount)));
             } else {
-                this.giveGems(p, tokenAmount, null);
+                this.giveGems(p, tokenAmount, null, ReceiveCause.REDEEM);
                 if (item.getAmount() == 1) {
                     p.setItemInHand(null);
                 } else {
@@ -197,7 +198,7 @@ public class GemsManager {
         Schedulers.async().run(() -> {
             if (getPlayerGems(executor) >= amount) {
                 this.removeGems(executor, amount, null);
-                this.giveGems(target, amount, null);
+                this.giveGems(target, amount, null, ReceiveCause.PAY);
                 executor.sendMessage(plugin.getMessage("gems_send").replace("%player%", target.getName()).replace("%gems%", String.format("%,d", amount)));
                 if (target.isOnline()) {
                     ((Player) target).sendMessage(plugin.getMessage("gems_received").replace("%player%", executor.getName()).replace("%gems%", String.format("%,d", amount)));
@@ -224,7 +225,7 @@ public class GemsManager {
 
             if (!notFit.isEmpty()) {
                 notFit.forEach(itemStack -> {
-                    this.giveGems(executor, amount * item.getAmount(), null);
+                    this.giveGems(executor, amount * item.getAmount(), null, ReceiveCause.REDEEM);
                 });
             }
 

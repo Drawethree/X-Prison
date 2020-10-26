@@ -1,5 +1,6 @@
 package me.drawethree.wildprisoncore.tokens.api;
 
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.tokens.managers.TokensManager;
 import org.bukkit.OfflinePlayer;
 
@@ -30,6 +31,6 @@ public class WildPrisonTokensAPIImpl implements WildPrisonTokensAPI {
 
     @Override
     public void addTokens(OfflinePlayer p, long amount) {
-        this.manager.giveTokens(p, amount, null);
+		this.manager.giveTokens(p, amount, null, ReceiveCause.GIVE);
     }
 }

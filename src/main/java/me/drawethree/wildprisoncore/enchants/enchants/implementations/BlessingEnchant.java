@@ -1,5 +1,6 @@
 package me.drawethree.wildprisoncore.enchants.enchants.implementations;
 
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
 import me.lucko.helper.utils.Players;
@@ -53,11 +54,11 @@ public class BlessingEnchant extends WildPrisonEnchantment {
 
             for (Player p : Players.all()) {
                 if (p.equals(e.getPlayer())) {
-                    plugin.getCore().getTokens().getTokensManager().giveTokens(p, selfAmount, null);
+                    plugin.getCore().getTokens().getTokensManager().giveTokens(p, selfAmount, null, ReceiveCause.MINING);
                     p.sendMessage(plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d", selfAmount)));
                 } else {
                     if (othersAmount > 0) {
-                        plugin.getCore().getTokens().getTokensManager().giveTokens(p, othersAmount, null);
+                        plugin.getCore().getTokens().getTokensManager().giveTokens(p, othersAmount, null, ReceiveCause.MINING);
                         p.sendMessage(plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", othersAmount)).replace("%player%", e.getPlayer().getName()));
                     }
                 }

@@ -1,6 +1,7 @@
 package me.drawethree.wildprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.tokens.WildPrisonTokens;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
@@ -23,7 +24,7 @@ public class TokensGiveCommand extends TokensCommand {
             try {
                 long amount = Long.parseLong(args.get(0));
                 OfflinePlayer target = Players.getOfflineNullable(args.get(1));
-                plugin.getTokensManager().giveTokens(target, amount, sender);
+				plugin.getTokensManager().giveTokens(target, amount, sender, ReceiveCause.GIVE);
                 return true;
             } catch (NumberFormatException e) {
                 sender.sendMessage(plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));

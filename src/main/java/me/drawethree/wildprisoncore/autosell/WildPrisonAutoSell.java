@@ -4,6 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
+import me.drawethree.wildprisoncore.api.events.player.WildPrisonAutoSellEvent;
 import me.drawethree.wildprisoncore.autosell.api.WildPrisonAutoSellAPI;
 import me.drawethree.wildprisoncore.autosell.api.WildPrisonAutoSellAPIImpl;
 import me.drawethree.wildprisoncore.config.FileManager;
@@ -127,6 +128,17 @@ public final class WildPrisonAutoSell {
                         if (regionsAutoSell.containsKey(reg) && regionsAutoSell.get(reg).containsKey(e.getBlock().getType())) {
                             int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                             double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
+
+
+                            WildPrisonAutoSellEvent event = new WildPrisonAutoSellEvent(e.getPlayer(), reg, e.getBlock(), amount);
+
+                            Events.call(event);
+
+                            if (event.isCancelled()) {
+                                return;
+                            }
+
+                            amount = event.getMoneyToDeposit();
 
                             boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
                             core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);

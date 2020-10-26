@@ -404,6 +404,18 @@ public class RankManager {
         player.sendMessage(Text.colorize("&e&lPRESTIGE FINDER &8» &7You've just found a &fX" + levels + " Prestige Level &7while mining."));
     }
 
+    public void buyPrestige(Player target, int amountOfLevels) {
+        if (0 > amountOfLevels) {
+            return;
+        }
+
+        for (int i = 0; i < amountOfLevels; i++) {
+            if (!buyNextPrestige(target)) {
+                break;
+            }
+        }
+    }
+
 	public void addPlayerPrestige(CommandSender sender, Player target, int amount) {
 
 		if (0 > amount) {

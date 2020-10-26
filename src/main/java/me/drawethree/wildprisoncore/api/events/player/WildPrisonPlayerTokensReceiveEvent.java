@@ -2,6 +2,7 @@ package me.drawethree.wildprisoncore.api.events.player;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -11,6 +12,7 @@ public class WildPrisonPlayerTokensReceiveEvent extends WildPrisonPlayerEvent im
 
 	private static final HandlerList handlers = new HandlerList();
 
+	private final ReceiveCause cause;
 	@Getter
 	@Setter
 	private long amount;
@@ -19,8 +21,9 @@ public class WildPrisonPlayerTokensReceiveEvent extends WildPrisonPlayerEvent im
 	@Setter
 	private boolean cancelled;
 
-	public WildPrisonPlayerTokensReceiveEvent(OfflinePlayer player, long amount) {
+	public WildPrisonPlayerTokensReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
 		super(player);
+		this.cause = cause;
 		this.amount = amount;
 	}
 

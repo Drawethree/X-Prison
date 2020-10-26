@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.drawethree.wildprisoncore.WildPrisonCore;
+import me.drawethree.wildprisoncore.autominer.commands.FuelCommand;
 import me.drawethree.wildprisoncore.autominer.gui.MainAutoMinerGui;
 import me.drawethree.wildprisoncore.config.FileManager;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
@@ -15,12 +16,19 @@ import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
@@ -56,6 +64,7 @@ public final class WildPrisonAutoMiner {
     private AutoMinerRegion region;
     @Getter
     private WildPrisonCore core;
+    private List<UUID> disabledAutoMiner;
 
     public WildPrisonAutoMiner(WildPrisonCore wildPrisonCore) {
         this.core = wildPrisonCore;
@@ -67,6 +76,7 @@ public final class WildPrisonAutoMiner {
         this.autoMinerFuels = new HashMap<>();
         this.autoMinerLevels = new HashMap<>();
         this.autoMinerCommandLevels = new HashMap<>();
+        this.disabledAutoMiner = new ArrayList<>();
         this.registerCommands();
         this.registerEvents();
         this.loadMessages();
@@ -138,6 +148,16 @@ public final class WildPrisonAutoMiner {
                 .handler(e -> this.saveAutoMiner(e.getPlayer(), true)).bindWith(this.core);
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> this.loadAutoMiner(e.getPlayer())).bindWith(this.core);
+        Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+                .filter(e -> e.getItem() != null && e.getItem().getType() == Material.DOUBLE_PLANT && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+                .handler(e -> {
+                    if (e.getItem().hasItemMeta()) {
+                        e.setCancelled(true);
+                        e.setUseInteractedBlock(Event.Result.DENY);
+                        this.redeemFuel(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking());
+                    }
+                })
+                .bindWith(this.core);
     }
 
     private void loadPlayersAutoMiner() {
@@ -279,6 +299,8 @@ public final class WildPrisonAutoMiner {
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         new MainAutoMinerGui(c.sender()).open();
+                    } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("toggle")) {
+                        toggleAutoMiner(c.sender());
                     }
 
                 }).registerAndBind(core, "miner", "autominer");
@@ -287,6 +309,11 @@ public final class WildPrisonAutoMiner {
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         c.sender().sendMessage(messages.get("fuel_tank").replace("%fuel%", String.format("%,d", this.getPlayerFuel(c.sender()))));
+                    } else {
+                        FuelCommand subCommand = FuelCommand.getCommand(c.rawArg(0));
+                        if (subCommand != null) {
+                            subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+                        }
                     }
 
                 }).registerAndBind(core, "fueltank", "fuel");
@@ -450,6 +477,93 @@ public final class WildPrisonAutoMiner {
 
     public AutoMinerCommandLevel getNextCommandLevel(Player p) {
         return this.commandLevels.get(this.getPlayerCommandLevel(p) + 1);
+    }
+
+    private void toggleAutoMiner(Player sender) {
+        if (disabledAutoMiner.contains(sender.getUniqueId())) {
+            sender.sendMessage(getMessage("autominer_enabled"));
+            disabledAutoMiner.remove(sender.getUniqueId());
+        } else {
+            sender.sendMessage(getMessage("autominer_disabled"));
+            disabledAutoMiner.add(sender.getUniqueId());
+        }
+    }
+
+    public boolean hasAutominerOff(Player p) {
+        return disabledAutoMiner.contains(p.getUniqueId());
+    }
+
+    public void payFuel(Player executor, long amount, Player target) {
+        Schedulers.async().run(() -> {
+            if (getPlayerFuel(executor) >= amount) {
+                this.decrementFuel(executor, amount);
+                this.addFuel(target, amount);
+                executor.sendMessage(this.getMessage("fuel_send").replace("%player%", target.getName()).replace("%fuel%", String.format("%,d", amount)));
+                if (target.isOnline()) {
+                    target.sendMessage(this.getMessage("fuel_received").replace("%player%", executor.getName()).replace("%fuel%", String.format("%,d", amount)));
+                }
+            } else {
+                executor.sendMessage(this.getMessage("not_enough_fuel"));
+            }
+        });
+    }
+
+    private void addFuel(Player p, long amount) {
+        long newAmount = autoMinerFuels.get(p.getUniqueId()) + amount;
+        autoMinerFuels.put(p.getUniqueId(), newAmount);
+    }
+
+    public void withdrawFuel(Player executor, long amount, int value) {
+        Schedulers.async().run(() -> {
+            long totalAmount = amount * value;
+
+            if (this.getPlayerFuel(executor) < totalAmount) {
+                executor.sendMessage(this.getMessage("not_enough_fuel"));
+                return;
+            }
+
+            decrementFuel(executor, totalAmount);
+
+            ItemStack item = createFuelItem(amount, value);
+            Collection<ItemStack> notFit = executor.getInventory().addItem(item).values();
+
+            if (!notFit.isEmpty()) {
+                notFit.forEach(itemStack -> {
+                    this.addFuel(executor, amount * item.getAmount());
+                });
+            }
+
+            executor.sendMessage(this.getMessage("withdraw_successful").replace("%amount%", String.format("%,d,", amount)).replace("%value%", String.format("%,d", value)));
+        });
+    }
+
+    public static ItemStack createFuelItem(long amount, int value) {
+        return ItemStackBuilder.of(Material.EYE_OF_ENDER).amount(value).name("&e&l" + String.format("%,d", amount) + " FUEL").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+    }
+
+    public void redeemFuel(Player p, ItemStack item, boolean shiftClick) {
+        String displayName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
+        displayName = displayName.replace(" FUEL", "").replace(",", "");
+        try {
+            long tokenAmount = Long.parseLong(displayName);
+            int itemAmount = item.getAmount();
+            if (shiftClick) {
+                p.setItemInHand(null);
+                this.addFuel(p, tokenAmount * itemAmount);
+                p.sendMessage(this.getMessage("fuel_redeem").replace("%fuel%", String.format("%,d", tokenAmount * itemAmount)));
+            } else {
+                this.addFuel(p, tokenAmount);
+                if (item.getAmount() == 1) {
+                    p.setItemInHand(null);
+                } else {
+                    item.setAmount(item.getAmount() - 1);
+                }
+                p.sendMessage(this.getMessage("fuel_redeem").replace("%fuel%", String.format("%,d", tokenAmount)));
+            }
+        } catch (Exception e) {
+            //Not a fuel item
+            p.sendMessage(this.getMessage("not_fuel_item"));
+        }
     }
 
 

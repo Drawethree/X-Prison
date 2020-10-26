@@ -2,6 +2,7 @@ package me.drawethree.wildprisoncore.tokens.managers;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.api.events.WildPrisonBlockBreakEvent;
 import me.drawethree.wildprisoncore.api.events.player.WildPrisonPlayerTokensReceiveEvent;
 import me.drawethree.wildprisoncore.database.MySQLDatabase;
@@ -51,6 +52,8 @@ public class TokensManager {
     private boolean updating;
     private long nextResetWeekly;
 
+    private List<UUID> tokenMessageOffPlayers;
+
     public TokensManager(WildPrisonTokens plugin) {
         this.plugin = plugin;
         this.SPACER_LINE = plugin.getMessage("top_spacer_line");
@@ -58,6 +61,7 @@ public class TokensManager {
 		this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
         this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
         this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
+        this.tokenMessageOffPlayers = new ArrayList<>();
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
@@ -210,11 +214,11 @@ public class TokensManager {
         });
     }
 
-    public void giveTokens(OfflinePlayer p, long amount, CommandSender executor) {
+    public void giveTokens(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
         Schedulers.async().run(() -> {
             long currentTokens = getPlayerTokens(p);
 
-            WildPrisonPlayerTokensReceiveEvent event = new WildPrisonPlayerTokensReceiveEvent(p, amount);
+            WildPrisonPlayerTokensReceiveEvent event = new WildPrisonPlayerTokensReceiveEvent(cause, p, amount);
 
             Events.call(event);
 
@@ -228,7 +232,7 @@ public class TokensManager {
                 this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.TOKENS_DB_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", finalAmount + currentTokens, p.getUniqueId().toString());
             } else {
                 tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-                p.getPlayer().sendMessage(plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor.getName()));
+                p.getPlayer().sendMessage(plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
             }
             if (executor != null) {
                 executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
@@ -244,10 +248,10 @@ public class TokensManager {
             int itemAmount = item.getAmount();
             if (shiftClick) {
                 p.setItemInHand(null);
-                this.giveTokens(p, tokenAmount * itemAmount, null);
+                this.giveTokens(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
                 p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
             } else {
-                this.giveTokens(p, tokenAmount, null);
+                this.giveTokens(p, tokenAmount, null, ReceiveCause.REDEEM);
                 if (item.getAmount() == 1) {
                     p.setItemInHand(null);
                 } else {
@@ -265,7 +269,7 @@ public class TokensManager {
         Schedulers.async().run(() -> {
             if (getPlayerTokens(executor) >= amount) {
                 this.removeTokens(executor, amount, null);
-                this.giveTokens(target, amount, null);
+                this.giveTokens(target, amount, null, ReceiveCause.PAY);
                 executor.sendMessage(plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
                 if (target.isOnline()) {
                     ((Player) target).sendMessage(plugin.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.format("%,d", amount)));
@@ -292,7 +296,7 @@ public class TokensManager {
 
             if (!notFit.isEmpty()) {
                 notFit.forEach(itemStack -> {
-                    this.giveTokens(executor, amount * item.getAmount(), null);
+                    this.giveTokens(executor, amount * item.getAmount(), null, ReceiveCause.REDEEM);
                 });
             }
 
@@ -719,6 +723,16 @@ public class TokensManager {
         this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
         this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
         this.loadBlockRewards();
+    }
+
+    public void toggleTokenMessage(Player p) {
+        if (this.tokenMessageOffPlayers.contains(p.getUniqueId())) {
+            p.sendMessage(plugin.getMessage("token_message_enabled"));
+            this.tokenMessageOffPlayers.remove(p.getUniqueId());
+        } else {
+            p.sendMessage(plugin.getMessage("token_message_disabled"));
+            this.tokenMessageOffPlayers.add(p.getUniqueId());
+        }
     }
 
     @AllArgsConstructor

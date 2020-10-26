@@ -1,5 +1,6 @@
 package me.drawethree.wildprisoncore.gems.api;
 
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.gems.managers.GemsManager;
 import org.bukkit.OfflinePlayer;
 
@@ -30,6 +31,6 @@ public class WildPrisonGemsAPIImpl implements WildPrisonGemsAPI {
 
     @Override
 	public void addGems(OfflinePlayer p, long amount) {
-        this.manager.giveGems(p, amount, null);
+		this.manager.giveGems(p, amount, null, ReceiveCause.GIVE);
     }
 }

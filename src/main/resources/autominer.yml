@@ -11,6 +11,16 @@ messages:
   last_level: "&e&lAUTOMINER &8» &7You are at last level!"
   not_enough_tokens: "&e&lAUTOMINER &8» &cYou do not have enough tokens! (Needed: %tokens%)"
   level_bought: "&e&lAUTOMINER &8» &7You have advanced to Level %level%!"
+    not_a_number: "&c%input% is not a number!"
+  player_not_online: "&cPlayer &e%player% &cis not online!"
+  not_enough_fuel: "&e&l(!) &eYou don't have enough fuel!"
+  autominer_disabled: "&e&l(!) &7You've &c&lDISABLED &7AutoMiner."
+  autominer_enabled: "&e&l(!) &7You've &a&lENABLED &7AutoMiner."
+  fuel_send: "&eYou have sent %fuel% to %player%"
+  fuel_received: "&eYou received %fuel% from %player%."
+  withdraw_successful: "&aYou have withdrawn &e%value%x %amount% Fuel!"
+  not_fuel_item: "&cThis is not a fuel item!"
+  fuel_redeem: "&e&l(!) &eYou redeemed &f%fuel% &fuel"
 levels:
   1:
     cost: 0
