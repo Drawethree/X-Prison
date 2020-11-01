@@ -71,9 +71,15 @@ public abstract class Multiplier {
 
     public abstract void setDuration(long endTime);
 
-    public void addMultiplier(double amount, double maxMultiplier) {
-        if ( (this.multiplier + amount) > maxMultiplier) {
+    public void addMultiplier(double amount /*double maxMultiplier*/) {
+       /* if ( (this.multiplier + amount) > maxMultiplier) {
             this.multiplier = maxMultiplier;
+        } else {
+            this.multiplier += amount;
+        }
+        */
+        if (this.multiplier + amount > 10000) {
+            this.multiplier = 10000;
         } else {
             this.multiplier += amount;
         }

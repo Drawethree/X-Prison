@@ -409,11 +409,13 @@ public class RankManager {
             return;
         }
 
-        for (int i = 0; i < amountOfLevels; i++) {
-            if (!buyNextPrestige(target)) {
-                break;
-            }
-        }
+		Schedulers.async().run(() -> {
+			for (int i = 0; i < amountOfLevels; i++) {
+				if (!buyNextPrestige(target)) {
+					break;
+				}
+			}
+		});
     }
 
 	public void addPlayerPrestige(CommandSender sender, Player target, int amount) {

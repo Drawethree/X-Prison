@@ -96,7 +96,7 @@ enchants:
     Enabled: true
     InGuiSlot: 29
     Increase-Cost-by: 75
-    Max: 5000
+    Max: -1
     Chance: 100
     Cost: 75
     Description: '&7&o(( Ability to receive more blocks while mining ))'

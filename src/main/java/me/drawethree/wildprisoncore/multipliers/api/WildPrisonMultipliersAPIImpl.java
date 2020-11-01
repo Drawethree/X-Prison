@@ -29,6 +29,11 @@ public class WildPrisonMultipliersAPIImpl implements WildPrisonMultipliersAPI {
 
     @Override
     public double getPlayerMultiplier(Player p) {
-        return this.getGlobalMultiplier() + this.getVoteMultiplier(p) + this.getRankMultiplier(p);
+        return this.getGlobalMultiplier() + this.getVoteMultiplier(p) + this.getRankMultiplier(p) + this.getPrestigeMultiplier(p);
+    }
+
+    @Override
+    public double getPrestigeMultiplier(Player p) {
+        return plugin.getPrestigeMultiplier(p);
     }
 }

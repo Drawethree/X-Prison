@@ -88,10 +88,11 @@ public final class WildPrisonRankup {
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         this.rankManager.buyNextPrestige(c.sender());
-                    } else if (c.args().size() == 1) {
+					} /*else if (c.args().size() == 1) {
                         int amountOfLevels = c.arg(0).parseOrFail(Integer.class);
                         this.rankManager.buyPrestige(c.sender(), amountOfLevels);
                     }
+                    */
                 }).registerAndBind(core, "prestige");
         Commands.create()
                 .assertPlayer()

@@ -369,7 +369,7 @@ public class EnchantsManager {
     private List<String> translateLore(WildPrisonEnchantment enchantment, List<String> guiItemLore, int currentLevel) {
         List<String> newList = new ArrayList<>();
         for (String s : guiItemLore) {
-            newList.add(s.replace("%description%", enchantment.getDescription()).replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel))).replace("%max_level%", String.format("%,d", enchantment.getMaxLevel())).replace("%current_level%", String.format("%,d", currentLevel)));
+            newList.add(s.replace("%description%", enchantment.getDescription()).replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel))).replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel())).replace("%current_level%", String.format("%,d", currentLevel)));
         }
         return newList;
     }

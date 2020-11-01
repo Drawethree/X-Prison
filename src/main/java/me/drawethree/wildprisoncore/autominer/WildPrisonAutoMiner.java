@@ -22,10 +22,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -148,7 +144,7 @@ public final class WildPrisonAutoMiner {
                 .handler(e -> this.saveAutoMiner(e.getPlayer(), true)).bindWith(this.core);
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> this.loadAutoMiner(e.getPlayer())).bindWith(this.core);
-        Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+        /*Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
                 .filter(e -> e.getItem() != null && e.getItem().getType() == Material.DOUBLE_PLANT && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
                 .handler(e -> {
                     if (e.getItem().hasItemMeta()) {
@@ -158,6 +154,8 @@ public final class WildPrisonAutoMiner {
                     }
                 })
                 .bindWith(this.core);
+
+         */
     }
 
     private void loadPlayersAutoMiner() {

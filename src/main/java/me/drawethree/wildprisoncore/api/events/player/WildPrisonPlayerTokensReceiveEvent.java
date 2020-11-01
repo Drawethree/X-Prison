@@ -12,6 +12,7 @@ public class WildPrisonPlayerTokensReceiveEvent extends WildPrisonPlayerEvent im
 
 	private static final HandlerList handlers = new HandlerList();
 
+	@Getter
 	private final ReceiveCause cause;
 	@Getter
 	@Setter

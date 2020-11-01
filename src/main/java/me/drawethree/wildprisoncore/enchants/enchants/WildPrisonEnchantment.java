@@ -95,4 +95,8 @@ public abstract class WildPrisonEnchantment implements Refundable {
         allEnchantments.put(17, new BlockBoosterEnchant(WildPrisonEnchants.getInstance()));
         allEnchantments.put(18, new FuelEnchant(WildPrisonEnchants.getInstance()));
     }
+
+    public int getMaxLevel() {
+        return this.maxLevel == -1 ? Integer.MAX_VALUE : this.maxLevel;
+    }
 }

@@ -17,6 +17,9 @@ ranks:
 global-multiplier:
   multiplier: 0.0
   timeLeft: -1
+prestige:
+  per-prestige-multi: 1000
+  prestige-multiplier: 1.0
 
 
 

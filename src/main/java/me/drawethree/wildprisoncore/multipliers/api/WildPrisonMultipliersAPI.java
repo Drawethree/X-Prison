@@ -16,4 +16,6 @@ public interface WildPrisonMultipliersAPI {
     default double getTotalToDeposit(Player p, double deposit) {
         return deposit * (1 + getPlayerMultiplier(p));
     }
+
+    double getPrestigeMultiplier(Player p);
 }

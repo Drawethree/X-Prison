@@ -49,6 +49,10 @@ public final class WildPrisonMultipliers {
 
     @Getter
     private WildPrisonCore core;
+    @Getter
+    private long perPrestigeMultiplier;
+    @Getter
+    private double prestigeMultiplier;
 
     public WildPrisonMultipliers(WildPrisonCore wildPrisonCore) {
         instance = this;
@@ -58,6 +62,12 @@ public final class WildPrisonMultipliers {
         this.personalMultipliers = new HashMap<>();
         this.loadMessages();
         this.loadRankMultipliers();
+        this.loadPrestigeMultipliers();
+    }
+
+    private void loadPrestigeMultipliers() {
+        this.perPrestigeMultiplier = getConfig().get().getLong("prestige.per-prestige-multi");
+        this.prestigeMultiplier = getConfig().get().getDouble("prestige.prestige-multiplier");
     }
 
 
@@ -289,10 +299,11 @@ public final class WildPrisonMultipliers {
     }
 
     private void setupPersonalMultiplier(CommandSender sender, Player onlinePlayer, double amount, int minutes) {
-        if (amount > 15.0) {
+        /*if (amount > 15.0) {
             sender.sendMessage(Text.colorize("&cPersonal multiplier must be max 15!"));
             return;
         }
+         */
         if (onlinePlayer == null || !onlinePlayer.isOnline()) {
             sender.sendMessage(Text.colorize("&cPlayer must be online!"));
             return;
@@ -300,7 +311,7 @@ public final class WildPrisonMultipliers {
 
         if (personalMultipliers.containsKey(onlinePlayer.getUniqueId())) {
             PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
-            multiplier.addMultiplier(amount, 15.0);
+            multiplier.addMultiplier(amount);
             multiplier.addDuration(minutes);
             personalMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
         } else {
@@ -313,12 +324,13 @@ public final class WildPrisonMultipliers {
 
 
     private void setupGlobalMultiplier(CommandSender sender, int time, double amount) {
-        if (amount > 10.0) {
+        /*if (amount > 10.0) {
             sender.sendMessage(Text.colorize("&cGlobal multiplier must be max 10.0!"));
             return;
         }
+         */
 
-        GLOBAL_MULTIPLIER.addMultiplier(amount, 10.0);
+        GLOBAL_MULTIPLIER.addMultiplier(amount);
         GLOBAL_MULTIPLIER.addDuration(time);
         sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
     }
@@ -344,17 +356,24 @@ public final class WildPrisonMultipliers {
     private Multiplier calculateRankMultiplier(Player p) {
         PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
 
-        if (p.hasPermission("Store.Multiplier")) {
+        /*if (p.hasPermission("Store.Multiplier")) {
             toReturn.addMultiplier(10.0, 35.0);
         }
+         */
 
         for (String perm : permissionToMultiplier.keySet()) {
             if (p.hasPermission(perm)) {
-                toReturn.addMultiplier(permissionToMultiplier.get(perm), 35.0);
+                toReturn.addMultiplier(permissionToMultiplier.get(perm));
                 break;
             }
         }
 
         return toReturn;
+    }
+
+    public double getPrestigeMultiplier(Player p) {
+        int playerPrestige = this.core.getRanks().getApi().getPlayerPrestige(p);
+
+        return (playerPrestige / this.perPrestigeMultiplier) * this.prestigeMultiplier;
     }
 }

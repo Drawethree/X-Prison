@@ -12,8 +12,9 @@ public abstract class FuelCommand {
 
 	static {
 		commands = new HashMap<>();
-		commands.put("withdraw", new FuelWithdrawCommand(WildPrisonAutoMiner.getInstance()));
+		//commands.put("withdraw", new FuelWithdrawCommand(WildPrisonAutoMiner.getInstance()));
 		commands.put("pay", new FuelPayCommand(WildPrisonAutoMiner.getInstance()));
+		//commands.put("help", new FuelHelpCommand(WildPrisonAutoMiner.getInstance()));
 	}
 
 	protected WildPrisonAutoMiner plugin;

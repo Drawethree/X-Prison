@@ -12,6 +12,7 @@ public class WildPrisonPlayerGemsReceiveEvent extends WildPrisonPlayerEvent impl
 
 	private static final HandlerList handlers = new HandlerList();
 
+	@Getter
 	private final ReceiveCause cause;
 	@Getter
 	@Setter
