@@ -2,6 +2,7 @@ messages:
   vote_multi: "&eVote Multiplier - %multiplier% &7(&a%duration%&7)"
   rank_multi: "&eRank Multiplier - %multiplier% &7(&aPERMAMENT&7)"
   global_multi: "&eGlobal Multiplier - %multiplier% &7(&a%duration%&7)"
+  prestige_multi: "&ePrestige Multiplier - %multiplier% &7(&aPERMAMENT&7)"
   personal_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Sell Multiplier x %multiplier% for %minutes% minutes."
 ranks:
   wpplus: 2.5

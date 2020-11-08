@@ -37,6 +37,7 @@ public final class WildPrisonAutoSell {
     private HashMap<ProtectedRegion, HashMap<Material, Integer>> regionsAutoSell;
     private HashMap<String, String> messages;
     private HashMap<UUID, Double> lastMinuteEarnings;
+    private HashMap<UUID, Integer> lastMinuteItems;
     @Getter
     private WildPrisonAutoSellAPI api;
     private List<UUID> disabledAutoSell;
@@ -49,6 +50,7 @@ public final class WildPrisonAutoSell {
         this.api = new WildPrisonAutoSellAPIImpl(this);
         this.disabledAutoSell = new ArrayList<>();
         this.lastMinuteEarnings = new HashMap<>();
+        this.lastMinuteItems = new HashMap<>();
     }
 
     private void loadMessages() {
@@ -92,8 +94,15 @@ public final class WildPrisonAutoSell {
     private void runBroadcastTask() {
         Schedulers.async().runRepeating(() -> {
             Players.all().stream().filter(p -> lastMinuteEarnings.containsKey(p.getUniqueId())).forEach(p -> {
-                double lastAmount = lastMinuteEarnings.get(p.getUniqueId());
-                p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,.0f", lastAmount)));
+                double lastAmount = lastMinuteEarnings.getOrDefault(p.getUniqueId(), 0.0);
+                int lastItems = lastMinuteItems.getOrDefault(p.getUniqueId(), 0);
+                p.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                p.sendMessage(Text.colorize(" &8&l» &6&lAUTOSELL:"));
+                p.sendMessage(Text.colorize(" &8&l➥ &e&lMONEY MADE: &f$" + String.format("%,.0f", lastAmount)));
+                p.sendMessage(Text.colorize(" &8&l➥ &e&lITEMS SOLD: &f" + String.format("%,d", lastItems)));
+                p.sendMessage(Text.colorize(" &8&l➥ &e&lMULTIPLIER: &fX" + String.format("%,.0f", this.core.getMultipliers().getApi().getPlayerMultiplier(p))));
+                p.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                //p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,.0f", lastAmount)));
             });
             lastMinuteEarnings.clear();
         }, 0, TimeUnit.SECONDS, 1, TimeUnit.MINUTES);
@@ -129,7 +138,6 @@ public final class WildPrisonAutoSell {
                             int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                             double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
 
-
                             WildPrisonAutoSellEvent event = new WildPrisonAutoSellEvent(e.getPlayer(), reg, e.getBlock(), amount);
 
                             Events.call(event);
@@ -140,9 +148,15 @@ public final class WildPrisonAutoSell {
 
                             amount = event.getMoneyToDeposit();
 
+                            int amountOfItems = 0;
+                            for (ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())) {
+                                amountOfItems += item.getAmount() * amplifier;
+                            }
+
                             boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
                             core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
                             core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
+                            this.lastMinuteItems.put(e.getPlayer().getUniqueId(), this.lastMinuteItems.getOrDefault(e.getPlayer().getUniqueId(), 0) + amountOfItems);
 
 							e.setDropItems(false);
                             e.getBlock().setType(Material.AIR);

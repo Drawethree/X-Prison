@@ -1,5 +1,6 @@
 package me.drawethree.wildprisoncore.enchants.managers;
 
+import me.drawethree.wildprisoncore.api.enums.ReceiveCause;
 import me.drawethree.wildprisoncore.api.events.player.WildPrisonPlayerEnchantEvent;
 import me.drawethree.wildprisoncore.enchants.WildPrisonEnchants;
 import me.drawethree.wildprisoncore.enchants.enchants.WildPrisonEnchantment;
@@ -153,9 +154,9 @@ public class EnchantsManager {
 
     public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
         if (e.getBlock().getType() == Material.ENDER_STONE) {
-            plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), ENDSTONE_TOKENS);
+			plugin.getCore().getTokens().getTokensManager().giveTokens(e.getPlayer(), ENDSTONE_TOKENS, null, ReceiveCause.MINING);
         } else if (e.getBlock().getType() == Material.OBSIDIAN) {
-            plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), OBSIDIAN_TOKENS);
+			plugin.getCore().getTokens().getTokensManager().giveTokens(e.getPlayer(), OBSIDIAN_TOKENS, null, ReceiveCause.MINING);
         }
         HashMap<WildPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
         for (WildPrisonEnchantment enchantment : playerEnchants.keySet()) {

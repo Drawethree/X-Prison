@@ -292,7 +292,8 @@ public final class WildPrisonMultipliers {
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
-                    c.sender().sendMessage(messages.get("global_multi").replace("%multiplier%", String.valueOf(GLOBAL_MULTIPLIER.getMultiplier())).replace("%duration%", GLOBAL_MULTIPLIER.getTimeLeft()));
+                    //c.sender().sendMessage(messages.get("global_multi").replace("%multiplier%", String.valueOf(GLOBAL_MULTIPLIER.getMultiplier())).replace("%duration%", GLOBAL_MULTIPLIER.getTimeLeft()));
+                    c.sender().sendMessage(messages.get("prestige_multi").replace("%multiplier%", String.valueOf(this.getPrestigeMultiplier(c.sender()))));
                     c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", String.valueOf(rankMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier()).getMultiplier())));
                     c.sender().sendMessage(messages.get("vote_multi").replace("%multiplier%", String.valueOf(personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getMultiplier())).replace("%duration%", personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getTimeLeft()));
                 }).registerAndBind(core, "multiplier", "multi");
@@ -372,8 +373,28 @@ public final class WildPrisonMultipliers {
     }
 
     public double getPrestigeMultiplier(Player p) {
-        int playerPrestige = this.core.getRanks().getApi().getPlayerPrestige(p);
+        return getPrestigeMultiplier(this.core.getRanks().getApi().getPlayerPrestige(p));
+    }
 
-        return (playerPrestige / this.perPrestigeMultiplier) * this.prestigeMultiplier;
+    private long getPrestigeMultiplier(int prestige) {
+
+        long totalMulti = 0;
+
+        long baseIncrement = 5000000;
+        long baseMultiIncrement = 2500;
+
+        for (long i = 0, m = 2500; i < 100000000; i += baseIncrement, m += baseMultiIncrement) {
+
+            if (prestige > i && prestige <= i + baseIncrement) {
+                totalMulti += (prestige - i) / m;
+                break;
+            } else if (prestige > (i + baseIncrement)) {
+                totalMulti += (baseIncrement / baseMultiIncrement);
+                continue;
+            }
+        }
+
+        return totalMulti;
+        //return (playerPrestige / this.perPrestigeMultiplier) * this.prestigeMultiplier;
     }
 }
