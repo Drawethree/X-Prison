@@ -36,8 +36,6 @@ disenchant_menu:
       - "&6&l* &eRight-Click &8» &7-10 Levels"
       - " "
       - "&7&o(( &f&oClick&7&o on the enchant name to disenchant ))"
-endstone_tokens: 10
-obsidian_tokens: 800
 messages:
   no_pickaxe_found: "&cYou do not have any diamond pickaxe!"
   enchant_max_level: "&e&l(!) &eYou have already maxed out this enchantment"
@@ -51,8 +49,8 @@ messages:
   charity_your: "&a&l+ $%amount% &7(From Your Charity)"
   blessing_other: "&6&l+ %amount% TOKENS &7(From %player%'s Blessing)"
   blessing_your: "&6&l+ %amount% TOKENS &7(From Your Blessing)"
-  jackhammer_disabled: "&e&l(!) &7You've &c&lDISABLED &7jackhammer."
-  jackhammer_enabled: "&e&l(!) &7You've &a&lENABLED &7jackhammer."
+  layer_disabled: "&e&l(!) &7You've &c&lDISABLED &7layer."
+  layer_enabled: "&e&l(!) &7You've &a&lENABLED &7layer."
   lucky_booster_on: "&e&lENCHANT &8» &fLucky Mode &7has &Aactivated&7, &FX2 Money & Tokens &7for &a&l5:00"
   lucky_booster_off: "&e&lENCHANT &8» &fLucky Mode &7has &cDeactivated&7."
   block_booster_on: "&e&lENCHANT &8» &fBlock Booster &7has &Aactivated&7, &FX2 Blocks &7for &a&l5:00"
@@ -61,7 +59,7 @@ messages:
   lucky_mode_disabled: "&e&lENCHANT &8» &fLucky Mode &CDisabled&7."
   explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
   explosive_enabled: "&e&l(!) &7You've &a&lENABLED &7explosive."
-  value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.wildprison.net&7."
+  value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.ultraprison.net&7."
   value_no_pickaxe: "&e&lVALUE &8» &7You must hold an pickaxe in your hand."
   value_value: "&e&lVALUE &8» &f%player%'s &7Pickaxe Value: &f%tokens% Tokens&7."
   value_cooldown: "&e&lVALUE &8» &7Please wait &f%time% Seconds&7 before using this command again."
@@ -180,7 +178,7 @@ enchants:
       Enabled: true
       InGuiSlot: 35
   '10':
-    Name: '&bJackHammer'
+    Name: '&bLayer'
     Material: BOOK
     Enabled: true
     InGuiSlot: 36

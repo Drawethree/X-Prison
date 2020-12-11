@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.drawethree</groupId>
-    <artifactId>WildPrisonCore</artifactId>
+    <artifactId>UltraPrisonCore</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <build>
@@ -32,6 +32,12 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
+                                    <shadedPattern>me.drawethree.ultraprisoncore.utils</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -48,7 +54,7 @@
 
     <packaging>jar</packaging>
 
-    <name>WildPrisonCore</name>
+    <name>UltraPrisonCore</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,15 +69,23 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
+            <id>codemc-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>spigot</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.12.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/server.jar</systemPath>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>worldedit</groupId>
@@ -79,6 +93,11 @@
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/worldedit-bukkit-6.1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>de.tr7zw</groupId>
+            <artifactId>item-nbt-api</artifactId>
+            <version>2.6.0</version>
         </dependency>
         <dependency>
             <groupId>worldguard</groupId>
@@ -92,20 +111,12 @@
             <artifactId>jets</artifactId>
             <version>LATEST</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/WildMines.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>gangs</groupId>
-            <artifactId>gangs</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/GangsPlus-2.8.2.jar</systemPath>
+            <systemPath>${project.basedir}/libs/JetsPrisonMines-3.3.1_1.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>me.lucko</groupId>
             <artifactId>helper</artifactId>
             <version>5.6.2</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>

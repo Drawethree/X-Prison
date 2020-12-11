@@ -1,5 +1,9 @@
-name: WildPrisonCore
+name: UltraPrisonCore
 version: ${project.version}
-main: me.drawethree.wildprisoncore.WildPrisonCore
-depend: [helper, Vault, PlaceholderAPI, WorldGuard, WorldEdit, WildMines, LuckPerms, GangsPlus]
+main: me.drawethree.ultraprisoncore.UltraPrisonCore
+depend: [Vault, WorldGuard, WorldEdit]
+softdepend:
+  - PlaceholderAPI
+  - JetsPrisonMines
 authors: [Drawethree]
+api-version: 1.13
