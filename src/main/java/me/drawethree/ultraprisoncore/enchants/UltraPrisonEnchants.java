@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.enchants;
 import lombok.Getter;
 import lombok.NonNull;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPI;
 import me.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPIImpl;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public final class UltraPrisonEnchants {
+public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     @Getter
     private static UltraPrisonEnchants instance;
@@ -61,6 +62,25 @@ public final class UltraPrisonEnchants {
         instance = this;
         this.config = UltraPrisonCore.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
         this.core = UltraPrisonCore;
+    }
+
+    @Override
+	public void reload() {
+		this.config.reload();
+		this.loadMessages();
+		this.enchantsManager.reloadConfig();
+		UltraPrisonEnchantment.loadEnchantments();
+	}
+
+    private void loadMessages() {
+        messages = new HashMap<>();
+        for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
+            messages.put(key, Text.colorize(getConfig().get().getString("messages." + key)));
+        }
+    }
+
+    @Override
+    public void enable() {
         this.enchantsManager = new EnchantsManager(this);
         this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();
@@ -93,29 +113,18 @@ public final class UltraPrisonEnchants {
                 }
             });
         }, 20, 20);
-    }
-
-	public void reload() {
-		this.config.reload();
-		this.loadMessages();
-		this.enchantsManager.reloadConfig();
-		UltraPrisonEnchantment.loadEnchantments();
-	}
-
-    private void loadMessages() {
-        messages = new HashMap<>();
-        for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key, Text.colorize(getConfig().get().getString("messages." + key)));
-        }
-    }
-
-    public void enable() {
         this.registerCommands();
         this.registerEvents();
     }
 
+    @Override
     public void disable() {
         // Plugin shutdown logic
+    }
+
+    @Override
+    public String getName() {
+        return "Enchants";
     }
 
     private void registerCommands() {

@@ -2,7 +2,7 @@ messages:
   rank_up: '&e&lRANKUP &8» &7Congratulations, you ranked up from %Rank-1% &7to %Rank-2%&7.'
   not_enough_money: '&e&lRANKUP &8» &7You don''t have enough money to rankup.'
   prestige_needed: '&e&lRANKUP &8» &7In order to continue to the next stage do &f/prestige&7.'
-  prestige_up: '&e&lPRESTIGE &8» &7Congratulations, you prestiged up to &f%Prestige-2%'
+  prestige_up: '&e&lPRESTIGE &8» &7Congratulations, you prestiged up to &f%Prestige%'
   not_enough_money_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need &a$%cost%'
   last_prestige: '&e&lPRESTIGE &8» &7You are at the last Prestige and have no more Prestiges.'
   not_last_rank: '&e&lPRESTIGE &8» &7You must be last rank to prestige.'
@@ -148,52 +148,52 @@ Prestige:
     Cost: 30000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '2':
     Prefix: '&b&lP2'
     Cost: 60000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '3':
     Prefix: '&c&lP3'
     Cost: 90000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '4':
     Prefix: '&d&lP4'
     Cost: 120000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '5':
     Prefix: '&e&lP5'
     Cost: 150000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '6':
     Prefix: '&f&lP6'
     Cost: 300000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '7':
     Prefix: '&2&lP7'
     Cost: 450000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '8':
     Prefix: '&b&lP8'
     Cost: 600000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
   '9':
     Prefix: '&c&lP9'
     Cost: 750000000000
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige-2%&8] &a&l*&2&l*&a&l*
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*

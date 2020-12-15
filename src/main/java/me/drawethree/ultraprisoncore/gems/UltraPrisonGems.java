@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.gems;
 
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 
-public final class UltraPrisonGems {
+public final class UltraPrisonGems implements UltraPrisonModule {
 
     public static final String GEMS_ADMIN_PERM = "ultraprison.gems.admin";
 
@@ -40,21 +41,34 @@ public final class UltraPrisonGems {
         instance = this;
         this.core = UltraPrisonCore;
         this.config = UltraPrisonCore.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
-        this.loadMessages();
-        this.gemsManager = new GemsManager(this);
-        this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);
     }
 
 
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
     public void enable() {
+        this.loadMessages();
+        this.gemsManager = new GemsManager(this);
+        this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);
         this.registerCommands();
         this.registerEvents();
     }
 
 
+
+    @Override
     public void disable() {
         this.gemsManager.stopUpdating();
         this.gemsManager.savePlayerDataOnDisable();
+    }
+
+    @Override
+    public String getName() {
+        return "Gems";
     }
 
     private void registerEvents() {

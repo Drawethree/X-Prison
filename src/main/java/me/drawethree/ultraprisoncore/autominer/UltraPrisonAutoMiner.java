@@ -4,6 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.database.MySQLDatabase;
 import me.lucko.helper.Commands;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public final class UltraPrisonAutoMiner {
+public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 
     @Getter
@@ -55,6 +56,12 @@ public final class UltraPrisonAutoMiner {
         this.config = UltraPrisonCore.getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
     }
 
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
     public void enable() {
         instance = this;
         this.autoMinerTimes = new HashMap<>();
@@ -239,8 +246,14 @@ public final class UltraPrisonAutoMiner {
         }
     }
 
+    @Override
     public void disable() {
         Players.all().forEach(p -> saveAutoMiner(p, false));
+    }
+
+    @Override
+    public String getName() {
+        return "Auto Miner";
     }
 
     private void registerCommands() {

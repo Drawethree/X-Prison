@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.multipliers;
 
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.database.MySQLDatabase;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
 
-public final class UltraPrisonMultipliers {
+public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private static GlobalMultiplier GLOBAL_MULTIPLIER;
 
@@ -56,8 +57,6 @@ public final class UltraPrisonMultipliers {
         this.config = UltraPrisonCore.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
         this.rankMultipliers = new HashMap<>();
         this.personalMultipliers = new HashMap<>();
-        this.loadMessages();
-        this.loadRankMultipliers();
     }
 
 
@@ -73,13 +72,21 @@ public final class UltraPrisonMultipliers {
     }
 
 
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
     public void enable() {
-        api = new UltraPrisonMultipliersAPIImpl(this);
+        this.loadMessages();
+        this.loadRankMultipliers();
         this.registerCommands();
         this.registerEvents();
         this.removeExpiredMultipliers();
         this.loadGlobalMultiplier();
         this.loadOnlineMultipliers();
+        api = new UltraPrisonMultipliersAPIImpl(this);
     }
 
     private void loadOnlineMultipliers() {
@@ -203,8 +210,14 @@ public final class UltraPrisonMultipliers {
     }
 
 
+    @Override
     public void disable() {
         this.saveAllMultipliers();
+    }
+
+    @Override
+    public String getName() {
+        return "Multipliers";
     }
 
     private void saveAllMultipliers() {

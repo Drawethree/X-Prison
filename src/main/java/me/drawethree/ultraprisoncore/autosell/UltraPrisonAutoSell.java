@@ -4,6 +4,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonAutoSellEvent;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
@@ -27,7 +28,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public final class UltraPrisonAutoSell {
+public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     @Getter
     private FileManager.Config config;
@@ -45,7 +46,6 @@ public final class UltraPrisonAutoSell {
     public UltraPrisonAutoSell(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
         this.config = UltraPrisonCore.getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
-        this.api = new UltraPrisonAutoSellAPIImpl(this);
         this.disabledAutoSell = new ArrayList<>();
         this.lastMinuteEarnings = new HashMap<>();
         this.lastMinuteItems = new HashMap<>();
@@ -81,12 +81,19 @@ public final class UltraPrisonAutoSell {
         }
     }
 
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
     public void enable() {
         this.loadAutoSellRegions();
         this.loadMessages();
         this.registerCommands();
         this.registerListeners();
         this.runBroadcastTask();
+        this.api = new UltraPrisonAutoSellAPIImpl(this);
     }
 
     private void runBroadcastTask() {
@@ -164,8 +171,14 @@ public final class UltraPrisonAutoSell {
                 }).bindWith(core);
     }
 
+    @Override
     public void disable() {
 
+    }
+
+    @Override
+    public String getName() {
+        return "Auto Sell";
     }
 
     private void registerCommands() {

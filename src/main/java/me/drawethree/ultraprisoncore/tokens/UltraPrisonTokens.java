@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.tokens;
 
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
@@ -28,7 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class UltraPrisonTokens {
+public final class UltraPrisonTokens implements UltraPrisonModule {
 
     public static final String TOKENS_ADMIN_PERM = "ultraprison.tokens.admin";
 
@@ -59,13 +60,10 @@ public final class UltraPrisonTokens {
         this.core = prisonCore;
         this.config = prisonCore.getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
         this.blockRewardsConfig = prisonCore.getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
-        this.loadMessages();
-        this.loadVariables();
-        this.tokensManager = new TokensManager(this);
-        this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
     }
 
 
+    @Override
     public void reload() {
         this.config.reload();
         this.blockRewardsConfig.reload();
@@ -81,16 +79,27 @@ public final class UltraPrisonTokens {
     }
 
 
+    @Override
     public void enable() {
+        this.loadMessages();
+        this.loadVariables();
+        this.tokensManager = new TokensManager(this);
+        this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
         this.registerCommands();
         this.registerEvents();
     }
 
 
+    @Override
     public void disable() {
         this.tokensManager.stopUpdating();
         this.tokensManager.saveWeeklyReset();
         this.tokensManager.savePlayerDataOnDisable();
+    }
+
+    @Override
+    public String getName() {
+        return "Tokens";
     }
 
     private void registerEvents() {

@@ -4,4 +4,12 @@ sql:
   database: dbName
   username: dbUser
   password: dbPass
+modules:
+  tokens: true
+  gems: true
+  ranks: true
+  multipliers: true
+  enchants: true
+  autosell: true
+  autominer: true
 

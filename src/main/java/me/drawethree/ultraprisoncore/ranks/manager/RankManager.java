@@ -221,10 +221,10 @@ public class RankManager {
         this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy.getId());
 
         for (String s : toBuy.getCommandsToExecute()) {
-            Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
+            Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()).replace("%Prestige%",this.plugin.getApi().getPrestigePrefix(toBuy.getId()))));
         }
 
-        p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige-2%", this.plugin.getApi().getPrestigePrefix(toBuy.getId())));
+        p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige%", this.plugin.getApi().getPrestigePrefix(toBuy.getId())));
 
         return true;
     }

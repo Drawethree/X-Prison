@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.ranks;
 
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRankupAPI;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRankupAPIImpl;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public final class UltraPrisonRankup {
+public final class UltraPrisonRankup implements UltraPrisonModule {
 
     @Getter
     private FileManager.Config config;
@@ -39,6 +40,12 @@ public final class UltraPrisonRankup {
         this.config = UltraPrisonCore.getFileManager().getConfig("ranks.yml").copyDefaults(true).save();
     }
 
+    @Override
+    public void reload() {
+
+    }
+
+    @Override
     public void enable() {
         this.loadMessages();
         this.rankManager = new RankManager(this);
@@ -60,9 +67,15 @@ public final class UltraPrisonRankup {
     }
 
 
+    @Override
     public void disable() {
         this.rankManager.stopUpdating();
         this.rankManager.saveAllDataSync();
+    }
+
+    @Override
+    public String getName() {
+        return "Ranks & Prestiges";
     }
 
     private void registerCommands() {
