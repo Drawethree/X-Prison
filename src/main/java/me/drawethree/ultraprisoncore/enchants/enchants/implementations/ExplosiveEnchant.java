@@ -1,6 +1,5 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.lucko.helper.cooldown.Cooldown;
@@ -11,6 +10,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +53,10 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
         }
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             Block b = e.getBlock();
-            List<ProtectedRegion> regions = plugin.getCore().getWorldGuard().getRegionContainer().get(b.getWorld()).getApplicableRegions(b.getLocation()).getRegions().stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
+            List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
                 Player p = e.getPlayer();
-                ProtectedRegion region = regions.get(0);
+                IWrappedRegion region = regions.get(0);
                 int radius = enchantLevel <= 300 ? 3 : enchantLevel <= 499 ? 4 : 5;
 
                 b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
@@ -72,7 +73,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                     for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius-1 : (radius / 2)); z++) {
                         for (int y = startLocation.getBlockY() - (radius == 4 ? 3 : (radius / 2)); y <= startLocation.getBlockY() + (radius == 4 ? 0 : (radius / 2)); y++) {
                             Block b1 = b.getWorld().getBlockAt(x, y, z);
-                            if (region.contains(x, y, z) && b1 != null && b1.getType() != Material.AIR) {
+                            if (region.contains(b1.getLocation()) && b1 != null && b1.getType() != Material.AIR) {
                                 blockCount++;
                                 blocksAffected.add(b1);
                                 if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {

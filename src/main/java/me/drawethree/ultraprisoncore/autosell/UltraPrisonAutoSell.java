@@ -1,7 +1,5 @@
 package me.drawethree.ultraprisoncore.autosell;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
@@ -23,6 +21,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +33,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     @Getter
     private FileManager.Config config;
 
-    private HashMap<ProtectedRegion, HashMap<Material, Integer>> regionsAutoSell;
+    private HashMap<IWrappedRegion, HashMap<Material, Integer>> regionsAutoSell;
     private HashMap<String, String> messages;
     private HashMap<UUID, Double> lastMinuteEarnings;
     private HashMap<UUID, Integer> lastMinuteItems;
@@ -65,7 +65,13 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
             String worldName = this.getConfig().get().getString("regions." + regName + ".world");
 
             World w = Bukkit.getWorld(worldName);
-            ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(w).getRegion(regName);
+            Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(w, regName);
+
+            if (!optRegion.isPresent()) {
+                continue;
+            }
+
+            IWrappedRegion region = optRegion.get();
 
             if (region == null || w == null) {
                 continue;
@@ -133,7 +139,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         e.getBlock().getDrops().clear();
                         e.getBlock().setType(Material.AIR);
                     } else {
-                        ProtectedRegion reg = getFirstRegionAtLocation(e.getBlock().getLocation());
+                        IWrappedRegion reg = getFirstRegionAtLocation(e.getBlock().getLocation());
 
                         if (reg == null) {
                             return;
@@ -202,7 +208,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
                         int price = c.arg(0).parseOrFail(Integer.class).intValue();
                         Material type = c.sender().getItemInHand().getType();
-                        ProtectedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
+                        IWrappedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
 
                         if (region == null) {
                             c.sender().sendMessage(Text.colorize("&cYou must be standing in a region!"));
@@ -229,7 +235,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        ProtectedRegion region = this.getFirstRegionAtLocation(c.sender().getLocation());
+                        IWrappedRegion region = this.getFirstRegionAtLocation(c.sender().getLocation());
 
                         if (region == null) {
                             c.sender().sendMessage(getMessage("not_in_region"));
@@ -271,9 +277,9 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         }
     }
 
-    private ProtectedRegion getFirstRegionAtLocation(Location loc) {
-        List<ProtectedRegion> regions = new ArrayList<>(WorldGuardPlugin.inst().getRegionContainer().createQuery().getApplicableRegions(loc).getRegions());
-        return regions.size() == 0 ? null : regions.get(0);
+    private IWrappedRegion getFirstRegionAtLocation(Location loc) {
+        Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc);
+        return regions.size() == 0 ? null : regions.stream().findFirst().get();
     }
 
     public String getMessage(String key) {
@@ -284,7 +290,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         return lastMinuteEarnings.containsKey(player.getUniqueId()) ? lastMinuteEarnings.get(player.getUniqueId()) : 0.0;
     }
 
-    public int getPriceForBrokenBlock(ProtectedRegion region, Block block) {
+    public int getPriceForBrokenBlock(IWrappedRegion region, Block block) {
         return regionsAutoSell.containsKey(region) ? regionsAutoSell.get(region).containsKey(block.getType()) ? regionsAutoSell.get(region).get(block.getType()) : 0 : 0;
     }
 

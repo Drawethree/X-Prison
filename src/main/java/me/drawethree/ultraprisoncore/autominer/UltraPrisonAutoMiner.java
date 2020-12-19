@@ -1,7 +1,5 @@
 package me.drawethree.ultraprisoncore.autominer;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
@@ -18,15 +16,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
@@ -229,12 +226,14 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
         World world = Bukkit.getWorld(worldName);
 
-        ProtectedRegion region = WorldGuardPlugin.inst().getRegionManager(world).getRegion(regionName);
-        if (region == null) {
+        Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world,regionName);
+
+        if (!optRegion.isPresent()) {
             core.getLogger().warning(String.format("There is no such region named %s in world %s!", regionName, world));
             return;
         }
-        this.region = new AutoMinerRegion(this, world, region, moneyPerSec, tokensPerSec);
+
+        this.region = new AutoMinerRegion(this, world, optRegion.get(), moneyPerSec, tokensPerSec);
         core.getLogger().info("AutoMiner region loaded!");
 
     }

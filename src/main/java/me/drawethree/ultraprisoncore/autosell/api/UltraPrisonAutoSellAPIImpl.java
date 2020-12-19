@@ -1,9 +1,9 @@
 package me.drawethree.ultraprisoncore.autosell.api;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 
@@ -19,7 +19,7 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
     }
 
     @Override
-    public long getPriceForBrokenBlock(ProtectedRegion region, Block block) {
+    public long getPriceForBrokenBlock(IWrappedRegion region, Block block) {
         return plugin.getPriceForBrokenBlock(region, block);
     }
 

@@ -1,27 +1,27 @@
 package me.drawethree.ultraprisoncore.autominer;
 
 import com.connorlinfoot.actionbarapi.ActionBarAPI;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import lombok.Getter;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.utils.Players;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 @Getter
 public class AutoMinerRegion {
 
     private UltraPrisonAutoMiner parent;
     private World world;
-    private ProtectedRegion region;
+    private IWrappedRegion region;
     private long moneyPerSecond;
     private long tokensPerSecond;
 
     private Task autoMinerTask;
 
 
-    public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, ProtectedRegion region, long moneyPerSecond, long tokensPerSecond) {
+    public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, long moneyPerSecond, long tokensPerSecond) {
         this.parent = parent;
         this.world = world;
         this.region = region;
@@ -35,7 +35,7 @@ public class AutoMinerRegion {
                     continue;
                 }
 
-                if (region.contains(p.getLocation().getBlockX(), p.getLocation().getBlockY(), p.getLocation().getBlockZ())) {
+                if (region.contains(p.getLocation())) {
                     if (!parent.hasAutoMinerTime(p)) {
                         sendActionBar(p, parent.getMessage("auto_miner_disabled"));
                         continue;

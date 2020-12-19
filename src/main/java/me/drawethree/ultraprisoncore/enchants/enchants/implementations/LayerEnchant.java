@@ -1,6 +1,5 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import org.bukkit.Material;
@@ -8,6 +7,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
+import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,18 +47,20 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 
         if (currentProgress + 1 >= this.getRequiredBlocks(enchantLevel)) {
             Block b = e.getBlock();
-            List<ProtectedRegion> regions = plugin.getCore().getWorldGuard().getRegionContainer().get(b.getWorld()).getApplicableRegions(b.getLocation()).getRegions().stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
+            List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
                 Player p = e.getPlayer();
-                ProtectedRegion region = regions.get(0);
+                IWrappedRegion region = regions.get(0);
+                ICuboidSelection selection = (ICuboidSelection) region.getSelection();
+
                 List<Block> blocksAffected = new ArrayList<>();
 
                 double totalDeposit = 0;
                 int blockCount = 0;
                 int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++) {
-                    for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
+                for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++){
+                    for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
                         Block b1 = b.getWorld().getBlockAt(x, b.getY(), z);
                         if (b1 != null && b1.getType() != Material.AIR) {
                             blockCount++;

@@ -1,6 +1,5 @@
 package me.drawethree.ultraprisoncore;
 
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
@@ -22,7 +21,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.ArrayList;
@@ -185,13 +183,5 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         }
         economy = rsp.getProvider();
         return economy != null;
-    }
-
-    public WorldGuardPlugin getWorldGuard() {
-        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            return null;
-        }
-        return (WorldGuardPlugin) plugin;
     }
 }

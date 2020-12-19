@@ -29,26 +29,9 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.15" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.8-SNAPSHOT" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: worldedit:worldedit-api:1.8.8-R0.1-SNAPSHOT">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/worldedit-bukkit-6.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Maven: de.tr7zw:item-nbt-api:2.6.0" level="project" />
     <orderEntry type="library" name="Maven: de.tr7zw:functional-annotations:0.1-SNAPSHOT" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: worldguard:worldguard:1.8.8">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/worldguard-bukkit-6.2.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="Maven: org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: jets:jets:LATEST">
         <CLASSES>
