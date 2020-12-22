@@ -14,4 +14,6 @@ public interface UltraPrisonRankupAPI {
 	default String getPrestigePrefix(int id) {
 		return Text.colorize(String.format("%,d", id));
 	}
+
+    Rank getNextPlayerRank(Player player);
 }

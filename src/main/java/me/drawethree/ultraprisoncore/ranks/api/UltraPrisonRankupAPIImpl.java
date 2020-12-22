@@ -21,4 +21,9 @@ public class UltraPrisonRankupAPIImpl implements UltraPrisonRankupAPI{
 	public int getPlayerPrestige(Player p) {
         return plugin.getRankManager().getPlayerPrestige(p);
     }
+
+    @Override
+    public Rank getNextPlayerRank(Player player) {
+        return plugin.getRankManager().getNextRank(this.getPlayerRank(player).getId());
+    }
 }

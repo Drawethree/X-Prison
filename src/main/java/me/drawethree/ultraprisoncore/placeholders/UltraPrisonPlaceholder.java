@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -115,6 +116,9 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             return String.format("%.2f", plugin.getMultipliers().getApi().getPlayerMultiplier(player));
         } else if (identifier.equalsIgnoreCase("rank")) {
             return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
+        } else if (identifier.equalsIgnoreCase("next_rank")) {
+            Rank nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
+            return nextRank == null ? "" : nextRank.getPrefix();
         } else if (identifier.equalsIgnoreCase("prestige")) {
             return plugin.getRanks().getApi().getPrestigePrefix(plugin.getRanks().getApi().getPlayerPrestige(player));
         } else if (identifier.equalsIgnoreCase("autominer_time")) {
