@@ -181,6 +181,7 @@ enchants:
     Name: '&bLayer'
     Material: BOOK
     Enabled: true
+    Chance: 9.0E-5
     InGuiSlot: 36
     Increase-Cost-by: 200
     Max: 500

@@ -12,18 +12,19 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class LayerEnchant extends UltraPrisonEnchantment {
 
+    private final double chance;
 
-    private final HashMap<UUID, Integer> progress = new HashMap<>();
+    //private final HashMap<UUID, Integer> progress = new HashMap<>();
 
     public LayerEnchant(UltraPrisonEnchants instance) {
         super(instance, 10);
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override
@@ -42,10 +43,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
             return;
         }
 
-        int currentProgress = this.progress.getOrDefault(e.getPlayer().getUniqueId(), 0);
-
-
-        if (currentProgress + 1 >= this.getRequiredBlocks(enchantLevel)) {
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             Block b = e.getBlock();
             List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
@@ -86,27 +84,9 @@ public class LayerEnchant extends UltraPrisonEnchantment {
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
 
-                this.progress.put(e.getPlayer().getUniqueId(), 0);
             }
-        } else {
-            this.progress.put(e.getPlayer().getUniqueId(), currentProgress + 1);
         }
     }
 
 
-    public int getRequiredBlocks(int enchantLevel) {
-        if (enchantLevel <= 100) {
-            return 900;
-        } else if (enchantLevel <= 200) {
-            return 750;
-        } else if (enchantLevel <= 300) {
-            return 600;
-        } else if (enchantLevel <= 400) {
-            return 450;
-        } else if (enchantLevel <= 499) {
-            return 300;
-        } else {
-            return 150;
-        }
-    }
 }

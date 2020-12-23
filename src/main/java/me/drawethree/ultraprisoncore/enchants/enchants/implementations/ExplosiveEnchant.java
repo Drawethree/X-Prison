@@ -67,7 +67,8 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                 int blockCount = 0;
                 int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                final Location startLocation = e.getBlock().getLocation();
+
+				final Location startLocation = e.getBlock().getLocation();
 
                 for (int x = startLocation.getBlockX() - (radius == 4 ? 0 : (radius / 2)); x <= startLocation.getBlockX() + (radius == 4 ? radius-1 : (radius / 2)); x++) {
                     for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius-1 : (radius / 2)); z++) {
