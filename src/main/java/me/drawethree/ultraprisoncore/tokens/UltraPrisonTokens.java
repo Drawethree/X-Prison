@@ -11,13 +11,13 @@ import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
 import me.drawethree.ultraprisoncore.tokens.commands.TokensCommand;
 import me.drawethree.ultraprisoncore.tokens.managers.TokensManager;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -106,7 +106,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
     private void registerEvents() {
 
         Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == Material.DOUBLE_PLANT && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+                .filter(e -> e.getItem() != null && e.getItem().getType() == CompMaterial.SUNFLOWER.toMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
                 .handler(e -> {
                     if (e.getItem().hasItemMeta()) {
                         e.setCancelled(true);
@@ -119,7 +119,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
         Events.subscribe(BlockBreakEvent.class)
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().filter(region -> region.getId().toLowerCase().startsWith("mine")).findAny().isPresent())
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp") && !e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
                 .handler(e -> {
 					tokensManager.addBlocksBroken(null, e.getPlayer(), 1);
                     if (chance >= ThreadLocalRandom.current().nextDouble()) {

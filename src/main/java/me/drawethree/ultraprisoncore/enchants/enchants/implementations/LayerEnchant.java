@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
-import org.bukkit.Material;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -62,17 +62,15 @@ public class LayerEnchant extends UltraPrisonEnchantment {
                 for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++){
                     for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
                         Block b1 = b.getWorld().getBlockAt(x, b.getY(), z);
-                        if (b1 != null && b1.getType() != Material.AIR) {
+                        if (b1 != null && b1.getType() != CompMaterial.AIR.toMaterial()) {
                             blockCount++;
                             blocksAffected.add(b1);
                             if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
                                 totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) + 0.0) * amplifier);
                             } else {
-                                if (b1.getType() != Material.ENDER_STONE) {
-                                    p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
-                                }
+                                p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
                             }
-                            b1.setType(Material.AIR);
+                            b1.setType(CompMaterial.AIR.toMaterial());
                         }
                     }
                 }

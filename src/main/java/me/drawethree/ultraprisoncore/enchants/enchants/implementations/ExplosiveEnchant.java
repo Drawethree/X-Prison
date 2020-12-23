@@ -2,10 +2,10 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -73,17 +73,15 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                     for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius-1 : (radius / 2)); z++) {
                         for (int y = startLocation.getBlockY() - (radius == 4 ? 3 : (radius / 2)); y <= startLocation.getBlockY() + (radius == 4 ? 0 : (radius / 2)); y++) {
                             Block b1 = b.getWorld().getBlockAt(x, y, z);
-                            if (region.contains(b1.getLocation()) && b1 != null && b1.getType() != Material.AIR) {
+                            if (region.contains(b1.getLocation()) && b1 != null && b1.getType() != CompMaterial.AIR.toMaterial()) {
                                 blockCount++;
                                 blocksAffected.add(b1);
                                 if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
                                     totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) + 0.0) * amplifier);
                                 } else {
-                                    if (b1.getType() != Material.ENDER_STONE) {
-                                        p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
-                                    }
+                                    p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
                                 }
-                                b1.setType(Material.AIR);
+                                b1.setType(CompMaterial.AIR.toMaterial());
                             }
                         }
                     }

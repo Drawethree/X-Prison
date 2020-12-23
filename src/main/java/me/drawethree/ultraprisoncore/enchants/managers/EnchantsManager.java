@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
@@ -58,7 +59,7 @@ public class EnchantsManager {
             if (i == null) {
                 continue;
             }
-            if (i.getType() == Material.DIAMOND_PICKAXE) {
+            if (i.getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
                 return i;
             }
         }
@@ -304,7 +305,7 @@ public class EnchantsManager {
     }
 
     public Item getRefundGuiItem(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
-        Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : Material.BARRIER;
+        Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : CompMaterial.BARRIER.toMaterial();
         ItemStackBuilder builder = ItemStackBuilder.of(m);
         builder.name(enchantment.isRefundEnabled() ? enchantment.getName() : this.plugin.getMessage("enchant_cant_disenchant"));
         builder.lore(enchantment.isRefundEnabled() ? translateLore(enchantment, DISENCHANT_GUI_ITEM_LORE, level) : new ArrayList<>());

@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.api.events.UltraPrisonBlockBreakEvent;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerTokensReceiveEvent;
 import me.drawethree.ultraprisoncore.database.MySQLDatabase;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -16,7 +17,6 @@ import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -227,7 +227,7 @@ public class TokensManager {
 
             UltraPrisonPlayerTokensReceiveEvent event = new UltraPrisonPlayerTokensReceiveEvent(cause, p, amount);
 
-            Events.call(event);
+            Events.callSync(event);
 
             if (event.isCancelled()) {
                 return;
@@ -390,7 +390,7 @@ public class TokensManager {
     }
 
     public static ItemStack createTokenItem(long amount, int value) {
-        return ItemStackBuilder.of(Material.DOUBLE_PLANT).amount(value).name("&e&l" + String.format("%,d", amount) + " TOKENS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+        return ItemStackBuilder.of(CompMaterial.SUNFLOWER.toItem()).amount(value).name("&e&l" + String.format("%,d", amount) + " TOKENS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
     }
 
     public void sendInfoMessage(CommandSender sender, OfflinePlayer target, boolean tokens) {

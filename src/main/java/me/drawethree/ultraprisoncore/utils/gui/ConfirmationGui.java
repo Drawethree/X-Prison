@@ -1,16 +1,16 @@
 package me.drawethree.ultraprisoncore.utils.gui;
 
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public abstract class ConfirmationGui extends Gui {
 
-	private static final ItemStack YES_ITEM = ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(5).name("&aYES").build();
-	private static final ItemStack NO_ITEM = ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(14).name("&cNO").build();
+	private static final ItemStack YES_ITEM = ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&aYES").build();
+	private static final ItemStack NO_ITEM = ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name("&cNO").build();
 
 
 	public ConfirmationGui(Player player, String title) {
@@ -47,7 +47,7 @@ public abstract class ConfirmationGui extends Gui {
 
 
 	private final Item getInfoItem() {
-		return ItemStackBuilder.of(Material.BOOK).name(this.getInitialTitle()).lore("&c&lWARNING!", "&7This action cannot be undone.").buildItem().build();
+		return ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name(this.getInitialTitle()).lore("&c&lWARNING!", "&7This action cannot be undone.").buildItem().build();
 	}
 
 

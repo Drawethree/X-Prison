@@ -212,7 +212,7 @@ public class RankManager {
         Prestige toBuy = getNextPrestige(currentPrestige);
 
         if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-            p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+            p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,d", toBuy.getCost())));
             return false;
         }
 

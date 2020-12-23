@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -128,16 +129,14 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 }, 20));
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == Material.DIAMOND_PICKAXE && !e.getPlayer().getWorld().getName().equalsIgnoreCase("pvp") && !e.getPlayer().getWorld().getName().equalsIgnoreCase("plots"))
+                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
                     if (disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
-                        if (e.getBlock().getType() != Material.ENDER_STONE && e.getBlock().getType() != Material.OBSIDIAN) {
-                            e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
-                        }
+                        e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
 
                         e.getBlock().getDrops().clear();
-                        e.getBlock().setType(Material.AIR);
+                        e.getBlock().setType(CompMaterial.AIR.getMaterial());
                     } else {
                         IWrappedRegion reg = getFirstRegionAtLocation(e.getBlock().getLocation());
 
@@ -170,7 +169,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                             this.lastMinuteItems.put(e.getPlayer().getUniqueId(), this.lastMinuteItems.getOrDefault(e.getPlayer().getUniqueId(), 0) + amountOfItems);
 
                             e.getBlock().getDrops().clear();
-                            e.getBlock().setType(Material.AIR);
+                            e.getBlock().setType(CompMaterial.AIR.toMaterial());
                         }
                     }
 
