@@ -34,7 +34,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     @Getter
     private FileManager.Config config;
 
-    private HashMap<IWrappedRegion, HashMap<Material, Integer>> regionsAutoSell;
+    private HashMap<String, HashMap<Material, Integer>> regionsAutoSell;
     private HashMap<String, String> messages;
     private HashMap<UUID, Double> lastMinuteEarnings;
     private HashMap<UUID, Integer> lastMinuteItems;
@@ -69,6 +69,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
             Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(w, regName);
 
             if (!optRegion.isPresent()) {
+                this.core.getLogger().warning("There is no such WorldGuard region named " + regName + " in world " + worldName);
                 continue;
             }
 
@@ -84,7 +85,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 int sellPrice = this.getConfig().get().getInt("regions." + regName + ".items." + item);
                 sellPrices.put(type, sellPrice);
             }
-            regionsAutoSell.put(region, sellPrices);
+
+            regionsAutoSell.put(regName, sellPrices);
+            this.core.getLogger().info("Loaded auto-sell region named " + regName + " in world " + worldName);
+
         }
     }
 
@@ -138,38 +142,41 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         e.getBlock().getDrops().clear();
                         e.getBlock().setType(CompMaterial.AIR.getMaterial());
                     } else {
-                        IWrappedRegion reg = getFirstRegionAtLocation(e.getBlock().getLocation());
+                        Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation());
 
-                        if (reg == null) {
+                        if (regions == null || regions.isEmpty()) {
                             return;
                         }
 
-                        if (regionsAutoSell.containsKey(reg) && regionsAutoSell.get(reg).containsKey(e.getBlock().getType())) {
-                            int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                            double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg).get(e.getBlock().getType()) + 0.0) * amplifier);
+                        for (IWrappedRegion reg : regions) {
+                            if (regionsAutoSell.containsKey(reg.getId()) && regionsAutoSell.get(reg.getId()).containsKey(e.getBlock().getType())) {
+                                int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
+                                double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).get(e.getBlock().getType()) + 0.0) * amplifier);
 
-                            UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), reg, e.getBlock(), amount);
+                                UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), reg, e.getBlock(), amount);
 
-                            Events.call(event);
+                                Events.call(event);
 
-                            if (event.isCancelled()) {
-                                return;
+                                if (event.isCancelled()) {
+                                    return;
+                                }
+
+                                amount = event.getMoneyToDeposit();
+
+                                int amountOfItems = 0;
+                                for (ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())) {
+                                    amountOfItems += item.getAmount() * amplifier;
+                                }
+
+                                boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+                                core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
+                                core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
+                                this.lastMinuteItems.put(e.getPlayer().getUniqueId(), this.lastMinuteItems.getOrDefault(e.getPlayer().getUniqueId(), 0) + amountOfItems);
+
+                                e.getBlock().getDrops().clear();
+                                e.getBlock().setType(CompMaterial.AIR.toMaterial());
+                                break;
                             }
-
-                            amount = event.getMoneyToDeposit();
-
-                            int amountOfItems = 0;
-                            for (ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())) {
-                                amountOfItems += item.getAmount() * amplifier;
-                            }
-
-                            boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-                            core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
-                            core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
-                            this.lastMinuteItems.put(e.getPlayer().getUniqueId(), this.lastMinuteItems.getOrDefault(e.getPlayer().getUniqueId(), 0) + amountOfItems);
-
-                            e.getBlock().getDrops().clear();
-                            e.getBlock().setType(CompMaterial.AIR.toMaterial());
                         }
                     }
 
@@ -219,13 +226,14 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         getConfig().save();
 
                         HashMap<Material, Integer> prices;
-                        if (regionsAutoSell.containsKey(region)) {
-                            prices = regionsAutoSell.get(region);
+
+                        if (regionsAutoSell.containsKey(region.getId())) {
+                            prices = regionsAutoSell.get(region.getId());
                         } else {
                             prices = new HashMap<>();
                         }
                         prices.put(type, price);
-                        regionsAutoSell.put(region, prices);
+                        regionsAutoSell.put(region.getId(), prices);
 
                         c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%d &ain region &e%s", type.name(), price, region.getId())));
                     }
@@ -234,31 +242,33 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        IWrappedRegion region = this.getFirstRegionAtLocation(c.sender().getLocation());
+                        Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(c.sender().getLocation());
 
-                        if (region == null) {
+                        if (regions == null || regions.isEmpty()) {
                             c.sender().sendMessage(getMessage("not_in_region"));
                             return;
                         }
 
+                        for (IWrappedRegion region : regions) {
+                            if (regionsAutoSell.containsKey(region.getId())) {
 
-                        if (regionsAutoSell.containsKey(region)) {
+                                double totalPrice = 0;
 
-                            double totalPrice = 0;
+                                List<ItemStack> toRemove = new ArrayList<>();
 
-                            List<ItemStack> toRemove = new ArrayList<>();
-
-                            for (Material m : regionsAutoSell.get(region).keySet()) {
-                                for (ItemStack item : Arrays.stream(c.sender().getInventory().getContents()).filter(i -> i != null && i.getType() == m).collect(Collectors.toList())) {
-                                    totalPrice += item.getAmount() * regionsAutoSell.get(region).get(m);
-                                    toRemove.add(item);
+                                for (Material m : regionsAutoSell.get(region.getId()).keySet()) {
+                                    for (ItemStack item : Arrays.stream(c.sender().getInventory().getContents()).filter(i -> i != null && i.getType() == m).collect(Collectors.toList())) {
+                                        totalPrice += item.getAmount() * regionsAutoSell.get(region.getId()).get(m);
+                                        toRemove.add(item);
+                                    }
                                 }
-                            }
 
-                            toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
-                            totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
-                            core.getEconomy().depositPlayer(c.sender(), totalPrice);
-                            c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
+                                toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
+                                totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
+                                core.getEconomy().depositPlayer(c.sender(), totalPrice);
+                                c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
+                                break;
+                            }
                         }
                     }
                 }).registerAndBind(core, "sellall");
@@ -278,7 +288,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     private IWrappedRegion getFirstRegionAtLocation(Location loc) {
         Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc);
-        return regions.size() == 0 ? null : regions.stream().findFirst().get();
+        return regions.size() == 0 ? null : regions.iterator().next();
     }
 
     public String getMessage(String key) {
@@ -290,7 +300,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     }
 
     public int getPriceForBrokenBlock(IWrappedRegion region, Block block) {
-        return regionsAutoSell.containsKey(region) ? regionsAutoSell.get(region).containsKey(block.getType()) ? regionsAutoSell.get(region).get(block.getType()) : 0 : 0;
+        return regionsAutoSell.containsKey(region.getId()) ? regionsAutoSell.get(region.getId()).containsKey(block.getType()) ? regionsAutoSell.get(region.getId()).get(block.getType()) : 0 : 0;
     }
 
     public boolean hasAutoSellEnabled(Player p) {

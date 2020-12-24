@@ -229,7 +229,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world,regionName);
 
         if (!optRegion.isPresent()) {
-            core.getLogger().warning(String.format("There is no such region named %s in world %s!", regionName, world));
+            core.getLogger().warning(String.format("There is no such region named %s in world %s!", regionName, world.getName()));
             return;
         }
 
