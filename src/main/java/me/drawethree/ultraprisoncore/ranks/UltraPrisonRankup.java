@@ -34,6 +34,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
 
     @Getter
     private UltraPrisonCore core;
+    private boolean enabled;
 
     public UltraPrisonRankup(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
@@ -41,12 +42,17 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
     }
 
     @Override
-    public void reload() {
+    public boolean isEnabled() {
+        return enabled;
+    }
 
+    @Override
+    public void reload() {
     }
 
     @Override
     public void enable() {
+        this.enabled = true;
         this.loadMessages();
         this.rankManager = new RankManager(this);
         api = new UltraPrisonRankupAPIImpl(this);

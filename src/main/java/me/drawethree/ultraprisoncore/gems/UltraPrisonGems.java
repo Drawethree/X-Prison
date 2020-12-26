@@ -36,6 +36,7 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     private UltraPrisonCore core;
 
     private HashMap<String, String> messages;
+    private boolean enabled;
 
     public UltraPrisonGems(UltraPrisonCore UltraPrisonCore) {
         instance = this;
@@ -45,12 +46,18 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
 
     @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
     public void reload() {
 
     }
 
     @Override
     public void enable() {
+        this.enabled = true;
         this.loadMessages();
         this.gemsManager = new GemsManager(this);
         this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);

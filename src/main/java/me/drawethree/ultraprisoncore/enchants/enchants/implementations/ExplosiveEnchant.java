@@ -77,7 +77,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                             if (region.contains(b1.getLocation()) && b1 != null && b1.getType() != CompMaterial.AIR.toMaterial()) {
                                 blockCount++;
                                 blocksAffected.add(b1);
-                                if (plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
+                                if (plugin.getCore().getAutoSell().isEnabled() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
                                     totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region, b1) + 0.0) * amplifier);
                                 } else {
                                     p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
@@ -97,7 +97,9 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                 double total = luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit);
 
                 plugin.getCore().getEconomy().depositPlayer(p, total);
-                plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+                if (plugin.getCore().getAutoSell().isEnabled()) {
+                    plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+                }
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
 				plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
             }

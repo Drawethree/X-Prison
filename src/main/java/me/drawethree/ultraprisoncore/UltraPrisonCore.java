@@ -117,10 +117,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
     }
 
-    public boolean isModuleLoaded(UltraPrisonModule module) {
-        return this.loadedModules.contains(module);
-    }
-
     private void registerMainCommand() {
         Commands.create()
                 .assertOp()

@@ -47,10 +47,16 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     @Getter
     private UltraPrisonCore core;
     private List<UUID> disabledAutoMiner;
+    private boolean enabled;
 
     public UltraPrisonAutoMiner(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
         this.config = UltraPrisonCore.getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -60,6 +66,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     @Override
     public void enable() {
+        this.enabled = true;
         instance = this;
         this.autoMinerTimes = new HashMap<>();
         this.disabledAutoMiner = new ArrayList<>();

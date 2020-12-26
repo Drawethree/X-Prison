@@ -50,6 +50,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     @Getter
     private UltraPrisonCore core;
+    private boolean enabled;
 
     public UltraPrisonMultipliers(UltraPrisonCore UltraPrisonCore) {
         instance = this;
@@ -73,12 +74,18 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 
     @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
     public void reload() {
 
     }
 
     @Override
     public void enable() {
+        this.enabled = true;
         this.loadMessages();
         this.loadRankMultipliers();
         this.registerCommands();

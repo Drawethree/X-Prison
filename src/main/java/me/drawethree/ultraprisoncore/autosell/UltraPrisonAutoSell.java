@@ -43,6 +43,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     private List<UUID> disabledAutoSell;
     @Getter
     private UltraPrisonCore core;
+    private boolean enabled;
 
     public UltraPrisonAutoSell(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
@@ -93,12 +94,18 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     }
 
     @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
     public void reload() {
 
     }
 
     @Override
     public void enable() {
+        this.enabled = true;
         this.loadAutoSellRegions();
         this.loadMessages();
         this.registerCommands();

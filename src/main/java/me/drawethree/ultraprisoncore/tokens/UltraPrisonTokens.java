@@ -55,6 +55,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
     private double chance;
     private long minAmount;
     private long maxAmount;
+    private boolean enabled;
 
     public UltraPrisonTokens(UltraPrisonCore prisonCore) {
         instance = this;
@@ -63,6 +64,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
         this.blockRewardsConfig = prisonCore.getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
     }
 
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     @Override
     public void reload() {
@@ -82,6 +88,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
     @Override
     public void enable() {
+        this.enabled = true;
         this.loadMessages();
         this.loadVariables();
         this.tokensManager = new TokensManager(this);

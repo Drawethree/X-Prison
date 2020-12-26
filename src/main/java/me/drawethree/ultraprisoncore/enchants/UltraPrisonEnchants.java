@@ -56,11 +56,17 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     private List<UUID> disabledLayer = new ArrayList<>();
     private List<UUID> disabledExplosive = new ArrayList<>();
     private CooldownMap<Player> valueCooldown = CooldownMap.create(Cooldown.of(30, TimeUnit.SECONDS));
+    private boolean enabled;
 
     public UltraPrisonEnchants(UltraPrisonCore UltraPrisonCore) {
         instance = this;
         this.config = UltraPrisonCore.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
         this.core = UltraPrisonCore;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override
@@ -80,6 +86,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     @Override
     public void enable() {
+        this.enabled = true;
         this.enchantsManager = new EnchantsManager(this);
         this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();
