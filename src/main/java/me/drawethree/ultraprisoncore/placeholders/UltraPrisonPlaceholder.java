@@ -123,6 +123,10 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             return plugin.getRanks().getApi().getPrestigePrefix(plugin.getRanks().getApi().getPlayerPrestige(player));
         } else if (identifier.equalsIgnoreCase("autominer_time")) {
             return plugin.getAutoMiner().getTimeLeft(player);
+        } else if (identifier.equalsIgnoreCase("tokens_formatted")) {
+            return formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
+        } else if (identifier.equalsIgnoreCase("gems_formatted")) {
+            return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
         }
 
         return null;

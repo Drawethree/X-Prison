@@ -2,8 +2,10 @@ package me.drawethree.ultraprisoncore.enchants.gui;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.jet315.prisonmines.events.MinePreResetEvent;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -12,6 +14,7 @@ import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,6 +57,16 @@ public class EnchantGUI extends Gui {
                         ((Player) e.getPlayer()).updateInventory();
                     }, 5);
                 }).bindWith(this);
+
+        if (UltraPrisonCore.getInstance().getJetsPrisonMinesAPI() != null) {
+
+            Events.subscribe(MinePreResetEvent.class, EventPriority.LOWEST)
+                    .handler(e -> {
+                        if (e.getMine().isLocationInRegion(this.getPlayer().getLocation())) {
+                            this.getPlayer().closeInventory();
+                        }
+                    }).bindWith(this);
+        }
     }
 
 
