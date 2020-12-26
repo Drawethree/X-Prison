@@ -125,7 +125,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     @Override
     public void disable() {
-        // Plugin shutdown logic
+        this.enabled = false;
     }
 
     @Override

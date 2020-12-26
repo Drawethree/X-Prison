@@ -192,7 +192,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     @Override
     public void disable() {
-
+        this.enabled = false;
     }
 
     @Override

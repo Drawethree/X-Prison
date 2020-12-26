@@ -255,6 +255,8 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     @Override
     public void disable() {
         Players.all().forEach(p -> saveAutoMiner(p, false));
+        this.enabled = false;
+
     }
 
     @Override

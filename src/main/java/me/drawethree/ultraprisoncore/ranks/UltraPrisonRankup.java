@@ -77,6 +77,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
     public void disable() {
         this.rankManager.stopUpdating();
         this.rankManager.saveAllDataSync();
+        this.enabled = false;
     }
 
     @Override

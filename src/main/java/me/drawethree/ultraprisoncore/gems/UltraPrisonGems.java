@@ -71,6 +71,8 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     public void disable() {
         this.gemsManager.stopUpdating();
         this.gemsManager.savePlayerDataOnDisable();
+        this.enabled = false;
+
     }
 
     @Override

@@ -103,6 +103,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
         this.tokensManager.stopUpdating();
         this.tokensManager.saveWeeklyReset();
         this.tokensManager.savePlayerDataOnDisable();
+        this.enabled = false;
+
     }
 
     @Override

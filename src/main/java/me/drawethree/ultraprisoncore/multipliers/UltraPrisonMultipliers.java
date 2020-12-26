@@ -220,6 +220,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     @Override
     public void disable() {
         this.saveAllMultipliers();
+        this.enabled = false;
+
     }
 
     @Override
