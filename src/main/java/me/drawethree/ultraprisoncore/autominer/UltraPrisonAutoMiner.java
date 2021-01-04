@@ -233,6 +233,10 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
         World world = Bukkit.getWorld(worldName);
 
+		if (world == null) {
+			return;
+		}
+
         Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world,regionName);
 
         if (!optRegion.isPresent()) {
@@ -273,8 +277,8 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
                     }
                 }).registerAndBind(core, "miner", "autominer");
         Commands.create()
-                .assertOp()
-                .handler(c -> {
+				.assertPermission("ultraprison.autominer.admin")
+				.handler(c -> {
                     if (c.args().size() == 3 && c.rawArg(0).equalsIgnoreCase("give")) {
                         Player target = Players.getNullable(c.rawArg(1));
                         int time = c.arg(2).parseOrFail(Integer.class).intValue();

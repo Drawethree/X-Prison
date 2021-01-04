@@ -162,8 +162,8 @@ public class RankManager {
         return this.ranksById.getOrDefault(this.onlinePlayersRanks.get(p.getUniqueId()), this.ranksById.get(1));
     }
 
-    public int getPlayerPrestige(Player p) {
-        return this.onlinePlayersPrestige.getOrDefault(p.getUniqueId(), 0);
+    public Prestige getPlayerPrestige(Player p) {
+        return this.prestigeById.getOrDefault(this.onlinePlayersPrestige.get(p.getUniqueId()), this.prestigeById.get(0));
     }
 
     public boolean isMaxRank(Player p) {
@@ -171,7 +171,7 @@ public class RankManager {
     }
 
     public boolean isMaxPrestige(Player p) {
-        return this.getPlayerPrestige(p) == this.maxPrestige.getId();
+        return this.getPlayerPrestige(p).getId() == this.maxPrestige.getId();
     }
 
     public boolean buyNextRank(Player p) {
@@ -208,8 +208,8 @@ public class RankManager {
             return false;
         }
 
-        int currentPrestige = this.getPlayerPrestige(p);
-        Prestige toBuy = getNextPrestige(currentPrestige);
+        Prestige currentPrestige = this.getPlayerPrestige(p);
+        Prestige toBuy = getNextPrestige(currentPrestige.getId());
 
         if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
             p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,d", toBuy.getCost())));
@@ -221,10 +221,10 @@ public class RankManager {
         this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy.getId());
 
         for (String s : toBuy.getCommandsToExecute()) {
-            Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()).replace("%Prestige%",this.plugin.getApi().getPrestigePrefix(toBuy.getId()))));
+            Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()).replace("%Prestige%", toBuy.getPrefix())));
         }
 
-        p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige%", this.plugin.getApi().getPrestigePrefix(toBuy.getId())));
+        p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige%", toBuy.getPrefix()));
 
         return true;
     }
@@ -297,9 +297,9 @@ public class RankManager {
             return false;
         }
 
-        int startPrestige = this.getPlayerPrestige(p);
+        Prestige startPrestige = this.getPlayerPrestige(p);
 
-        Prestige nextPrestige = this.getNextPrestige(startPrestige);
+        Prestige nextPrestige = this.getNextPrestige(startPrestige.getId());
 
         if (!this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
             p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
@@ -318,7 +318,7 @@ public class RankManager {
 
         }
 
-        if (startPrestige < this.onlinePlayersPrestige.get(p.getUniqueId())) {
+        if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
             p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige, this.onlinePlayersPrestige.get(p.getUniqueId()))));
         }
 
@@ -331,9 +331,9 @@ public class RankManager {
             return;
         }
 
-        int currentPrestige = this.getPlayerPrestige(player);
+        Prestige currentPrestige = this.getPlayerPrestige(player);
 
-        if (currentPrestige + levels > this.maxPrestige.getId()) {
+        if (currentPrestige.getId() + levels > this.maxPrestige.getId()) {
             this.onlinePlayersPrestige.put(player.getUniqueId(), this.maxPrestige.getId());
         } else {
             this.onlinePlayersPrestige.put(player.getUniqueId(), this.onlinePlayersPrestige.get(player.getUniqueId()) + levels);
@@ -354,9 +354,9 @@ public class RankManager {
             return;
         }
 
-        int currentPrestige = this.getPlayerPrestige(target);
+        Prestige currentPrestige = this.getPlayerPrestige(target);
 
-        if (currentPrestige + amount > this.maxPrestige.getId()) {
+        if (currentPrestige.getId() + amount > this.maxPrestige.getId()) {
             this.onlinePlayersPrestige.put(target.getUniqueId(), this.maxPrestige.getId());
         } else {
             this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) + amount);
@@ -386,14 +386,50 @@ public class RankManager {
             return;
         }
 
-        int currentPrestige = this.getPlayerPrestige(target);
+        Prestige currentPrestige = this.getPlayerPrestige(target);
 
-        if (currentPrestige - amount < 0) {
+        if (currentPrestige.getId() - amount < 0) {
             this.onlinePlayersPrestige.put(target.getUniqueId(), 0);
         } else {
             this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) - amount);
         }
 
         sender.sendMessage(this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+    }
+
+    public Rank getRankById(int id) {
+        return this.ranksById.get(id);
+    }
+
+    public boolean setRank(Player target, Rank rank, CommandSender sender) {
+
+        Rank currentRank = this.getPlayerRank(target);
+
+        rank.runCommands(target);
+
+        this.onlinePlayersRanks.put(target.getUniqueId(), rank.getId());
+
+        sender.sendMessage(this.plugin.getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
+        target.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
+
+        return true;
+    }
+
+    public int getRankupProgress(Player player) {
+
+        if (this.isMaxRank(player)) {
+            return 100;
+        }
+
+        Rank current = this.getPlayerRank(player);
+        Rank next = this.getNextRank(current.getId());
+
+        int progress = (int) ((this.plugin.getCore().getEconomy().getBalance(player) / next.getCost()) * 100);
+
+        if (progress > 100) {
+            progress = 100;
+        }
+
+        return progress;
     }
 }

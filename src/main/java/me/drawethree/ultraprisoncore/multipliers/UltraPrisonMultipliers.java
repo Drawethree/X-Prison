@@ -243,7 +243,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private void registerCommands() {
         Commands.create()
-                .assertOp()
+				.assertPermission("ultraprison.multipliers.admin")
                 .handler(c -> {
                     if (c.args().size() == 2) {
                         double amount = c.arg(0).parseOrFail(Double.class).doubleValue();
@@ -252,7 +252,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                     }
                 }).registerAndBind(core, "globalmultiplier", "gmulti");
         Commands.create()
-                .assertOp()
+				.assertPermission("ultraprison.multipliers.admin")
                 .handler(c -> {
                     if (c.args().size() == 3) {
                         Player onlinePlayer = Players.getNullable(c.rawArg(0));

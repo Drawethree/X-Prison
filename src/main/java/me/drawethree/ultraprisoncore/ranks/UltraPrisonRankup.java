@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRankupAPI;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRankupAPIImpl;
 import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
+import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
@@ -94,6 +95,22 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                     }
                 }).registerAndBind(core, "rankup");
         Commands.create()
+                .assertPermission("ultraprison.ranks.admin")
+                .handler(c -> {
+                    if (c.args().size() == 2) {
+                        Player target = c.arg(0).parseOrFail(Player.class);
+                        Rank rank = this.getRankManager().getRankById(c.arg(1).parseOrFail(Integer.class));
+
+                        if (rank == null) {
+                            c.sender().sendMessage(Text.colorize("&cInvalid rank id provided."));
+                            return;
+                        }
+
+                        this.rankManager.setRank(target, rank, c.sender());
+                    }
+                }).registerAndBind(core, "setrank");
+
+        Commands.create()
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
@@ -137,7 +154,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                     }
                 }).registerAndBind(core, "prestigetop");
         Commands.create()
-                .assertOp()
+                .assertPermission("ultraprison.ranks.admin")
                 .handler(c -> {
                     if (c.args().size() == 3) {
 

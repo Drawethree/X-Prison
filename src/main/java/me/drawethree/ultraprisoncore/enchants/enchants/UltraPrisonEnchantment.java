@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.*;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.plugin = plugin;
         this.id = id;
         this.name = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
-        this.material = Material.valueOf(this.plugin.getConfig().get().getString("enchants." + id + ".Material"));
+		this.material = CompMaterial.fromString(this.plugin.getConfig().get().getString("enchants." + id + ".Material")).toMaterial();
         this.description = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Description"));
         this.enabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Enabled");
         this.guiSlot = this.plugin.getConfig().get().getInt("enchants." + id + ".InGuiSlot");

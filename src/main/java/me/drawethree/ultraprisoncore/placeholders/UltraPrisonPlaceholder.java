@@ -120,13 +120,15 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             Rank nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
             return nextRank == null ? "" : nextRank.getPrefix();
         } else if (identifier.equalsIgnoreCase("prestige")) {
-            return plugin.getRanks().getApi().getPrestigePrefix(plugin.getRanks().getApi().getPlayerPrestige(player));
+            return plugin.getRanks().getApi().getPlayerPrestige(player).getPrefix();
         } else if (identifier.equalsIgnoreCase("autominer_time")) {
             return plugin.getAutoMiner().getTimeLeft(player);
         } else if (identifier.equalsIgnoreCase("tokens_formatted")) {
             return formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
         } else if (identifier.equalsIgnoreCase("gems_formatted")) {
             return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
+        } else if (identifier.equalsIgnoreCase("rankup_progress")) {
+            return String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(player));
         }
 
         return null;

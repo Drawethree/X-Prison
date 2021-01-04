@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.database.MySQLDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
@@ -58,7 +59,14 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.fileManager = new FileManager(this);
         this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 
-        this.sqlDatabase = new MySQLDatabase(this);
+        try {
+            this.sqlDatabase = new MySQLDatabase(this);
+        } catch (Exception e) {
+            this.getLogger().warning("Could not maintain SQL Connection. Perhaps your SQL credentials in config.yml are wrong / not set ?");
+            this.getLogger().warning("It is required to have SQL Connection to properly load this plugin. Please set it up.");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         this.tokens = new UltraPrisonTokens(this);
         this.gems = new UltraPrisonGems(this);
@@ -71,7 +79,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.setupEconomy();
         this.registerPlaceholders();
         this.registerJetsPrisonMines();
-
 
         if (this.getConfig().getBoolean("modules.tokens")) {
             this.loadModule(tokens);
@@ -105,8 +112,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.getLogger().info(Text.colorize(String.format("&aUltraPrisonCore - Module %s loaded.", module.getName())));
     }
 
+    //Always unload via iterator!
     private void unloadModule(UltraPrisonModule module) {
-        this.loadedModules.remove(module);
         module.disable();
         this.getLogger().info(Text.colorize(String.format("&aUltraPrisonCore - Module %s unloaded.", module.getName())));
     }
@@ -119,7 +126,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
     private void registerMainCommand() {
         Commands.create()
-                .assertOp()
+                .assertPermission("ultraprison.admin")
                 .handler(c -> {
                     if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload")) {
                         this.reload(c.sender());
@@ -148,9 +155,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
         while (it.hasNext()) {
             this.unloadModule(it.next());
+            it.remove();
         }
 
-        this.sqlDatabase.close();
+        if (this.sqlDatabase != null) {
+            this.sqlDatabase.close();
+        }
     }
 
     private void startEvents() {
@@ -161,6 +171,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new UltraPrisonPlaceholder(this).register();
         }
+
+        new UltraPrisonMVdWPlaceholder(this);
     }
 
     private void registerJetsPrisonMines() {

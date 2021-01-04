@@ -5,6 +5,7 @@ depend: [Vault, WorldGuard, WorldEdit]
 softdepend:
   - PlaceholderAPI
   - JetsPrisonMines
+  - MVdWPlaceholderAPI
 authors: [Drawethree]
 api-version: 1.13
 load: POSTWORLD

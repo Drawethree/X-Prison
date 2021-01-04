@@ -179,7 +179,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                 })
                 .registerAndBind(core, "blockstopweekly", "blockstopw", "btw");
         Commands.create()
-                .assertOp()
+                .assertPermission("ultraprison.tokens.admin")
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         this.tokensManager.resetBlocksTopWeekly(c.sender());
@@ -204,7 +204,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                 })
                 .registerAndBind(core, "blocks", "block");
 		Commands.create()
-				.assertOp()
+                .assertPermission("ultraprison.tokens.admin")
 				.handler(c -> {
 					if (c.args().size() == 3) {
 

@@ -171,6 +171,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                 amount = event.getMoneyToDeposit();
 
                                 int amountOfItems = 0;
+
                                 for (ItemStack item : e.getBlock().getDrops(e.getPlayer().getItemInHand())) {
                                     amountOfItems += item.getAmount() * amplifier;
                                 }
@@ -210,7 +211,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 }).registerAndBind(core, "autosell");
         Commands.create()
                 .assertPlayer()
-                .assertPermission("ultraprison.sellprice")
+				.assertPermission("ultraprison.autosell.admin")
                 .handler(c -> {
                     if (c.args().size() == 1) {
 
@@ -319,4 +320,5 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
         this.lastMinuteEarnings.put(p.getUniqueId(), current + amount);
     }
+
 }

@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.jet315.prisonmines.events.MinePreResetEvent;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -12,7 +13,6 @@ import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -23,8 +23,7 @@ public class EnchantGUI extends Gui {
 
     private static final String GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
     private static final Item EMPTY_SLOT_ITEM = ItemStackBuilder.
-            of(Material.valueOf(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots").split(":")[0]))
-            .data(Integer.parseInt(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots").split(":")[1])).buildItem().build();
+			of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
 
     private static int PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.pickaxe_slot");
 
