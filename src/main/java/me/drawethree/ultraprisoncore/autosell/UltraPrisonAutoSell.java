@@ -34,7 +34,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     @Getter
     private FileManager.Config config;
 
-    private HashMap<String, HashMap<Material, Integer>> regionsAutoSell;
+    private HashMap<String, HashMap<Material, Double>> regionsAutoSell;
     private HashMap<String, String> messages;
     private HashMap<UUID, Double> lastMinuteEarnings;
     private HashMap<UUID, Integer> lastMinuteItems;
@@ -80,10 +80,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 continue;
             }
 
-            HashMap<Material, Integer> sellPrices = new HashMap<>();
+            HashMap<Material, Double> sellPrices = new HashMap<>();
             for (String item : this.getConfig().get().getConfigurationSection("regions." + regName + ".items").getKeys(false)) {
                 Material type = Material.valueOf(item);
-                int sellPrice = this.getConfig().get().getInt("regions." + regName + ".items." + item);
+                double sellPrice = this.getConfig().get().getDouble("regions." + regName + ".items." + item);
                 sellPrices.put(type, sellPrice);
             }
 
@@ -100,7 +100,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     @Override
     public void reload() {
-
+        this.config = this.core.getFileManager().getConfig("autosell.yml");
+        this.config.reload();
     }
 
     @Override
@@ -220,7 +221,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                             return;
                         }
 
-                        int price = c.arg(0).parseOrFail(Integer.class).intValue();
+                        double price = c.arg(0).parseOrFail(Double.class).doubleValue();
                         Material type = c.sender().getItemInHand().getType();
                         IWrappedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
 
@@ -233,7 +234,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         getConfig().set("regions." + region.getId() + ".items." + type.name(), price);
                         getConfig().save();
 
-                        HashMap<Material, Integer> prices;
+                        HashMap<Material, Double> prices;
 
                         if (regionsAutoSell.containsKey(region.getId())) {
                             prices = regionsAutoSell.get(region.getId());
@@ -243,7 +244,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         prices.put(type, price);
                         regionsAutoSell.put(region.getId(), prices);
 
-                        c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%d &ain region &e%s", type.name(), price, region.getId())));
+                        c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId())));
                     }
                 }).registerAndBind(core, "sellprice");
         Commands.create()
@@ -307,7 +308,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         return lastMinuteEarnings.containsKey(player.getUniqueId()) ? lastMinuteEarnings.get(player.getUniqueId()) : 0.0;
     }
 
-    public int getPriceForBrokenBlock(IWrappedRegion region, Block block) {
+    public double getPriceForBrokenBlock(IWrappedRegion region, Block block) {
         return regionsAutoSell.containsKey(region.getId()) ? regionsAutoSell.get(region.getId()).containsKey(block.getType()) ? regionsAutoSell.get(region.getId()).get(block.getType()) : 0 : 0;
     }
 

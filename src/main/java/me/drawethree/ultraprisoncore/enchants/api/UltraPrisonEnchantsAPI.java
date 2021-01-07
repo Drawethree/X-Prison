@@ -19,4 +19,6 @@ public interface UltraPrisonEnchantsAPI {
 
     ItemStack removeEnchant(ItemStack item, Player p, int id);
 
+    boolean registerEnchant(UltraPrisonEnchantment enchantment);
+
 }

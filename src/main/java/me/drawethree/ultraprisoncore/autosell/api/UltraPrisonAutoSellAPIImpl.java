@@ -19,7 +19,7 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
     }
 
     @Override
-    public long getPriceForBrokenBlock(IWrappedRegion region, Block block) {
+    public double getPriceForBrokenBlock(IWrappedRegion region, Block block) {
         return plugin.getPriceForBrokenBlock(region, block);
     }
 

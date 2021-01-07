@@ -95,9 +95,22 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         allEnchantments.put(16, new PrestigeFinderEnchant(UltraPrisonEnchants.getInstance()));
         allEnchantments.put(17, new BlockBoosterEnchant(UltraPrisonEnchants.getInstance()));
         allEnchantments.put(18, new FuelEnchant(UltraPrisonEnchants.getInstance()));
+
+
+        registerCustomEnchants();
+    }
+
+    private static void registerCustomEnchants() {
+        //TODO: Find all extra classes and register them.
     }
 
     public int getMaxLevel() {
         return this.maxLevel == -1 ? Integer.MAX_VALUE : this.maxLevel;
+    }
+
+
+    public static boolean registerEnchant(UltraPrisonEnchantment enchantment) {
+        allEnchantments.put(enchantment.getId(), enchantment);
+        return true;
     }
 }

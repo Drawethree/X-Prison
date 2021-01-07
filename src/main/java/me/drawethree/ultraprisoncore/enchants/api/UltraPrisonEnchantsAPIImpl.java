@@ -40,4 +40,9 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
     public ItemStack removeEnchant(ItemStack item, Player p, int id) {
         return this.enchantsManager.removeEnchant(item, p, id, 0);
     }
+
+    @Override
+    public boolean registerEnchant(UltraPrisonEnchantment enchantment) {
+        return UltraPrisonEnchantment.registerEnchant(enchantment);
+    }
 }

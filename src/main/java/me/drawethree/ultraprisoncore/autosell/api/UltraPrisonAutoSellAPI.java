@@ -8,7 +8,7 @@ public interface UltraPrisonAutoSellAPI {
 
     double getCurrentEarnings(Player player);
 
-    long getPriceForBrokenBlock(IWrappedRegion region, Block block);
+    double getPriceForBrokenBlock(IWrappedRegion region, Block block);
 
     boolean hasAutoSellEnabled(Player p);
 }

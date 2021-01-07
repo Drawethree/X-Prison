@@ -52,7 +52,8 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
     @Override
     public void reload() {
-
+        this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
+        this.config.reload();
     }
 
     @Override

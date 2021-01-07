@@ -72,6 +72,9 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
     @Override
     public void reload() {
+        this.config = this.core.getFileManager().getConfig("tokens.yml");
+        this.blockRewardsConfig = this.core.getFileManager().getConfig("block-rewards.yml");
+
         this.config.reload();
         this.blockRewardsConfig.reload();
         this.loadMessages();

@@ -61,7 +61,8 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     @Override
     public void reload() {
-
+        this.config = this.core.getFileManager().getConfig("autominer.yml");
+        this.config.reload();
     }
 
     @Override
