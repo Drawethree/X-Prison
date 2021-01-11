@@ -220,7 +220,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 }).registerAndBind(core, "autosell");
         Commands.create()
                 .assertPlayer()
-				.assertPermission("ultraprison.autosell.admin")
+                .assertPermission("ultraprison.autosell.admin")
                 .handler(c -> {
                     if (c.args().size() == 1) {
 
@@ -270,8 +270,27 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
-                    if (c.args().size() == 0) {
-                        Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(c.sender().getLocation());
+                    if (c.args().size() == 0 || c.args().size() == 1) {
+
+                        Set<IWrappedRegion> regions;
+
+                        if (c.args().size() == 1) {
+
+                            String regionName = c.rawArg(0);
+
+                            Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(c.sender().getLocation().getWorld(), regionName);
+
+                            if (!optRegion.isPresent()) {
+                                c.sender().sendMessage(getMessage("invalid_region"));
+                                return;
+                            }
+
+                            regions = new HashSet<>();
+                            regions.add(optRegion.get());
+
+                        } else {
+                            regions = WorldGuardWrapper.getInstance().getRegions(c.sender().getLocation());
+                        }
 
                         if (regions == null || regions.isEmpty()) {
                             c.sender().sendMessage(getMessage("not_in_region"));
