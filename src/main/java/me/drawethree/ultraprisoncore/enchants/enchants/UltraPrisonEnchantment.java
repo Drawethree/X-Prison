@@ -95,7 +95,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         allEnchantments.put(16, new PrestigeFinderEnchant(UltraPrisonEnchants.getInstance()));
         allEnchantments.put(17, new BlockBoosterEnchant(UltraPrisonEnchants.getInstance()));
         allEnchantments.put(18, new FuelEnchant(UltraPrisonEnchants.getInstance()));
-
+        allEnchantments.put(19, new AutoSellEnchant(UltraPrisonEnchants.getInstance()));
 
         registerCustomEnchants();
     }

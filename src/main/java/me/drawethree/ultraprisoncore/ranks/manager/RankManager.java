@@ -184,6 +184,11 @@ public class RankManager {
         Rank currentRank = this.getPlayerRank(p);
         Rank toBuy = getNextRank(currentRank.getId());
 
+        if (toBuy == null) {
+            p.sendMessage(this.plugin.getMessage("prestige_needed"));
+            return false;
+        }
+
         if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
             p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,d", toBuy.getCost())));
             return false;

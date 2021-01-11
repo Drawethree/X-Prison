@@ -330,6 +330,19 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 44
+  '19':
+    Name: '&eAutosell'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 45
+    Increase-Cost-by: 0
+    Max: 1
+    Chance: 25.0
+    Cost: 1000
+    Description: '&7&o(( Ability to sell all items while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 45
 Pickaxe:
   lore:
     - '&8&m------------------------'
@@ -353,3 +366,4 @@ Pickaxe:
     - '%Enchant-16%'
     - '%Enchant-17%'
     - '%Enchant-18%'
+    - '%Enchant-19%'
