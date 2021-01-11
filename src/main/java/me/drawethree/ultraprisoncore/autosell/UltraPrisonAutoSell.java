@@ -36,8 +36,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     private HashMap<String, HashMap<Material, Double>> regionsAutoSell;
     private HashMap<String, String> messages;
-    private HashMap<UUID, Double> lastMinuteEarnings;
-    private HashMap<UUID, Integer> lastMinuteItems;
+    private List<String> autoSellBroadcastMessage;
+    private long broadcastTime;
+    private HashMap<UUID, Double> lastEarnings;
+    private HashMap<UUID, Long> lastItems;
     @Getter
     private UltraPrisonAutoSellAPI api;
     private List<UUID> disabledAutoSell;
@@ -49,8 +51,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         this.core = UltraPrisonCore;
         this.config = UltraPrisonCore.getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
         this.disabledAutoSell = new ArrayList<>();
-        this.lastMinuteEarnings = new HashMap<>();
-        this.lastMinuteItems = new HashMap<>();
+        this.lastEarnings = new HashMap<>();
+        this.lastItems = new HashMap<>();
     }
 
     private void loadMessages() {
@@ -67,6 +69,12 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
             String worldName = this.getConfig().get().getString("regions." + regName + ".world");
 
             World w = Bukkit.getWorld(worldName);
+
+            if (w == null) {
+                this.core.getLogger().warning("There is no such World named " + worldName + "! Perhaps its no loaded yet?");
+                continue;
+            }
+
             Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(w, regName);
 
             if (!optRegion.isPresent()) {
@@ -108,6 +116,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     public void enable() {
         this.enabled = true;
         this.loadAutoSellRegions();
+        this.broadcastTime = this.getConfig().get().getInt("auto_sell_broadcast.time");
+        this.autoSellBroadcastMessage = this.getConfig().get().getStringList("auto_sell_broadcast.message");
         this.loadMessages();
         this.registerCommands();
         this.registerListeners();
@@ -117,19 +127,15 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     private void runBroadcastTask() {
         Schedulers.async().runRepeating(() -> {
-            Players.all().stream().filter(p -> lastMinuteEarnings.containsKey(p.getUniqueId())).forEach(p -> {
-                double lastAmount = lastMinuteEarnings.getOrDefault(p.getUniqueId(), 0.0);
-                int lastItems = lastMinuteItems.getOrDefault(p.getUniqueId(), 0);
-                p.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-                p.sendMessage(Text.colorize(" &8&l» &6&lAUTOSELL:"));
-                p.sendMessage(Text.colorize(" &8&l➥ &e&lMONEY MADE: &f$" + String.format("%,.0f", lastAmount)));
-                p.sendMessage(Text.colorize(" &8&l➥ &e&lITEMS SOLD: &f" + String.format("%,d", lastItems)));
-                p.sendMessage(Text.colorize(" &8&l➥ &e&lMULTIPLIER: &fX" + String.format("%,.0f", this.core.getMultipliers().getApi().getPlayerMultiplier(p))));
-                p.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-                //p.sendMessage(getMessage("last_minute_earn").replace("%amount%", String.format("%,.0f", lastAmount)));
+            Players.all().stream().filter(p -> lastEarnings.containsKey(p.getUniqueId())).forEach(p -> {
+                double lastAmount = lastEarnings.getOrDefault(p.getUniqueId(), 0.0);
+                long lastItems = this.lastItems.getOrDefault(p.getUniqueId(), 0L);
+                for (String s : this.autoSellBroadcastMessage) {
+                    p.sendMessage(Text.colorize(s.replace("%money%", String.format("%,.0f", lastAmount)).replace("%items%", String.format("%,d", lastItems))));
+                }
             });
-            lastMinuteEarnings.clear();
-        }, 0, TimeUnit.SECONDS, 1, TimeUnit.MINUTES);
+            lastEarnings.clear();
+        }, this.broadcastTime, TimeUnit.SECONDS, this.broadcastTime, TimeUnit.SECONDS);
     }
 
     private void registerListeners() {
@@ -178,9 +184,11 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                 }
 
                                 boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+
                                 core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
                                 core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
-                                this.lastMinuteItems.put(e.getPlayer().getUniqueId(), this.lastMinuteItems.getOrDefault(e.getPlayer().getUniqueId(), 0) + amountOfItems);
+
+                                this.lastItems.put(e.getPlayer().getUniqueId(), this.lastItems.getOrDefault(e.getPlayer().getUniqueId(), 0L) + amountOfItems);
 
                                 e.getBlock().getDrops().clear();
                                 e.getBlock().setType(CompMaterial.AIR.toMaterial());
@@ -234,6 +242,12 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         getConfig().set("regions." + region.getId() + ".items." + type.name(), price);
                         getConfig().save();
 
+                        if (type == Material.REDSTONE_ORE) {
+                            getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
+                            getConfig().set("regions." + region.getId() + ".items." + Material.GLOWING_REDSTONE_ORE.name(), price);
+                            getConfig().save();
+                        }
+
                         HashMap<Material, Double> prices;
 
                         if (regionsAutoSell.containsKey(region.getId())) {
@@ -241,10 +255,16 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                         } else {
                             prices = new HashMap<>();
                         }
+
+                        if (type == Material.REDSTONE_ORE) {
+                            prices.put(Material.GLOWING_REDSTONE_ORE, price);
+                        }
+
                         prices.put(type, price);
                         regionsAutoSell.put(region.getId(), prices);
 
                         c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId())));
+
                     }
                 }).registerAndBind(core, "sellprice");
         Commands.create()
@@ -305,7 +325,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     }
 
     public double getCurrentEarnings(Player player) {
-        return lastMinuteEarnings.containsKey(player.getUniqueId()) ? lastMinuteEarnings.get(player.getUniqueId()) : 0.0;
+        return lastEarnings.containsKey(player.getUniqueId()) ? lastEarnings.get(player.getUniqueId()) : 0.0;
     }
 
     public double getPriceForBrokenBlock(IWrappedRegion region, Block block) {
@@ -317,9 +337,9 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     }
 
     public void addToCurrentEarnings(Player p, double amount) {
-        double current = this.lastMinuteEarnings.getOrDefault(p.getUniqueId(), 0.0);
+        double current = this.lastEarnings.getOrDefault(p.getUniqueId(), 0.0);
 
-        this.lastMinuteEarnings.put(p.getUniqueId(), current + amount);
+        this.lastEarnings.put(p.getUniqueId(), current + amount);
     }
 
 }

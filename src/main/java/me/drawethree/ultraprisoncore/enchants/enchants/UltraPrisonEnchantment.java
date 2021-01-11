@@ -104,6 +104,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         //TODO: Find all extra classes and register them.
     }
 
+
     public int getMaxLevel() {
         return this.maxLevel == -1 ? Integer.MAX_VALUE : this.maxLevel;
     }

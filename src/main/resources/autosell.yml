@@ -4,4 +4,12 @@ messages:
   not_in_region: "&e&l(!) &cYou must be in region to use /sellall"
   sell_all_complete: "&e&lSELLALL &8>> &7You've sold your inventory for &a$%price%"
   last_minute_earn: "&e&lINFO &8>> &7You've earn &a$%amount% &7in last minute."
+auto_sell_broadcast:
+  time: 60
+  message:
+    - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+    - " &8&l» &6&lAUTOSELL:"
+    - " &8&l➥ &e&lMONEY MADE: &2$&a%money%"
+    - " &8&l➥ &e&lITEMS SOLD: &f%items%"
+    - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 regions: {}

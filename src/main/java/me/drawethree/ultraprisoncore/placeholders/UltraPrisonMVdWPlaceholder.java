@@ -22,6 +22,8 @@ public class UltraPrisonMVdWPlaceholder {
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier", event -> String.format("%.2f", plugin.getMultipliers().getApi().getPlayerMultiplier(event.getPlayer())));
 
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_global", event -> String.format("%.2f", plugin.getMultipliers().getApi().getGlobalMultiplier()));
+
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rank", event -> plugin.getRanks().getApi().getPlayerRank(event.getPlayer()).getPrefix());
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank", event -> {

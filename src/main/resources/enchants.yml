@@ -251,7 +251,7 @@ enchants:
       Enabled: true
       InGuiSlot: 40
   '15':
-    Name: '&BKey Finder'
+    Name: '&bKey Finder'
     Material: BOOK
     Enabled: true
     InGuiSlot: 41

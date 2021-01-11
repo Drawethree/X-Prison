@@ -114,6 +114,8 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
         } else if (identifier.equalsIgnoreCase("multiplier")) {
             return String.format("%.2f", plugin.getMultipliers().getApi().getPlayerMultiplier(player));
+        } else if (identifier.equalsIgnoreCase("multiplier_global")) {
+            return String.format("%.2f", plugin.getMultipliers().getApi().getGlobalMultiplier());
         } else if (identifier.equalsIgnoreCase("rank")) {
             return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
         } else if (identifier.equalsIgnoreCase("next_rank")) {

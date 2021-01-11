@@ -17,8 +17,8 @@ public class BlessingEnchant extends UltraPrisonEnchantment {
     public BlessingEnchant(UltraPrisonEnchants instance) {
         super(instance, 13);
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
-        this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
+		this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
+		this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
     }
 
     @Override
