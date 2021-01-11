@@ -5,6 +5,8 @@ messages:
   invalid_region: "&e&l(!) &cYou have specified invalid region."
   sell_all_complete: "&e&lSELLALL &8>> &7You've sold your inventory for &a$%price%"
   last_minute_earn: "&e&lINFO &8>> &7You've earn &a$%amount% &7in last minute."
+  no_permission_sell: "&e&l(!) &cYou do not have permission to sell in this region! (%perm%)"
+  no_permission_autosell_toggle: "&e&l(!) &cYou do not have permission to toggle autosell feature!"
 auto_sell_broadcast:
   time: 60
   message:

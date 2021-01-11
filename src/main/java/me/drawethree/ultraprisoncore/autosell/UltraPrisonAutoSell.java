@@ -31,6 +31,11 @@ import java.util.stream.Collectors;
 
 public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
+
+    private static final String ADMIN_PERMISSION = "ultraprison.autosell.admin";
+    private static final String SELL_PERMISSION = "ultraprison.sellall";
+    private static final String AUTOSELL_TOGGLE_PERMISSION = "ultraprison.autosell.toggle";
+
     @Getter
     private FileManager.Config config;
 
@@ -213,6 +218,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     private void registerCommands() {
         Commands.create()
                 .assertPlayer()
+                .assertPermission(AUTOSELL_TOGGLE_PERMISSION, getMessage("no_permission_autosell_toggle"))
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         toggleAutoSell(c.sender());
@@ -220,7 +226,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 }).registerAndBind(core, "autosell");
         Commands.create()
                 .assertPlayer()
-                .assertPermission("ultraprison.autosell.admin")
+                .assertPermission(ADMIN_PERMISSION)
                 .handler(c -> {
                     if (c.args().size() == 1) {
 
@@ -299,6 +305,11 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
                         for (IWrappedRegion region : regions) {
                             if (regionsAutoSell.containsKey(region.getId())) {
+
+                                if (!c.sender().hasPermission(SELL_PERMISSION + "." + region.getId())) {
+                                    c.sender().sendMessage(getMessage("no_permission_sell").replace("%perm%", SELL_PERMISSION + "." + region.getId()));
+                                    return;
+                                }
 
                                 double totalPrice = 0;
 
