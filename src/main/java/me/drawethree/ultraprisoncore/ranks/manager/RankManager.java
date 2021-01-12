@@ -1,6 +1,5 @@
 package me.drawethree.ultraprisoncore.ranks.manager;
 
-import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
@@ -16,9 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,7 +36,7 @@ public class RankManager {
     private String SPACER_LINE;
     private String TOP_FORMAT_PRESTIGE;
     private boolean updating;
-    private HashMap<UUID, Integer> top10Prestige;
+	private LinkedHashMap<UUID, Integer> top10Prestige;
     private Task task;
 
     public RankManager(UltraPrisonRankup plugin) {
@@ -269,13 +265,8 @@ public class RankManager {
     private void updatePrestigeTop() {
         top10Prestige = new LinkedHashMap<>();
         this.plugin.getCore().getLogger().info("Starting updating PrestigeTop");
-        try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.RANKS_UUID_COLNAME + "," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " FROM " + MySQLDatabase.RANKS_DB_NAME + " ORDER BY " + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
-            while (set.next()) {
-                top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.RANKS_UUID_COLNAME)), set.getInt(MySQLDatabase.RANKS_PRESTIGE_COLNAME));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+		this.top10Prestige = (LinkedHashMap<UUID, Integer>) this.plugin.getCore().getPluginDatabase().getTop10Prestiges();
         this.plugin.getCore().getLogger().info("PrestigeTop updated!");
     }
 

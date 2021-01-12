@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
-import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -19,9 +18,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {
@@ -183,28 +179,14 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
-                    statement.setString(1, p.getUniqueId().toString());
-                    statement.setInt(2, timeLeft);
-                    statement.setInt(3, timeLeft);
-                    statement.execute();
-                    this.autoMinerTimes.remove(p.getUniqueId());
-                    this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
-                statement.setString(1, p.getUniqueId().toString());
-                statement.setInt(2, timeLeft);
-                statement.setInt(3, timeLeft);
-                statement.execute();
+                this.core.getPluginDatabase().saveAutoMiner(p, timeLeft);
                 this.autoMinerTimes.remove(p.getUniqueId());
                 this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            });
+        } else {
+            this.core.getPluginDatabase().saveAutoMiner(p, timeLeft);
+            this.autoMinerTimes.remove(p.getUniqueId());
+            this.core.getLogger().info(String.format("Saved %s's AutoMiner time.", p.getName()));
         }
     }
 

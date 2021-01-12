@@ -2,7 +2,6 @@ package me.drawethree.ultraprisoncore.gems.managers;
 
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerGemsReceiveEvent;
-import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -21,9 +20,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -107,7 +103,7 @@ public class GemsManager {
 
     private void addIntoTable(Player player) {
         Schedulers.async().run(() -> {
-            this.plugin.getCore().getPluginDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.GEMS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+			this.plugin.getCore().getPluginDatabase().addIntoGems(player);
         });
     }
 
@@ -269,13 +265,8 @@ public class GemsManager {
     private void updateGemsTop() {
         top10Gems = new LinkedHashMap<>();
         this.plugin.getCore().getLogger().info("Starting updating GemsTop");
-        try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.GEMS_UUID_COLNAME + "," + MySQLDatabase.GEMS_GEMS_COLNAME + " FROM " + MySQLDatabase.GEMS_DB_NAME + " ORDER BY " + MySQLDatabase.GEMS_GEMS_COLNAME + " DESC LIMIT 10").executeQuery()) {
-            while (set.next()) {
-                top10Gems.put(UUID.fromString(set.getString(MySQLDatabase.GEMS_UUID_COLNAME)), set.getLong(MySQLDatabase.GEMS_GEMS_COLNAME));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+		this.top10Gems = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Gems();
         this.plugin.getCore().getLogger().info("GemsTop updated!");
     }
 

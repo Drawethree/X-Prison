@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
-import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
@@ -21,9 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -127,38 +123,14 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
-                    statement.setString(1, player.getUniqueId().toString());
-                    statement.setDouble(2, multiplier.getMultiplier());
-                    statement.setLong(3, multiplier.getEndTime());
-                    statement.setDouble(4, multiplier.getMultiplier());
-                    statement.setLong(5, multiplier.getEndTime());
-
-                    statement.execute();
-                    this.personalMultipliers.remove(player.getUniqueId());
-                    this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
-
-                } catch (SQLException e) {
-                    this.core.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
-                statement.setString(1, player.getUniqueId().toString());
-                statement.setDouble(2, multiplier.getMultiplier());
-                statement.setLong(3, multiplier.getEndTime());
-                statement.setDouble(4, multiplier.getMultiplier());
-                statement.setLong(5, multiplier.getEndTime());
-
-                statement.execute();
+                this.core.getPluginDatabase().savePersonalMultiplier(player, multiplier);
                 this.personalMultipliers.remove(player.getUniqueId());
                 this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
-
-            } catch (SQLException e) {
-                this.core.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
-                e.printStackTrace();
-            }
+            });
+        } else {
+            this.core.getPluginDatabase().savePersonalMultiplier(player, multiplier);
+            this.personalMultipliers.remove(player.getUniqueId());
+            this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
         }
     }
 
@@ -188,8 +160,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     private void loadPersonalMultiplier(Player player) {
         Schedulers.async().run(() -> {
             PlayerMultiplier multiplier = this.core.getPluginDatabase().getPlayerPersonalMultiplier(player);
+            if (multiplier == null) {
+                multiplier = new PlayerMultiplier(player.getUniqueId(), 0, 0);
+            }
             personalMultipliers.put(player.getUniqueId(), multiplier);
-            this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier, player.getName()));
+            this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
         });
     }
 

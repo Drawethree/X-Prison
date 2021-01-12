@@ -5,7 +5,6 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonBlockBreakEvent;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerTokensReceiveEvent;
-import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
@@ -27,10 +26,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -117,9 +112,9 @@ public class TokensManager {
 	private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
 		if (async) {
 			Schedulers.async().run(() -> {
-				this.plugin.getCore().getPluginDatabase().execute("UPDATE " + MySQLDatabase.TOKENS_DB_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", tokensCache.get(player.getUniqueId()), player.getUniqueId().toString());
-				this.plugin.getCore().getPluginDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", blocksCache.get(player.getUniqueId()), player.getUniqueId().toString());
-				this.plugin.getCore().getPluginDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", blocksCacheWeekly.get(player.getUniqueId()), player.getUniqueId().toString());
+				this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
+				this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
+				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
 				if (removeFromCache) {
 					tokensCache.remove(player.getUniqueId());
 					blocksCache.remove(player.getUniqueId());
@@ -128,9 +123,9 @@ public class TokensManager {
 				this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
 			});
 		} else {
-			this.plugin.getCore().getPluginDatabase().execute("UPDATE " + MySQLDatabase.TOKENS_DB_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", tokensCache.get(player.getUniqueId()), player.getUniqueId().toString());
-			this.plugin.getCore().getPluginDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", blocksCache.get(player.getUniqueId()), player.getUniqueId().toString());
-			this.plugin.getCore().getPluginDatabase().execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", blocksCacheWeekly.get(player.getUniqueId()), player.getUniqueId().toString());
+			this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
 			if (removeFromCache) {
 				tokensCache.remove(player.getUniqueId());
 				blocksCache.remove(player.getUniqueId());
@@ -161,9 +156,9 @@ public class TokensManager {
 
 	private void addIntoTable(Player player) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.TOKENS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
-			this.plugin.getCore().getPluginDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.BLOCKS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
-			this.plugin.getCore().getPluginDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+			this.plugin.getCore().getPluginDatabase().addIntoTokens(player);
+			this.plugin.getCore().getPluginDatabase().addIntoBlocks(player);
+			this.plugin.getCore().getPluginDatabase().addIntoBlocksWeekly(player);
 		});
 	}
 
@@ -173,40 +168,17 @@ public class TokensManager {
 
 	private void loadPlayerData(Player player) {
 		Schedulers.async().run(() -> {
-			try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.TOKENS_DB_NAME + " WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?")) {
-				statement.setString(1, player.getUniqueId().toString());
-				try (ResultSet tokens = statement.executeQuery()) {
-					if (tokens.next()) {
-						tokensCache.put(UUID.fromString(tokens.getString(MySQLDatabase.TOKENS_UUID_COLNAME)), tokens.getLong(MySQLDatabase.TOKENS_TOKENS_COLNAME));
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 
-			try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.BLOCKS_DB_NAME + " WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?")) {
-				statement.setString(1, player.getUniqueId().toString());
-				try (ResultSet blocks = statement.executeQuery()) {
-					if (blocks.next()) {
-						blocksCache.put(UUID.fromString(blocks.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), blocks.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			long playerTokens = this.plugin.getCore().getPluginDatabase().getPlayerTokens(player);
+			long playerBlocks = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocks(player);
+			long playerBlocksWeekly = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocksWeekly(player);
 
-			try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?")) {
-				statement.setString(1, player.getUniqueId().toString());
-				try (ResultSet blocks = statement.executeQuery()) {
-					if (blocks.next()) {
-						blocksCacheWeekly.put(UUID.fromString(blocks.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), blocks.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			this.tokensCache.put(player.getUniqueId(), playerTokens);
+			this.blocksCache.put(player.getUniqueId(), playerBlocks);
+			this.blocksCacheWeekly.put(player.getUniqueId(), playerBlocksWeekly);
 
-			this.plugin.getCore().getLogger().info(String.format("Loaded data of player %s from database", player.getName()));
+			this.plugin.getCore().getLogger().info(String.format("Loaded tokens and blocks broken of player %s from database", player.getName()));
+
 		});
 	}
 
@@ -500,39 +472,21 @@ public class TokensManager {
 	private void updateTokensTop() {
 		top10Tokens = new LinkedHashMap<>();
 		this.plugin.getCore().getLogger().info("Starting updating TokensTop");
-		try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + " FROM " + MySQLDatabase.TOKENS_DB_NAME + " ORDER BY " + MySQLDatabase.TOKENS_TOKENS_COLNAME + " DESC LIMIT 10").executeQuery()) {
-			while (set.next()) {
-				top10Tokens.put(UUID.fromString(set.getString(MySQLDatabase.TOKENS_UUID_COLNAME)), set.getLong(MySQLDatabase.TOKENS_TOKENS_COLNAME));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.top10Tokens = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Tokens();
 		this.plugin.getCore().getLogger().info("TokensTop updated!");
 	}
 
 	private void updateBlocksTop() {
 		top10Blocks = new LinkedHashMap<>();
 		this.plugin.getCore().getLogger().info("Starting updating BlocksTop");
-		try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC LIMIT 10").executeQuery()) {
-			while (set.next()) {
-				top10Blocks.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.top10Blocks = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Blocks();
 		this.plugin.getCore().getLogger().info("BlocksTop updated!");
 	}
 
 	private void updateBlocksTopWeekly() {
 		top10BlocksWeekly = new LinkedHashMap<>();
 		this.plugin.getCore().getLogger().info("Starting updating BlocksTop - Weekly");
-		try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC").executeQuery()) {
-			while (set.next()) {
-				top10BlocksWeekly.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		this.top10BlocksWeekly = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10BlocksWeekly();
 		this.plugin.getCore().getLogger().info("BlocksTop updated!");
 	}
 
@@ -658,6 +612,7 @@ public class TokensManager {
 			this.top10BlocksWeekly.clear();
 			this.nextResetWeekly = Time.nowMillis() + TimeUnit.DAYS.toMillis(7);
 			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
+			sender.sendMessage(Text.colorize("&aBlocksTop - Weekly - Resetted!"));
 		});
 	}
 

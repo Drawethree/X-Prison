@@ -4,6 +4,10 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.UUID;
 
 public abstract class Database {
 
@@ -46,4 +50,26 @@ public abstract class Database {
 	public abstract void updateBlocksWeekly(OfflinePlayer player, long newAmount);
 
 	public abstract long getPlayerBrokenBlocksWeekly(OfflinePlayer player);
+
+	public abstract void savePersonalMultiplier(Player player, PlayerMultiplier multiplier);
+
+	public abstract void saveAutoMiner(Player p, int timeLeft);
+
+	public abstract Map<UUID, Integer> getTop10Prestiges();
+
+	public abstract Map<UUID, Long> getTop10Gems();
+
+	public abstract Map<UUID, Long> getTop10BlocksWeekly();
+
+	public abstract Map<UUID, Long> getTop10Tokens();
+
+	public abstract Map<UUID, Long> getTop10Blocks();
+
+	public abstract void addIntoTokens(OfflinePlayer player);
+
+	public abstract void addIntoBlocks(OfflinePlayer player);
+
+	public abstract void addIntoBlocksWeekly(OfflinePlayer player);
+
+	public abstract void addIntoGems(OfflinePlayer player);
 }

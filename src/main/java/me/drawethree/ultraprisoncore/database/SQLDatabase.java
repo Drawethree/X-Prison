@@ -5,15 +5,18 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.text.Text;
 import me.lucko.helper.time.Time;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -100,13 +103,13 @@ public abstract class SQLDatabase extends Database {
 
 	public void createTables() {
 		Schedulers.async().run(() -> {
-			execute("CREATE TABLE IF NOT EXISTS " + RANKS_DB_NAME + "(UUID varchar(36) NOT NULL, id_rank int, id_prestige int, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_DB_NAME + "(UUID varchar(36) NOT NULL, Tokens bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + GEMS_DB_NAME + "(UUID varchar(36) NOT NULL, Gems bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_DB_NAME + "(UUID varchar(36) NOT NULL, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL, time int, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + RANKS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige int, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + GEMS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 		});
 	}
 
@@ -116,7 +119,6 @@ public abstract class SQLDatabase extends Database {
 			for (String table : ALL_TABLES) {
 				execute("TRUNCATE " + table);
 			}
-			sender.sendMessage(Text.colorize("&aUltraPrisonCore - All SQL Tables have been reset."));
 		});
 	}
 
@@ -143,7 +145,6 @@ public abstract class SQLDatabase extends Database {
 	@Override
 	public void resetBlocksWeekly(CommandSender sender) {
 		this.execute("DELETE FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME);
-		sender.sendMessage(Text.colorize("&aBlocksTop - Weekly - Resetted!"));
 	}
 
 	@Override
@@ -152,7 +153,7 @@ public abstract class SQLDatabase extends Database {
 			statement.setString(1, p.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
-					return set.getLong(MySQLDatabase.GEMS_UUID_COLNAME);
+					return set.getLong(MySQLDatabase.GEMS_GEMS_COLNAME);
 				}
 			}
 		} catch (SQLException e) {
@@ -163,7 +164,7 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void updateGems(OfflinePlayer p, long newAmount) {
-		this.execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_UUID_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", newAmount, p.getUniqueId().toString());
+		this.execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_GEMS_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", newAmount, p.getUniqueId().toString());
 	}
 
 	@Override
@@ -292,5 +293,117 @@ public abstract class SQLDatabase extends Database {
 	@Override
 	public void updateBlocksWeekly(OfflinePlayer player, long newAmount) {
 		this.execute("UPDATE " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " SET " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + "=? WHERE " + MySQLDatabase.BLOCKS_UUID_COLNAME + "=?", newAmount, player.getUniqueId().toString());
+	}
+
+	@Override
+	public void savePersonalMultiplier(Player player, PlayerMultiplier multiplier) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
+			statement.setString(1, player.getUniqueId().toString());
+			statement.setDouble(2, multiplier.getMultiplier());
+			statement.setLong(3, multiplier.getEndTime());
+			statement.setDouble(4, multiplier.getMultiplier());
+			statement.setLong(5, multiplier.getEndTime());
+			statement.execute();
+		} catch (SQLException e) {
+			this.plugin.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void saveAutoMiner(Player p, int timeLeft) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
+			statement.setString(1, p.getUniqueId().toString());
+			statement.setInt(2, timeLeft);
+			statement.setInt(3, timeLeft);
+			statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Map<UUID, Integer> getTop10Prestiges() {
+		Map<UUID, Integer> top10Prestige = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.RANKS_UUID_COLNAME + "," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " FROM " + MySQLDatabase.RANKS_DB_NAME + " ORDER BY " + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
+			while (set.next()) {
+				top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.RANKS_UUID_COLNAME)), set.getInt(MySQLDatabase.RANKS_PRESTIGE_COLNAME));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return top10Prestige;
+	}
+
+	@Override
+	public Map<UUID, Long> getTop10Gems() {
+		Map<UUID, Long> top10Gems = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.GEMS_UUID_COLNAME + "," + MySQLDatabase.GEMS_GEMS_COLNAME + " FROM " + MySQLDatabase.GEMS_DB_NAME + " ORDER BY " + MySQLDatabase.GEMS_GEMS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+			while (set.next()) {
+				top10Gems.put(UUID.fromString(set.getString(MySQLDatabase.GEMS_UUID_COLNAME)), set.getLong(MySQLDatabase.GEMS_GEMS_COLNAME));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return top10Gems;
+	}
+
+	@Override
+	public Map<UUID, Long> getTop10BlocksWeekly() {
+		Map<UUID, Long> top10BlocksWeekly = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC").executeQuery()) {
+			while (set.next()) {
+				top10BlocksWeekly.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return top10BlocksWeekly;
+	}
+
+	@Override
+	public Map<UUID, Long> getTop10Tokens() {
+		Map<UUID, Long> top10Tokens = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + " FROM " + MySQLDatabase.TOKENS_DB_NAME + " ORDER BY " + MySQLDatabase.TOKENS_TOKENS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+			while (set.next()) {
+				top10Tokens.put(UUID.fromString(set.getString(MySQLDatabase.TOKENS_UUID_COLNAME)), set.getLong(MySQLDatabase.TOKENS_TOKENS_COLNAME));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return top10Tokens;
+	}
+
+	@Override
+	public Map<UUID, Long> getTop10Blocks() {
+		Map<UUID, Long> top10Blocks = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + MySQLDatabase.BLOCKS_DB_NAME + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+			while (set.next()) {
+				top10Blocks.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return top10Blocks;
+	}
+
+	@Override
+	public void addIntoTokens(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + MySQLDatabase.TOKENS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+	}
+
+	@Override
+	public void addIntoBlocks(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + MySQLDatabase.BLOCKS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+	}
+
+	@Override
+	public void addIntoBlocksWeekly(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+	}
+
+	@Override
+	public void addIntoGems(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + MySQLDatabase.GEMS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 }

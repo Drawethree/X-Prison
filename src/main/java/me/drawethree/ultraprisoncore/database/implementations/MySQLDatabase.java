@@ -23,8 +23,8 @@ public class MySQLDatabase extends SQLDatabase {
 		final HikariConfig hikari = new HikariConfig();
 
 		hikari.setPoolName("ultraprison-" + POOL_COUNTER.getAndIncrement());
-
 		hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName());
+		hikari.setConnectionTestQuery("SELECT 1");
 
 		hikari.setUsername(credentials.getUserName());
 		hikari.setPassword(credentials.getPassword());

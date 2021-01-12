@@ -1,6 +1,8 @@
 package me.drawethree.ultraprisoncore.utils.gui;
 
 import me.drawethree.ultraprisoncore.database.Database;
+import me.lucko.helper.Schedulers;
+import me.lucko.helper.text.Text;
 import org.bukkit.entity.Player;
 
 public class ClearDBGui extends ConfirmationGui {
@@ -15,7 +17,10 @@ public class ClearDBGui extends ConfirmationGui {
 	@Override
 	public void confirm(boolean confirm) {
 		if (confirm) {
-			this.database.resetAllData(this.getPlayer());
+			Schedulers.async().run(() -> {
+				this.database.resetAllData(this.getPlayer());
+				this.getPlayer().sendMessage(Text.colorize("&aUltraPrisonCore - All SQL Tables have been reset."));
+			});
 		}
 		this.close();
 	}
