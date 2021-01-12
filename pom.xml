@@ -120,6 +120,12 @@
             <groupId>me.lucko</groupId>
             <artifactId>helper</artifactId>
             <version>5.6.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.flowpowered</groupId>
+                    <artifactId>math</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
