@@ -46,7 +46,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     private HashMap<UUID, Long> lastItems;
     @Getter
     private UltraPrisonAutoSellAPI api;
-    private List<UUID> disabledAutoSell;
+	private List<UUID> enabledAutoSell;
     @Getter
     private UltraPrisonCore core;
     private boolean enabled;
@@ -54,7 +54,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     public UltraPrisonAutoSell(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
         this.config = UltraPrisonCore.getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
-        this.disabledAutoSell = new ArrayList<>();
+		this.enabledAutoSell = new ArrayList<>();
         this.lastEarnings = new HashMap<>();
         this.lastItems = new HashMap<>();
     }
@@ -150,7 +150,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     private void registerListeners() {
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> Schedulers.async().runLater(() -> {
-                    if (!disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
+					if (enabledAutoSell.contains(e.getPlayer().getUniqueId())) {
                         e.getPlayer().sendMessage(getMessage("autosell_enable"));
                     }
                 }, 20));
@@ -159,7 +159,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
-                    if (disabledAutoSell.contains(e.getPlayer().getUniqueId())) {
+					if (!enabledAutoSell.contains(e.getPlayer().getUniqueId())) {
                         e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
 
                         e.getBlock().getDrops().clear();
@@ -342,11 +342,11 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     }
 
     private void toggleAutoSell(Player player) {
-        if (disabledAutoSell.contains(player.getUniqueId())) {
+		if (!enabledAutoSell.contains(player.getUniqueId())) {
             player.sendMessage(getMessage("autosell_enable"));
-            disabledAutoSell.remove(player.getUniqueId());
+			enabledAutoSell.add(player.getUniqueId());
         } else {
-            disabledAutoSell.add(player.getUniqueId());
+			enabledAutoSell.remove(player.getUniqueId());
             player.sendMessage(getMessage("autosell_disable"));
         }
     }
@@ -369,7 +369,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     }
 
     public boolean hasAutoSellEnabled(Player p) {
-        return !disabledAutoSell.contains(p.getUniqueId());
+		return enabledAutoSell.contains(p.getUniqueId());
     }
 
     public void addToCurrentEarnings(Player p, double amount) {
