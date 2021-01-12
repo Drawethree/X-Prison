@@ -13,6 +13,9 @@ public class MySQLDatabase extends SQLDatabase {
 
 	public MySQLDatabase(UltraPrisonCore parent, DatabaseCredentials credentials) {
 		super(parent);
+
+		this.plugin.getLogger().info("Using MySQL (remote) database.");
+
 		this.credentials = credentials;
 		this.connect();
 	}

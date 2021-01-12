@@ -23,8 +23,10 @@ public class SQLiteDatabase extends SQLDatabase {
 	public SQLiteDatabase(UltraPrisonCore plugin) {
 		super(plugin);
 
+		this.plugin.getLogger().info("Using SQLite (local) database.");
+
 		this.filePath = this.plugin.getDataFolder().getPath() + File.separator + FILE_NAME;
-		this.plugin.getLogger().info(String.format("Path to %s is %s", FILE_NAME, this.filePath));
+		this.plugin.getLogger().info(String.format("Path to SQLite Database %s is %s", FILE_NAME, this.filePath));
 		this.createDBFile();
 
 		this.connect();
