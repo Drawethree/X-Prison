@@ -8,16 +8,17 @@ import org.bukkit.configuration.file.FileConfiguration;
 @Getter
 @AllArgsConstructor
 public class DatabaseCredentials {
+
     private final String host, databaseName, userName, password;
     private final int port;
 
-
     public static DatabaseCredentials fromConfig(FileConfiguration config) {
-        String host = config.getString("sql.host");
-        String dbName = config.getString("sql.database");
-        String userName = config.getString("sql.username");
-        String password = config.getString("sql.password");
-        int port = config.getInt("sql.port");
+
+		String host = config.getString("mysql.host");
+		String dbName = config.getString("mysql.database");
+		String userName = config.getString("mysql.username");
+		String password = config.getString("mysql.password");
+		int port = config.getInt("mysql.port");
 
         Validate.notNull(host);
         Validate.notNull(dbName);

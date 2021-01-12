@@ -4,7 +4,11 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import me.drawethree.ultraprisoncore.config.FileManager;
-import me.drawethree.ultraprisoncore.database.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.Database;
+import me.drawethree.ultraprisoncore.database.DatabaseCredentials;
+import me.drawethree.ultraprisoncore.database.SQLDatabase;
+import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.implementations.SQLiteDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
@@ -37,7 +41,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
     @Getter
     private static UltraPrisonCore instance;
-    private MySQLDatabase sqlDatabase;
+    private Database pluginDatabase;
     private Economy economy;
     private FileManager fileManager;
 
@@ -60,10 +64,23 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 
         try {
-            this.sqlDatabase = new MySQLDatabase(this);
+            String databaseType = this.getConfig().getString("database_type");
+
+            if (databaseType.equalsIgnoreCase("sqlite")) {
+                this.pluginDatabase = new SQLiteDatabase(this);
+            } else if (databaseType.equalsIgnoreCase("mysql")) {
+                this.pluginDatabase = new MySQLDatabase(this, DatabaseCredentials.fromConfig(this.getConfig()));
+            } else {
+                this.getLogger().warning(String.format("Error! Unknown database type: %s. Disabling plugin.", databaseType));
+                this.getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
+
         } catch (Exception e) {
-            this.getLogger().warning("Could not maintain SQL Connection. Perhaps your SQL credentials in config.yml are wrong / not set ?");
-            this.getLogger().warning("It is required to have SQL Connection to properly load this plugin. Please set it up.");
+            this.getLogger().warning("Could not maintain Database Connection. Disabling plugin.");
+
+            e.printStackTrace();
+
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -132,9 +149,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
                         this.reload(c.sender());
                     } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb")) {
                         if (c.sender() instanceof Player) {
-                            new ClearDBGui(this.sqlDatabase, (Player) c.sender()).open();
+                            new ClearDBGui(this.pluginDatabase, (Player) c.sender()).open();
                         } else {
-                            this.sqlDatabase.resetAllTables(c.sender());
+                            this.pluginDatabase.resetAllData(c.sender());
                         }
                     }
                 }).registerAndBind(this, "prisoncore", "ultraprison", "prison");
@@ -158,8 +175,11 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
             it.remove();
         }
 
-        if (this.sqlDatabase != null) {
-            this.sqlDatabase.close();
+        if (this.pluginDatabase != null) {
+            if (this.pluginDatabase instanceof SQLDatabase) {
+                SQLDatabase sqlDatabase = (SQLDatabase) this.pluginDatabase;
+                sqlDatabase.close();
+            }
         }
     }
 

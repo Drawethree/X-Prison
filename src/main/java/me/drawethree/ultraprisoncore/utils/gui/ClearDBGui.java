@@ -1,13 +1,13 @@
 package me.drawethree.ultraprisoncore.utils.gui;
 
-import me.drawethree.ultraprisoncore.database.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.Database;
 import org.bukkit.entity.Player;
 
 public class ClearDBGui extends ConfirmationGui {
 
-	private final MySQLDatabase database;
+	private final Database database;
 
-	public ClearDBGui(MySQLDatabase database, Player player) {
+	public ClearDBGui(Database database, Player player) {
 		super(player, "Clear all player data?");
 		this.database = database;
 	}
@@ -15,7 +15,7 @@ public class ClearDBGui extends ConfirmationGui {
 	@Override
 	public void confirm(boolean confirm) {
 		if (confirm) {
-			this.database.resetAllTables(this.getPlayer());
+			this.database.resetAllData(this.getPlayer());
 		}
 		this.close();
 	}

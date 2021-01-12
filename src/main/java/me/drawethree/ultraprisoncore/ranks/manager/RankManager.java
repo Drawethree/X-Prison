@@ -1,6 +1,6 @@
 package me.drawethree.ultraprisoncore.ranks.manager;
 
-import me.drawethree.ultraprisoncore.database.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -65,7 +64,7 @@ public class RankManager {
 
     public void saveAllDataSync() {
         for (UUID uuid : this.onlinePlayersRanks.keySet()) {
-            this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.RANKS_DB_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", onlinePlayersRanks.get(uuid), onlinePlayersPrestige.get(uuid), uuid.toString());
+            this.plugin.getCore().getPluginDatabase().updateRankAndPrestige(Players.getOfflineNullable(uuid), onlinePlayersRanks.get(uuid), onlinePlayersPrestige.get(uuid));
         }
         this.plugin.getCore().getLogger().info("Saved players ranks and prestiges!");
     }
@@ -78,7 +77,7 @@ public class RankManager {
 
     private void savePlayerRankAndPrestige(Player player) {
         Schedulers.async().run(() -> {
-            this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.RANKS_DB_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", getPlayerRank(player).getId(), getPlayerPrestige(player), player.getUniqueId().toString());
+            this.plugin.getCore().getPluginDatabase().updateRankAndPrestige(player, this.getPlayerRank(player).getId(), this.getPlayerPrestige(player).getId());
             this.onlinePlayersPrestige.remove(player.getUniqueId());
             this.onlinePlayersRanks.remove(player.getUniqueId());
             this.plugin.getCore().getLogger().info("Saved " + player.getName() + "'s rank and prestige to database.");
@@ -87,23 +86,13 @@ public class RankManager {
 
     private void loadPlayerRankAndPrestige(Player player) {
         Schedulers.async().run(() -> {
-            try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.RANKS_DB_NAME + " WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?")) {
-                statement.setString(1, player.getUniqueId().toString());
-                try (ResultSet set = statement.executeQuery()) {
-                    if (set.next()) {
-                        this.onlinePlayersRanks.put(player.getUniqueId(), set.getInt(MySQLDatabase.RANKS_RANK_COLNAME));
-                        this.onlinePlayersPrestige.put(player.getUniqueId(), set.getInt(MySQLDatabase.RANKS_PRESTIGE_COLNAME));
-                        this.plugin.getCore().getLogger().info("Loaded " + player.getName() + "'s prestige and rank.");
-                    } else {
-                        this.plugin.getCore().getSqlDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.RANKS_DB_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 1, 0);
-                        this.plugin.getCore().getLogger().info("Added player " + player.getName() + " to database.");
-                        this.onlinePlayersRanks.put(player.getUniqueId(), 1);
-                        this.onlinePlayersPrestige.put(player.getUniqueId(), 0);
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            int rank = this.plugin.getCore().getPluginDatabase().getPlayerRank(player);
+            int prestige = this.plugin.getCore().getPluginDatabase().getPlayerPrestige(player);
+
+            this.onlinePlayersRanks.put(player.getUniqueId(), rank);
+            this.onlinePlayersPrestige.put(player.getUniqueId(), prestige);
+            this.plugin.getCore().getLogger().info("Loaded " + player.getName() + "'s prestige and rank.");
+
         });
     }
 
@@ -280,7 +269,7 @@ public class RankManager {
     private void updatePrestigeTop() {
         top10Prestige = new LinkedHashMap<>();
         this.plugin.getCore().getLogger().info("Starting updating PrestigeTop");
-        try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.RANKS_UUID_COLNAME + "," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " FROM " + MySQLDatabase.RANKS_DB_NAME + " ORDER BY " + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
+        try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.RANKS_UUID_COLNAME + "," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " FROM " + MySQLDatabase.RANKS_DB_NAME + " ORDER BY " + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
             while (set.next()) {
                 top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.RANKS_UUID_COLNAME)), set.getInt(MySQLDatabase.RANKS_PRESTIGE_COLNAME));
             }

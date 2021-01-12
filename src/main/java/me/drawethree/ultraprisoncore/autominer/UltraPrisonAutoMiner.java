@@ -4,7 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
-import me.drawethree.ultraprisoncore.database.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -21,7 +21,6 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -163,29 +162,16 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     private void removeExpiredAutoMiners() {
         Schedulers.async().run(() -> {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + " <= 0")) {
-                statement.execute();
-                this.core.getLogger().info("Removed expired AutoMiners from database");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            this.core.getPluginDatabase().removeExpiredAutoMiners();
+            this.core.getLogger().info("Removed expired AutoMiners from database");
         });
     }
 
     private void loadAutoMiner(Player p) {
         Schedulers.async().run(() -> {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.AUTOMINER_DB_NAME + " WHERE " + MySQLDatabase.AUTOMINER_UUID_COLNAME + "=?")) {
-                statement.setString(1, p.getUniqueId().toString());
-                try (ResultSet set = statement.executeQuery()) {
-                    if (set.next()) {
-                        int timeLeft = set.getInt(MySQLDatabase.AUTOMINER_TIME_COLNAME);
-                        this.autoMinerTimes.put(p.getUniqueId(), timeLeft);
-                        this.core.getLogger().info(String.format("Loaded %s's AutoMiner Time.", p.getName()));
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            int timeLeft = this.core.getPluginDatabase().getPlayerAutoMinerTime(p);
+            this.autoMinerTimes.put(p.getUniqueId(), timeLeft);
+            this.core.getLogger().info(String.format("Loaded %s's AutoMiner Time.", p.getName()));
         });
     }
 
@@ -197,7 +183,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
+                try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
                     statement.setString(1, p.getUniqueId().toString());
                     statement.setInt(2, timeLeft);
                     statement.setInt(3, timeLeft);
@@ -209,7 +195,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
                 }
             });
         } else {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
+            try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.AUTOMINER_TIME_COLNAME + "=?")) {
                 statement.setString(1, p.getUniqueId().toString());
                 statement.setInt(2, timeLeft);
                 statement.setInt(3, timeLeft);

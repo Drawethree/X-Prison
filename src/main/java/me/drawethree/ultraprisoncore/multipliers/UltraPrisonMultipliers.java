@@ -4,7 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
-import me.drawethree.ultraprisoncore.database.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
@@ -23,7 +23,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -128,7 +127,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
         if (async) {
             Schedulers.async().run(() -> {
-                try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
+                try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
                     statement.setString(1, player.getUniqueId().toString());
                     statement.setDouble(2, multiplier.getMultiplier());
                     statement.setLong(3, multiplier.getEndTime());
@@ -145,7 +144,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                 }
             });
         } else {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
+            try (Connection con = this.core.getPluginDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_VOTE_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + "=?")) {
                 statement.setString(1, player.getUniqueId().toString());
                 statement.setDouble(2, multiplier.getMultiplier());
                 statement.setLong(3, multiplier.getEndTime());
@@ -188,33 +187,16 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private void loadPersonalMultiplier(Player player) {
         Schedulers.async().run(() -> {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.MULTIPLIERS_DB_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_UUID_COLNAME + "=?")) {
-                statement.setString(1, player.getUniqueId().toString());
-                try (ResultSet set = statement.executeQuery()) {
-                    if (set.next()) {
-                        double multiplier = set.getDouble(MySQLDatabase.MULTIPLIERS_VOTE_COLNAME);
-                        long endTime = set.getLong(MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME);
-                        if (endTime > Time.nowMillis()) {
-                            personalMultipliers.put(player.getUniqueId(), new PlayerMultiplier(player.getUniqueId(), multiplier, endTime));
-                            this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier, player.getName()));
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                this.core.getLogger().warning("Could not load multiplier for player " + player.getName() + "!");
-                e.printStackTrace();
-            }
+            PlayerMultiplier multiplier = this.core.getPluginDatabase().getPlayerPersonalMultiplier(player);
+            personalMultipliers.put(player.getUniqueId(), multiplier);
+            this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier, player.getName()));
         });
     }
 
     private void removeExpiredMultipliers() {
         Schedulers.async().run(() -> {
-            try (Connection con = this.core.getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.MULTIPLIERS_DB_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_VOTE_TIMELEFT_COLNAME + " < " + Time.nowMillis())) {
-                statement.execute();
-                this.core.getLogger().info("Removed expired multipliers from database");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            this.core.getPluginDatabase().removeExpiredMultipliers();
+            this.core.getLogger().info("Removed expired multipliers from database");
         });
     }
 

@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.gems.managers;
 
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerGemsReceiveEvent;
-import me.drawethree.ultraprisoncore.database.MySQLDatabase;
+import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -22,7 +22,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -80,14 +79,14 @@ public class GemsManager {
     private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
         if (async) {
             Schedulers.async().run(() -> {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_GEMS_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", gemsCache.get(player.getUniqueId()), player.getUniqueId().toString());
+                this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.get(player.getUniqueId()));
                 if (removeFromCache) {
                     gemsCache.remove(player.getUniqueId());
                 }
                 this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
             });
         } else {
-            this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_GEMS_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", gemsCache.get(player.getUniqueId()), player.getUniqueId().toString());
+            this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.get(player.getUniqueId()));
             if (removeFromCache) {
                 gemsCache.remove(player.getUniqueId());
             }
@@ -99,7 +98,7 @@ public class GemsManager {
         this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saving all player data - gems");
         Schedulers.sync().run(() -> {
             for (UUID uuid : gemsCache.keySet()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_GEMS_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", gemsCache.get(uuid), uuid.toString());
+                this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.get(uuid));
             }
             gemsCache.clear();
             this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database - gems");
@@ -108,7 +107,7 @@ public class GemsManager {
 
     private void addIntoTable(Player player) {
         Schedulers.async().run(() -> {
-            this.plugin.getCore().getSqlDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.GEMS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+            this.plugin.getCore().getPluginDatabase().execute("INSERT IGNORE INTO " + MySQLDatabase.GEMS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
         });
     }
 
@@ -118,17 +117,8 @@ public class GemsManager {
 
     private void loadPlayerData(Player player) {
         Schedulers.async().run(() -> {
-            try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GEMS_DB_NAME + " WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?")) {
-                statement.setString(1, player.getUniqueId().toString());
-                try (ResultSet gems = statement.executeQuery()) {
-                    if (gems.next()) {
-                        gemsCache.put(UUID.fromString(gems.getString(MySQLDatabase.GEMS_UUID_COLNAME)), gems.getLong(MySQLDatabase.GEMS_GEMS_COLNAME));
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
+            long playerGems = this.plugin.getCore().getPluginDatabase().getPlayerGems(player);
+            gemsCache.put(player.getUniqueId(), playerGems);
             this.plugin.getCore().getLogger().info(String.format("Loaded gems of player %s from database", player.getName()));
         });
     }
@@ -136,7 +126,7 @@ public class GemsManager {
     public void setGems(OfflinePlayer p, long newAmount, CommandSender executor) {
         Schedulers.async().run(() -> {
             if (!p.isOnline()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_UUID_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", newAmount, p.getUniqueId().toString());
+                this.plugin.getCore().getPluginDatabase().updateGems(p, newAmount);
             } else {
                 gemsCache.put(p.getUniqueId(), newAmount);
             }
@@ -159,7 +149,7 @@ public class GemsManager {
             long finalAmount = event.getAmount();
 
             if (!p.isOnline()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_UUID_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", finalAmount + currentgems, p.getUniqueId().toString());
+                this.plugin.getCore().getPluginDatabase().updateGems(p, currentgems + finalAmount);
             } else {
                 gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
             }
@@ -235,20 +225,10 @@ public class GemsManager {
 
     public long getPlayerGems(OfflinePlayer p) {
         if (!p.isOnline()) {
-            try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GEMS_DB_NAME + " WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?")) {
-                statement.setString(1, p.getUniqueId().toString());
-                try (ResultSet set = statement.executeQuery()) {
-                    if (set.next()) {
-                        return set.getLong(MySQLDatabase.GEMS_UUID_COLNAME);
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            return this.plugin.getCore().getPluginDatabase().getPlayerGems(p);
         } else {
             return gemsCache.getOrDefault(p.getUniqueId(), (long) 0);
         }
-        return 0;
     }
 
     public void removeGems(OfflinePlayer p, long amount, CommandSender executor) {
@@ -261,7 +241,7 @@ public class GemsManager {
             }
 
             if (!p.isOnline()) {
-                this.plugin.getCore().getSqlDatabase().execute("UPDATE " + MySQLDatabase.GEMS_DB_NAME + " SET " + MySQLDatabase.GEMS_UUID_COLNAME + "=? WHERE " + MySQLDatabase.GEMS_UUID_COLNAME + "=?", finalgems, p.getUniqueId().toString());
+                this.plugin.getCore().getPluginDatabase().updateGems(p, finalgems);
             } else {
                 gemsCache.put(p.getUniqueId(), finalgems);
             }
@@ -288,8 +268,8 @@ public class GemsManager {
 
     private void updateGemsTop() {
         top10Gems = new LinkedHashMap<>();
-        this.plugin.getCore().getLogger().info("Starting updating GemssTop");
-        try (Connection con = this.plugin.getCore().getSqlDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.GEMS_UUID_COLNAME + "," + MySQLDatabase.GEMS_GEMS_COLNAME + " FROM " + MySQLDatabase.GEMS_DB_NAME + " ORDER BY " + MySQLDatabase.GEMS_GEMS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+        this.plugin.getCore().getLogger().info("Starting updating GemsTop");
+        try (Connection con = this.plugin.getCore().getPluginDatabase().getHikari().getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.GEMS_UUID_COLNAME + "," + MySQLDatabase.GEMS_GEMS_COLNAME + " FROM " + MySQLDatabase.GEMS_DB_NAME + " ORDER BY " + MySQLDatabase.GEMS_GEMS_COLNAME + " DESC LIMIT 10").executeQuery()) {
             while (set.next()) {
                 top10Gems.put(UUID.fromString(set.getString(MySQLDatabase.GEMS_UUID_COLNAME)), set.getLong(MySQLDatabase.GEMS_GEMS_COLNAME));
             }
