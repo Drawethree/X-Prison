@@ -2,4 +2,4 @@ target
 dependency-reduced-pom.xml
 src/test
 .idea
-WildPrisonCore.iml
+UltraPrisonCore.iml
