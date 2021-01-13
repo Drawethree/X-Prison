@@ -138,6 +138,24 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     private void registerCommands() {
 
+
+        Commands.create()
+                .assertOp()
+                .handler(c -> {
+
+                    String input = null;
+                    Player target = null;
+
+                    if (c.args().size() == 1) {
+                        input = c.rawArg(0);
+                    } else if (c.args().size() == 2) {
+                        target = c.arg(0).parseOrFail(Player.class);
+                        input = c.rawArg(1);
+                    }
+
+                    this.enchantsManager.givePickaxe(target, input, c.sender());
+                }).registerAndBind(core, "givepickaxe");
+
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
