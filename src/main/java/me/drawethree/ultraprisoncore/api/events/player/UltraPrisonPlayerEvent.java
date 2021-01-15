@@ -10,6 +10,11 @@ public abstract class UltraPrisonPlayerEvent extends Event {
 	@Getter
 	protected OfflinePlayer player;
 
+	/**
+	 * Abstract UltraPrisonPlayerEvent
+	 *
+	 * @param player Player
+	 */
 	public UltraPrisonPlayerEvent(OfflinePlayer player) {
 		this.player = player;
 	}

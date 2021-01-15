@@ -22,6 +22,13 @@ public class UltraPrisonPlayerTokensReceiveEvent extends UltraPrisonPlayerEvent 
 	@Setter
 	private boolean cancelled;
 
+	/**
+	 * Called when player receive tokens
+	 *
+	 * @param cause  ReceiveCause
+	 * @param player Player
+	 * @param amount Amount of tokens received
+	 */
 	public UltraPrisonPlayerTokensReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
 		super(player);
 		this.cause = cause;

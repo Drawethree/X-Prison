@@ -17,6 +17,12 @@ public class UltraPrisonBlockBreakEvent extends Event implements Cancellable {
 	private long amount;
 	private boolean cancelled;
 
+	/**
+	 * Called when player mines blocks within mine with or without custom enchants.
+	 *
+	 * @param player Player
+	 * @param amount Amount of blocks broken simultaneously
+	 */
 	public UltraPrisonBlockBreakEvent(Player player, long amount) {
 		this.player = player;
 		this.amount = amount;

@@ -23,6 +23,14 @@ public class UltraPrisonAutoSellEvent extends Event implements Cancellable {
 	@Setter
 	private boolean cancelled;
 
+	/**
+	 * Called when mined blocks are automatically sold
+	 *
+	 * @param player         Player
+	 * @param reg            IWrappedRegion where block was mined
+	 * @param block          Block that was mined
+	 * @param moneyToDeposit Default amount to deposit
+	 */
 	public UltraPrisonAutoSellEvent(Player player, IWrappedRegion reg, Block block, double moneyToDeposit) {
 		this.player = player;
 		this.region = reg;

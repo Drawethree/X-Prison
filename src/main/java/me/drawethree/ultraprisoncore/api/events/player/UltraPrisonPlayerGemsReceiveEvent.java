@@ -22,6 +22,13 @@ public class UltraPrisonPlayerGemsReceiveEvent extends UltraPrisonPlayerEvent im
 	@Setter
 	private boolean cancelled;
 
+	/**
+	 * Called when player receive gems
+	 *
+	 * @param cause  ReceiveCause
+	 * @param player Player
+	 * @param amount Amount of gems received
+	 */
 	public UltraPrisonPlayerGemsReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
 		super(player);
 		this.cause = cause;

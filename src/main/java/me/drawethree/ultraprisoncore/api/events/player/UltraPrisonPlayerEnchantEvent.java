@@ -22,6 +22,11 @@ public class UltraPrisonPlayerEnchantEvent extends UltraPrisonPlayerEvent implem
 	private final int level;
 
 
+	/**
+	 * @param player
+	 * @param tokenCost
+	 * @param level
+	 */
 	public UltraPrisonPlayerEnchantEvent(Player player, long tokenCost, int level) {
 		super(player);
 		this.tokenCost = tokenCost;
