@@ -207,6 +207,7 @@ public class EnchantsManager {
 
 
 		item = nbtItem.getItem();
+		this.applyLoreToPickaxe(item);
 		return item;
 	}
 

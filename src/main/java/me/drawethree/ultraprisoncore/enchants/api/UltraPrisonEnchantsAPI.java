@@ -44,6 +44,15 @@ public interface UltraPrisonEnchantsAPI {
     ItemStack addEnchant(ItemStack item, Player p, int id, int level);
 
     /**
+     * Method to add custom enchant to ItemStack
+     * @param item ItemStack
+     * @param id Enchant ID
+     * @param level Enchant Level
+     * @return modified ItemStack
+     */
+    ItemStack addEnchant(ItemStack item, int id, int level);
+
+    /**
      * Method to remove custom enchant from ItemStack
      * @param item ItemStack
      * @param p Player
@@ -59,5 +68,19 @@ public interface UltraPrisonEnchantsAPI {
      * @return true if enchant was registered properly
      */
     boolean registerEnchant(UltraPrisonEnchantment enchantment);
+
+    /**
+     * Method to get Enchant by ID
+     * @param id enchant id
+     * @return UltraPrisonEnchantment
+     */
+    UltraPrisonEnchantment getById(int id);
+
+    /**
+     * Method to get Enchant by ID
+     * @param rawName enchant rawname
+     * @return UltraPrisonEnchantment
+     */
+    UltraPrisonEnchantment getByName(String rawName);
 
 }

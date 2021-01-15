@@ -37,6 +37,11 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
     }
 
     @Override
+    public ItemStack addEnchant(ItemStack item, int id, int level) {
+        return this.enchantsManager.addEnchant(item, id, level);
+    }
+
+    @Override
     public ItemStack removeEnchant(ItemStack item, Player p, int id) {
         return this.enchantsManager.removeEnchant(item, p, id, 0);
     }
@@ -44,5 +49,15 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
     @Override
     public boolean registerEnchant(UltraPrisonEnchantment enchantment) {
         return UltraPrisonEnchantment.registerEnchant(enchantment);
+    }
+
+    @Override
+    public UltraPrisonEnchantment getById(int id) {
+        return UltraPrisonEnchantment.getEnchantById(id);
+    }
+
+    @Override
+    public UltraPrisonEnchantment getByName(String rawName) {
+        return UltraPrisonEnchantment.getEnchantByName(rawName);
     }
 }
