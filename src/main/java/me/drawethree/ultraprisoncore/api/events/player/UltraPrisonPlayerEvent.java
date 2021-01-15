@@ -12,7 +12,6 @@ public abstract class UltraPrisonPlayerEvent extends Event {
 
 	/**
 	 * Abstract UltraPrisonPlayerEvent
-	 *
 	 * @param player Player
 	 */
 	public UltraPrisonPlayerEvent(OfflinePlayer player) {

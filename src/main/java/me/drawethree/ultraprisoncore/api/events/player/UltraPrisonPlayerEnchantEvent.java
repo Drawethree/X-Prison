@@ -23,9 +23,10 @@ public class UltraPrisonPlayerEnchantEvent extends UltraPrisonPlayerEvent implem
 
 
 	/**
-	 * @param player
-	 * @param tokenCost
-	 * @param level
+	 * Called when player enchants a tool
+	 * @param player Player
+	 * @param tokenCost cost of enchant in tokens
+	 * @param level level of enchant
 	 */
 	public UltraPrisonPlayerEnchantEvent(Player player, long tokenCost, int level) {
 		super(player);

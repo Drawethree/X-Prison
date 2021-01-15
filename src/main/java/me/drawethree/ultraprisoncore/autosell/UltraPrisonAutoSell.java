@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.autosell;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
-import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonAutoSellEvent;
+import me.drawethree.ultraprisoncore.api.events.UltraPrisonAutoSellEvent;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
