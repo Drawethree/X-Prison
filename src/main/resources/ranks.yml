@@ -13,6 +13,9 @@ messages:
   prestige_set: "&e&lPRESTIGE &8» &7You have set %player%'s prestige to %amount%"
   prestige_add: "&e&lPRESTIGE &8» &7You have added %amount% prestige to  %player%"
   prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
+max_prestige: 1000
+prestige_cost: 10000
+prestige_prefix: '&f&lP%prestige%'
 Ranks:
   '1':
     Prefix: '&a&lA'
