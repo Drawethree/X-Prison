@@ -99,6 +99,10 @@ public class EnchantsManager {
 	}
 
 	public long getBlocksBroken(ItemStack item) {
+		if (item == null || item.getType() == Material.AIR) {
+			return 0;
+		}
+
 		NBTItem nbtItem = new NBTItem(item);
 
 		if (!nbtItem.hasKey("blocks-broken")) {
@@ -135,6 +139,11 @@ public class EnchantsManager {
 	}
 
 	public synchronized int getEnchantLevel(ItemStack itemStack, int id) {
+
+		if (itemStack == null || itemStack.getType() == Material.AIR) {
+			return 0;
+		}
+
 		NBTItem nbtItem = new NBTItem(itemStack);
 
 		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER + id)) {
@@ -225,6 +234,7 @@ public class EnchantsManager {
 		if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
 			enchantment.onEquip(p, item, 0);
 		}
+
 		NBTItem nbtItem = new NBTItem(item);
 
 
