@@ -175,7 +175,7 @@ public class RankManager {
         }
 
         if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-            p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,d", toBuy.getCost())));
+            p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
             return false;
         }
 
@@ -202,7 +202,7 @@ public class RankManager {
         Prestige toBuy = getNextPrestige(currentPrestige.getId());
 
         if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-            p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,d", toBuy.getCost())));
+            p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
             return false;
         }
 
@@ -304,7 +304,7 @@ public class RankManager {
         }
 
         if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
-            p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige, this.onlinePlayersPrestige.get(p.getUniqueId()))));
+            p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige.getId(), this.onlinePlayersPrestige.get(p.getUniqueId()))));
         }
 
         return true;

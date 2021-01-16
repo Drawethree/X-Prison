@@ -12,7 +12,7 @@ import java.util.List;
 public class Rank {
 
     private int id;
-    private long cost;
+    private double cost;
     private String prefix;
     private List<String> commandsToExecute;
 
