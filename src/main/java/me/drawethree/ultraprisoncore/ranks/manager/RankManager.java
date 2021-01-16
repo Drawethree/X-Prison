@@ -48,6 +48,7 @@ public class RankManager {
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
+                    this.addIntoTable(e.getPlayer());
                     loadPlayerRankAndPrestige(e.getPlayer());
                 }).bindWith(plugin.getCore());
         Events.subscribe(PlayerQuitEvent.class)
@@ -56,6 +57,12 @@ public class RankManager {
                 }).bindWith(plugin.getCore());
 
         this.updateTop10();
+    }
+
+    private void addIntoTable(Player player) {
+        Schedulers.async().run(() -> {
+            this.plugin.getCore().getPluginDatabase().addIntoRanksAndPrestiges(player);
+        });
     }
 
     public void saveAllDataSync() {
@@ -82,6 +89,7 @@ public class RankManager {
 
     private void loadPlayerRankAndPrestige(Player player) {
         Schedulers.async().run(() -> {
+
             int rank = this.plugin.getCore().getPluginDatabase().getPlayerRank(player);
             int prestige = this.plugin.getCore().getPluginDatabase().getPlayerPrestige(player);
 

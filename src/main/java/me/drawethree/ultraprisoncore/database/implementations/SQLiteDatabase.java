@@ -84,6 +84,11 @@ public class SQLiteDatabase extends SQLDatabase {
 	}
 
 	@Override
+	public void addIntoRanksAndPrestiges(OfflinePlayer player) {
+		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.RANKS_DB_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
+	}
+
+	@Override
 	public void addIntoBlocks(OfflinePlayer player) {
 		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}

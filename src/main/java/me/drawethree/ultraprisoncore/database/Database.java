@@ -72,4 +72,6 @@ public abstract class Database {
 	public abstract void addIntoBlocksWeekly(OfflinePlayer player);
 
 	public abstract void addIntoGems(OfflinePlayer player);
+
+	public abstract void addIntoRanksAndPrestiges(OfflinePlayer player);
 }

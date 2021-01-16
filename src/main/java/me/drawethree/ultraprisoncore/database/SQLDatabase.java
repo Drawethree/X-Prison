@@ -393,6 +393,11 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
+	public void addIntoRanksAndPrestiges(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + MySQLDatabase.RANKS_DB_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
+	}
+
+	@Override
 	public void addIntoBlocks(OfflinePlayer player) {
 		this.execute("INSERT IGNORE INTO " + MySQLDatabase.BLOCKS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
