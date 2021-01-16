@@ -272,8 +272,12 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
         }
 
         for (int i = 0; i < 3; i++) {
-            loreLast.remove(0);
-            loreCurrent.remove(0);
+			try {
+				loreLast.remove(0);
+				loreCurrent.remove(0);
+			} catch (Exception e) {
+				break;
+			}
         }
 
         return loreLast.equals(loreCurrent);
