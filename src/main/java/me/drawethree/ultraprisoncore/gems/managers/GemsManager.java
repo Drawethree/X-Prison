@@ -31,6 +31,7 @@ public class GemsManager {
 
     private UltraPrisonGems plugin;
     private String SPACER_LINE;
+	private String SPACER_LINE_BOTTOM;
     private String TOP_FORMAT_GEMS;
     private HashMap<UUID, Long> gemsCache = new HashMap<>();
     private LinkedHashMap<UUID, Long> top10Gems = new LinkedHashMap<>();
@@ -40,6 +41,7 @@ public class GemsManager {
     public GemsManager(UltraPrisonGems plugin) {
         this.plugin = plugin;
         this.SPACER_LINE = plugin.getMessage("top_spacer_line");
+		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
         this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
 
         Events.subscribe(PlayerJoinEvent.class)
@@ -275,7 +277,7 @@ public class GemsManager {
             sender.sendMessage(Text.colorize(SPACER_LINE));
             if (this.updating) {
                 sender.sendMessage(this.plugin.getMessage("top_updating"));
-                sender.sendMessage(Text.colorize(SPACER_LINE));
+				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
                 return;
             }
             for (int i = 0; i < 10; i++) {
@@ -294,7 +296,7 @@ public class GemsManager {
                     break;
                 }
             }
-            sender.sendMessage(Text.colorize(SPACER_LINE));
+			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
         });
     }
 }

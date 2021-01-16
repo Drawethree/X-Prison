@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class TokensManager {
 
 
+	private String SPACER_LINE_BOTTOM;
 	private UltraPrisonTokens plugin;
 
 	private String SPACER_LINE;
@@ -59,6 +60,7 @@ public class TokensManager {
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
 		this.SPACER_LINE = plugin.getMessage("top_spacer_line");
+		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
 		this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
 		this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
 		this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
@@ -495,7 +497,7 @@ public class TokensManager {
 			sender.sendMessage(Text.colorize(SPACER_LINE));
 			if (this.updating) {
 				sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE));
+				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 				return;
 			}
 			for (int i = 0; i < 10; i++) {
@@ -514,7 +516,7 @@ public class TokensManager {
 					break;
 				}
 			}
-			sender.sendMessage(Text.colorize(SPACER_LINE));
+			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 		});
 	}
 
@@ -542,7 +544,7 @@ public class TokensManager {
 					break;
 				}
 			}
-			sender.sendMessage(Text.colorize(SPACER_LINE));
+			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 		});
 	}
 
@@ -550,11 +552,11 @@ public class TokensManager {
 		Schedulers.async().run(() -> {
 			sender.sendMessage(Text.colorize(SPACER_LINE));
 			sender.sendMessage(plugin.getMessage("top_weekly_reset").replace("%time%", this.getTimeLeftUntilWeeklyReset()));
-			sender.sendMessage(Text.colorize(SPACER_LINE));
+			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 
 			if (this.updating || top10BlocksWeekly.isEmpty()) {
 				sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE));
+				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 				return;
 			}
 
@@ -580,7 +582,7 @@ public class TokensManager {
 				Player p = (Player) sender;
 				sender.sendMessage(TOP_FORMAT_BLOCKS_YOUR.replace("%position%", String.format("%,d", this.getBlocksTopWeeklyPosition(p))).replace("%amount%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId()))));
 			}
-			sender.sendMessage(Text.colorize(SPACER_LINE));
+			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 		});
 	}
 
@@ -648,6 +650,7 @@ public class TokensManager {
 
 	public void reloadConfig() {
 		this.SPACER_LINE = plugin.getMessage("top_spacer_line");
+		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
 		this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
 		this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
 		this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");

@@ -22,6 +22,7 @@ messages:
   top_format_blocks: "&f&l#%position%. &e%player% &8» &7%amount% blocks"
   top_format_blocks_your: "&eYour Position &f#%position% &8» &7%blocks% blocks"
   top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  top_spacer_line_bottom: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   top_updating: "&c&lLeaderboard is currently updating..."
   top_weekly_reset: "&7&oTime Left: %time%"
   token_message_disabled: "&e&lTOKENS &8» &7Messages &c&lOFF"

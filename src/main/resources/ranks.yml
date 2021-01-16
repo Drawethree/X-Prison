@@ -8,6 +8,7 @@ messages:
   not_last_rank: '&e&lPRESTIGE &8» &7You must be last rank to prestige.'
   top_format_prestige: "&f&l#%position%. &e%player% &8» &7%prestige% Prestige"
   top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  top_spacer_line_bottom: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   top_updating: "&c&lLeaderboard is currently updating..."
   rank_set: "&e&lRANKUP &8» &7You have set %player%'s rank to %rank%"
   prestige_set: "&e&lPRESTIGE &8» &7You have set %player%'s prestige to %amount%"
