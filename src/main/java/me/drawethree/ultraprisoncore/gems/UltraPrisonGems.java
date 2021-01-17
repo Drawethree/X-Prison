@@ -115,7 +115,7 @@ public final class UltraPrisonGems implements UltraPrisonModule {
                         this.gemsManager.sendGemsTop(c.sender());
                     }
                 })
-                .registerAndBind(core, "gemstop");
+                .registerAndBind(core, "gemstop", "gemtop");
     }
 
     private void loadMessages() {
