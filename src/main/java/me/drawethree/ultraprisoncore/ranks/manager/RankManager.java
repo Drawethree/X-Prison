@@ -37,7 +37,7 @@ public class RankManager {
     private String SPACER_LINE;
     private String TOP_FORMAT_PRESTIGE;
     private boolean updating;
-	private LinkedHashMap<UUID, Integer> top10Prestige;
+    private LinkedHashMap<UUID, Integer> top10Prestige;
     private Task task;
 
     public RankManager(UltraPrisonRankup plugin) {
@@ -276,7 +276,7 @@ public class RankManager {
         top10Prestige = new LinkedHashMap<>();
         this.plugin.getCore().getLogger().info("Starting updating PrestigeTop");
 
-		this.top10Prestige = (LinkedHashMap<UUID, Integer>) this.plugin.getCore().getPluginDatabase().getTop10Prestiges();
+        this.top10Prestige = (LinkedHashMap<UUID, Integer>) this.plugin.getCore().getPluginDatabase().getTop10Prestiges();
         this.plugin.getCore().getLogger().info("PrestigeTop updated!");
     }
 
@@ -413,11 +413,28 @@ public class RankManager {
     public int getRankupProgress(Player player) {
 
         if (this.isMaxRank(player)) {
-            return 100;
+            return getPrestigeProgress(player);
         }
 
         Rank current = this.getPlayerRank(player);
         Rank next = this.getNextRank(current.getId());
+
+        int progress = (int) ((this.plugin.getCore().getEconomy().getBalance(player) / next.getCost()) * 100);
+
+        if (progress > 100) {
+            progress = 100;
+        }
+
+        return progress;
+    }
+
+    private int getPrestigeProgress(Player player) {
+        if (this.isMaxPrestige(player)) {
+            return 100;
+        }
+
+        Prestige current = this.getPlayerPrestige(player);
+        Prestige next = this.getNextPrestige(current.getId());
 
         int progress = (int) ((this.plugin.getCore().getEconomy().getBalance(player) / next.getCost()) * 100);
 
