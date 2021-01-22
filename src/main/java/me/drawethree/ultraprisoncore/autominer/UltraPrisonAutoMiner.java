@@ -197,8 +197,9 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     private void loadAutoMinerRegion() {
         String worldName = getConfig().get().getString("auto-miner-region.world");
         String regionName = getConfig().get().getString("auto-miner-region.name");
-        long moneyPerSec = getConfig().get().getLong("auto-miner-region.money");
-        long tokensPerSec = getConfig().get().getLong("auto-miner-region.tokens");
+
+		double moneyPerSec = getConfig().get().getDouble("auto-miner-region.money");
+		double tokensPerSec = getConfig().get().getDouble("auto-miner-region.tokens");
 
         World world = Bukkit.getWorld(worldName);
 

@@ -40,7 +40,6 @@ public class EnchantGUI extends Gui {
 		Events.subscribe(InventoryCloseEvent.class)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
-					UltraPrisonCore.getInstance().getLogger().info("Called InventoryCloseEvent");
 
 					if (!this.getPlayer().getItemInHand().equals(this.pickAxe)) {
 						this.getPlayer().getInventory().remove(this.pickAxe);

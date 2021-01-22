@@ -15,13 +15,13 @@ public class AutoMinerRegion {
     private UltraPrisonAutoMiner parent;
     private World world;
     private IWrappedRegion region;
-    private long moneyPerSecond;
-    private long tokensPerSecond;
+	private double moneyPerSecond;
+	private double tokensPerSecond;
 
     private Task autoMinerTask;
 
 
-    public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, long moneyPerSecond, long tokensPerSecond) {
+	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, double moneyPerSecond, double tokensPerSecond) {
         this.parent = parent;
         this.world = world;
         this.region = region;
@@ -41,7 +41,7 @@ public class AutoMinerRegion {
                         continue;
                     } else {
                         sendActionBar(p, parent.getMessage("auto_miner_enabled"));
-                        parent.getCore().getTokens().getApi().addTokens(p, tokensPerSecond);
+						parent.getCore().getTokens().getApi().addTokens(p, (long) tokensPerSecond);
                         this.parent.getCore().getEconomy().depositPlayer(p, moneyPerSecond);
                         this.parent.decrementTime(p);
                     }
