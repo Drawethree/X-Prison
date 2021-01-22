@@ -1,6 +1,5 @@
 package me.drawethree.ultraprisoncore.gems;
 
-
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;

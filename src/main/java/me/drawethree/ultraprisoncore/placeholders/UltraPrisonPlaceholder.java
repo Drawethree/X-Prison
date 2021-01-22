@@ -140,7 +140,7 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
         if (amount <= 1000.0D)
             return String.valueOf(amount);
         ArrayList<String> suffixes = new ArrayList<>(Arrays.asList(new String[]{
-                "", "K", "M", "B", "T", "Q", "QT", "S", "SP", "O",
+                "", "k", "M", "B", "T", "q", "Q", "QT", "S", "SP", "O",
                 "N", "D"}));
         double chunks = Math.floor(Math.floor(Math.log10(amount) / 3.0D));
         amount /= Math.pow(10.0D, chunks * 3.0D - 1.0D);
