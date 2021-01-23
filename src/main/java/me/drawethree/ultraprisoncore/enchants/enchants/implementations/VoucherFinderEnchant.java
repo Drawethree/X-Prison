@@ -20,7 +20,7 @@ public class VoucherFinderEnchant extends UltraPrisonEnchantment {
     private final List<CommandWithChance> commandsToExecute;
 
     public VoucherFinderEnchant(UltraPrisonEnchants instance) {
-        super(instance, 15);
+        super(instance, 20);
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
         this.commandsToExecute = this.loadCommands();
 
