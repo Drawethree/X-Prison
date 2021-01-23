@@ -129,6 +129,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     @Override
     public void disable() {
         this.enabled = false;
+		for (Player p : Players.all()) {
+			p.closeInventory();
+		}
     }
 
     @Override
