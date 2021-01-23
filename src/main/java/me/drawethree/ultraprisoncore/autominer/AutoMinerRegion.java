@@ -12,46 +12,48 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 @Getter
 public class AutoMinerRegion {
 
-    private UltraPrisonAutoMiner parent;
-    private World world;
-    private IWrappedRegion region;
+	private UltraPrisonAutoMiner parent;
+	private World world;
+	private IWrappedRegion region;
 	private double moneyPerSecond;
 	private double tokensPerSecond;
 
-    private Task autoMinerTask;
+	private Task autoMinerTask;
 
 
 	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, double moneyPerSecond, double tokensPerSecond) {
-        this.parent = parent;
-        this.world = world;
-        this.region = region;
-        this.moneyPerSecond = moneyPerSecond;
-        this.tokensPerSecond = tokensPerSecond;
+		this.parent = parent;
+		this.world = world;
+		this.region = region;
+		this.moneyPerSecond = moneyPerSecond;
+		this.tokensPerSecond = tokensPerSecond;
 
-        this.autoMinerTask = Schedulers.async().runRepeating(() -> {
-            for (Player p : Players.all()) {
+		this.autoMinerTask = Schedulers.async().runRepeating(() -> {
+			for (Player p : Players.all()) {
 
-                if (!p.getWorld().equals(this.world)) {
-                    continue;
-                }
+				if (!p.getWorld().equals(this.world)) {
+					continue;
+				}
 
-                if (region.contains(p.getLocation())) {
-                    if (!parent.hasAutoMinerTime(p)) {
-                        sendActionBar(p, parent.getMessage("auto_miner_disabled"));
-                        continue;
-                    } else {
-                        sendActionBar(p, parent.getMessage("auto_miner_enabled"));
+				if (region.contains(p.getLocation())) {
+					if (!parent.hasAutoMinerTime(p)) {
+						sendActionBar(p, parent.getMessage("auto_miner_disabled"));
+						continue;
+					} else {
+						sendActionBar(p, parent.getMessage("auto_miner_enabled"));
 						parent.getCore().getTokens().getApi().addTokens(p, (long) tokensPerSecond);
-                        this.parent.getCore().getEconomy().depositPlayer(p, moneyPerSecond);
-                        this.parent.decrementTime(p);
-                    }
-                }
-            }
-        }, 20, 20);
-    }
+						if (moneyPerSecond > 0) {
+							this.parent.getCore().getEconomy().depositPlayer(p, moneyPerSecond);
+						}
+						this.parent.decrementTime(p);
+					}
+				}
+			}
+		}, 20, 20);
+	}
 
-    private void sendActionBar(Player player, String message) {
-        ActionBarAPI.sendActionBar(player,message);
-    }
+	private void sendActionBar(Player player, String message) {
+		ActionBarAPI.sendActionBar(player, message);
+	}
 
 }

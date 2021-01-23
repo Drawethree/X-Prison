@@ -14,8 +14,15 @@ import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnchantGUI extends Gui {
 
@@ -55,6 +62,16 @@ public class EnchantGUI extends Gui {
 					Schedulers.async().runLater(() -> {
 						((Player) e.getPlayer()).updateInventory();
 					}, 5);
+				}).bindWith(this);
+
+		Events.subscribe(PlayerTeleportEvent.class, EventPriority.LOW)
+				.filter(e -> e.getPlayer().getUniqueId().equals(this.getPlayer().getUniqueId()))
+				.handler(e -> {
+					List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(e.getFrom()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
+
+					if (regions.size() > 0) {
+						this.getPlayer().closeInventory();
+					}
 				}).bindWith(this);
 
 		if (UltraPrisonCore.getInstance().getJetsPrisonMinesAPI() != null) {
