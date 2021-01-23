@@ -49,8 +49,8 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
 
     @Override
     public void reload() {
-        this.config = this.core.getFileManager().getConfig("ranks.yml");
         this.config.reload();
+        this.config = this.core.getFileManager().getConfig("ranks.yml");
     }
 
     @Override

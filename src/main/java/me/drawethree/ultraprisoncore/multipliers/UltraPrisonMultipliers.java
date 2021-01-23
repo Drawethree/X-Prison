@@ -75,9 +75,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     @Override
     public void reload() {
-        this.config = this.core.getFileManager().getConfig("multipliers.yml");
         this.config.reload();
-
+        this.config = this.core.getFileManager().getConfig("multipliers.yml");
     }
 
     @Override
