@@ -19,7 +19,7 @@ public class Rank {
     public void runCommands(Player p) {
         if (commandsToExecute != null) {
             for (String cmd : commandsToExecute) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige-2%", prefix));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix));
             }
         }
     }

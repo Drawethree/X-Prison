@@ -248,9 +248,7 @@ public class RankManager {
 
 		this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy.getId());
 
-		for (String s : toBuy.getCommandsToExecute()) {
-			Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()).replace("%Prestige%", toBuy.getPrefix())));
-		}
+		toBuy.runCommands(p);
 
 		p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige%", toBuy.getPrefix()));
 
