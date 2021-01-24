@@ -22,6 +22,11 @@ public class BlessingEnchant extends UltraPrisonEnchantment {
     }
 
     @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
+
+    @Override
     public void onEquip(Player p, ItemStack pickAxe, int level) {
 
     }

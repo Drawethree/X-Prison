@@ -47,11 +47,6 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
     }
 
     @Override
-    public boolean registerEnchant(UltraPrisonEnchantment enchantment) {
-        return UltraPrisonEnchantment.registerEnchant(enchantment);
-    }
-
-    @Override
     public UltraPrisonEnchantment getById(int id) {
         return UltraPrisonEnchantment.getEnchantById(id);
     }

@@ -39,4 +39,9 @@ public class TokenatorEnchant extends UltraPrisonEnchantment {
 			plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), randAmount);
         }
     }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

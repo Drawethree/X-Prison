@@ -38,4 +38,9 @@ public class PrestigeFinderEnchant extends UltraPrisonEnchantment {
             this.plugin.getCore().getRanks().getRankManager().givePrestige(e.getPlayer(), levels);
         }
     }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

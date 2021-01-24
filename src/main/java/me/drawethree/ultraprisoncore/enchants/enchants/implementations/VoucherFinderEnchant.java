@@ -54,6 +54,11 @@ public class VoucherFinderEnchant extends UltraPrisonEnchantment {
         }
     }
 
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
+
     @AllArgsConstructor
     @Getter
     private class CommandWithChance {

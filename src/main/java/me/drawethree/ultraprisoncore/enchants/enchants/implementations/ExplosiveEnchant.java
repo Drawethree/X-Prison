@@ -32,6 +32,11 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
         this.cooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
     }
 
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
+
 
     @Override
     public void onEquip(Player p, ItemStack pickAxe, int level) {

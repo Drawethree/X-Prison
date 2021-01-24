@@ -54,4 +54,9 @@ public class KeyFinderEnchant extends UltraPrisonEnchantment {
 			return 10;
 		}
 	}
+
+	@Override
+	public String getAuthor() {
+		return "Drawethree";
+	}
 }

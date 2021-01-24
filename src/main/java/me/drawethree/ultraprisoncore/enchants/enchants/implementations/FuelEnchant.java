@@ -38,4 +38,9 @@ public class FuelEnchant extends UltraPrisonEnchantment {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
         }
     }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

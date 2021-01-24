@@ -90,5 +90,10 @@ public class LayerEnchant extends UltraPrisonEnchantment {
         }
     }
 
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
+
 
 }

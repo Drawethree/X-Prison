@@ -1,10 +1,11 @@
 package me.drawethree.ultraprisoncore.enchants.enchants;
 
 import lombok.Getter;
+import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.*;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,15 +14,17 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @Getter
 public abstract class UltraPrisonEnchantment implements Refundable {
 
-    private static HashMap<Integer, UltraPrisonEnchantment> allEnchantmentsById;
-    private static HashMap<String, UltraPrisonEnchantment> allEnchantmentsByName;
+    private static HashMap<Integer, UltraPrisonEnchantment> allEnchantmentsById = new HashMap<>();
+    private static HashMap<String, UltraPrisonEnchantment> allEnchantmentsByName = new HashMap<>();
 
     static {
-        loadEnchantments();
+        loadDefaultEnchantments();
     }
 
     protected final UltraPrisonEnchants plugin;
@@ -50,6 +53,8 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.cost = this.plugin.getConfig().get().getLong("enchants." + id + ".Cost");
         this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
     }
+
+    public abstract String getAuthor();
 
     public abstract void onEquip(Player p, ItemStack pickAxe, int level);
 
@@ -84,37 +89,64 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         return allEnchantmentsByName.get(name.toLowerCase());
     }
 
-    public static void loadEnchantments() {
-        allEnchantmentsById = new HashMap<>();
-        allEnchantmentsByName = new HashMap<>();
+    public void register() {
 
-        registerEnchant(new EfficiencyEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new UnbreakingEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new FortuneEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new HasteEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new SpeedEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new JumpBoostEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new NightVisionEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new LuckyBoosterEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new ExplosiveEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new LayerEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new CharityEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new SalaryEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new BlessingEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new TokenatorEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new KeyFinderEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new PrestigeFinderEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new BlockBoosterEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new FuelEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new AutoSellEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new AutoSellEnchant(UltraPrisonEnchants.getInstance()));
-        registerEnchant(new VoucherFinderEnchant(UltraPrisonEnchants.getInstance()));
+        if (allEnchantmentsById.containsKey(this.getId()) || allEnchantmentsByName.containsKey(this.getRawName())) {
+            UltraPrisonCore.getInstance().getLogger().warning(Text.colorize("&cUnable to register enchant " + this.getName() + "&c created by " + this.getAuthor() + ". That enchant is already registered."));
+            return;
+        }
 
-        registerCustomEnchants();
+        Validate.notNull(this.getRawName());
+
+        allEnchantmentsById.put(this.getId(), this);
+        allEnchantmentsByName.put(this.getRawName().toLowerCase(), this);
+
+        UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully registered enchant " + this.getName() + "&a created by " + this.getAuthor()));
     }
 
-    private static void registerCustomEnchants() {
-        //TODO: Find all extra classes and register them.
+    public void unregister() {
+
+        if (!allEnchantmentsById.containsKey(this.getId()) && !allEnchantmentsByName.containsKey(this.getRawName())) {
+            UltraPrisonCore.getInstance().getLogger().warning(Text.colorize("&cUnable to unregister enchant " + this.getName() + "&c created by " + this.getAuthor() + ". That enchant is not registered."));
+            return;
+        }
+
+        allEnchantmentsById.remove(this.getId());
+        allEnchantmentsByName.remove(this.getRawName());
+
+        UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully unregistered enchant " + this.getName() + "&a created by " + this.getAuthor()));
+    }
+
+
+    public static void loadDefaultEnchantments() {
+        new EfficiencyEnchant(UltraPrisonEnchants.getInstance()).register();
+        new UnbreakingEnchant(UltraPrisonEnchants.getInstance()).register();
+        new FortuneEnchant(UltraPrisonEnchants.getInstance()).register();
+        new HasteEnchant(UltraPrisonEnchants.getInstance()).register();
+        new SpeedEnchant(UltraPrisonEnchants.getInstance()).register();
+        new JumpBoostEnchant(UltraPrisonEnchants.getInstance()).register();
+        new NightVisionEnchant(UltraPrisonEnchants.getInstance()).register();
+        new LuckyBoosterEnchant(UltraPrisonEnchants.getInstance()).register();
+        new ExplosiveEnchant(UltraPrisonEnchants.getInstance()).register();
+        new LayerEnchant(UltraPrisonEnchants.getInstance()).register();
+        new CharityEnchant(UltraPrisonEnchants.getInstance()).register();
+        new SalaryEnchant(UltraPrisonEnchants.getInstance()).register();
+        new BlessingEnchant(UltraPrisonEnchants.getInstance()).register();
+        new TokenatorEnchant(UltraPrisonEnchants.getInstance()).register();
+        new KeyFinderEnchant(UltraPrisonEnchants.getInstance()).register();
+        new PrestigeFinderEnchant(UltraPrisonEnchants.getInstance()).register();
+        new BlockBoosterEnchant(UltraPrisonEnchants.getInstance()).register();
+        new FuelEnchant(UltraPrisonEnchants.getInstance()).register();
+        new AutoSellEnchant(UltraPrisonEnchants.getInstance()).register();
+        new VoucherFinderEnchant(UltraPrisonEnchants.getInstance()).register();
+    }
+
+    public static void unregisterAll() {
+        allEnchantmentsById.clear();
+        allEnchantmentsByName.clear();
+
+        UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully unregistered all enchants."));
+
     }
 
 
@@ -122,13 +154,4 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         return this.maxLevel == -1 ? Integer.MAX_VALUE : this.maxLevel;
     }
 
-
-    public static boolean registerEnchant(UltraPrisonEnchantment enchantment) {
-
-        Validate.notNull(enchantment.getRawName());
-
-        allEnchantmentsById.put(enchantment.getId(), enchantment);
-        allEnchantmentsByName.put(enchantment.getRawName().toLowerCase(), enchantment);
-        return true;
-    }
 }

@@ -44,4 +44,9 @@ public class SalaryEnchant extends UltraPrisonEnchantment {
         }
 
     }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

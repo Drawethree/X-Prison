@@ -36,4 +36,9 @@ public class HasteEnchant extends UltraPrisonEnchantment {
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
     }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

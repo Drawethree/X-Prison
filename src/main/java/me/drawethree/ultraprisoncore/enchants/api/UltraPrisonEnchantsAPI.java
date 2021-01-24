@@ -62,14 +62,6 @@ public interface UltraPrisonEnchantsAPI {
     ItemStack removeEnchant(ItemStack item, Player p, int id);
 
     /**
-     * @deprecated NOT CURRENTLY WORKING!
-     * Method to register new enchantment
-     * @param enchantment Enchant
-     * @return true if enchant was registered properly
-     */
-    boolean registerEnchant(UltraPrisonEnchantment enchantment);
-
-    /**
      * Method to get Enchant by ID
      * @param id enchant id
      * @return UltraPrisonEnchantment

@@ -100,4 +100,9 @@ public class BlockBoosterEnchant extends UltraPrisonEnchantment {
 
         return new StringBuilder().append(ChatColor.GRAY + "(" + ChatColor.WHITE).append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").append(ChatColor.GRAY + ")").toString();
     }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

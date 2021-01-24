@@ -72,12 +72,15 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     @Override
 	public void reload() {
 
+        UltraPrisonEnchantment.unregisterAll();
+
         this.config = this.core.getFileManager().getConfig("enchants.yml");
         this.config.reload();
 
 		this.loadMessages();
 		this.enchantsManager.reloadConfig();
-		UltraPrisonEnchantment.loadEnchantments();
+
+		UltraPrisonEnchantment.loadDefaultEnchantments();
 	}
 
     private void loadMessages() {
