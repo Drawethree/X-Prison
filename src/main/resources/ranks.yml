@@ -14,6 +14,7 @@ messages:
   prestige_set: "&e&lPRESTIGE &8» &7You have set %player%'s prestige to %amount%"
   prestige_add: "&e&lPRESTIGE &8» &7You have added %amount% prestige to  %player%"
   prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
+  max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
 unlimited_prestiges:
   enabled: false
   max_prestige: 1000

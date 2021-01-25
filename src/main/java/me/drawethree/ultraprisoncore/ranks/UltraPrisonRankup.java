@@ -143,8 +143,11 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                         }
 
                         Schedulers.async().run(() -> {
+
                             this.prestigingPlayers.add(c.sender().getUniqueId());
+
                             this.rankManager.buyMaxPrestige(c.sender());
+
                             this.prestigingPlayers.remove(c.sender().getUniqueId());
                         });
                     }
