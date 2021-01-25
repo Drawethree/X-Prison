@@ -16,10 +16,12 @@ import me.lucko.helper.text.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import javax.naming.ConfigurationException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -59,7 +61,14 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private void loadRankMultipliers() {
         permissionToMultiplier = new LinkedHashMap<>();
-        for (String rank : getConfig().get().getConfigurationSection("ranks").getKeys(false)) {
+
+        ConfigurationSection section = getConfig().get().getConfigurationSection("ranks");
+
+        if (section == null) {
+            return;
+        }
+
+        for (String rank : section.getKeys(false)) {
             String perm = "ultraprison.multiplier." + rank;
             double multiplier = getConfig().get().getDouble("ranks." + rank);
             permissionToMultiplier.put(perm, multiplier);
