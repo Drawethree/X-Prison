@@ -571,7 +571,7 @@ public class TokensManager {
 						name = player.getName();
 					}
 					long blocks = top10BlocksWeekly.get(uuid);
-					sender.sendMessage(TOP_FORMAT_BLOCKS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", blocks)));
+					sender.sendMessage(TOP_FORMAT_BLOCKS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", blocks)).replace("%blocks%", String.format("%,d", blocks)));
 				} catch (ArrayIndexOutOfBoundsException e) {
 					break;
 				}

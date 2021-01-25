@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonAutoSellEvent;
+import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
@@ -160,7 +161,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
 					if (!enabledAutoSell.contains(e.getPlayer().getUniqueId())) {
-                        e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
+
+					    if (e.getPlayer().getInventory().firstEmpty() != -1) {
+                            e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
+                        }
 
                         e.getBlock().getDrops().clear();
                         e.getBlock().setType(CompMaterial.AIR.getMaterial());
@@ -173,10 +177,13 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
                         for (IWrappedRegion reg : regions) {
                             if (regionsAutoSell.containsKey(reg.getId()) && regionsAutoSell.get(reg.getId()).sellsMaterial(e.getBlock().getType())) {
+
+                                AutoSellRegion region = regionsAutoSell.get(reg.getId());
+
                                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
                                 double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier);
 
-                                UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), reg, e.getBlock(), amount);
+                                UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), region, e.getBlock(), amount);
 
                                 Events.call(event);
 
@@ -332,6 +339,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                 totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
                                 core.getEconomy().depositPlayer(c.sender(), totalPrice);
                                 c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
+
+                                //Call post autosell
+                                UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(c.sender(), autoSellRegion);
+                                Events.call(event);
                                 break;
                             }
                         }
