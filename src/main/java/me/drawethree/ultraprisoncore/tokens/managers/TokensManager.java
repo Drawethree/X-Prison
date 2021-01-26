@@ -356,7 +356,6 @@ public class TokensManager {
 
 	public void addBlocksBroken(CommandSender sender, Player player, long amount) {
 
-
 		UltraPrisonBlockBreakEvent event = new UltraPrisonBlockBreakEvent(player, amount);
 
 		Events.call(event);
