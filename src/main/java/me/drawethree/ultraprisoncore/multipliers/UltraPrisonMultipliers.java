@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import javax.naming.ConfigurationException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
@@ -188,7 +187,6 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     public void disable() {
         this.saveAllMultipliers();
         this.enabled = false;
-
     }
 
     @Override

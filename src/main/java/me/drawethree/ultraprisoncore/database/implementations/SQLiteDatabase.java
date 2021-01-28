@@ -68,44 +68,47 @@ public class SQLiteDatabase extends SQLDatabase {
 	@Override
 	public void createTables() {
 		Schedulers.async().run(() -> {
-			execute("CREATE TABLE IF NOT EXISTS " + RANKS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige int, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + GEMS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_DB_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + RANKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige int, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, multiplier double, timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
+
+			execute("ALTER TABLE " + MULTIPLIERS_TABLE_NAME + " RENAME COLUMN vote_multiplier TO multiplier");
+			execute("ALTER TABLE " + MULTIPLIERS_TABLE_NAME + " RENAME COLUMN vote_multiplier_timeleft TO timeleft");
 		});
 	}
 
 	@Override
 	public void addIntoTokens(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.TOKENS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.TOKENS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoRanksAndPrestiges(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.RANKS_DB_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
+		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.RANKS_TABLE_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
 	}
 
 	@Override
 	public void addIntoBlocks(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoBlocksWeekly(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_WEEKLY_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_WEEKLY_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoGems(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.GEMS_DB_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.GEMS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void saveAutoMiner(Player p, int timeLeft) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.AUTOMINER_DB_NAME + " VALUES (?,?) ")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.AUTOMINER_TABLE_NAME + " VALUES (?,?) ")) {
 			statement.setString(1, p.getUniqueId().toString());
 			statement.setInt(2, timeLeft);
 			statement.execute();
@@ -116,7 +119,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	@Override
 	public void savePersonalMultiplier(Player player, PlayerMultiplier multiplier) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_DB_NAME + " VALUES(?,?,?) ")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " VALUES(?,?,?) ")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
 			statement.setLong(3, multiplier.getEndTime());
