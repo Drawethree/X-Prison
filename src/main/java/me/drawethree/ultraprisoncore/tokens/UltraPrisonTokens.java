@@ -32,182 +32,189 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
 
-    public static final String TOKENS_ADMIN_PERM = "ultraprison.tokens.admin";
+	public static final String TOKENS_ADMIN_PERM = "ultraprison.tokens.admin";
 
-    @Getter
-    private static UltraPrisonTokens instance;
+	@Getter
+	private static UltraPrisonTokens instance;
 
-    @Getter
-    private FileManager.Config config;
+	@Getter
+	private FileManager.Config config;
 
-    @Getter
-    private FileManager.Config blockRewardsConfig;
+	@Getter
+	private FileManager.Config blockRewardsConfig;
 
-    @Getter
-    private UltraPrisonTokensAPI api;
+	@Getter
+	private UltraPrisonTokensAPI api;
 
-    @Getter
-    private TokensManager tokensManager;
-    @Getter
-    private UltraPrisonCore core;
+	@Getter
+	private TokensManager tokensManager;
+	@Getter
+	private UltraPrisonCore core;
 
-    private HashMap<String, String> messages;
-    private double chance;
-    private long minAmount;
-    private long maxAmount;
-    private boolean enabled;
+	private HashMap<String, String> messages;
+	private double chance;
+	private long minAmount;
+	private long maxAmount;
+	private boolean enabled;
 
-    public UltraPrisonTokens(UltraPrisonCore prisonCore) {
-        instance = this;
-        this.core = prisonCore;
-        this.config = prisonCore.getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
-        this.blockRewardsConfig = prisonCore.getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
-    }
-
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void reload() {
-        this.config = this.core.getFileManager().getConfig("tokens.yml");
-        this.blockRewardsConfig = this.core.getFileManager().getConfig("block-rewards.yml");
-
-        this.config.reload();
-        this.blockRewardsConfig.reload();
-        this.loadMessages();
-        this.loadVariables();
-        this.tokensManager.reloadConfig();
-    }
-
-    private void loadVariables() {
-        this.chance = getConfig().get().getDouble("tokens.breaking.chance");
-        this.minAmount = getConfig().get().getLong("tokens.breaking.min");
-        this.maxAmount = getConfig().get().getLong("tokens.breaking.max");
-    }
+	public UltraPrisonTokens(UltraPrisonCore prisonCore) {
+		instance = this;
+		this.core = prisonCore;
+		this.config = prisonCore.getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
+		this.blockRewardsConfig = prisonCore.getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
+	}
 
 
-    @Override
-    public void enable() {
-        this.enabled = true;
-        this.loadMessages();
-        this.loadVariables();
-        this.tokensManager = new TokensManager(this);
-        this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
-        this.registerCommands();
-        this.registerEvents();
-    }
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void reload() {
+		this.config = this.core.getFileManager().getConfig("tokens.yml");
+		this.blockRewardsConfig = this.core.getFileManager().getConfig("block-rewards.yml");
+
+		this.config.reload();
+		this.blockRewardsConfig.reload();
+		this.loadMessages();
+		this.loadVariables();
+		this.tokensManager.reloadConfig();
+	}
+
+	private void loadVariables() {
+		this.chance = getConfig().get().getDouble("tokens.breaking.chance");
+		this.minAmount = getConfig().get().getLong("tokens.breaking.min");
+		this.maxAmount = getConfig().get().getLong("tokens.breaking.max");
+	}
 
 
-    @Override
-    public void disable() {
-        this.tokensManager.stopUpdating();
-        this.tokensManager.saveWeeklyReset();
-        this.tokensManager.savePlayerDataOnDisable();
-        this.enabled = false;
+	@Override
+	public void enable() {
+		this.enabled = true;
+		this.loadMessages();
+		this.loadVariables();
+		this.tokensManager = new TokensManager(this);
+		this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
+		this.registerCommands();
+		this.registerEvents();
+	}
 
-    }
 
-    @Override
-    public String getName() {
-        return "Tokens";
-    }
+	@Override
+	public void disable() {
+		this.tokensManager.stopUpdating();
+		this.tokensManager.saveWeeklyReset();
+		this.tokensManager.savePlayerDataOnDisable();
+		this.enabled = false;
 
-    private void registerEvents() {
+	}
 
-        Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == CompMaterial.SUNFLOWER.toMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
-                .handler(e -> {
-                    if (e.getItem().hasItemMeta()) {
-                        e.setCancelled(true);
-                        e.setUseInteractedBlock(Event.Result.DENY);
-                        this.tokensManager.redeemTokens(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking());
-                    }
-                })
-                .bindWith(core);
+	@Override
+	public String getName() {
+		return "Tokens";
+	}
 
-        Events.subscribe(BlockBreakEvent.class)
-                .filter(EventFilters.ignoreCancelled())
-                .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().filter(region -> region.getId().toLowerCase().startsWith("mine")).findAny().isPresent())
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
-                .handler(e -> {
-					tokensManager.addBlocksBroken(null, e.getPlayer(), 1);
-                    if (chance >= ThreadLocalRandom.current().nextDouble()) {
-                        boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+	private void registerEvents() {
 
-                        long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-                        randAmount = luckyBooster ? randAmount * 2 : randAmount;
+		Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+				.filter(e -> e.getItem() != null && e.getItem().getType() == CompMaterial.SUNFLOWER.toMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+				.handler(e -> {
+					if (e.getItem().hasItemMeta()) {
+						e.setCancelled(true);
+						e.setUseInteractedBlock(Event.Result.DENY);
+						this.tokensManager.redeemTokens(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking());
+					}
+				})
+				.bindWith(core);
 
-                        tokensManager.giveTokens(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
-                    }
-                }).bindWith(core);
-    }
+		Events.subscribe(BlockBreakEvent.class)
+				.filter(EventFilters.ignoreCancelled())
+				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().filter(region -> region.getId().toLowerCase().startsWith("mine")).findAny().isPresent())
+				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+				.handler(e -> {
+					this.handleBlockBreak(e.getPlayer(), 1);
+				}).bindWith(core);
+	}
 
-    private void registerCommands() {
-        Commands.create()
-                .handler(c -> {
-                    if (c.args().size() == 0 && c.sender() instanceof Player) {
-                        this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
-                        return;
-                    }
-                    TokensCommand subCommand = TokensCommand.getCommand(c.rawArg(0));
-                    if (subCommand != null) {
-                        subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
-                    } else {
-                        OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-                        this.tokensManager.sendInfoMessage(c.sender(), target, true);
-                    }
-                }).registerAndBind(core, "tokens", "token");
+	public void handleBlockBreak(Player p, int amountOfBlocks) {
+		tokensManager.addBlocksBroken(null, p, amountOfBlocks);
+		for (int i = 0; i < amountOfBlocks; i++) {
+			double random = ThreadLocalRandom.current().nextDouble(100);
+			if (this.chance >= random) {
+				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p.getPlayer());
 
-        Commands.create()
-                .assertPlayer()
-                .handler(c -> {
-                    this.tokensManager.toggleTokenMessage(c.sender());
-                }).registerAndBind(core, "tokenmessage");
+				long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+				randAmount = luckyBooster ? randAmount * 2 : randAmount;
 
-        Commands.create()
-                .handler(c -> {
-                    if (c.args().size() == 0) {
-                        this.tokensManager.sendBlocksTop(c.sender());
-                    }
-                })
-                .registerAndBind(core, "blockstop", "blocktop");
-        Commands.create()
-                .handler(c -> {
-                    if (c.args().size() == 0) {
-                        this.tokensManager.sendBlocksTopWeekly(c.sender());
-                    }
-                })
-                .registerAndBind(core, "blockstopweekly", "blockstopw", "btw");
-        Commands.create()
-                .assertPermission("ultraprison.tokens.admin")
-                .handler(c -> {
-                    if (c.args().size() == 0) {
-                        this.tokensManager.resetBlocksTopWeekly(c.sender());
-                    }
-                })
-                .registerAndBind(core, "blockstopweeklyreset");
-        Commands.create()
-                .handler(c -> {
-                    if (c.args().size() == 0) {
-                        this.tokensManager.sendTokensTop(c.sender());
-                    }
-                })
-                .registerAndBind(core, "tokenstop", "tokentop");
-        Commands.create()
-                .handler(c -> {
-                    if (c.args().size() == 0) {
-                        this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
-                    } else if (c.args().size() == 1) {
-                        OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-                        this.tokensManager.sendInfoMessage(c.sender(), target, false);
-                    }
-                })
-                .registerAndBind(core, "blocks", "block");
+				tokensManager.giveTokens(p, randAmount, null, ReceiveCause.MINING);
+			}
+		}
+	}
+
+	private void registerCommands() {
 		Commands.create()
-                .assertPermission("ultraprison.tokens.admin")
+				.handler(c -> {
+					if (c.args().size() == 0 && c.sender() instanceof Player) {
+						this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
+						return;
+					}
+					TokensCommand subCommand = TokensCommand.getCommand(c.rawArg(0));
+					if (subCommand != null) {
+						subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+					} else {
+						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
+						this.tokensManager.sendInfoMessage(c.sender(), target, true);
+					}
+				}).registerAndBind(core, "tokens", "token");
+
+		Commands.create()
+				.assertPlayer()
+				.handler(c -> {
+					this.tokensManager.toggleTokenMessage(c.sender());
+				}).registerAndBind(core, "tokenmessage");
+
+		Commands.create()
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						this.tokensManager.sendBlocksTop(c.sender());
+					}
+				})
+				.registerAndBind(core, "blockstop", "blocktop");
+		Commands.create()
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						this.tokensManager.sendBlocksTopWeekly(c.sender());
+					}
+				})
+				.registerAndBind(core, "blockstopweekly", "blockstopw", "btw");
+		Commands.create()
+				.assertPermission("ultraprison.tokens.admin")
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						this.tokensManager.resetBlocksTopWeekly(c.sender());
+					}
+				})
+				.registerAndBind(core, "blockstopweeklyreset");
+		Commands.create()
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						this.tokensManager.sendTokensTop(c.sender());
+					}
+				})
+				.registerAndBind(core, "tokenstop", "tokentop");
+		Commands.create()
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
+					} else if (c.args().size() == 1) {
+						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
+						this.tokensManager.sendInfoMessage(c.sender(), target, false);
+					}
+				})
+				.registerAndBind(core, "blocks", "block");
+		Commands.create()
+				.assertPermission("ultraprison.tokens.admin")
 				.handler(c -> {
 					if (c.args().size() == 3) {
 
@@ -233,16 +240,16 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 					}
 				})
 				.registerAndBind(core, "blocksadmin", "blocksa");
-    }
+	}
 
-    private void loadMessages() {
-        messages = new HashMap<>();
-        for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key, Text.colorize(this.getConfig().get().getString("messages." + key)));
-        }
-    }
+	private void loadMessages() {
+		messages = new HashMap<>();
+		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key, Text.colorize(this.getConfig().get().getString("messages." + key)));
+		}
+	}
 
-    public String getMessage(String key) {
-        return messages.get(key);
-    }
+	public String getMessage(String key) {
+		return messages.get(key);
+	}
 }

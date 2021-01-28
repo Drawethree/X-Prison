@@ -85,6 +85,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
                 }
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
+                plugin.getCore().getTokens().handleBlockBreak(p, blockCount);
 
             }
         }
