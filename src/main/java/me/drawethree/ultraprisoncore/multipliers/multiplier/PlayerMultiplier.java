@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.multipliers.multiplier;
 
+import lombok.ToString;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
@@ -7,12 +8,14 @@ import me.lucko.helper.time.Time;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@ToString
 public class PlayerMultiplier extends Multiplier {
 
     private final UUID playerUUID;
 
     public PlayerMultiplier(UUID playerUUID, double multiplier, int duration) {
         super(multiplier, duration);
+
         this.playerUUID = playerUUID;
         if (endTime > Time.nowMillis()) {
             if (task != null) {
@@ -22,6 +25,7 @@ public class PlayerMultiplier extends Multiplier {
                 UltraPrisonMultipliers.getInstance().removePersonalMultiplier(this.playerUUID);
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
         }
+
     }
 
     public PlayerMultiplier(UUID playerUUID, double multiplier, long timeLeft) {
@@ -58,7 +62,7 @@ public class PlayerMultiplier extends Multiplier {
     public void addDuration(int minutes) {
 
         this.startTime = System.currentTimeMillis();
-        this.endTime += TimeUnit.MINUTES.toMillis(minutes);
+        this.endTime = this.endTime == 0 ? (System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(minutes)) : this.endTime + TimeUnit.MINUTES.toMillis(minutes);
 
         if (endTime > Time.nowMillis()) {
             if (task != null) {

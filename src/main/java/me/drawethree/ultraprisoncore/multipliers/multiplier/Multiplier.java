@@ -21,7 +21,7 @@ public abstract class Multiplier {
     public Multiplier(double multiplier, int duration) {
         this.multiplier = multiplier;
         this.startTime = System.currentTimeMillis();
-        this.endTime = duration == 0 ? 0 : startTime + TimeUnit.MINUTES.toMillis(duration);
+        this.endTime = duration == 0 ? 0 : (startTime + TimeUnit.MINUTES.toMillis(duration));
     }
 
     public Multiplier(double multiplier, long endTime) {

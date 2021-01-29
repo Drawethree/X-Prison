@@ -167,10 +167,15 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     private void loadPersonalMultiplier(Player player) {
         Schedulers.async().run(() -> {
             PlayerMultiplier multiplier = this.core.getPluginDatabase().getPlayerPersonalMultiplier(player);
+
             if (multiplier == null) {
                 multiplier = new PlayerMultiplier(player.getUniqueId(), 0, 0);
             }
+
+            System.out.println(multiplier.toString());
+
             personalMultipliers.put(player.getUniqueId(), multiplier);
+
             this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
         });
     }
@@ -249,6 +254,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         } else {
             personalMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes));
         }
+
+        System.out.println(personalMultipliers.get(onlinePlayer.getUniqueId()).getEndTime());
 
         onlinePlayer.sendMessage(messages.get("personal_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
         sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &ePersonal Multiplier &ato &e%.2f &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));

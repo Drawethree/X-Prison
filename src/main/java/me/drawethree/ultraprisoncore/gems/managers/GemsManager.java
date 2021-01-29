@@ -31,7 +31,7 @@ public class GemsManager {
 
     private UltraPrisonGems plugin;
     private String SPACER_LINE;
-	private String SPACER_LINE_BOTTOM;
+    private String SPACER_LINE_BOTTOM;
     private String TOP_FORMAT_GEMS;
     private HashMap<UUID, Long> gemsCache = new HashMap<>();
     private LinkedHashMap<UUID, Long> top10Gems = new LinkedHashMap<>();
@@ -41,7 +41,7 @@ public class GemsManager {
     public GemsManager(UltraPrisonGems plugin) {
         this.plugin = plugin;
         this.SPACER_LINE = plugin.getMessage("top_spacer_line");
-		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
+        this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
         this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
 
         Events.subscribe(PlayerJoinEvent.class)
@@ -105,7 +105,7 @@ public class GemsManager {
 
     private void addIntoTable(Player player) {
         Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoGems(player);
+            this.plugin.getCore().getPluginDatabase().addIntoGems(player);
         });
     }
 
@@ -133,28 +133,28 @@ public class GemsManager {
     }
 
     public void giveGems(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
-        Schedulers.async().run(() -> {
-            long currentgems = getPlayerGems(p);
+        long currentgems = getPlayerGems(p);
 
-            UltraPrisonPlayerGemsReceiveEvent event = new UltraPrisonPlayerGemsReceiveEvent(cause, p, amount);
+        UltraPrisonPlayerGemsReceiveEvent event = new UltraPrisonPlayerGemsReceiveEvent(cause, p, amount);
 
-            Events.call(event);
+        Events.call(event);
 
-            if (event.isCancelled()) {
-                return;
-            }
+        if (event.isCancelled()) {
+            return;
+        }
 
-            long finalAmount = event.getAmount();
+        long finalAmount = event.getAmount();
 
-            if (!p.isOnline()) {
-                this.plugin.getCore().getPluginDatabase().updateGems(p, currentgems + finalAmount);
-            } else {
-                gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-            }
-            if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", finalAmount)));
-            }
-        });
+
+        if (!p.isOnline()) {
+            this.plugin.getCore().getPluginDatabase().updateGems(p, currentgems + finalAmount);
+        } else {
+            gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
+        }
+        if (executor != null) {
+            executor.sendMessage(plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", finalAmount)));
+        }
+
     }
 
     public void redeemGems(Player p, ItemStack item, boolean shiftClick) {
@@ -217,7 +217,7 @@ public class GemsManager {
                 });
             }
 
-			executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
+            executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
         });
     }
 
@@ -268,7 +268,7 @@ public class GemsManager {
         top10Gems = new LinkedHashMap<>();
         this.plugin.getCore().getLogger().info("Starting updating GemsTop");
 
-		this.top10Gems = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Gems();
+        this.top10Gems = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Gems();
         this.plugin.getCore().getLogger().info("GemsTop updated!");
     }
 
@@ -277,7 +277,7 @@ public class GemsManager {
             sender.sendMessage(Text.colorize(SPACER_LINE));
             if (this.updating) {
                 sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
+                sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
                 return;
             }
             for (int i = 0; i < 10; i++) {
@@ -296,7 +296,7 @@ public class GemsManager {
                     break;
                 }
             }
-			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
+            sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
         });
     }
 }

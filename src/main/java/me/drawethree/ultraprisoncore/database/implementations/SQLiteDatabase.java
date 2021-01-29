@@ -73,11 +73,8 @@ public class SQLiteDatabase extends SQLDatabase {
 			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, multiplier double, timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
-
-			execute("ALTER TABLE " + MULTIPLIERS_TABLE_NAME + " RENAME COLUMN vote_multiplier TO multiplier");
-			execute("ALTER TABLE " + MULTIPLIERS_TABLE_NAME + " RENAME COLUMN vote_multiplier_timeleft TO timeleft");
 		});
 	}
 
@@ -119,7 +116,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	@Override
 	public void savePersonalMultiplier(Player player, PlayerMultiplier multiplier) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " VALUES(?,?,?) ")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " VALUES(?,?,?)")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
 			statement.setLong(3, multiplier.getEndTime());

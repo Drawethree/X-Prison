@@ -52,8 +52,8 @@ public abstract class SQLDatabase extends Database {
 	public static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
 
 	public static final String MULTIPLIERS_UUID_COLNAME = "UUID";
-	public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "multiplier";
-	public static final String MULTIPLIERS_TIMELEFT_COLNAME = "timeleft";
+	public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "vote_multiplier";
+	public static final String MULTIPLIERS_TIMELEFT_COLNAME = "vote_multiplier_timeleft";
 
 	public static final String AUTOMINER_UUID_COLNAME = "UUID";
 	public static final String AUTOMINER_TIME_COLNAME = "time";
@@ -108,11 +108,9 @@ public abstract class SQLDatabase extends Database {
 			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, multiplier double, timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 
-			execute("ALTER TABLE " + MULTIPLIERS_TABLE_NAME + " RENAME COLUMN vote_multiplier TO multiplier");
-			execute("ALTER TABLE " + MULTIPLIERS_TABLE_NAME + " RENAME COLUMN vote_multiplier_timeleft TO timeleft");
 		});
 	}
 
