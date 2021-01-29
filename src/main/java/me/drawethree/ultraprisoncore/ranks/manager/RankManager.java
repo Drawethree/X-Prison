@@ -8,7 +8,6 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -419,7 +418,8 @@ public class RankManager {
             return;
         }
 
-        if (amount > this.maxPrestige.getId()) {
+		long maxPretige = this.unlimitedPrestiges ? this.unlimitedPrestigeMax : this.maxPrestige.getId();
+		if (amount > maxPretige) {
             this.onlinePlayersPrestige.put(target.getUniqueId(), this.maxPrestige.getId());
         } else {
             this.onlinePlayersPrestige.put(target.getUniqueId(), amount);
