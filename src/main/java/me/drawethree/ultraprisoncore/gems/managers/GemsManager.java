@@ -40,9 +40,7 @@ public class GemsManager {
 
     public GemsManager(UltraPrisonGems plugin) {
         this.plugin = plugin;
-        this.SPACER_LINE = plugin.getMessage("top_spacer_line");
-        this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
-        this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
+        this.reload();
 
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
@@ -57,6 +55,12 @@ public class GemsManager {
 
         this.loadPlayerDataOnEnable();
         this.updateTop10();
+    }
+
+    public void reload() {
+        this.SPACER_LINE = plugin.getMessage("top_spacer_line");
+        this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
+        this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
     }
 
     public void stopUpdating() {

@@ -54,10 +54,6 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     public UltraPrisonAutoSell(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
-        this.config = UltraPrisonCore.getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
-		this.enabledAutoSell = new ArrayList<>();
-        this.lastEarnings = new HashMap<>();
-        this.lastItems = new HashMap<>();
     }
 
     private void loadMessages() {
@@ -118,20 +114,32 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     @Override
     public void reload() {
-        this.config = this.core.getFileManager().getConfig("autosell.yml");
         this.config.reload();
+        this.loadMessages();
+        this.broadcastTime = this.getConfig().get().getInt("auto_sell_broadcast.time");
+        this.autoSellBroadcastMessage = this.getConfig().get().getStringList("auto_sell_broadcast.message");
+        this.loadAutoSellRegions();
     }
 
     @Override
     public void enable() {
         this.enabled = true;
-        this.loadAutoSellRegions();
+
+        this.config = this.core.getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
+
+        this.enabledAutoSell = new ArrayList<>();
+        this.lastEarnings = new HashMap<>();
+        this.lastItems = new HashMap<>();
+
         this.broadcastTime = this.getConfig().get().getInt("auto_sell_broadcast.time");
         this.autoSellBroadcastMessage = this.getConfig().get().getStringList("auto_sell_broadcast.message");
+
+        this.loadAutoSellRegions();
         this.loadMessages();
         this.registerCommands();
         this.registerListeners();
         this.runBroadcastTask();
+
         this.api = new UltraPrisonAutoSellAPIImpl(this);
     }
 

@@ -51,9 +51,6 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     public UltraPrisonMultipliers(UltraPrisonCore UltraPrisonCore) {
         instance = this;
         this.core = UltraPrisonCore;
-        this.config = UltraPrisonCore.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
-        this.rankMultipliers = new HashMap<>();
-        this.personalMultipliers = new HashMap<>();
     }
 
 
@@ -84,12 +81,20 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     @Override
     public void reload() {
         this.config.reload();
-        this.config = this.core.getFileManager().getConfig("multipliers.yml");
+
+        this.loadMessages();
+        this.loadRankMultipliers();
     }
 
     @Override
     public void enable() {
+
         this.enabled = true;
+        this.config = this.core.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
+
+        this.rankMultipliers = new HashMap<>();
+        this.personalMultipliers = new HashMap<>();
+
         this.loadMessages();
         this.loadRankMultipliers();
         this.registerCommands();

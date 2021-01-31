@@ -36,9 +36,7 @@ public class EnchantsManager {
 
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
-		this.ENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("enchant_menu.item.lore");
-		this.DISENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("disenchant_menu.item.lore");
-		this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");
+		this.reload();
 	}
 
 
@@ -393,7 +391,7 @@ public class EnchantsManager {
 		return sum;
 	}
 
-	public void reloadConfig() {
+	public void reload() {
 		this.ENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("enchant_menu.item.lore");
 		this.DISENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("disenchant_menu.item.lore");
 		this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");

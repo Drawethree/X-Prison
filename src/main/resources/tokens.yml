@@ -27,10 +27,11 @@ messages:
   top_weekly_reset: "&7&oTime Left: %time%"
   token_message_disabled: "&e&lTOKENS &8» &7Messages &c&lOFF"
   token_message_enabled: "&e&lTOKENS &8» &7Messages &a&lON"
+  tokens_received_mining: "&e&lTOKENS &8» &7You found &6%amount% Tokens &7while mining"
 tokens:
   breaking:
-    chance: 50
-    max: 35
+    chance: 5.0
+    max: 5
     min: 1
   item:
     material: SUNFLOWER

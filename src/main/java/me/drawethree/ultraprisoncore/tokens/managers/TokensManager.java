@@ -667,6 +667,10 @@ public class TokensManager {
 		}
 	}
 
+	public boolean hasOffTokenMessages(Player p) {
+		return this.tokenMessageOffPlayers.contains(p.getUniqueId());
+	}
+
 	@AllArgsConstructor
 	@Getter
 	private class BlockReward {

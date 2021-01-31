@@ -27,7 +27,7 @@ public abstract class Database {
 
 	public abstract int getPlayerRank(OfflinePlayer player);
 
-	public abstract int getPlayerPrestige(OfflinePlayer player);
+	public abstract long getPlayerPrestige(OfflinePlayer player);
 
 	public abstract int getPlayerAutoMinerTime(OfflinePlayer player);
 
@@ -39,7 +39,7 @@ public abstract class Database {
 
 	public abstract void updateGems(OfflinePlayer player, long newAmount);
 
-	public abstract void updateRankAndPrestige(OfflinePlayer player, int rank, int prestige);
+	public abstract void updateRankAndPrestige(OfflinePlayer player, int rank, long prestige);
 
 	public abstract void removeExpiredAutoMiners();
 

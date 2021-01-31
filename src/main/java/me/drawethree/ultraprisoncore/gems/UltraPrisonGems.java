@@ -40,7 +40,6 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     public UltraPrisonGems(UltraPrisonCore UltraPrisonCore) {
         instance = this;
         this.core = UltraPrisonCore;
-        this.config = UltraPrisonCore.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
     }
 
 
@@ -51,13 +50,15 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
     @Override
     public void reload() {
-        this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
         this.config.reload();
+        this.loadMessages();
+        this.gemsManager.reload();
     }
 
     @Override
     public void enable() {
         this.enabled = true;
+        this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
         this.loadMessages();
         this.gemsManager = new GemsManager(this);
         this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);

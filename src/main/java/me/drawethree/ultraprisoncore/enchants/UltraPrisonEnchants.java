@@ -60,7 +60,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     public UltraPrisonEnchants(UltraPrisonCore UltraPrisonCore) {
         instance = this;
-        this.config = UltraPrisonCore.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
         this.core = UltraPrisonCore;
     }
 
@@ -74,11 +73,10 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
         UltraPrisonEnchantment.unregisterAll();
 
-        this.config = this.core.getFileManager().getConfig("enchants.yml");
         this.config.reload();
 
 		this.loadMessages();
-		this.enchantsManager.reloadConfig();
+		this.enchantsManager.reload();
 
 		UltraPrisonEnchantment.loadDefaultEnchantments();
 	}
@@ -93,6 +91,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     @Override
     public void enable() {
         this.enabled = true;
+
+        this.config = this.core.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
+
         this.enchantsManager = new EnchantsManager(this);
         this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();

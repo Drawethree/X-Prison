@@ -46,7 +46,6 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     public UltraPrisonAutoMiner(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
-        this.config = UltraPrisonCore.getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
     }
 
     @Override
@@ -56,14 +55,18 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     @Override
     public void reload() {
-        this.config = this.core.getFileManager().getConfig("autominer.yml");
         this.config.reload();
+        this.loadMessages();
+        this.loadAutoMinerRegion();
     }
 
     @Override
     public void enable() {
         this.enabled = true;
+
         instance = this;
+        this.config = this.core.getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
+
         this.autoMinerTimes = new HashMap<>();
         this.disabledAutoMiner = new ArrayList<>();
         this.registerCommands();

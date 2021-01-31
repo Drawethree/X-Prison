@@ -39,7 +39,6 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
 
     public UltraPrisonRankup(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
-        this.config = UltraPrisonCore.getFileManager().getConfig("ranks.yml").copyDefaults(true).save();
     }
 
     @Override
@@ -50,12 +49,16 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
     @Override
     public void reload() {
         this.config.reload();
-        this.config = this.core.getFileManager().getConfig("ranks.yml");
+        this.loadMessages();
+        this.rankManager.reload();
     }
 
     @Override
     public void enable() {
         this.enabled = true;
+
+        this.config = this.core.getFileManager().getConfig("ranks.yml").copyDefaults(true).save();
+
         this.loadMessages();
         this.rankManager = new RankManager(this);
         api = new UltraPrisonRankupAPIImpl(this);
@@ -127,7 +130,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         this.rankManager.buyNextPrestige(c.sender());
-					} /*else if (c.args().size() == 1) {
+                    } /*else if (c.args().size() == 1) {
                         int amountOfLevels = c.arg(0).parseOrFail(Integer.class);
                         this.rankManager.buyPrestige(c.sender(), amountOfLevels);
                     }

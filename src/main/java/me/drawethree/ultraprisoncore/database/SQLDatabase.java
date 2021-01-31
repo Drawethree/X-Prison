@@ -103,7 +103,7 @@ public abstract class SQLDatabase extends Database {
 
 	public void createTables() {
 		Schedulers.async().run(() -> {
-			execute("CREATE TABLE IF NOT EXISTS " + RANKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige int, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + RANKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
@@ -169,7 +169,7 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public void updateRankAndPrestige(OfflinePlayer player, int newRank, int newPrestige) {
+	public void updateRankAndPrestige(OfflinePlayer player, int newRank, long newPrestige) {
 		this.execute("UPDATE " + MySQLDatabase.RANKS_TABLE_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", newRank, newPrestige, player.getUniqueId().toString());
 	}
 
@@ -189,12 +189,12 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public int getPlayerPrestige(OfflinePlayer player) {
+	public long getPlayerPrestige(OfflinePlayer player) {
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.RANKS_TABLE_NAME + " WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
-					return set.getInt(SQLDatabase.RANKS_PRESTIGE_COLNAME);
+					return set.getLong(SQLDatabase.RANKS_PRESTIGE_COLNAME);
 				}
 			}
 		} catch (SQLException e) {
