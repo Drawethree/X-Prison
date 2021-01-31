@@ -17,8 +17,8 @@ messages:
   max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
 unlimited_prestiges:
   enabled: false
-  max_prestige: 1000
-  prestige_cost: 1000
+  max_prestige: 1000000
+  prestige_cost: 1000000
   increase_cost:
     enabled: true
     increase_cost_by: 1.25
