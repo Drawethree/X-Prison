@@ -150,6 +150,11 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .assertOp()
                 .handler(c -> {
 
+                    if (c.args().size() == 0) {
+                        c.sender().sendMessage(Text.colorize("&c/givepickaxe <player> <enchant:<id>=<level>>,..."));
+                        return;
+                    }
+
                     String input = null;
                     Player target = null;
 
