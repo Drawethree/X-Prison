@@ -106,11 +106,11 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
         }
 
 
-        if (identifier.equalsIgnoreCase("tokens")) {
+        if (identifier.equalsIgnoreCase("tokens") || identifier.equalsIgnoreCase("tokens_2")) {
             return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(player));
         } else if (identifier.equalsIgnoreCase("gems")) {
             return String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(player));
-        } else if (identifier.equalsIgnoreCase("blocks")) {
+        } else if (identifier.equalsIgnoreCase("blocks") || identifier.equalsIgnoreCase("blocks_2")) {
             return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
         } else if (identifier.equalsIgnoreCase("multiplier")) {
             return String.format("%.2f", (1.0 + plugin.getMultipliers().getApi().getPlayerMultiplier(player)));
@@ -125,12 +125,18 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             return plugin.getRanks().getApi().getPlayerPrestige(player).getPrefix();
         } else if (identifier.equalsIgnoreCase("autominer_time")) {
             return plugin.getAutoMiner().getTimeLeft(player);
-        } else if (identifier.equalsIgnoreCase("tokens_formatted")) {
+        } else if (identifier.equalsIgnoreCase("tokens_formatted") || identifier.equalsIgnoreCase("tokens_3")) {
             return formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
         } else if (identifier.equalsIgnoreCase("gems_formatted")) {
             return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
         } else if (identifier.equalsIgnoreCase("rankup_progress")) {
             return String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(player));
+        } else if (identifier.equalsIgnoreCase("tokens_1")) {
+            return String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(player));
+        } else if (identifier.equalsIgnoreCase("blocks_1")) {
+            return String.valueOf(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+        } else if (identifier.equalsIgnoreCase("blocks_3")) {
+            return formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
         }
 
         return null;
