@@ -21,6 +21,10 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_2", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_3", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_1", event -> String.valueOf(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_2", event -> String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_3", event -> formatNumber(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
+
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_formatted", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
 
