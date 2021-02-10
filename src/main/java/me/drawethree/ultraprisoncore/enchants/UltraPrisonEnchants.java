@@ -190,7 +190,22 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
                     c.sender().setItemInHand(null);
                     new DisenchantGUI(c.sender(), pickAxe).open();
-                }).registerAndBind(core, "disenchant", "dise", "de");
+                }).registerAndBind(core, "disenchant", "dise", "de", "disenchantmenu", "dismenu");
+
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
+                    ItemStack pickAxe = c.sender().getItemInHand();
+
+                    if (pickAxe == null || pickAxe.getType() != CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
+                        c.sender().sendMessage(getMessage("no_pickaxe_found"));
+                        return;
+                    }
+
+                    c.sender().setItemInHand(null);
+                    new EnchantGUI(c.sender(), pickAxe).open();
+                }).registerAndBind(core, "enchantmenu", "enchmenu");
+
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
