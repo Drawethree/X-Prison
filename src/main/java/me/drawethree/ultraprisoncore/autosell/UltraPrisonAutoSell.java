@@ -18,6 +18,7 @@ import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -65,7 +66,13 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     private void loadAutoSellRegions() {
         regionsAutoSell = new HashMap<>();
-        for (String regName : this.getConfig().get().getConfigurationSection("regions").getKeys(false)) {
+
+		ConfigurationSection section = this.getConfig().get().getConfigurationSection("regions");
+		if (section == null) {
+			return;
+		}
+
+		for (String regName : section.getKeys(false)) {
 
             String worldName = this.getConfig().get().getString("regions." + regName + ".world");
 
