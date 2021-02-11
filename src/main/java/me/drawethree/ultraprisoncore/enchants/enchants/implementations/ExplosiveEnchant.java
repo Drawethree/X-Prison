@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -80,7 +81,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                     for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius - 1 : (radius / 2)); z++) {
                         for (int y = startLocation.getBlockY() - (radius == 4 ? 3 : (radius / 2)); y <= startLocation.getBlockY() + (radius == 4 ? 0 : (radius / 2)); y++) {
                             Block b1 = b.getWorld().getBlockAt(x, y, z);
-                            if (region.contains(b1.getLocation()) && b1 != null && b1.getType() != CompMaterial.AIR.toMaterial()) {
+                            if (region.contains(b1.getLocation()) && b1.getType() != Material.AIR) {
                                 blockCount++;
                                 blocksAffected.add(b1);
                                 if (plugin.getCore().getAutoSell().isEnabled() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p)) {
@@ -103,9 +104,11 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                 double total = luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit);
 
                 plugin.getCore().getEconomy().depositPlayer(p, total);
+
                 if (plugin.getCore().getAutoSell().isEnabled()) {
                     plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
                 }
+
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
                 plugin.getCore().getTokens().handleBlockBreak(p, blockCount);
