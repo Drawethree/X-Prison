@@ -500,4 +500,23 @@ public class RankManager {
 
         return progress;
     }
+
+    public double getNextRankCost(Player player) {
+        if (this.isMaxRank(player)) {
+            if (this.isMaxPrestige(player)) {
+                return 0.0;
+            } else {
+                Prestige prestige = this.getPlayerPrestige(player);
+                Prestige next = this.getNextPrestige(prestige);
+                if (next != null) {
+                    return next.getCost();
+                } else {
+                    return 0.0;
+                }
+            }
+        }
+
+        Rank current = this.getPlayerRank(player);
+        return current.getCost();
+    }
 }
