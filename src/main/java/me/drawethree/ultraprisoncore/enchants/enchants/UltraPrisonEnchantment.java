@@ -41,6 +41,11 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     public UltraPrisonEnchantment(UltraPrisonEnchants plugin, int id) {
         this.plugin = plugin;
         this.id = id;
+        this.reloadDefaultAttributes();
+        this.reload();
+    }
+
+    private void reloadDefaultAttributes() {
         this.rawName = this.plugin.getConfig().get().getString("enchants." + id + ".RawName");
         this.name = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
         this.material = CompMaterial.fromString(this.plugin.getConfig().get().getString("enchants." + id + ".Material")).toMaterial();
@@ -50,8 +55,6 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.maxLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Max");
         this.cost = this.plugin.getConfig().get().getLong("enchants." + id + ".Cost");
         this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
-
-        this.reload();
     }
 
     public abstract String getAuthor();
@@ -144,7 +147,12 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     }
 
     public static void reloadAll() {
-        allEnchantmentsById.values().forEach(UltraPrisonEnchantment::reload);
+
+        allEnchantmentsById.values().forEach(enchant-> {
+            enchant.reloadDefaultAttributes();
+            enchant.reload();
+        });
+
         UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully reloaded all enchants."));
     }
 
