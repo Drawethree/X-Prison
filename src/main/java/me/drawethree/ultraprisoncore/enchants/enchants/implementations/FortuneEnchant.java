@@ -32,6 +32,11 @@ public class FortuneEnchant extends UltraPrisonEnchantment {
     }
 
     @Override
+    public void reload() {
+
+    }
+
+    @Override
     public String getAuthor() {
         return "Drawethree";
     }

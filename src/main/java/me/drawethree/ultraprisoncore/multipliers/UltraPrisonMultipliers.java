@@ -27,6 +27,9 @@ import java.util.UUID;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
+
+    public static final String MODULE_NAME = "Multipliers";
+
     private static GlobalMultiplier GLOBAL_MULTIPLIER;
 
     @Getter
@@ -201,7 +204,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Multipliers";
+        return MODULE_NAME;
     }
 
     private void saveAllMultipliers() {

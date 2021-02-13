@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 @Getter
 public abstract class UltraPrisonEnchantment implements Refundable {
@@ -52,6 +50,8 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.maxLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Max");
         this.cost = this.plugin.getConfig().get().getLong("enchants." + id + ".Cost");
         this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
+
+        this.reload();
     }
 
     public abstract String getAuthor();
@@ -61,6 +61,8 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     public abstract void onUnequip(Player p, ItemStack pickAxe, int level);
 
     public abstract void onBlockBreak(BlockBreakEvent e, int enchantLevel);
+
+    public abstract void reload();
 
     public static Collection<UltraPrisonEnchantment> all() {
         return allEnchantmentsById.values();
@@ -118,7 +120,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     }
 
 
-    public static void loadDefaultEnchantments() {
+    private static void loadDefaultEnchantments() {
         new EfficiencyEnchant(UltraPrisonEnchants.getInstance()).register();
         new UnbreakingEnchant(UltraPrisonEnchants.getInstance()).register();
         new FortuneEnchant(UltraPrisonEnchants.getInstance()).register();
@@ -141,12 +143,9 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         new VoucherFinderEnchant(UltraPrisonEnchants.getInstance()).register();
     }
 
-    public static void unregisterAll() {
-        allEnchantmentsById.clear();
-        allEnchantmentsByName.clear();
-
-        UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully unregistered all enchants."));
-
+    public static void reloadAll() {
+        allEnchantmentsById.values().forEach(UltraPrisonEnchantment::reload);
+        UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully reloaded all enchants."));
     }
 
 

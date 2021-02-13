@@ -18,13 +18,11 @@ import java.util.stream.Collectors;
 
 public class LayerEnchant extends UltraPrisonEnchantment {
 
-    private final double chance;
+    private double chance;
 
-    //private final HashMap<UUID, Integer> progress = new HashMap<>();
 
     public LayerEnchant(UltraPrisonEnchants instance) {
         super(instance, 10);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override
@@ -57,7 +55,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
                 int blockCount = 0;
                 int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++){
+                for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
                     for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
                         Block b1 = b.getWorld().getBlockAt(x, b.getY(), z);
                         if (b1 != null && b1.getType() != CompMaterial.AIR.toMaterial()) {
@@ -89,6 +87,11 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 
             }
         }
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override

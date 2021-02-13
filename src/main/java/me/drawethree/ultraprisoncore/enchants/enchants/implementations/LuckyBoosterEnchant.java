@@ -17,83 +17,87 @@ import java.util.concurrent.TimeUnit;
 
 public class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 
-	private static final Map<UUID, Long> boostedPlayers = new HashMap<>();
+    private static final Map<UUID, Long> boostedPlayers = new HashMap<>();
 
 
-	private final double chance;
+    private double chance;
 
-	public LuckyBoosterEnchant(UltraPrisonEnchants instance) {
-		super(instance, 8);
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-	}
+    public LuckyBoosterEnchant(UltraPrisonEnchants instance) {
+        super(instance, 8);
+    }
 
-	@Override
-	public void onEquip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onEquip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onUnequip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onUnequip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+    @Override
+    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 
-			if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
-				return;
-			}
+            if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
+                return;
+            }
 
-			e.getPlayer().sendMessage(this.plugin.getMessage("lucky_booster_on"));
+            e.getPlayer().sendMessage(this.plugin.getMessage("lucky_booster_on"));
 
-			boostedPlayers.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(5));
-			Schedulers.async().runLater(() -> {
-				if (e.getPlayer().isOnline()) {
-					e.getPlayer().sendMessage(this.plugin.getMessage("lucky_booster_off"));
-				}
-				boostedPlayers.remove(e.getPlayer().getUniqueId());
-			}, 5, TimeUnit.MINUTES);
-		}
-	}
+            boostedPlayers.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(5));
+            Schedulers.async().runLater(() -> {
+                if (e.getPlayer().isOnline()) {
+                    e.getPlayer().sendMessage(this.plugin.getMessage("lucky_booster_off"));
+                }
+                boostedPlayers.remove(e.getPlayer().getUniqueId());
+            }, 5, TimeUnit.MINUTES);
+        }
+    }
 
-	public static boolean hasLuckyBoosterRunning(Player p) {
-		return boostedPlayers.containsKey(p.getUniqueId());
-	}
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+    }
 
-	public static String getTimeLeft(Player p) {
+    public static boolean hasLuckyBoosterRunning(Player p) {
+        return boostedPlayers.containsKey(p.getUniqueId());
+    }
 
-		if (!boostedPlayers.containsKey(p.getUniqueId())) {
-			return "";
-		}
+    public static String getTimeLeft(Player p) {
 
-		long endTime = boostedPlayers.get(p.getUniqueId());
+        if (!boostedPlayers.containsKey(p.getUniqueId())) {
+            return "";
+        }
 
-		if (System.currentTimeMillis() > endTime) {
-			return "";
-		}
+        long endTime = boostedPlayers.get(p.getUniqueId());
+
+        if (System.currentTimeMillis() > endTime) {
+            return "";
+        }
 
 
-		long timeLeft = endTime - System.currentTimeMillis();
+        long timeLeft = endTime - System.currentTimeMillis();
 
-		long days = timeLeft / (24 * 60 * 60 * 1000);
-		timeLeft -= days * (24 * 60 * 60 * 1000);
+        long days = timeLeft / (24 * 60 * 60 * 1000);
+        timeLeft -= days * (24 * 60 * 60 * 1000);
 
-		long hours = timeLeft / (60 * 60 * 1000);
-		timeLeft -= hours * (60 * 60 * 1000);
+        long hours = timeLeft / (60 * 60 * 1000);
+        timeLeft -= hours * (60 * 60 * 1000);
 
-		long minutes = timeLeft / (60 * 1000);
-		timeLeft -= minutes * (60 * 1000);
+        long minutes = timeLeft / (60 * 1000);
+        timeLeft -= minutes * (60 * 1000);
 
-		long seconds = timeLeft / (1000);
+        long seconds = timeLeft / (1000);
 
-		timeLeft -= seconds * 1000;
+        timeLeft -= seconds * 1000;
 
-		return new StringBuilder().append(ChatColor.GRAY + "(" + ChatColor.WHITE).append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").append(ChatColor.GRAY + ")").toString();
-	}
+        return new StringBuilder().append(ChatColor.GRAY + "(" + ChatColor.WHITE).append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").append(ChatColor.GRAY + ")").toString();
+    }
 
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
-	}
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

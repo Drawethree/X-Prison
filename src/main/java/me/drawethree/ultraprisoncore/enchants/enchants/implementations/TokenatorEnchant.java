@@ -9,16 +9,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TokenatorEnchant extends UltraPrisonEnchantment {
-	private final long maxAmount;
-	private final long minAmount;
-    private final double chance;
+    private long maxAmount;
+    private long minAmount;
+    private double chance;
 
 
     public TokenatorEnchant(UltraPrisonEnchants instance) {
         super(instance, 14);
-		this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override
@@ -35,9 +32,16 @@ public class TokenatorEnchant extends UltraPrisonEnchantment {
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             long randAmount;
-			randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-			plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), randAmount);
+            randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+            plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), randAmount);
         }
+    }
+
+    @Override
+    public void reload() {
+        this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
+        this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override

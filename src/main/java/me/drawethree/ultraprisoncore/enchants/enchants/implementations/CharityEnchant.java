@@ -11,15 +11,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class CharityEnchant extends UltraPrisonEnchantment {
 
-    private final double chance;
-    private final long minAmount;
-    private final long maxAmount;
+    private double chance;
+    private long minAmount;
+    private long maxAmount;
 
     public CharityEnchant(UltraPrisonEnchants instance) {
         super(instance, 11);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.minAmount = instance.getConfig().get().getLong("enchants." + id + ".Min-Money");
-        this.maxAmount = instance.getConfig().get().getLong("enchants." + id + ".Max-Money");
     }
 
     @Override
@@ -39,18 +36,25 @@ public class CharityEnchant extends UltraPrisonEnchantment {
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
-			long randAmount;
+        if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+            long randAmount;
 
             for (Player p : Players.all()) {
-				randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-				plugin.getCore().getEconomy().depositPlayer(p, randAmount);
+                randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+                plugin.getCore().getEconomy().depositPlayer(p, randAmount);
                 if (p.equals(e.getPlayer())) {
-					p.sendMessage(plugin.getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
-				} else {
-					p.sendMessage(plugin.getMessage("charity_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
-				}
-			}
+                    p.sendMessage(plugin.getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
+                } else {
+                    p.sendMessage(plugin.getMessage("charity_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
+                }
+            }
         }
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Money");
+        this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Money");
     }
 }

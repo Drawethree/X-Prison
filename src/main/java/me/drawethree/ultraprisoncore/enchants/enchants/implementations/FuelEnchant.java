@@ -12,13 +12,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class FuelEnchant extends UltraPrisonEnchantment {
 
-    private final double chance;
-    private final List<String> commandsToExecute;
+    private double chance;
+    private List<String> commandsToExecute;
 
     public FuelEnchant(UltraPrisonEnchants instance) {
         super(instance, 18);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
     }
 
     @Override
@@ -37,6 +35,12 @@ public class FuelEnchant extends UltraPrisonEnchantment {
             String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
         }
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        this.commandsToExecute = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
     }
 
     @Override

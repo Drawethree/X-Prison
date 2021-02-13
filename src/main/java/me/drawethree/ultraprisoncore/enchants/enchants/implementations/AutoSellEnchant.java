@@ -14,7 +14,6 @@ public class AutoSellEnchant extends UltraPrisonEnchantment {
 
     public AutoSellEnchant(UltraPrisonEnchants instance) {
         super(instance, 19);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override
@@ -39,5 +38,10 @@ public class AutoSellEnchant extends UltraPrisonEnchantment {
             e.getPlayer().performCommand("sellall");
         }
 
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 }

@@ -28,16 +28,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 @Getter
 public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
-    private List<UltraPrisonModule> loadedModules;
+    private Map<String, UltraPrisonModule> loadedModules;
 
     @Getter
     private static UltraPrisonCore instance;
@@ -59,7 +57,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     protected void enable() {
 
         instance = this;
-        this.loadedModules = new ArrayList<>();
+        this.loadedModules = new HashMap<>();
         this.fileManager = new FileManager(this);
         this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 
@@ -124,7 +122,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     }
 
     private void loadModule(UltraPrisonModule module) {
-        this.loadedModules.add(module);
+        this.loadedModules.put(module.getName(), module);
         module.enable();
         this.getLogger().info(Text.colorize(String.format("&aUltraPrisonCore - Module %s loaded.", module.getName())));
     }
@@ -158,7 +156,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     }
 
     private void reload(CommandSender sender) {
-        for (UltraPrisonModule module : this.loadedModules) {
+        for (UltraPrisonModule module : this.loadedModules.values()) {
             this.reloadModule(module);
         }
         sender.sendMessage(Text.colorize("&aUltraPrisonCore - Reloaded."));
@@ -168,7 +166,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     @Override
     protected void disable() {
 
-        Iterator<UltraPrisonModule> it = this.loadedModules.iterator();
+        Iterator<UltraPrisonModule> it = this.loadedModules.values().iterator();
 
         while (it.hasNext()) {
             this.unloadModule(it.next());
@@ -185,6 +183,10 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
     private void startEvents() {
 
+    }
+
+    public boolean isModuleEnabled(String moduleName) {
+        return this.loadedModules.containsKey(moduleName);
     }
 
     private void registerPlaceholders() {

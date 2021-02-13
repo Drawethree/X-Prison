@@ -21,15 +21,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ExplosiveEnchant extends UltraPrisonEnchantment {
-    private final double chance;
-    private final int cooldown;
+    private double chance;
+    private int cooldown;
     private final CooldownMap<Player> cooldownMap;
 
 
     public ExplosiveEnchant(UltraPrisonEnchants instance) {
         super(instance, 9);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.cooldown = plugin.getConfig().get().getInt("enchants." + id + ".Cooldown");
         this.cooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
     }
 
@@ -114,5 +112,11 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                 plugin.getCore().getTokens().handleBlockBreak(p, blockCount);
             }
         }
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        this.cooldown = plugin.getConfig().get().getInt("enchants." + id + ".Cooldown");
     }
 }

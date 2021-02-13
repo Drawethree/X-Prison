@@ -31,6 +31,11 @@ public class EfficiencyEnchant extends UltraPrisonEnchantment {
     }
 
     @Override
+    public void reload() {
+
+    }
+
+    @Override
     public String getAuthor() {
         return "Drawethree";
     }

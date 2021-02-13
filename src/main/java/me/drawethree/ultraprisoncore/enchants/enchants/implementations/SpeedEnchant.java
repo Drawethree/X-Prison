@@ -33,6 +33,11 @@ public class SpeedEnchant extends UltraPrisonEnchantment {
     }
 
     @Override
+    public void reload() {
+
+    }
+
+    @Override
     public String getAuthor() {
         return "Drawethree";
     }

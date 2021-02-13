@@ -10,21 +10,19 @@ import org.bukkit.potion.PotionEffectType;
 
 public class HasteEnchant extends UltraPrisonEnchantment {
 
-    private final double chance;
+    private double chance;
 
     public HasteEnchant(UltraPrisonEnchants instance) {
-        super(instance,4);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-
+        super(instance, 4);
     }
 
     @Override
     public void onEquip(Player p, ItemStack pickAxe, int level) {
         if (level == 0) {
-            this.onUnequip(p,pickAxe,level);
+            this.onUnequip(p, pickAxe, level);
             return;
         }
-        p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, level-1,true,true),true);
+        p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, level - 1, true, true), true);
     }
 
     @Override
@@ -35,6 +33,11 @@ public class HasteEnchant extends UltraPrisonEnchantment {
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     @Override

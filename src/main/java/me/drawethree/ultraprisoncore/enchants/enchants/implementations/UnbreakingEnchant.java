@@ -32,6 +32,11 @@ public class UnbreakingEnchant extends UltraPrisonEnchantment {
     }
 
     @Override
+    public void reload() {
+
+    }
+
+    @Override
     public String getAuthor() {
         return "Drawethree";
     }

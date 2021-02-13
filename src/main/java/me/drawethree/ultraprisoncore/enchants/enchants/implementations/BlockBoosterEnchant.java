@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class BlockBoosterEnchant extends UltraPrisonEnchantment {
 
     private static final Map<UUID, Long> boostedPlayers = new HashMap<>();
-    private final double chance;
+    private double chance;
 
     public BlockBoosterEnchant(UltraPrisonEnchants instance) {
         super(instance, 17);
@@ -64,6 +64,11 @@ public class BlockBoosterEnchant extends UltraPrisonEnchantment {
             }, 5, TimeUnit.MINUTES);
         }
 
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
     }
 
     public static boolean hasBlockBoosterRunning(Player p) {

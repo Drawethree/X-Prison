@@ -16,14 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
-    private final double chance;
-    private final List<CommandWithChance> commandsToExecute;
+    private double chance;
+    private List<CommandWithChance> commandsToExecute;
 
     public VoucherFinderEnchant(UltraPrisonEnchants instance) {
         super(instance, 20);
-        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = this.loadCommands();
-
     }
 
     private List<CommandWithChance> loadCommands() {
@@ -52,6 +49,12 @@ public class VoucherFinderEnchant extends UltraPrisonEnchantment {
             CommandWithChance randomCmd = RandomSelector.weighted(this.commandsToExecute, element -> element.getChance()).pick();
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.getCommand().replace("%player%", e.getPlayer().getName()));
         }
+    }
+
+    @Override
+    public void reload() {
+        this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+        this.commandsToExecute = this.loadCommands();
     }
 
     @Override

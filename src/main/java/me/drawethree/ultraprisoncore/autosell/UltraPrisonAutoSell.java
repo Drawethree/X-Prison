@@ -9,6 +9,7 @@ import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
+import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -354,7 +355,9 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                 }
 
                                 toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
-                                totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
+                                if (core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME)) {
+                                    totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
+                                }
                                 core.getEconomy().depositPlayer(c.sender(), totalPrice);
                                 c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
 
