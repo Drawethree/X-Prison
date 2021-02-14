@@ -149,7 +149,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                 .handler(e -> e.setCancelled(true)).bindWith(core);
     }
 
-    public void handleBlockBreak(Player p, int amountOfBlocks) {
+    public long handleBlockBreak(Player p, int amountOfBlocks) {
         tokensManager.addBlocksBroken(null, p, amountOfBlocks);
         long totalAmount = 0;
 
@@ -169,6 +169,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
         if (totalAmount > 0 && !this.tokensManager.hasOffTokenMessages(p)) {
             p.sendMessage(this.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", totalAmount)));
         }
+        return totalAmount;
     }
 
     private void registerCommands() {

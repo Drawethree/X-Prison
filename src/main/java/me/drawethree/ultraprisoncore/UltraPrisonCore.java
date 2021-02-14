@@ -28,7 +28,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 @Getter
@@ -151,8 +153,10 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
                         } else {
                             this.pluginDatabase.resetAllData(c.sender());
                         }
+                    } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v")) {
+                        c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
                     }
-                }).registerAndBind(this, "prisoncore", "ultraprison", "prison");
+                }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore", "upc");
     }
 
     private void reload(CommandSender sender) {
