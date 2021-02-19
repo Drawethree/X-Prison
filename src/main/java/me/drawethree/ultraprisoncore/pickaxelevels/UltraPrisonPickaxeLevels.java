@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.pickaxelevels;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
@@ -7,8 +8,18 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.lucko.helper.Events;
+import me.lucko.helper.event.filter.EventFilters;
+import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.text.Text;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,6 +30,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
 
 	private static final String ADMIN_PERMISSION = "ultraprison.pickaxe.admin";
+	private static final String NBT_TAG_INDETIFIER = "ultra-prison-pickaxe-level";
 
 	@Getter
 	private FileManager.Config config;
@@ -26,6 +38,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 	private Map<Integer, PickaxeLevel> pickaxeLevels;
 	private Map<String, String> messages;
 	private PickaxeLevel defaultLevel;
+	private PickaxeLevel maxLevel;
 	@Getter
 	private UltraPrisonPickaxeLevelsAPI api;
 	@Getter
@@ -67,9 +80,9 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 			}
 
 			this.pickaxeLevels.put(levelId, pickaxeLevel);
+			this.maxLevel = pickaxeLevel;
 
 			this.core.getLogger().info("Loaded Pickaxe Level " + levelId);
-
 		}
 	}
 
@@ -102,6 +115,32 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
 	private void registerListeners() {
 
+		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
+				.filter(EventFilters.ignoreCancelled())
+				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().filter(region -> region.getId().toLowerCase().startsWith("mine")).findAny().isPresent())
+				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+				.handler(e -> {
+					//Firstly, add default level if we do not have
+					e.getPlayer().setItemInHand(this.addDefaultPickaxeLevel(e.getPlayer().getItemInHand()));
+
+					//Check for next level progression
+
+					PickaxeLevel currentLevel = this.getPickaxeLevel(e.getPlayer().getItemInHand());
+					PickaxeLevel nextLevel = this.getNextPickaxeLevel(currentLevel);
+
+					if (nextLevel != null && this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand()) >= nextLevel.getBlocksRequired()) {
+						nextLevel.giveRewards(e.getPlayer());
+						e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), nextLevel));
+						e.getPlayer().sendMessage(this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(nextLevel.getLevel())));
+					}
+				}).bindWith(core);
+	}
+
+	public PickaxeLevel getNextPickaxeLevel(PickaxeLevel currentLevel) {
+		if (currentLevel == null || currentLevel == maxLevel) {
+			return null;
+		}
+		return this.pickaxeLevels.get(currentLevel.getLevel() + 1);
 	}
 
 	@Override
@@ -121,6 +160,49 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
 	public String getMessage(String key) {
 		return messages.get(key.toLowerCase());
+	}
+
+	public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
+		if (itemStack == null || itemStack.getType() == Material.AIR) {
+			return null;
+		}
+
+		NBTItem nbtItem = new NBTItem(itemStack);
+
+		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
+			return null;
+		}
+		return this.pickaxeLevels.get(nbtItem.getInteger(NBT_TAG_INDETIFIER));
+	}
+
+	public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level) {
+
+		if (level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
+			return item;
+		}
+
+		NBTItem nbtItem = new NBTItem(item);
+
+		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
+			nbtItem.setInteger(NBT_TAG_INDETIFIER, 0);
+		}
+
+		nbtItem.setInteger(NBT_TAG_INDETIFIER, level.getLevel());
+
+		return ItemStackBuilder.of(nbtItem.getItem()).name(level.getDisplayName()).build();
+	}
+
+	private ItemStack addDefaultPickaxeLevel(ItemStack item) {
+
+		NBTItem nbtItem = new NBTItem(item);
+
+		if (nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
+			return item;
+		}
+
+		nbtItem.setInteger(NBT_TAG_INDETIFIER, 1);
+
+		return ItemStackBuilder.of(nbtItem.getItem()).name(this.defaultLevel.getDisplayName()).build();
 	}
 
 }

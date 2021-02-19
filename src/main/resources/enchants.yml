@@ -402,7 +402,7 @@ enchants:
 Pickaxe:
   lore:
     - '&8&m------------------------'
-    - '&E&lBLOCKS MINED: &f%Blocks%'
+    - '&E&lBLOCKS MINED: &f%Blocks%/%Blocks_Required%'
     - '&8&m------------------------'
     - '%Enchant-1%'
     - '%Enchant-2%'

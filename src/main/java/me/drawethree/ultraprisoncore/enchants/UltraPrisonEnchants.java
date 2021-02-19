@@ -275,7 +275,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);
 					enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand());
 				}).bindWith(core);
-
 	}
 
 	public String getMessage(String key) {

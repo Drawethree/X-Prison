@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
+import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -71,6 +72,11 @@ public class EnchantsManager {
 
 		for (String s : PICKAXE_LORE) {
 			s = s.replace("%Blocks%", String.valueOf(getBlocksBroken(item)));
+
+			if (this.plugin.getCore().isModuleEnabled("Pickaxe Levels")) {
+				PickaxeLevel nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item));
+				s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
+			}
 
 			try {
 				int enchId = Integer.parseInt(s.replace("%Enchant-", "").replace("%", ""));

@@ -14,6 +14,6 @@ public class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevels
 
 	@Override
 	public PickaxeLevel getPickaxeLevel(ItemStack item) {
-		return null;
+		return this.plugin.getPickaxeLevel(item);
 	}
 }
