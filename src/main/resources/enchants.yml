@@ -13,6 +13,7 @@ enchant_menu:
       - " "
       - "&7&o(( &f&oLeft-Click&7&o to add 1 level ))"
       - "&7&o(( &f&oRight-Click&7&o to add 10 levels ))"
+      - "&7&o(( &f&oMiddle-Click&7&o to add 100 levels ))"
 disenchant_menu:
   title: "&7Disenchant Menu"
   empty_slots: STAINED_GLASS_PANE:7
@@ -34,6 +35,8 @@ disenchant_menu:
       - "&6&l* &eLeft-Click &8» &7-1 Levels"
       - " "
       - "&6&l* &eRight-Click &8» &7-10 Levels"
+      - " "
+      - "&6&l* &eMiddle-Click &8» &7-100 Levels"
       - " "
       - "&7&o(( &f&oClick&7&o on the enchant name to disenchant ))"
 messages:
@@ -381,21 +384,21 @@ enchants:
       Enabled: true
       InGuiSlot: 45
     Commands:
-       '1':
-         command: 'voucher give %player% 5$'
-         chance: 50
-       '2':
-         command: 'voucher give %player% 10$'
-         chance: 25
-       '3':
-         command: 'voucher give %player% 25$'
-         chance: 10
-       '4':
-         command: 'voucher give %player% 50$'
-         chance: 5
-       '5':
-         command: 'voucher give %player% 50$'
-         chance: 1
+      '1':
+        command: 'voucher give %player% 5$'
+        chance: 50
+      '2':
+        command: 'voucher give %player% 10$'
+        chance: 25
+      '3':
+        command: 'voucher give %player% 25$'
+        chance: 10
+      '4':
+        command: 'voucher give %player% 50$'
+        chance: 5
+      '5':
+        command: 'voucher give %player% 50$'
+        chance: 1
 Pickaxe:
   lore:
     - '&8&m------------------------'
