@@ -1,0 +1,10 @@
+levels:
+  1:
+    display_name: "Default Pickaxe"
+    blocks_required: 0
+  2:
+    display_name: "Level 2 Pickaxe"
+    blocks_required: 1000
+    rewards:
+      - 'eco give %player% 1000'
+messages: {}

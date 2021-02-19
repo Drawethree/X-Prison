@@ -34,7 +34,6 @@ public class EnchantsManager {
 	private List<String> DISENCHANT_GUI_ITEM_LORE;
 	private List<String> PICKAXE_LORE;
 
-
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
 		this.reload();

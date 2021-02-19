@@ -13,3 +13,4 @@ modules:
   enchants: true
   autosell: true
   autominer: true
+  pickaxe_levels: true

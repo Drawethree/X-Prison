@@ -365,7 +365,6 @@ public class RankManager {
 			nextPrestige.runCommands(p);
 
 			nextPrestige = this.getNextPrestige(nextPrestige);
-
 		}
 
 		if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {

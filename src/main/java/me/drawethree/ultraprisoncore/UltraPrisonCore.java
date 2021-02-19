@@ -12,6 +12,7 @@ import me.drawethree.ultraprisoncore.database.implementations.SQLiteDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
@@ -52,6 +53,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     private UltraPrisonEnchants enchants;
     private UltraPrisonAutoSell autoSell;
     private UltraPrisonAutoMiner autoMiner;
+    private UltraPrisonPickaxeLevels pickaxeLevels;
 
     private JetsPrisonMinesAPI jetsPrisonMinesAPI;
 
@@ -92,6 +94,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.enchants = new UltraPrisonEnchants(this);
         this.autoSell = new UltraPrisonAutoSell(this);
         this.autoMiner = new UltraPrisonAutoMiner(this);
+        this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
 
         this.setupEconomy();
         this.registerPlaceholders();
@@ -117,6 +120,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         }
         if (this.getConfig().getBoolean("modules.autominer")) {
             this.loadModule(autoMiner);
+        }
+        if (this.getConfig().getBoolean("modules.pickaxe_levels")) {
+            this.loadModule(pickaxeLevels);
         }
 
         this.startEvents();
