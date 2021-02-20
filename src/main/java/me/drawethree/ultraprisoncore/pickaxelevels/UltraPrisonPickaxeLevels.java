@@ -195,7 +195,12 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
         nbtItem.setInteger(NBT_TAG_INDETIFIER, level.getLevel());
 
-        item = ItemStackBuilder.of(nbtItem.getItem()).name(level.getDisplayName()).build();
+        ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
+        if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
+            builder = builder.name(level.getDisplayName());
+        }
+
+        item = builder.build();
         this.core.getEnchants().getEnchantsManager().updatePickaxe(item);
         return item;
     }
@@ -210,7 +215,12 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
         nbtItem.setInteger(NBT_TAG_INDETIFIER, 1);
 
-        item = ItemStackBuilder.of(nbtItem.getItem()).name(defaultLevel.getDisplayName()).build();
+        ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
+        if (defaultLevel.getDisplayName() != null && !defaultLevel.getDisplayName().isEmpty()) {
+            builder = builder.name(defaultLevel.getDisplayName());
+        }
+
+        item = builder.build();
         this.core.getEnchants().getEnchantsManager().updatePickaxe(item);
         return item;
     }
