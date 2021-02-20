@@ -169,15 +169,16 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     }
 
     public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getType() == Material.AIR) {
+        if (itemStack == null || itemStack.getType() != Material.DIAMOND_PICKAXE) {
             return null;
         }
 
         NBTItem nbtItem = new NBTItem(itemStack);
 
         if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-            return null;
+            return defaultLevel;
         }
+
         return this.pickaxeLevels.get(nbtItem.getInteger(NBT_TAG_INDETIFIER));
     }
 

@@ -321,8 +321,7 @@ enchants:
     Max: 750
     Chance: 5.0E-6
     Cost: 225
-    Description: '&7&o(( Ability to give everyone global boosters while mining
-            ))'
+    Description: '&7&o(( Ability to give everyone global boosters while mining ))'
     Commands:
       - tempGlobalMultiplier 0.1 5 minutes
       - tempGlobalMultiplier 0.09 5 minutes
@@ -369,7 +368,7 @@ enchants:
     Chance: 1.0
     Cost: 1000
     Description: '&7&o(( Ability to sell all items while mining ))'
-      Pickaxe-Level-Required: 1
+    Pickaxe-Level-Required: 1
     Refund:
       Enabled: true
       InGuiSlot: 45
