@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 
@@ -143,6 +144,18 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             return String.valueOf(plugin.getGems().getGemsManager().getPlayerGems(player));
         } else if (identifier.equalsIgnoreCase("gems_3")) {
             return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
+        } else if (identifier.equalsIgnoreCase("pickaxe_level")) {
+
+            PickaxeLevel level = plugin.getPickaxeLevels().getApi().getPickaxeLevel(player);
+
+            if (level != null) {
+                return String.valueOf(level.getLevel());
+            } else {
+                return "0";
+            }
+
+        } else if (identifier.equalsIgnoreCase("pickaxe_progress")) {
+            return this.plugin.getPickaxeLevels().getProgressBar(player);
         }
 
         return null;

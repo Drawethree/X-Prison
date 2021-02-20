@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.pickaxelevels.api;
 
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevelsAPI {
@@ -15,5 +16,11 @@ public class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevels
 	@Override
 	public PickaxeLevel getPickaxeLevel(ItemStack item) {
 		return this.plugin.getPickaxeLevel(item);
+	}
+
+	@Override
+	public PickaxeLevel getPickaxeLevel(Player player) {
+		ItemStack item = this.plugin.findPickaxe(player);
+		return this.getPickaxeLevel(item);
 	}
 }
