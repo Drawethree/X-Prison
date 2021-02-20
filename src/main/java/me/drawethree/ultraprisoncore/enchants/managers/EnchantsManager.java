@@ -294,6 +294,8 @@ public class EnchantsManager {
 
     public boolean buyEnchnant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
 
+        long totalCost = 0;
+
         for (int i = 0; i < addition; i++, currentLevel++) {
 
             if (currentLevel >= enchantment.getMaxLevel()) {
@@ -322,7 +324,19 @@ public class EnchantsManager {
 
             ItemStack item = this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + 1);
             gui.setPickAxe(item);
-            gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(cost)));
+
+            if (addition == 1) {
+                gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(cost)));
+            } else {
+                totalCost += cost;
+            }
+        }
+
+        if (addition > 1) {
+            gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought_multiple")
+                    .replace("%amount%", String.valueOf(addition))
+                    .replace("%enchant%", enchantment.getName())
+                    .replace("%tokens%", String.format("%,d", totalCost)));
         }
         return true;
     }
@@ -384,6 +398,9 @@ public class EnchantsManager {
         builder.lore(translateLore(enchantment, ENCHANT_GUI_ITEM_LORE, currentLevel));
 
         return builder.buildItem().bind(handler -> {
+            if (!enchantment.canBeBought(gui.getPickAxe())) {
+                return;
+            }
             if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
                 this.buyEnchnant(enchantment, gui, currentLevel, 100);
                 gui.redraw();
@@ -400,7 +417,12 @@ public class EnchantsManager {
     private List<String> translateLore(UltraPrisonEnchantment enchantment, List<String> guiItemLore, int currentLevel) {
         List<String> newList = new ArrayList<>();
         for (String s : guiItemLore) {
-            newList.add(s.replace("%description%", enchantment.getDescription()).replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel))).replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel())).replace("%current_level%", String.format("%,d", currentLevel)));
+            newList.add(s
+                    .replace("%description%", enchantment.getDescription())
+                    .replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel)))
+                    .replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel()))
+                    .replace("%current_level%", String.format("%,d", currentLevel))
+                    .replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
         }
         return newList;
     }

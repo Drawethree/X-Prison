@@ -37,6 +37,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     private int maxLevel;
     private long cost;
     private long increaseCost;
+    private int requiredPickaxeLevel;
 
     public UltraPrisonEnchantment(UltraPrisonEnchants plugin, int id) {
         this.plugin = plugin;
@@ -55,6 +56,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.maxLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Max");
         this.cost = this.plugin.getConfig().get().getLong("enchants." + id + ".Cost");
         this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
+        this.requiredPickaxeLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Pickaxe-Level-Required");
     }
 
     public abstract String getAuthor();
@@ -148,7 +150,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 
     public static void reloadAll() {
 
-        allEnchantmentsById.values().forEach(enchant-> {
+        allEnchantmentsById.values().forEach(enchant -> {
             enchant.reloadDefaultAttributes();
             enchant.reload();
         });
@@ -161,4 +163,10 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         return this.maxLevel == -1 ? Integer.MAX_VALUE : this.maxLevel;
     }
 
+    public boolean canBeBought(ItemStack pickAxe) {
+        if (!this.plugin.getCore().isModuleEnabled("Pickaxe Levels")) {
+            return true;
+        }
+        return this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(pickAxe).getLevel() >= this.requiredPickaxeLevel;
+    }
 }

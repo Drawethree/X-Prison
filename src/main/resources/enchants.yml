@@ -14,6 +14,8 @@ enchant_menu:
       - "&7&o(( &f&oLeft-Click&7&o to add 1 level ))"
       - "&7&o(( &f&oRight-Click&7&o to add 10 levels ))"
       - "&7&o(( &f&oMiddle-Click&7&o to add 100 levels ))"
+      - " "
+      - "&c&lYou must have at least Level %pickaxe_level% on your pickaxe"
 disenchant_menu:
   title: "&7Disenchant Menu"
   empty_slots: STAINED_GLASS_PANE:7
@@ -43,7 +45,8 @@ messages:
   no_pickaxe_found: "&cYou do not have any diamond pickaxe!"
   enchant_max_level: "&e&l(!) &eYou have already maxed out this enchantment"
   not_enough_tokens: "&cYou do not have enough tokens!"
-  enchant_bought: "&c&l-%tokens% TOKENS"
+  enchant_bought: "&e&lENCHANT &8» &c&l-%tokens% TOKENS"
+  enchant_bought_multiple: "&e&lENCHANT &8» &7You have bought &f%amount% &7levels of %enchant%&r &7for &f%tokens% &7tokens."
   enchant_refunded: "&e&lREFUND &8» &7You have refunded &f%amount% &7levels of %enchant%"
   enchant_tokens_back: "&e&lREFUND &8» &7You have received &f%tokens% &7tokens back."
   enchant_cant_disenchant: "&c&l(!) &cThis enchant can't be disenchanted."
@@ -69,7 +72,6 @@ messages:
   pickaxe_given: "&e&lENCHANT &8» &fYou have given pickaxe to &e%player%"
   pickaxe_received: "&e&lENCHANT &8» &fYou have received pickaxe from &e%sender%"
   pickaxe_inventory_full: "&e&lENCHANT &8» &e%player% &chas full inventory!"
-
 enchants:
   '1':
     RawName: "efficiency"
@@ -346,6 +348,7 @@ enchants:
     Chance: 9.0E-5
     Cost: 350
     Description: '&7&o(( Ability to give everyone crate keys while mining ))'
+    Pickaxe-Level-Required: 1
     Commands:
       - cc giveall physical Token 1
       - cc giveall physical Token 2
@@ -366,6 +369,7 @@ enchants:
     Chance: 1.0
     Cost: 1000
     Description: '&7&o(( Ability to sell all items while mining ))'
+      Pickaxe-Level-Required: 1
     Refund:
       Enabled: true
       InGuiSlot: 45
@@ -380,6 +384,7 @@ enchants:
     Chance: 9.0E-5
     Cost: 5000
     Description: '&7&o(( Ability to find store vouchers while mining ))'
+    Pickaxe-Level-Required: 1
     Refund:
       Enabled: true
       InGuiSlot: 45

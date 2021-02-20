@@ -39,3 +39,4 @@ tokens:
     lore:
       - "&7Right-Click to Redeem"
 next-reset-weekly: 0
+display-token-messages: true
