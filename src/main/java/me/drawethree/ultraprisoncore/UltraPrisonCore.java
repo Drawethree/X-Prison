@@ -96,7 +96,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.autoMiner = new UltraPrisonAutoMiner(this);
         this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
 
-        this.setupEconomy();
+        if (!this.setupEconomy()) {
+            this.getLogger().warning(String.format("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin..."));
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         this.registerPlaceholders();
         this.registerJetsPrisonMines();
 
@@ -218,13 +223,17 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     }
 
     private boolean setupEconomy() {
+
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
+
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+
         if (rsp == null) {
             return false;
         }
+
         economy = rsp.getProvider();
         return economy != null;
     }

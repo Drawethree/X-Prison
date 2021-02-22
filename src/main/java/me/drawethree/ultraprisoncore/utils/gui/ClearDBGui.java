@@ -19,7 +19,7 @@ public class ClearDBGui extends ConfirmationGui {
 		if (confirm) {
 			Schedulers.async().run(() -> {
 				this.database.resetAllData(this.getPlayer());
-				this.getPlayer().sendMessage(Text.colorize("&aUltraPrisonCore - All SQL Tables have been reset."));
+				this.getPlayer().sendMessage(Text.colorize("&aUltraPrisonCore - Players Data have been reset."));
 			});
 		}
 		this.close();
