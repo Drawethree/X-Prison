@@ -100,6 +100,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
             this.getLogger().warning(String.format("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin..."));
             this.getServer().getPluginManager().disablePlugin(this);
             return;
+        } else {
+            this.getLogger().info(String.format("Economy provider for Vault found - " + this.getEconomy().getName()));
         }
 
         this.registerPlaceholders();
