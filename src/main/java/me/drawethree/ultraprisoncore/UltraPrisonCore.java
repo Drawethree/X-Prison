@@ -123,7 +123,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         }
         if (this.getConfig().getBoolean("modules.pickaxe_levels")) {
             if (!this.isModuleEnabled("Enchants")) {
-                this.getLogger().warning(Text.colorize("&aUltraPrisonCore - Module 'Pickaxe Levels' requires to have enchants module enabled."));
+                this.getLogger().warning(Text.colorize("UltraPrisonCore - Module 'Pickaxe Levels' requires to have enchants module enabled."));
             } else {
                 this.loadModule(pickaxeLevels);
             }
@@ -136,18 +136,18 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     private void loadModule(UltraPrisonModule module) {
         this.loadedModules.put(module.getName(), module);
         module.enable();
-        this.getLogger().info(Text.colorize(String.format("&aUltraPrisonCore - Module %s loaded.", module.getName())));
+        this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s loaded.", module.getName())));
     }
 
     //Always unload via iterator!
     private void unloadModule(UltraPrisonModule module) {
         module.disable();
-        this.getLogger().info(Text.colorize(String.format("&aUltraPrisonCore - Module %s unloaded.", module.getName())));
+        this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s unloaded.", module.getName())));
     }
 
     private void reloadModule(UltraPrisonModule module) {
         module.reload();
-        this.getLogger().info(Text.colorize(String.format("&aUltraPrisonCore - Module %s reloaded.", module.getName())));
+        this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s reloaded.", module.getName())));
 
     }
 
