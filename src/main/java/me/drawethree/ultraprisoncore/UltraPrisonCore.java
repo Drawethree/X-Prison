@@ -166,7 +166,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
                     } else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v"))) {
                         c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
                     }
-                }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore", "upc");
+                }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore");
     }
 
     private void reload(CommandSender sender) {
