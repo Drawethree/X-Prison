@@ -118,7 +118,7 @@ public abstract class SQLDatabase extends Database {
 	public void resetAllData(CommandSender sender) {
 		Schedulers.async().run(() -> {
 			for (String table : ALL_TABLES) {
-				execute("TRUNCATE " + table);
+				execute("TRUNCATE TABLE " + table);
 			}
 		});
 	}
