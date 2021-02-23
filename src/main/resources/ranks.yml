@@ -23,6 +23,15 @@ unlimited_prestiges:
     enabled: true
     increase_cost_by: 1.25
   prefix: '&2&lP%prestige%'
+  rewards:
+    10:
+      - 'eco give %player% 10'
+    100:
+      - 'eco give %player% 100'
+    1000:
+      - 'eco give %player% 1000'
+    10000:
+      - 'eco give %player% 10000'
 Ranks:
   '1':
     Prefix: '&a&lA'
