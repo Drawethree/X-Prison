@@ -42,6 +42,11 @@ public class CharityEnchant extends UltraPrisonEnchantment {
             for (Player p : Players.all()) {
                 randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
                 plugin.getCore().getEconomy().depositPlayer(p, randAmount);
+
+                if (!this.isMessagesEnabled()) {
+                    continue;
+                }
+
                 if (p.equals(e.getPlayer())) {
                     p.sendMessage(plugin.getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
                 } else {

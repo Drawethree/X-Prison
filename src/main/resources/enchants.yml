@@ -222,6 +222,7 @@ enchants:
     Max-Money: 5000000000000
     Min-Money: 1000000000000
     Cost: 25
+    Messages-Enabled: true
     Description: '&7&o(( Chance to give to everyone online money while mining ))'
     Refund:
       Enabled: true
@@ -254,6 +255,7 @@ enchants:
     Max-Tokens: 15000
     Min-Tokens: 5000
     Cost: 25
+    Messages-Enabled: true
     Description: '&7&o(( Chance to give to everyone online tokens while mining ))'
     Refund:
       Enabled: true

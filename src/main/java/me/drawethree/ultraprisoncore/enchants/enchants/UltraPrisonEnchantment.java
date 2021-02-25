@@ -38,6 +38,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     private long cost;
     private long increaseCost;
     private int requiredPickaxeLevel;
+    private boolean messagesEnabled;
 
     public UltraPrisonEnchantment(UltraPrisonEnchants plugin, int id) {
         this.plugin = plugin;
@@ -57,6 +58,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.cost = this.plugin.getConfig().get().getLong("enchants." + id + ".Cost");
         this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
         this.requiredPickaxeLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Pickaxe-Level-Required");
+        this.messagesEnabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Messages-Enabled", true);
     }
 
     public abstract String getAuthor();
