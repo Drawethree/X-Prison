@@ -74,7 +74,6 @@ public abstract class SQLDatabase extends Database {
     public SQLDatabase(UltraPrisonCore plugin) {
         super(plugin);
         this.plugin = plugin;
-
     }
 
     public abstract void connect();
@@ -88,7 +87,6 @@ public abstract class SQLDatabase extends Database {
 
     //Always execute async!
     public synchronized void execute(String sql, Object... replacements) {
-
         try (Connection c = this.hikari.getConnection(); PreparedStatement statement = c.prepareStatement(sql)) {
             if (replacements != null) {
                 for (int i = 0; i < replacements.length; i++) {
