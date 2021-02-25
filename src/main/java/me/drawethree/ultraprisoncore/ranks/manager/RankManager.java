@@ -451,7 +451,7 @@ public class RankManager {
 		long maxPretige = this.unlimitedPrestiges ? this.unlimitedPrestigeMax : this.maxPrestige.getId();
 
 		if (amount > maxPretige) {
-			this.onlinePlayersPrestige.put(target.getUniqueId(), this.maxPrestige.getId());
+			this.onlinePlayersPrestige.put(target.getUniqueId(), maxPretige);
 		} else {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), amount);
 		}
