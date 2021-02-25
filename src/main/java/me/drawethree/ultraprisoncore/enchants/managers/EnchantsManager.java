@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.enchants.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import lombok.Getter;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEnchantEvent;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
@@ -34,6 +35,8 @@ public class EnchantsManager {
     private List<String> ENCHANT_GUI_ITEM_LORE;
     private List<String> DISENCHANT_GUI_ITEM_LORE;
     private List<String> PICKAXE_LORE;
+    @Getter
+    private boolean openEnchantMenuOnRightClickBlock;
 
     public EnchantsManager(UltraPrisonEnchants plugin) {
         this.plugin = plugin;
@@ -442,6 +445,7 @@ public class EnchantsManager {
         this.ENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("enchant_menu.item.lore");
         this.DISENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("disenchant_menu.item.lore");
         this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");
+        this.openEnchantMenuOnRightClickBlock = plugin.getConfig().get().getBoolean("open-menu-on-right-click-block");
     }
 
 
