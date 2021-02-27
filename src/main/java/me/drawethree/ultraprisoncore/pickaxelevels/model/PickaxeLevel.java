@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.pickaxelevels.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.lucko.helper.Schedulers;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -21,6 +22,10 @@ public class PickaxeLevel {
 	private List<String> rewards;
 
 	public void giveRewards(Player p) {
-		this.rewards.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
+		if (!Bukkit.isPrimaryThread()) {
+			Schedulers.sync().run(() -> this.rewards.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()))));
+		} else {
+			this.rewards.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
+		}
 	}
 }

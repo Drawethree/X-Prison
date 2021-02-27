@@ -689,12 +689,17 @@ public class TokensManager {
 
         public void giveTo(Player p) {
 
-            Schedulers.sync().run(() -> {
+            if (!Bukkit.isPrimaryThread()) {
+                Schedulers.sync().run(() -> {
+                    for (String s : this.commandsToRun) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+                    }
+                });
+            } else {
                 for (String s : this.commandsToRun) {
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
                 }
-            });
-
+            }
             p.sendMessage(this.message);
         }
 
