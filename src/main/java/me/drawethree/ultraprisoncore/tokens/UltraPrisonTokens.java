@@ -24,10 +24,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.AnvilInventory;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.HashMap;
@@ -142,11 +139,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                     this.handleBlockBreak(e.getPlayer(), 1);
                 }).bindWith(core);
 
-        Events.subscribe(InventoryClickEvent.class)
+        /*Events.subscribe(InventoryClickEvent.class)
                 .filter(e -> e.getInventory() instanceof AnvilInventory)
                 .filter(e -> e.getSlotType() == InventoryType.SlotType.RESULT)
                 .filter(e -> e.getCurrentItem() != null && e.getCurrentItem().getType() == CompMaterial.SUNFLOWER.toMaterial())
-                .handler(e -> e.setCancelled(true)).bindWith(core);
+                .handler(e -> e.setCancelled(true)).bindWith(core);*/
     }
 
     public long handleBlockBreak(Player p, int amountOfBlocks) {
