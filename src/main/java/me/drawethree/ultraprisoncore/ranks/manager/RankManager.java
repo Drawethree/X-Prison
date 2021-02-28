@@ -8,6 +8,7 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -42,6 +43,7 @@ public class RankManager {
 	private String unlimitedPrestigePrefix;
 	private long unlimitedPrestigeMax;
 	private Map<Long, List<String>> unlimitedPrestigesRewards;
+	private List<String> unlimitedPrestigesRewardPerPrestige;
 	private LinkedHashMap<UUID, Integer> top10Prestige;
 	private Task task;
 
@@ -116,6 +118,7 @@ public class RankManager {
 		this.increaseCostEnabled = plugin.getConfig().get().getBoolean("unlimited_prestiges.increase_cost.enabled");
 
 		this.increaseCostBy = plugin.getConfig().get().getDouble("unlimited_prestiges.increase_cost.increase_cost_by");
+		this.unlimitedPrestigesRewardPerPrestige = plugin.getConfig().get().getStringList("unlimited_prestiges.rewards-per-prestige");
 
 		this.loadUnlimitedPrestigesRewards();
 
@@ -298,11 +301,7 @@ public class RankManager {
 			return false;
 		}
 
-		this.plugin.getCore().getEconomy().withdrawPlayer(p, toBuy.getCost());
-
-		this.onlinePlayersPrestige.put(p.getUniqueId(), toBuy.getId());
-
-		toBuy.runCommands(p);
+		doPrestige(p, toBuy);
 
 		p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige%", toBuy.getPrefix()));
 
@@ -384,11 +383,7 @@ public class RankManager {
 		p.sendMessage(this.plugin.getMessage("max_prestige_started"));
 
 		while (!isMaxPrestige(p) && this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
-			this.plugin.getCore().getEconomy().withdrawPlayer(p, nextPrestige.getCost());
-			this.onlinePlayersPrestige.put(p.getUniqueId(), nextPrestige.getId());
-
-			nextPrestige.runCommands(p);
-
+			doPrestige(p, nextPrestige);
 			nextPrestige = this.getNextPrestige(nextPrestige);
 		}
 
@@ -397,6 +392,21 @@ public class RankManager {
 		}
 
 		return true;
+	}
+
+	private void doPrestige(Player p, Prestige nextPrestige) {
+		this.plugin.getCore().getEconomy().withdrawPlayer(p, nextPrestige.getCost());
+		this.onlinePlayersPrestige.put(p.getUniqueId(), nextPrestige.getId());
+
+		nextPrestige.runCommands(p);
+
+		if (this.unlimitedPrestigesRewardPerPrestige != null) {
+			if (!Bukkit.isPrimaryThread()) {
+				Schedulers.sync().run(() -> this.unlimitedPrestigesRewardPerPrestige.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()))));
+			} else {
+				this.unlimitedPrestigesRewardPerPrestige.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
+			}
+		}
 	}
 
 	public void givePrestige(Player player, int levels) {
