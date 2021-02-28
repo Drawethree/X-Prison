@@ -545,6 +545,6 @@ public class RankManager {
 		}
 
 		Rank current = this.getPlayerRank(player);
-		return current.getCost();
+		return this.getNextRank(current.getId()).getCost();
 	}
 }
