@@ -41,6 +41,10 @@
                                     <pattern>org.codemc.worldguardwrapper</pattern>
                                     <shadedPattern>me.drawethree.ultraprisoncore.libs.worldguardwrapper</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>me.drawethree.ultraprisoncore.metrics</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -126,6 +130,12 @@
                     <artifactId>math</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>

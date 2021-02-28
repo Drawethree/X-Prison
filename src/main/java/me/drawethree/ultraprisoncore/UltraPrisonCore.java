@@ -24,6 +24,7 @@ import me.lucko.helper.Commands;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.text.Text;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -138,6 +139,11 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
         this.startEvents();
         this.registerMainCommand();
+        this.startMetrics();
+    }
+
+    private void startMetrics() {
+        new Metrics(this, 10520);
     }
 
     private void loadModule(UltraPrisonModule module) {
