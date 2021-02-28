@@ -265,6 +265,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.filter(e -> e.getItem() != null && e.getItem().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
 				.filter(e -> (e.getAction() == Action.RIGHT_CLICK_AIR || (e.getAction() == Action.RIGHT_CLICK_BLOCK && this.enchantsManager.isOpenEnchantMenuOnRightClickBlock())))
 				.handler(e -> {
+					e.setCancelled(true);
 					ItemStack pickAxe = e.getItem();
 					e.getPlayer().setItemInHand(null);
 					new EnchantGUI(e.getPlayer(), pickAxe).open();
