@@ -129,7 +129,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
                     if (nextLevel != null && this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand()) >= nextLevel.getBlocksRequired()) {
                         nextLevel.giveRewards(e.getPlayer());
-                        e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), nextLevel));
+                        e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), nextLevel, e.getPlayer()));
                         e.getPlayer().sendMessage(this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(nextLevel.getLevel())));
                     }
                 }).bindWith(core);
@@ -137,7 +137,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
                 .handler(e -> {
                     ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
                     if (item != null && item.getType() == Material.DIAMOND_PICKAXE) {
-                        e.getPlayer().getInventory().setItem(e.getNewSlot(), this.addDefaultPickaxeLevel(item));
+                        e.getPlayer().getInventory().setItem(e.getNewSlot(), this.addDefaultPickaxeLevel(item, e.getPlayer()));
                     }
                 }).bindWith(core);
     }
@@ -182,7 +182,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         return this.pickaxeLevels.get(nbtItem.getInteger(NBT_TAG_INDETIFIER));
     }
 
-    public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level) {
+    public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
 
         if (level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
             return item;
@@ -198,7 +198,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
         ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
         if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
-            builder = builder.name(level.getDisplayName());
+            builder = builder.name(level.getDisplayName(p));
         }
 
         item = builder.build();
@@ -206,7 +206,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         return item;
     }
 
-    private ItemStack addDefaultPickaxeLevel(ItemStack item) {
+    private ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
 
         NBTItem nbtItem = new NBTItem(item);
 
@@ -218,7 +218,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
         ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
         if (defaultLevel.getDisplayName() != null && !defaultLevel.getDisplayName().isEmpty()) {
-            builder = builder.name(defaultLevel.getDisplayName());
+            builder = builder.name(defaultLevel.getDisplayName(p));
         }
 
         item = builder.build();

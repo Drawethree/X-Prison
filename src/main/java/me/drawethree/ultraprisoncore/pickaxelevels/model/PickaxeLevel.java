@@ -28,4 +28,8 @@ public class PickaxeLevel {
 			this.rewards.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
 		}
 	}
+
+	public String getDisplayName(Player p) {
+		return this.displayName.replace("%player%", p.getName());
+	}
 }
