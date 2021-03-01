@@ -359,11 +359,16 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 								}
 
 								toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
+
 								if (core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME)) {
 									totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
 								}
+
 								core.getEconomy().depositPlayer(c.sender(), totalPrice);
-								c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
+
+								if (totalPrice > 0.0) {
+									c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
+								}
 
 								//Call post autosell
 								UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(c.sender(), autoSellRegion);
