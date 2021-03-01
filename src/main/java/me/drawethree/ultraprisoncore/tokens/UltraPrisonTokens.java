@@ -133,7 +133,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
         Events.subscribe(BlockBreakEvent.class)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().filter(region -> region.getId().toLowerCase().startsWith("mine")).findAny().isPresent())
+                .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
                 .handler(e -> {
                     this.handleBlockBreak(e.getPlayer(), 1);

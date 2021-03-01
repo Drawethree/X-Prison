@@ -505,4 +505,8 @@ public class EnchantsManager {
 		pickaxe = nbtItem.getItem();
 		return pickaxe;
 	}
+
+	public boolean hasEnchants(ItemStack item) {
+		return !this.getPlayerEnchants(item).isEmpty();
+	}
 }
