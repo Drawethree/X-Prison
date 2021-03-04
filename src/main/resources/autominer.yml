@@ -1,8 +1,10 @@
 auto-miner-region:
   name: automine
   world: world
-  money: 1000
-  tokens: 10
+  rewards:
+    - 'eco give %player% 1000'
+    - 'tokens give %player% 10'
+  reward-period: 5
 messages:
   not_enough_tokens: "&e&lAUTOMINER &8» &cYou do not have enough tokens! (Needed: %tokens%)"
   not_a_number: "&c%input% is not a number!"

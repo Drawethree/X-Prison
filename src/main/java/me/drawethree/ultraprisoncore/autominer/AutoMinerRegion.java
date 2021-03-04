@@ -5,55 +5,61 @@ import lombok.Getter;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 @Getter
 public class AutoMinerRegion {
 
-	private UltraPrisonAutoMiner parent;
-	private World world;
-	private IWrappedRegion region;
-	private double moneyPerSecond;
-	private double tokensPerSecond;
+    private UltraPrisonAutoMiner parent;
+    private World world;
+    private IWrappedRegion region;
+    private List<String> commands;
 
-	private Task autoMinerTask;
+    private Task autoMinerTask;
 
 
-	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, double moneyPerSecond, double tokensPerSecond) {
-		this.parent = parent;
-		this.world = world;
-		this.region = region;
-		this.moneyPerSecond = moneyPerSecond;
-		this.tokensPerSecond = tokensPerSecond;
+    public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, List<String> rewards, int seconds) {
+        this.parent = parent;
+        this.world = world;
+        this.region = region;
+        this.commands = rewards;
 
-		this.autoMinerTask = Schedulers.async().runRepeating(() -> {
-			for (Player p : Players.all()) {
+        this.autoMinerTask = Schedulers.async().runRepeating(() -> {
+            for (Player p : Players.all()) {
 
-				if (!p.getWorld().equals(this.world)) {
-					continue;
-				}
+                if (!p.getWorld().equals(this.world)) {
+                    continue;
+                }
 
-				if (region.contains(p.getLocation())) {
-					if (!parent.hasAutoMinerTime(p)) {
-						sendActionBar(p, parent.getMessage("auto_miner_disabled"));
-						continue;
-					} else {
-						sendActionBar(p, parent.getMessage("auto_miner_enabled"));
-						parent.getCore().getTokens().getApi().addTokens(p, (long) tokensPerSecond);
-						if (moneyPerSecond > 0) {
-							this.parent.getCore().getEconomy().depositPlayer(p, moneyPerSecond);
-						}
-						this.parent.decrementTime(p);
-					}
-				}
-			}
-		}, 20, 20);
-	}
+                if (region.contains(p.getLocation())) {
+                    if (!parent.hasAutoMinerTime(p)) {
+                        sendActionBar(p, parent.getMessage("auto_miner_disabled"));
+                        continue;
+                    } else {
+                        sendActionBar(p, parent.getMessage("auto_miner_enabled"));
+                        this.executeCommands(p);
+                        this.parent.decrementTime(p);
+                    }
+                }
+            }
+        }, seconds, TimeUnit.SECONDS, seconds, TimeUnit.SECONDS);
+    }
 
-	private void sendActionBar(Player player, String message) {
-		ActionBarAPI.sendActionBar(player, message);
-	}
+    private void executeCommands(Player p) {
+        if (this.commands.isEmpty()) {
+            return;
+        }
+        this.commands.forEach(c -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c.replace("%player%", p.getName())));
+    }
+
+    private void sendActionBar(Player player, String message) {
+        ActionBarAPI.sendActionBar(player, message);
+    }
 
 }

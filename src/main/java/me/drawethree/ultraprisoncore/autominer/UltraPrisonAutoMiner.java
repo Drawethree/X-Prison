@@ -201,14 +201,20 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         String worldName = getConfig().get().getString("auto-miner-region.world");
         String regionName = getConfig().get().getString("auto-miner-region.name");
 
-		double moneyPerSec = getConfig().get().getDouble("auto-miner-region.money");
-		double tokensPerSec = getConfig().get().getDouble("auto-miner-region.tokens");
+        List<String> rewards = getConfig().get().getStringList("auto-miner-region.rewards");
+
+        int seconds = getConfig().get().getInt("auto-miner-region.reward-period");
 
         World world = Bukkit.getWorld(worldName);
 
 		if (world == null) {
 			return;
 		}
+
+		if (seconds <= 0) {
+		    core.getLogger().warning("reward-perion in autominer.yml needs to be greater than 0!");
+		    return;
+        }
 
         Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world,regionName);
 
@@ -217,7 +223,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
             return;
         }
 
-        this.region = new AutoMinerRegion(this, world, optRegion.get(), moneyPerSec, tokensPerSec);
+        this.region = new AutoMinerRegion(this, world, optRegion.get(),rewards,seconds);
         core.getLogger().info("AutoMiner region loaded!");
 
     }
