@@ -39,7 +39,7 @@ public class EnchantGUI extends Gui {
 
 		this.pickAxe = pickAxe;
 
-		Events.subscribe(InventoryCloseEvent.class)
+		Events.subscribe(InventoryCloseEvent.class, EventPriority.MONITOR)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
 

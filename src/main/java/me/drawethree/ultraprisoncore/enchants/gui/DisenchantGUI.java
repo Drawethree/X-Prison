@@ -41,7 +41,7 @@ public class DisenchantGUI extends Gui {
 
 		this.pickAxe = pickAxe;
 
-		Events.subscribe(InventoryCloseEvent.class)
+		Events.subscribe(InventoryCloseEvent.class, EventPriority.MONITOR)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
 					if (!this.getPlayer().getItemInHand().equals(this.pickAxe)) {
