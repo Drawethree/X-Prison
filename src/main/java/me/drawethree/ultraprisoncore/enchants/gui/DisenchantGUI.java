@@ -41,12 +41,14 @@ public class DisenchantGUI extends Gui {
 
 		this.pickAxe = pickAxe;
 
-		Events.subscribe(InventoryCloseEvent.class, EventPriority.MONITOR)
+		Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
+
 					if (!this.getPlayer().getItemInHand().equals(this.pickAxe)) {
 						this.getPlayer().getInventory().remove(this.pickAxe);
 					}
+
 					ItemStack inHand = this.getPlayer().getItemInHand();
 					this.getPlayer().setItemInHand(this.pickAxe);
 
@@ -59,7 +61,7 @@ public class DisenchantGUI extends Gui {
 					}, 5);
 				}).bindWith(this);
 
-		Events.subscribe(PlayerTeleportEvent.class, EventPriority.MONITOR)
+		Events.subscribe(PlayerTeleportEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getPlayer().getUniqueId().equals(this.getPlayer().getUniqueId()))
 				.handler(e -> {
 					//List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(e.getFrom()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());

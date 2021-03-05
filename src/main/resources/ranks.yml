@@ -24,7 +24,9 @@ unlimited_prestiges:
     increase_cost_by: 1.25
   prefix: '&2&lP%prestige%'
   rewards-per-prestige:
-    - 'eco give %player% 1'
+    enabled: false
+    rewards:
+      - 'eco give %player% 1'
   rewards:
     10:
       - 'eco give %player% 10'

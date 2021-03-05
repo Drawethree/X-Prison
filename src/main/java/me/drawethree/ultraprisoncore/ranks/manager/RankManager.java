@@ -43,9 +43,10 @@ public class RankManager {
 	private String unlimitedPrestigePrefix;
 	private long unlimitedPrestigeMax;
 	private Map<Long, List<String>> unlimitedPrestigesRewards;
-	private List<String> unlimitedPrestigesRewardPerPrestige;
 	private LinkedHashMap<UUID, Integer> top10Prestige;
 	private Task task;
+	private boolean unlimitedPrestigesRewardPerPrestigeEnabled;
+	private List<String> unlimitedPrestigesRewardPerPrestige;
 
 	public RankManager(UltraPrisonRankup plugin) {
 		this.plugin = plugin;
@@ -118,7 +119,11 @@ public class RankManager {
 		this.increaseCostEnabled = plugin.getConfig().get().getBoolean("unlimited_prestiges.increase_cost.enabled");
 
 		this.increaseCostBy = plugin.getConfig().get().getDouble("unlimited_prestiges.increase_cost.increase_cost_by");
-		this.unlimitedPrestigesRewardPerPrestige = plugin.getConfig().get().getStringList("unlimited_prestiges.rewards-per-prestige");
+		this.unlimitedPrestigesRewardPerPrestigeEnabled = plugin.getConfig().get().getBoolean("unlimited_prestiges.rewards-per-prestige.enabled");
+		if (this.unlimitedPrestigesRewardPerPrestigeEnabled) {
+			this.unlimitedPrestigesRewardPerPrestige = plugin.getConfig().get().getStringList("unlimited_prestiges.rewards-per-prestige.rewards");
+		}
+
 
 		this.loadUnlimitedPrestigesRewards();
 

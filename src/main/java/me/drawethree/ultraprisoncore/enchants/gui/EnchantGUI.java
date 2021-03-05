@@ -39,7 +39,7 @@ public class EnchantGUI extends Gui {
 
 		this.pickAxe = pickAxe;
 
-		Events.subscribe(InventoryCloseEvent.class, EventPriority.MONITOR)
+		Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
 
@@ -59,7 +59,7 @@ public class EnchantGUI extends Gui {
 					}, 5);
 				}).bindWith(this);
 
-		Events.subscribe(PlayerTeleportEvent.class, EventPriority.MONITOR)
+		Events.subscribe(PlayerTeleportEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getPlayer().getUniqueId().equals(this.getPlayer().getUniqueId()))
 				.handler(e -> {
 					//List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(e.getFrom()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
