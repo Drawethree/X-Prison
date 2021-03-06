@@ -55,7 +55,7 @@ public class AutoMinerRegion {
         if (this.commands.isEmpty()) {
             return;
         }
-        this.commands.forEach(c -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c.replace("%player%", p.getName())));
+        this.commands.forEach(c -> Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c.replace("%player%", p.getName()))));
     }
 
     private void sendActionBar(Player player, String message) {
