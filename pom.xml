@@ -6,7 +6,7 @@
 
     <groupId>me.drawethree</groupId>
     <artifactId>UltraPrisonCore</artifactId>
-    <version>1.2.14-BETA</version>
+    <version>1.2.14-STABLE</version>
 
     <build>
         <defaultGoal>clean install</defaultGoal>
