@@ -208,21 +208,15 @@ public class TokensManager {
 
 			UltraPrisonPlayerTokensReceiveEvent event = new UltraPrisonPlayerTokensReceiveEvent(cause, p, amount);
 
-			this.plugin.getCore().getLogger().info("calling PlayerTokensReceiveEvent");
-			this.plugin.getCore().getLogger().info("Original amount: " + amount);
-			this.plugin.getCore().getLogger().info("Cause: " + cause);
 			Events.callSync(event);
 
 			if (event.isCancelled()) {
 				return;
 			}
 
-			this.plugin.getCore().getLogger().info("Event was not cancelled");
-
 
 			long finalAmount = event.getAmount();
 
-			this.plugin.getCore().getLogger().info("New amount: " + finalAmount);
 
 			if (!p.isOnline()) {
 				this.plugin.getCore().getPluginDatabase().updateTokens(p, finalAmount + currentTokens);
