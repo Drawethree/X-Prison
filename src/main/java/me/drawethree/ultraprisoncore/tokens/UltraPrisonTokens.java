@@ -146,9 +146,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                 .handler(e -> e.setCancelled(true)).bindWith(core);*/
     }
 
-    public long handleBlockBreak(Player p, int amountOfBlocks) {
+    public void handleBlockBreak(Player p, int amountOfBlocks) {
         tokensManager.addBlocksBroken(null, p, amountOfBlocks);
-        long totalAmount = 0;
 
         for (int i = 0; i < amountOfBlocks; i++) {
             double random = ThreadLocalRandom.current().nextDouble(100);
@@ -159,14 +158,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                 randAmount = luckyBooster ? randAmount * 2 : randAmount;
 
                 tokensManager.giveTokens(p, randAmount, null, ReceiveCause.MINING);
-                totalAmount += randAmount;
             }
         }
-
-        if (totalAmount > 0 && !this.tokensManager.hasOffTokenMessages(p)) {
-            p.sendMessage(this.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", totalAmount)));
-        }
-        return totalAmount;
     }
 
     private void registerCommands() {

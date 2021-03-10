@@ -99,6 +99,13 @@ public abstract class SQLDatabase extends Database {
         }
     }
 
+
+	public void executeAsync(String sql, Object... replacements) {
+		Schedulers.async().run(() -> {
+			this.execute(sql, replacements);
+		});
+	}
+
     public void createTables() {
         Schedulers.async().run(() -> {
             execute("CREATE TABLE IF NOT EXISTS " + RANKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige bigint, primary key (UUID))");
@@ -141,7 +148,7 @@ public abstract class SQLDatabase extends Database {
 
     @Override
     public void updateTokens(OfflinePlayer p, long amount) {
-        this.execute("UPDATE " + MySQLDatabase.TOKENS_TABLE_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", amount, p.getUniqueId().toString());
+		this.executeAsync("UPDATE " + MySQLDatabase.TOKENS_TABLE_NAME + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", amount, p.getUniqueId().toString());
     }
 
     @Override
