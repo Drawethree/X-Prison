@@ -305,7 +305,7 @@ public class EnchantsManager {
 			return false;
 		}
 
-		if (currentLevel + addition >= enchantment.getMaxLevel()) {
+		if (currentLevel + addition > enchantment.getMaxLevel()) {
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level_exceed"));
 			return false;
 		}
