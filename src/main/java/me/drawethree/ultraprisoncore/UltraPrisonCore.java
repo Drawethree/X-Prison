@@ -39,6 +39,8 @@ import java.util.Map;
 public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
+	private static boolean DEBUG_MODE = false;
+
     private Map<String, UltraPrisonModule> loadedModules;
 
     @Getter
@@ -157,6 +159,14 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         module.disable();
         this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s unloaded.", module.getName())));
     }
+
+
+	public void debug(String msg) {
+		if (!DEBUG_MODE) {
+			return;
+		}
+		this.getLogger().info(Text.colorize(msg));
+	}
 
     private void reloadModule(UltraPrisonModule module) {
         module.reload();
