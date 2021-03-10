@@ -160,7 +160,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s unloaded.", module.getName())));
     }
 
-
 	public void debug(String msg) {
 		if (!DEBUG_MODE) {
 			return;
@@ -186,9 +185,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
                         } else {
                             this.pluginDatabase.resetAllData(c.sender());
                         }
-                    } else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v"))) {
-                        c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
-                    }
+					} else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v"))) {
+						c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
+					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug")) {
+						DEBUG_MODE = !DEBUG_MODE;
+						c.sender().sendMessage(Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
+					}
                 }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore");
     }
 
