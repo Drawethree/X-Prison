@@ -289,7 +289,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     }
 
     public String getMessage(String key) {
-        return messages.get(key.toLowerCase());
+		return messages.getOrDefault(key.toLowerCase(), Text.colorize("&cMessage " + key + " not found."));
     }
 
     public boolean hasLayerDisabled(Player p) {
