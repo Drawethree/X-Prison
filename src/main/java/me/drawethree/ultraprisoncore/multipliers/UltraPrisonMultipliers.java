@@ -59,7 +59,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 
     private void loadRankMultipliers() {
-        permissionToMultiplier = new LinkedHashMap<>();
+        this.permissionToMultiplier = new LinkedHashMap<>();
 
         ConfigurationSection section = getConfig().get().getConfigurationSection("ranks");
 
@@ -70,8 +70,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         for (String rank : section.getKeys(false)) {
             String perm = "ultraprison.multiplier." + rank;
             double multiplier = getConfig().get().getDouble("ranks." + rank);
-            permissionToMultiplier.put(perm, multiplier);
-            core.getLogger().info("Loaded rank multiplier." + rank + " with multiplier " + multiplier);
+            this.permissionToMultiplier.put(perm, multiplier);
+            this.core.getLogger().info("Loaded rank multiplier." + rank + " with multiplier " + multiplier + " (" + perm + ")");
         }
     }
 
@@ -110,7 +110,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private void loadOnlineMultipliers() {
         Players.all().forEach(p -> {
-            rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
+            this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
             this.loadPersonalMultiplier(p);
         });
     }
@@ -118,12 +118,12 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     private void registerEvents() {
         Events.subscribe(PlayerJoinEvent.class)
                 .handler(e -> {
-                    rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
+                    this.rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
                     this.loadPersonalMultiplier(e.getPlayer());
                 }).bindWith(core);
         Events.subscribe(PlayerQuitEvent.class)
                 .handler(e -> {
-                    rankMultipliers.remove(e.getPlayer().getUniqueId());
+                    this.rankMultipliers.remove(e.getPlayer().getUniqueId());
                     this.savePersonalMultiplier(e.getPlayer(), true);
                 }).bindWith(core);
     }

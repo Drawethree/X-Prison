@@ -300,45 +300,43 @@ public class EnchantsManager {
 
 	public boolean buyEnchnant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
 
-		long totalCost = 0;
-
-		for (int i = 0; i < addition; i++, currentLevel++) {
-
-			if (currentLevel >= enchantment.getMaxLevel()) {
-				gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level"));
-				return false;
-			}
-
-			long cost = enchantment.getCostOfLevel(currentLevel + 1);
-
-			UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), cost, currentLevel + 1);
-
-			Events.call(event);
-
-			if (event.isCancelled()) {
-				return false;
-			}
-
-			cost = event.getTokenCost();
-
-			if (!plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), cost)) {
-				gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
-				return false;
-			}
-
-			plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), cost);
-
-			ItemStack item = this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + 1);
-			gui.setPickAxe(item);
-
-			if (addition == 1) {
-				gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(cost)));
-			} else {
-				totalCost += cost;
-			}
+		if (currentLevel >= enchantment.getMaxLevel()) {
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level"));
+			return false;
 		}
 
-		if (addition > 1) {
+		if (currentLevel + addition >= enchantment.getMaxLevel()) {
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level_exceed"));
+			return false;
+		}
+
+		long totalCost = 0;
+
+		for (int j = 0; j < addition; j++) {
+			totalCost += enchantment.getCostOfLevel(currentLevel + j + 1);
+		}
+
+		if (!plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost)) {
+			gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
+			return false;
+		}
+
+		UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + addition);
+
+		Events.call(event);
+
+		if (event.isCancelled()) {
+			return false;
+		}
+
+		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
+
+		ItemStack item = this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + addition);
+		gui.setPickAxe(item);
+
+		if (addition == 1) {
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
+		} else {
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought_multiple")
 					.replace("%amount%", String.valueOf(addition))
 					.replace("%enchant%", enchantment.getName())
