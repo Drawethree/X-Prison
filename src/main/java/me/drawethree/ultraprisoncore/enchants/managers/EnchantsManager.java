@@ -13,6 +13,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
+import me.lucko.helper.time.Time;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -312,9 +313,13 @@ public class EnchantsManager {
 
 		long totalCost = 0;
 
+		long startTime = Time.nowMillis();
+
 		for (int j = 0; j < addition; j++) {
 			totalCost += enchantment.getCostOfLevel(currentLevel + j + 1);
 		}
+
+		this.plugin.getCore().debug(String.format("Enchants | Calculation of levels %,d - %,d of %s enchant tooks %dms", currentLevel + 1, currentLevel + addition + 1, enchantment.getRawName(), Time.nowMillis() - startTime));
 
 		if (!plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost)) {
 			gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
