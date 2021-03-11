@@ -206,7 +206,11 @@ public class TokensManager {
 		Schedulers.async().run(() -> {
 			long currentTokens = getPlayerTokens(p);
 
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens);
+
 			UltraPrisonPlayerTokensReceiveEvent event = new UltraPrisonPlayerTokensReceiveEvent(cause, p, amount);
+
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Original amount :: " + amount);
 
 			Events.callSync(event);
 
@@ -214,8 +218,9 @@ public class TokensManager {
 				return;
 			}
 
-
 			long finalAmount = event.getAmount();
+
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount);
 
 
 			if (!p.isOnline()) {
@@ -228,6 +233,8 @@ public class TokensManager {
 					p.getPlayer().sendMessage(this.plugin.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
 				}
 			}
+
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L));
 
 			if (executor != null) {
 				executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
