@@ -14,6 +14,7 @@ public class UltraPrisonPlayerTokensReceiveEvent extends UltraPrisonPlayerEvent 
 
 	@Getter
 	private final ReceiveCause cause;
+
 	@Getter
 	@Setter
 	private long amount;
