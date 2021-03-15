@@ -390,7 +390,7 @@ public class RankManager {
 
         p.sendMessage(this.plugin.getMessage("max_prestige_started"));
 
-        while (!isMaxPrestige(p) && this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
+        while (!isMaxPrestige(p) && isMaxRank(p) && this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
             doPrestige(p, nextPrestige);
             nextPrestige = this.getNextPrestige(nextPrestige);
         }
