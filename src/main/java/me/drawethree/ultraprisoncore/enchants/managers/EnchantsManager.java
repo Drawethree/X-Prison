@@ -464,17 +464,22 @@ public class EnchantsManager {
 		String[] split = input.split(",");
 
 		for (String s : split) {
+			String[] enchantData = s.split("=");
 
-			if (s.startsWith("enchant:")) {
-				String[] enchantData = s.replace("enchant:", "").split("=");
+			try {
+				UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantByName(enchantData[0]);
+				if (enchantment == null) {
+					enchantment = UltraPrisonEnchantment.getEnchantById(Integer.parseInt(enchantData[0]));
+				}
 
-				try {
-					int enchantId = Integer.parseInt(enchantData[0]);
-					int enchantLevel = Integer.parseInt(enchantData[1]);
-					pickaxe = this.addEnchant(pickaxe, enchantId, enchantLevel);
-				} catch (Exception e) {
+				if (enchantment == null) {
 					continue;
 				}
+
+				int enchantLevel = Integer.parseInt(enchantData[1]);
+				pickaxe = this.addEnchant(pickaxe, enchantment.getId(), enchantLevel);
+			} catch (Exception e) {
+				continue;
 			}
 		}
 
