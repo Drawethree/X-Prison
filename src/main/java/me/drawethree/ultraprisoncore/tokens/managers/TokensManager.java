@@ -598,7 +598,9 @@ public class TokensManager {
 			if (sender instanceof Player) {
 				sender.sendMessage(Text.colorize(SPACER_LINE));
 				Player p = (Player) sender;
-				sender.sendMessage(TOP_FORMAT_BLOCKS_YOUR.replace("%position%", String.format("%,d", this.getBlocksTopWeeklyPosition(p))).replace("%amount%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId()))));
+				sender.sendMessage(TOP_FORMAT_BLOCKS_YOUR.replace("%position%", String.format("%,d", this.getBlocksTopWeeklyPosition(p)))
+						.replace("%amount%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId())))
+						.replace("%blocks%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId()))));
 			}
 			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
 		});

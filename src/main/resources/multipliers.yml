@@ -11,3 +11,4 @@ ranks:
 global-multiplier:
   multiplier: 0.0
   timeLeft: -1
+rank-multiplier-update-time: 5

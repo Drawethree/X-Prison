@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.lucko.helper.time.Time;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -42,6 +43,8 @@ public class LayerEnchant extends UltraPrisonEnchantment {
         }
 
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+
+            long startTime = Time.nowMillis();
             Block b = e.getBlock();
             List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
@@ -86,6 +89,8 @@ public class LayerEnchant extends UltraPrisonEnchantment {
                 plugin.getCore().getTokens().handleBlockBreak(p, blockCount);
 
             }
+            long timeEnd = Time.nowMillis();
+            this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.");
         }
     }
 

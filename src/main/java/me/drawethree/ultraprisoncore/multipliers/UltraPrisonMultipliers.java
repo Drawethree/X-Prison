@@ -12,6 +12,7 @@ import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
@@ -47,9 +49,13 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     private HashMap<String, String> messages;
     private LinkedHashMap<String, Double> permissionToMultiplier;
 
+
     @Getter
     private UltraPrisonCore core;
     private boolean enabled;
+
+    private Task rankUpdateTask;
+    private int rankMultiplierUpdateTime;
 
     public UltraPrisonMultipliers(UltraPrisonCore UltraPrisonCore) {
         instance = this;
@@ -87,6 +93,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
         this.loadMessages();
         this.loadRankMultipliers();
+
+        this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
     }
 
     @Override
@@ -98,6 +106,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         this.rankMultipliers = new HashMap<>();
         this.personalMultipliers = new HashMap<>();
 
+        this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
+
         this.loadMessages();
         this.loadRankMultipliers();
         this.registerCommands();
@@ -106,6 +116,13 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         this.loadGlobalMultiplier();
         this.loadOnlineMultipliers();
         api = new UltraPrisonMultipliersAPIImpl(this);
+
+        this.rankUpdateTask = Schedulers.async().runRepeating(() -> {
+            Players.all().forEach(p -> {
+                this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
+
+            });
+        }, this.rankMultiplierUpdateTime, TimeUnit.MINUTES, this.rankMultiplierUpdateTime, TimeUnit.MINUTES);
     }
 
     private void loadOnlineMultipliers() {
@@ -199,6 +216,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     @Override
     public void disable() {
         this.saveAllMultipliers();
+        this.rankUpdateTask.stop();
         this.enabled = false;
     }
 

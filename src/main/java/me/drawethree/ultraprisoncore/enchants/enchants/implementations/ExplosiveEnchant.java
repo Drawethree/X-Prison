@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
+import me.lucko.helper.time.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,6 +57,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
             return;
         }
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+			long timeStart = Time.nowMillis();
             Block b = e.getBlock();
             List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
             if (regions.size() > 0) {
@@ -111,6 +113,9 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
                 plugin.getCore().getTokens().handleBlockBreak(p, blockCount);
             }
+			long timeEnd = Time.nowMillis();
+			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.");
+
         }
     }
 

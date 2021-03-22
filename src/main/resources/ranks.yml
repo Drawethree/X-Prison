@@ -15,6 +15,7 @@ messages:
   prestige_add: "&e&lPRESTIGE &8» &7You have added %amount% prestige to  %player%"
   prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
   max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
+  max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
 reset_rank_after_prestige: false
 unlimited_prestiges:
   enabled: false

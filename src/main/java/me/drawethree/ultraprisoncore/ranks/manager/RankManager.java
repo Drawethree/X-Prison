@@ -396,7 +396,7 @@ public class RankManager {
         }
 
         if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
-            p.sendMessage(Text.colorize(String.format("&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%,d &7to &cP%,d&7.", startPrestige.getId(), this.onlinePlayersPrestige.get(p.getUniqueId()))));
+            p.sendMessage(this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%current_prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
         }
 
         return true;
@@ -438,7 +438,7 @@ public class RankManager {
         }
 
 
-        player.sendMessage(Text.colorize("&e&lPRESTIGE FINDER &8» &7You've just found a &fX" + levels + " Prestige Level &7while mining."));
+        player.sendMessage(this.plugin.getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
     }
 
 

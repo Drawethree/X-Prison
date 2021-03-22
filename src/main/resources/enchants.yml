@@ -74,6 +74,7 @@ messages:
   pickaxe_given: "&e&lENCHANT &8» &fYou have given pickaxe to &e%player%"
   pickaxe_received: "&e&lENCHANT &8» &fYou have received pickaxe from &e%sender%"
   pickaxe_inventory_full: "&e&lENCHANT &8» &e%player% &chas full inventory!"
+  prestige_finder: "&e&lPRESTIGE FINDER &8» &7You've just found a &fX%prestige% Prestige Level &7while mining."
 enchants:
   '1':
     RawName: "efficiency"
