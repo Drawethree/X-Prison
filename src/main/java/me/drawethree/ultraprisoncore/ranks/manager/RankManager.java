@@ -438,7 +438,7 @@ public class RankManager {
         }
 
 
-        player.sendMessage(this.plugin.getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
+		player.sendMessage(this.plugin.getCore().getEnchants().getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
     }
 
 
