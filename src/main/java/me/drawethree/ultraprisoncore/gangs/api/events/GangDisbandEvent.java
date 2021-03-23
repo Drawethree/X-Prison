@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.gangs.api.events;
 
+import lombok.Getter;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -10,6 +11,8 @@ public class GangDisbandEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS_LIST = new HandlerList();
 
     private boolean cancelled;
+
+    @Getter
     private Gang gang;
 
     public GangDisbandEvent(Gang gang) {
