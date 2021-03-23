@@ -14,3 +14,4 @@ modules:
   autosell: true
   autominer: true
   pickaxe_levels: true
+  gangs: true

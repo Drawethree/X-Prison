@@ -10,6 +10,7 @@ import me.drawethree.ultraprisoncore.database.SQLDatabase;
 import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.database.implementations.SQLiteDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
@@ -57,6 +58,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     private UltraPrisonAutoSell autoSell;
     private UltraPrisonAutoMiner autoMiner;
     private UltraPrisonPickaxeLevels pickaxeLevels;
+    private UltraPrisonGangs gangs;
 
     private JetsPrisonMinesAPI jetsPrisonMinesAPI;
 
@@ -98,6 +100,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.autoSell = new UltraPrisonAutoSell(this);
         this.autoMiner = new UltraPrisonAutoMiner(this);
         this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
+        this.gangs = new UltraPrisonGangs(this);
 
         if (!this.setupEconomy()) {
             this.getLogger().warning(String.format("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin..."));
@@ -130,6 +133,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         }
         if (this.getConfig().getBoolean("modules.autominer")) {
             this.loadModule(autoMiner);
+        }
+        if (this.getConfig().getBoolean("modules.gangs")) {
+            this.loadModule(gangs);
         }
         if (this.getConfig().getBoolean("modules.pickaxe_levels")) {
             if (!this.isModuleEnabled("Enchants")) {

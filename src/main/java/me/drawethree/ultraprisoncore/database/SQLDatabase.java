@@ -3,9 +3,11 @@ package me.drawethree.ultraprisoncore.database;
 import com.zaxxer.hikari.HikariDataSource;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
+import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,9 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,6 +37,7 @@ public abstract class SQLDatabase extends Database {
     public static final String BLOCKS_WEEKLY_TABLE_NAME = "UltraPrison_BlocksBrokenWeekly";
     public static final String MULTIPLIERS_TABLE_NAME = "UltraPrison_Multipliers";
     public static final String AUTOMINER_TABLE_NAME = "UltraPrison_AutoMiner";
+    public static final String GANGS_TABLE_NAME = "UltraPrison_Gangs";
 
     public static final String RANKS_UUID_COLNAME = "UUID";
     public static final String RANKS_RANK_COLNAME = "id_rank";
@@ -58,6 +59,10 @@ public abstract class SQLDatabase extends Database {
     public static final String AUTOMINER_UUID_COLNAME = "UUID";
     public static final String AUTOMINER_TIME_COLNAME = "time";
 
+    public static final String GANGS_NAME_COLNAME = "name";
+    public static final String GANGS_OWNER_COLNAME = "owner";
+    public static final String GANGS_MEMBERS_COLNAME = "members";
+
     public static final String[] ALL_TABLES = new String[]{
             RANKS_TABLE_NAME,
             TOKENS_TABLE_NAME,
@@ -66,6 +71,7 @@ public abstract class SQLDatabase extends Database {
             BLOCKS_WEEKLY_TABLE_NAME,
             MULTIPLIERS_TABLE_NAME,
             AUTOMINER_TABLE_NAME,
+            GANGS_TABLE_NAME
     };
 
     protected UltraPrisonCore plugin;
@@ -419,5 +425,50 @@ public abstract class SQLDatabase extends Database {
     @Override
     public void addIntoGems(OfflinePlayer player) {
         this.execute("INSERT IGNORE INTO " + MySQLDatabase.GEMS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+    }
+
+    @Override
+    public List<Gang> getAllGangs() {
+        List<Gang> returnList = new ArrayList<>();
+        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GANGS_TABLE_NAME)) {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+
+                    String gangName = set.getString(GANGS_NAME_COLNAME);
+                    UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
+                    List<UUID> members = new ArrayList<>();
+
+                    for (String s : set.getString(GANGS_MEMBERS_COLNAME).split(",")) {
+                        try {
+                            UUID uuid = UUID.fromString(s);
+                            members.add(uuid);
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+
+                    Gang gang = new Gang(gangName, owner, members);
+                    returnList.add(gang);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return returnList;
+    }
+
+    @Override
+    public void updateGang(Gang g) {
+        this.execute("UPDATE " + MySQLDatabase.GANGS_TABLE_NAME + " SET " + MySQLDatabase.GANGS_MEMBERS_COLNAME + "=? WHERE " + MySQLDatabase.GANGS_NAME_COLNAME + "=?", StringUtils.join(g.getMembersOffline().stream().map(OfflinePlayer::getUniqueId).map(UUID::toString).toArray(),","),g.getName());
+    }
+
+    @Override
+    public void createGang(Gang g) {
+        this.execute("INSERT IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + " VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
+    }
+
+    @Override
+    public void deleteGang(Gang g) {
+        this.execute("DELETE FROM " + MySQLDatabase.GANGS_TABLE_NAME + " WHERE name=?", g.getName());
     }
 }

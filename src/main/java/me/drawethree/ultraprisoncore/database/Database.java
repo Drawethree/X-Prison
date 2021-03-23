@@ -1,11 +1,13 @@
 package me.drawethree.ultraprisoncore.database;
 
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -74,4 +76,12 @@ public abstract class Database {
 	public abstract void addIntoGems(OfflinePlayer player);
 
 	public abstract void addIntoRanksAndPrestiges(OfflinePlayer player);
+
+	public abstract List<Gang> getAllGangs();
+
+	public abstract void updateGang(Gang g);
+
+	public abstract void deleteGang(Gang g);
+
+	public abstract void createGang(Gang g);
 }
