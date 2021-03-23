@@ -62,6 +62,7 @@ public abstract class SQLDatabase extends Database {
     public static final String GANGS_NAME_COLNAME = "name";
     public static final String GANGS_OWNER_COLNAME = "owner";
     public static final String GANGS_MEMBERS_COLNAME = "members";
+    public static final String GANGS_VALUE_COLNAME = "value";
 
     public static final String[] ALL_TABLES = new String[]{
             RANKS_TABLE_NAME,
@@ -121,7 +122,7 @@ public abstract class SQLDatabase extends Database {
             execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
-
+            execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (name))");
         });
     }
 
@@ -447,7 +448,9 @@ public abstract class SQLDatabase extends Database {
                         }
                     }
 
-                    Gang gang = new Gang(gangName, owner, members);
+                    int value = set.getInt(GANGS_VALUE_COLNAME);
+
+                    Gang gang = new Gang(gangName, owner, members,value);
                     returnList.add(gang);
                 }
             }
@@ -464,7 +467,7 @@ public abstract class SQLDatabase extends Database {
 
     @Override
     public void createGang(Gang g) {
-        this.execute("INSERT IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + " VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
+        this.execute("INSERT IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + "(name,owner,members) VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
     }
 
     @Override

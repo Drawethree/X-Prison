@@ -27,4 +27,10 @@ public class GangInviteCommand extends GangCommand{
         }
         return false;
     }
+
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return true;
+    }
 }

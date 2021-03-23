@@ -2,8 +2,11 @@ package me.drawethree.ultraprisoncore.placeholders;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+
+import java.util.Optional;
 
 import static me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder.formatNumber;
 
@@ -69,6 +72,25 @@ public class UltraPrisonMVdWPlaceholder {
         });
 
         PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_pickaxe_progress", event -> plugin.getPickaxeLevels().getProgressBar(event.getPlayer()));
+
+        PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_name", event -> {
+            Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+            if (optionalGang.isPresent()) {
+                return optionalGang.get().getName();
+            } else {
+                return "";
+            }
+        });
+
+        PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_value", event -> {
+            Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+            if (optionalGang.isPresent()) {
+                return String.format("%,d", optionalGang.get().getValue());
+            } else {
+                return "";
+            }
+        });
+
     }
 
 }

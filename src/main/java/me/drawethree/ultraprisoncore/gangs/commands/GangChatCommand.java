@@ -2,34 +2,30 @@ package me.drawethree.ultraprisoncore.gangs.commands;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
-import me.lucko.helper.text.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-public class GangHelpCommand extends GangCommand {
 
+public class GangChatCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang help";
+        return ChatColor.RED + "/gang chat";
     }
 
-    public GangHelpCommand(UltraPrisonGangs plugin) {
+    public GangChatCommand(UltraPrisonGangs plugin) {
         super(plugin);
     }
 
     @Override
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
-        if (args.isEmpty()) {
-            this.plugin.getGangsManager().sendHelpMenu(sender);
-            if (sender.hasPermission(UltraPrisonGangs.GANGS_ADMIN_PERM)) {
-                this.plugin.getGangsManager().sendAdminHelpMenu(sender);
-            }
-            return true;
+        if (args.size() == 0 && sender instanceof Player) {
+            Player p = (Player) sender;
+            return this.plugin.getGangsManager().toggleGangChat(p);
         }
         return false;
     }
-
 
     @Override
     public boolean canExecute(CommandSender sender) {

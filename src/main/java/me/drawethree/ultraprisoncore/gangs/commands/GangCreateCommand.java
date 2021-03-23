@@ -24,4 +24,9 @@ public class GangCreateCommand extends GangCommand {
         }
         return false;
     }
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.gangs.models;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
@@ -20,6 +21,10 @@ public class Gang {
     @Getter
     private String name;
 
+    @Getter
+    @Setter
+    private int value;
+
 
     public Gang(String name, UUID gangOwner) {
         this.name = name;
@@ -27,9 +32,10 @@ public class Gang {
         this.gangMembers = new ArrayList<>();
     }
 
-    public Gang(String gangName, UUID owner, List<UUID> members) {
+    public Gang(String gangName, UUID owner, List<UUID> members, int value) {
         this(gangName, owner);
         this.gangMembers = members;
+        this.value = value;
     }
 
     public boolean containsPlayer(OfflinePlayer p) {
@@ -84,5 +90,19 @@ public class Gang {
     public void disband() {
         this.gangMembers.clear();
         this.gangOwner = null;
+    }
+
+    public boolean kickPlayer(OfflinePlayer target) {
+
+        if (!this.gangMembers.contains(target.getUniqueId())) {
+            return false;
+        }
+
+        this.gangMembers.remove(target.getUniqueId());
+        this.getOnlinePlayers().forEach(player -> player.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-player-kicked").replace("%player%", target.getName())));
+        if (target.isOnline()) {
+            target.getPlayer().sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-kicked").replace("%gang%", this.name));
+        }
+        return true;
     }
 }

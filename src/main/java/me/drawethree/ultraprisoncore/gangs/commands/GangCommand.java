@@ -21,6 +21,11 @@ public abstract class GangCommand {
         commands.put("accept", new GangAcceptCommand(UltraPrisonGangs.getInstance()));
         commands.put("leave", new GangLeaveCommand(UltraPrisonGangs.getInstance()));
         commands.put("disband", new GangDisbandCommand(UltraPrisonGangs.getInstance()));
+        commands.put("remove", new GangRemoveCommand(UltraPrisonGangs.getInstance()));
+        commands.put("top", new GangTopCommand(UltraPrisonGangs.getInstance()));
+        commands.put("admin", new GangAdminCommand(UltraPrisonGangs.getInstance()));
+        commands.put("value", new GangValueCommand(UltraPrisonGangs.getInstance()));
+        commands.put("chat", new GangChatCommand(UltraPrisonGangs.getInstance()));
     }
 
     protected UltraPrisonGangs plugin;
@@ -36,4 +41,6 @@ public abstract class GangCommand {
     public static GangCommand getCommand(String arg) {
         return commands.get(arg.toLowerCase());
     }
+
+    public abstract boolean canExecute(CommandSender sender);
 }

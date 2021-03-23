@@ -396,7 +396,7 @@ public class RankManager {
         }
 
         if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
-            p.sendMessage(this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%current_prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
+            p.sendMessage(this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
         }
 
         return true;

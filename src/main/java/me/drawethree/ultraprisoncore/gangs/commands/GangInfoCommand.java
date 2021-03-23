@@ -12,7 +12,7 @@ public class GangInfoCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang info [player]";
+        return ChatColor.RED + "/gang info [gang/player]";
     }
 
     public GangInfoCommand(UltraPrisonGangs plugin) {
@@ -27,9 +27,21 @@ public class GangInfoCommand extends GangCommand {
                 return this.plugin.getGangsManager().sendGangInfo(p, p);
             } else if (args.size() == 1) {
                 OfflinePlayer target = Players.getOfflineNullable(args.get(0));
-                return this.plugin.getGangsManager().sendGangInfo(p, target);
+
+                if (this.plugin.getGangsManager().getPlayerGang(target).isPresent()) {
+                    return this.plugin.getGangsManager().sendGangInfo(p, target);
+                } else {
+                    return this.plugin.getGangsManager().sendGangInfo(p, args.get(0));
+
+                }
             }
         }
         return false;
+    }
+
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return true;
     }
 }

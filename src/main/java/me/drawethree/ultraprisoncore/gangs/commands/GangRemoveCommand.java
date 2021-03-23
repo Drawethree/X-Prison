@@ -2,26 +2,33 @@ package me.drawethree.ultraprisoncore.gangs.commands;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GangLeaveCommand extends GangCommand {
+import java.util.Optional;
+
+public class GangRemoveCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang leave";
+        return ChatColor.RED + "/gang remove <player>";
     }
 
-    public GangLeaveCommand(UltraPrisonGangs plugin) {
+    public GangRemoveCommand(UltraPrisonGangs plugin) {
         super(plugin);
     }
 
     @Override
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
-        if (args.size() == 0 && sender instanceof Player) {
+        if (args.size() == 1 && sender instanceof Player) {
             Player p = (Player) sender;
-            return this.plugin.getGangsManager().leaveGang(p);
+            Optional<Gang> gang = this.plugin.getGangsManager().getPlayerGang(p);
+            OfflinePlayer target = Players.getOfflineNullable(args.get(0));
+            return this.plugin.getGangsManager().removeFromGang(p,gang,target);
         }
         return false;
     }
@@ -31,4 +38,5 @@ public class GangLeaveCommand extends GangCommand {
     public boolean canExecute(CommandSender sender) {
         return true;
     }
+
 }

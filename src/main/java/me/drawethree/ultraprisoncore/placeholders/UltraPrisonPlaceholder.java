@@ -2,12 +2,14 @@ package me.drawethree.ultraprisoncore.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * This class will be registered through the register-method in the
@@ -156,8 +158,21 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
 
         } else if (identifier.equalsIgnoreCase("pickaxe_progress")) {
             return this.plugin.getPickaxeLevels().getProgressBar(player);
+        } else if (identifier.equalsIgnoreCase("gang_name")) {
+            Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+            if (optionalGang.isPresent()) {
+                return optionalGang.get().getName();
+            } else {
+                return "";
+            }
+        } else if (identifier.equalsIgnoreCase("gang_value")) {
+            Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+            if (optionalGang.isPresent()) {
+                return String.format("%,d", optionalGang.get().getValue());
+            } else {
+                return "";
+            }
         }
-
         return null;
     }
 

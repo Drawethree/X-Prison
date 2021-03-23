@@ -1,35 +1,78 @@
 package me.drawethree.ultraprisoncore.gangs.managers;
 
+import lombok.Getter;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
+import me.drawethree.ultraprisoncore.gangs.gui.DisbandGangAdminGUI;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class GangsManager {
+
+    private static int MAX_GANG_MEMBERS = 5;
+    private int gangUpdateDelay = 1;
 
     private UltraPrisonGangs plugin;
 
     private Map<String, Gang> gangs;
     private Map<UUID, Gang> pendingInvites;
+    private List<UUID> gangChatEnabledPlayers;
+
+    @Getter
+    private String gangDisbandGUITitle;
 
     private List<String> gangInfoFormat;
+    private List<String> gangTopFormat;
+    private List<String> gangAdminHelpMenu;
+    private List<String> gangHelpMenu;
+
+    private boolean updating;
+    private List<Gang> topGangs;
+
+    private Task task;
 
     public GangsManager(UltraPrisonGangs plugin) {
         this.plugin = plugin;
-        this.pendingInvites = new HashMap<>();
+        this.pendingInvites = new HashMap<>(25);
+        this.gangChatEnabledPlayers = new ArrayList<>(50);
 
-        this.gangInfoFormat = this.plugin.getConfig().get().getStringList("gang-info-format");
+        this.reloadConfig();
+
         this.loadGangs();
+        this.updateTop10();
+
+        Events.subscribe(AsyncPlayerChatEvent.class, EventPriority.MONITOR)
+                .filter(e -> this.hasGangChatEnabled(e.getPlayer()))
+                .handler(e -> {
+                    Optional<Gang> gangOptional = this.getPlayerGang(e.getPlayer());
+                    if (!gangOptional.isPresent()) {
+                        return;
+                    }
+
+                    e.setCancelled(true);
+
+                    Gang gang = gangOptional.get();
+
+                    e.getRecipients().removeIf(player -> !gang.containsPlayer(player));
+                    for (Player p : e.getRecipients()) {
+                        p.sendMessage(String.format(Text.colorize("&e&l[Gang] &f%s &8» &f%s"), e.getPlayer().getDisplayName(), e.getMessage()));
+                    }
+                }).bindWith(this.plugin.getCore());
     }
 
     private void loadGangs() {
@@ -43,6 +86,13 @@ public class GangsManager {
 
     public void reloadConfig() {
         this.gangInfoFormat = this.plugin.getConfig().get().getStringList("gang-info-format");
+        this.gangHelpMenu = this.plugin.getConfig().get().getStringList("gang-help-menu");
+        this.gangDisbandGUITitle = this.plugin.getConfig().get().getString("gang-disband-gui-title");
+        this.gangAdminHelpMenu = this.plugin.getConfig().get().getStringList("gang-admin-help-menu");
+        this.gangTopFormat = this.plugin.getConfig().get().getStringList("gang-top-format");
+        this.gangUpdateDelay = this.plugin.getConfig().get().getInt("gang-top-update");
+        MAX_GANG_MEMBERS = this.plugin.getConfig().get().getInt("max-gang-members");
+
     }
 
     public void saveDataOnDisable() {
@@ -81,9 +131,11 @@ public class GangsManager {
 
         GangCreateEvent gangCreateEvent = new GangCreateEvent(creator,g);
 
-        Events.call(gangCreateEvent);
+        this.plugin.getCore().debug("Calling GangCreateEvent for gang " + g.getName() + ".");
+        Events.callSync(gangCreateEvent);
 
         if (gangCreateEvent.isCancelled()) {
+            this.plugin.getCore().debug("GangCreateEvent for gang " + g.getName() + " was cancelled.");
             return true;
         }
 
@@ -114,6 +166,11 @@ public class GangsManager {
 
         if (!gang.isOwner(invitedBy)) {
             invitedBy.sendMessage(this.plugin.getMessage("gang-not-owner"));
+            return false;
+        }
+
+        if (gang.getMembersOffline().size() >= MAX_GANG_MEMBERS) {
+            invitedBy.sendMessage(this.plugin.getMessage("gang-full"));
             return false;
         }
 
@@ -179,6 +236,8 @@ public class GangsManager {
 
         for (String s : this.gangInfoFormat) {
             returnList.add(s
+                    .replace("%gang_top%", String.format("%,d", this.getGangTopPosition(g)))
+                    .replace("%gang_value%", String.format("%,d", g.getValue()))
                     .replace("%gang%", g.getName())
                     .replace("%gang_owner%", g.getOwnerOffline().getName())
                     .replace("%gang_members%", StringUtils.join(g.getMembersOffline().stream().map(OfflinePlayer::getName).toArray(), ", ")));
@@ -200,6 +259,34 @@ public class GangsManager {
         return true;
     }
 
+    public boolean sendGangInfo(Player p, String gangName) {
+        Optional<Gang> targetGang = this.getGangWithName(gangName);
+
+        if (!targetGang.isPresent()) {
+            p.sendMessage(this.plugin.getMessage("gang-not-exists"));
+            return true;
+        }
+
+        for (String s : this.getGangInfoFormat(targetGang.get())) {
+            p.sendMessage(Text.colorize(s));
+        }
+        return true;
+    }
+
+    public boolean hasGangChatEnabled(Player p) {
+        return this.gangChatEnabledPlayers.contains(p.getUniqueId());
+    }
+
+    public boolean disbandGang(CommandSender sender, Gang gang) {
+
+        gang.disband();
+        this.gangs.remove(gang.getName());
+        this.plugin.getCore().getPluginDatabase().deleteGang(gang);
+
+        Players.all().forEach(player1 -> player1.sendMessage(this.plugin.getMessage("gang-disband-broadcast").replace("%gang%", gang.getName()).replace("%player%", sender.getName())));
+        return true;
+    }
+
     public boolean disbandGang(Player player) {
         Optional<Gang> gangOptional = this.getPlayerGang(player);
 
@@ -217,9 +304,12 @@ public class GangsManager {
 
         GangDisbandEvent gangDisbandEvent = new GangDisbandEvent(gang);
 
-        Events.call(gangDisbandEvent);
+        this.plugin.getCore().debug("Calling GangDisbandEvent for gang " + gang.getName() + ".");
+
+        Events.callSync(gangDisbandEvent);
 
         if (gangDisbandEvent.isCancelled()) {
+            this.plugin.getCore().debug("GangDisbandEvent for gang " + gang.getName() + " was cancelled.");
             return true;
         }
 
@@ -242,5 +332,176 @@ public class GangsManager {
         }
 
         return joinGang(player, gangToJoin);
+    }
+
+    public void sendHelpMenu(CommandSender sender) {
+        this.gangHelpMenu.forEach(s -> sender.sendMessage(Text.colorize(s)));
+    }
+
+    public void sendAdminHelpMenu(CommandSender sender) {
+        this.gangAdminHelpMenu.forEach(s -> sender.sendMessage(Text.colorize(s)));
+    }
+
+
+    public int getGangTopPosition(Gang gang) {
+        if (!this.topGangs.contains(gang)) {
+            return -1;
+        }
+        return this.topGangs.indexOf(gang) + 1;
+    }
+
+    private void updateTop10() {
+        this.updating = true;
+        task = Schedulers.async().runRepeating(() -> {
+            this.updating = true;
+            this.topGangs = this.gangs.values().stream().sorted(Comparator.comparingInt(Gang::getValue).reversed()).collect(Collectors.toList());
+            this.updating = false;
+        }, this.gangUpdateDelay, TimeUnit.MINUTES, this.gangUpdateDelay, TimeUnit.MINUTES);
+    }
+
+    public boolean removeFromGang(Player p, Optional<Gang> gangOpt, OfflinePlayer target) {
+
+        if (!gangOpt.isPresent()) {
+            p.sendMessage(this.plugin.getMessage("not-in-gang"));
+            return false;
+        }
+
+        Gang gang = gangOpt.get();
+
+        if (!gang.isOwner(p)) {
+            p.sendMessage(this.plugin.getMessage("gang-not-owner"));
+            return false;
+        }
+
+        if (target == null) {
+            p.sendMessage(this.plugin.getMessage("player-not-online"));
+            return false;
+        }
+
+        gang.kickPlayer(target);
+        return true;
+    }
+
+    public boolean sendGangTop(CommandSender sender) {
+
+        if (this.updating) {
+            sender.sendMessage(this.plugin.getMessage("gang-top-updating"));
+            return true;
+        }
+
+        for (String s : this.gangTopFormat) {
+            if (s.startsWith("{FOR_EACH_GANG}")) {
+                String rawContent = s.replace("{FOR_EACH_GANG} ", "");
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        Gang gang = this.topGangs.get(i);
+                        sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%gang%", gang.getName()).replace("%value%", String.valueOf(gang.getValue()))));
+                    } catch (Exception e) {
+                        break;
+                    }
+                }
+            } else {
+                sender.sendMessage(Text.colorize(s));
+            }
+        }
+        return true;
+    }
+    public boolean forceAdd(CommandSender sender, Player target, Optional<Gang> gangOptional) {
+
+        if (target == null) {
+            sender.sendMessage(this.plugin.getMessage("player-not-online"));
+            return false;
+        }
+
+        if (!gangOptional.isPresent()) {
+            sender.sendMessage(this.plugin.getMessage("gang-not-exists"));
+            return false;
+        }
+
+        Gang targetGang = gangOptional.get();
+
+        Optional<Gang> currentGang = this.getPlayerGang(target);
+
+        if (currentGang.isPresent()) {
+            sender.sendMessage(this.plugin.getMessage("gang-cant-invite"));
+            return false;
+        }
+
+        return joinGang(target, targetGang);
+    }
+
+    public boolean forceRemove(CommandSender sender, Player target) {
+
+        if (target == null) {
+            sender.sendMessage(this.plugin.getMessage("player-not-online"));
+            return false;
+        }
+
+        Optional<Gang> currentGang = this.getPlayerGang(target);
+
+        if (!currentGang.isPresent()) {
+            sender.sendMessage(this.plugin.getMessage("gang-player-not-in-gang"));
+            return false;
+        }
+
+        return leaveGang(target);
+    }
+
+    public boolean forceDisband(CommandSender sender, Optional<Gang> gangOptional) {
+
+        if (!gangOptional.isPresent()) {
+            sender.sendMessage(this.plugin.getMessage("gang-not-exists"));
+            return false;
+        }
+
+        if (sender instanceof Player) {
+            new DisbandGangAdminGUI(this.plugin, (Player) sender, gangOptional.get()).open();
+        } else {
+            sender.sendMessage("§cOnly for players.");
+        }
+        return true;
+    }
+
+    public boolean toggleGangChat(Player p) {
+
+        if (!getPlayerGang(p).isPresent()) {
+            p.sendMessage(this.plugin.getMessage("not-in-gang"));
+            return false;
+        }
+
+        if (this.gangChatEnabledPlayers.contains(p.getUniqueId())) {
+            this.gangChatEnabledPlayers.remove(p.getUniqueId());
+            p.sendMessage(this.plugin.getMessage("gang-chat-off"));
+        } else {
+            this.gangChatEnabledPlayers.add(p.getUniqueId());
+            p.sendMessage(this.plugin.getMessage("gang-chat-on"));
+        }
+        return true;
+    }
+
+    public boolean modifyValue(CommandSender sender, Optional<Gang> gang, int amount, String operation) {
+
+        if (!gang.isPresent()) {
+            sender.sendMessage(this.plugin.getMessage("gang-not-exists"));
+            return false;
+        }
+
+        if (amount <= 0) {
+            sender.sendMessage(this.plugin.getMessage("invalid-value"));
+            return false;
+        }
+
+        if (operation.equalsIgnoreCase("add")) {
+            sender.sendMessage(this.plugin.getMessage("gang-value-add").replace("%value%", String.valueOf(amount)).replace("%gang%", gang.get().getName()));
+            gang.get().setValue(gang.get().getValue() + amount);
+            return true;
+        } else if (operation.equalsIgnoreCase("remove")) {
+            sender.sendMessage(this.plugin.getMessage("gang-value-remove").replace("%value%", String.valueOf(amount)).replace("%gang%", gang.get().getName()));
+            gang.get().setValue(gang.get().getValue() - amount);
+            return true;
+        } else {
+            sender.sendMessage("§cInvalid operation given.");
+            return false;
+        }
     }
 }
