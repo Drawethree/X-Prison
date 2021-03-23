@@ -24,13 +24,14 @@ public class GangHelpCommand extends GangCommand {
             sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
             sender.sendMessage(Text.colorize("&e&lGANG HELP MENU "));
             sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-            sender.sendMessage(Text.colorize("&e/gang create [gang]"));
+            sender.sendMessage(Text.colorize("&e/gang create [name]"));
             sender.sendMessage(Text.colorize("&e/gang invite [player]"));
             sender.sendMessage(Text.colorize("&e/gang info [player]"));
             sender.sendMessage(Text.colorize("&e/gang accept"));
             sender.sendMessage(Text.colorize("&e/gang leave"));
             sender.sendMessage(Text.colorize("&e/gang disband"));
             if (sender.hasPermission(UltraPrisonGangs.GANGS_ADMIN_PERM)) {
+                //todo: add admin cmds
             }
             sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
             return true;

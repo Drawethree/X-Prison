@@ -1,7 +1,10 @@
 package me.drawethree.ultraprisoncore.gangs.managers;
 
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
+import me.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
@@ -48,11 +51,11 @@ public class GangsManager {
         }
     }
 
-    private Optional<Gang> getPlayerGang(OfflinePlayer p) {
+    public Optional<Gang> getPlayerGang(OfflinePlayer p) {
         return this.gangs.values().stream().filter(gang -> gang.containsPlayer(p)).findFirst();
     }
 
-    private Optional<Gang> getGangWithName(String name) {
+    public Optional<Gang> getGangWithName(String name) {
         return this.gangs.values().stream().filter(gang -> gang.getName().equalsIgnoreCase(name)).findFirst();
     }
 
@@ -75,6 +78,14 @@ public class GangsManager {
 
 
         Gang g = new Gang(name, creator.getUniqueId());
+
+        GangCreateEvent gangCreateEvent = new GangCreateEvent(creator,g);
+
+        Events.call(gangCreateEvent);
+
+        if (gangCreateEvent.isCancelled()) {
+            return true;
+        }
 
         this.gangs.put(name, g);
 
@@ -203,6 +214,15 @@ public class GangsManager {
             player.sendMessage(this.plugin.getMessage("gang-not-owner"));
             return false;
         }
+
+        GangDisbandEvent gangDisbandEvent = new GangDisbandEvent(gang);
+
+        Events.call(gangDisbandEvent);
+
+        if (gangDisbandEvent.isCancelled()) {
+            return true;
+        }
+
 
         gang.disband();
         this.gangs.remove(gang.getName());

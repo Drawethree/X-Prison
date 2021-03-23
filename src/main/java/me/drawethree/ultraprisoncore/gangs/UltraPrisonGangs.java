@@ -5,6 +5,8 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
+import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import me.lucko.helper.Commands;
@@ -16,9 +18,14 @@ import java.util.Objects;
 
 public final class UltraPrisonGangs implements UltraPrisonModule {
 
-    public static final String GANGS_ADMIN_PERM = "gangs.admin";
+    public static final String GANGS_ADMIN_PERM = "ultraprison.gangs.admin";
+
     @Getter
     private static UltraPrisonGangs instance;
+
+    @Getter
+    private UltraPrisonGangsAPI api;
+
 
     @Getter
     private FileManager.Config config;
@@ -64,6 +71,8 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
         this.loadMessages();
 
         this.gangsManager = new GangsManager(this);
+
+        this.api = new UltraPrisonGangsAPIImpl(this.gangsManager);
 
         this.registerCommands();
         this.registerEvents();
