@@ -65,4 +65,9 @@ gang-info-format:
   - "Value: %gang_value%"
   - "Top Placement: %gang_top%"
   - " "
+gang-top-format:
+  - " "
+  - "&e&lGANG TOP"
+  - "{FOR_EACH_GANG} &f&l#%position%. &e%gang% &8» &7%value% Points"
+  - " "
 gang-disband-gui-title: "Disband your gang?"

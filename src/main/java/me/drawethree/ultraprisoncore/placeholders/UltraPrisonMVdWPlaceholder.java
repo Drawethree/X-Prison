@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import org.bukkit.ChatColor;
 
 import java.util.Optional;
 
@@ -78,7 +79,7 @@ public class UltraPrisonMVdWPlaceholder {
             if (optionalGang.isPresent()) {
                 return optionalGang.get().getName();
             } else {
-                return "";
+                return ChatColor.RED + "✗";
             }
         });
 
