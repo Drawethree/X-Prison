@@ -8,7 +8,6 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
-import me.drawethree.ultraprisoncore.gangs.gui.GangHelpGUI;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.text.Text;

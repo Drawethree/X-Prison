@@ -1,7 +1,6 @@
 package me.drawethree.ultraprisoncore.gangs.gui;
 
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
-import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.utils.gui.ConfirmationGui;
 import me.lucko.helper.Schedulers;
