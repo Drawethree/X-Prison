@@ -204,11 +204,6 @@ public class EnchantsManager {
 			return item;
 		}
 
-		if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
-			enchantment.onUnequip(p, item, level);
-			enchantment.onEquip(p, item, level);
-		}
-
 		NBTItem nbtItem = new NBTItem(item);
 
 		if (level > 0) {
@@ -261,9 +256,6 @@ public class EnchantsManager {
 		}
 
 		ItemStack item = p.getItemInHand();
-		if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
-			enchantment.onEquip(p, item, 0);
-		}
 
 		NBTItem nbtItem = new NBTItem(item);
 
@@ -280,10 +272,6 @@ public class EnchantsManager {
 
 		if (enchantment == null || item == null || level == 0) {
 			return item;
-		}
-
-		if (!p.getWorld().getName().equalsIgnoreCase("pvp")) {
-			enchantment.onEquip(p, item, level - 1);
 		}
 
 		NBTItem nbtItem = new NBTItem(item);
