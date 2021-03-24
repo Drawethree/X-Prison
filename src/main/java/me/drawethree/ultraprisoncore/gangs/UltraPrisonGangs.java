@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
+import me.drawethree.ultraprisoncore.gangs.gui.GangHelpGUI;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.text.Text;
@@ -92,7 +93,6 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     }
 
     private void registerEvents() {
-
     }
 
     private void registerCommands() {
@@ -100,7 +100,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
                 .handler(c -> {
                     if (c.args().size() == 0 && c.sender() instanceof Player) {
                         GangCommand.getCommand("help").execute(c.sender(), c.args());
-                        //new GangHelpGUI((Player) c.sender()).open();
+                        new GangHelpGUI((Player) c.sender()).open();
                         return;
                     }
                     GangCommand subCommand = GangCommand.getCommand(Objects.requireNonNull(c.rawArg(0)));
