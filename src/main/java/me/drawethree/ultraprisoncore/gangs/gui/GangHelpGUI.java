@@ -38,8 +38,8 @@ public class GangHelpGUI extends Gui {
 			}
 
 			populator = BUTTONS.newPopulator(this);
-			populator.acceptIfSpace(ItemStackBuilder.of(Material.BOOK).name("&eGangs Info").buildItem().build());
-			populator.acceptIfSpace(ItemStackBuilder.of(Material.WORKBENCH).name("&eCreate a Gang").lore("&7Dominate the server with your gang!", "&7Click to create a new gang.").build(() -> {
+			populator.acceptIfSpace(ItemStackBuilder.of(Material.BOOK).name("&eGangs Info").lore("&7Create gangs to dominate the server!", "&7Maximum Gang Size: 5").buildItem().build());
+			populator.acceptIfSpace(ItemStackBuilder.of(Material.WORKBENCH).name("&eCreate a Gang").lore("&7Click to create a new gang.").build(() -> {
 				SignPromptFactory factory = Services.load(SignPromptFactory.class);
 				factory.openPrompt(this.getPlayer(), Arrays.asList("", "§e^ ^ ^", "§7Input gang name", ""), responseHandler -> {
 					if (responseHandler.get(0).isEmpty()) {
