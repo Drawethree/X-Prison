@@ -15,7 +15,7 @@ public class GangInviteCommand extends GangCommand{
     }
 
     public GangInviteCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+        super(plugin, "invite", "inv");
     }
 
     @Override

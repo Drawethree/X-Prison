@@ -15,7 +15,7 @@ public class GangChatCommand extends GangCommand {
     }
 
     public GangChatCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+        super(plugin, "chat", "c");
     }
 
     @Override

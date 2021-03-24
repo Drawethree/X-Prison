@@ -11,15 +11,15 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class GangRemoveCommand extends GangCommand {
+public class GangKickCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang remove <player>";
+        return ChatColor.RED + "/gang kick <player>";
     }
 
-    public GangRemoveCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+    public GangKickCommand(UltraPrisonGangs plugin) {
+        super(plugin, "kick", "remove");
     }
 
     @Override

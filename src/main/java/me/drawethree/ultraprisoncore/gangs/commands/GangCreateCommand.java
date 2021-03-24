@@ -14,7 +14,7 @@ public class GangCreateCommand extends GangCommand {
     }
 
     public GangCreateCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+        super(plugin, "create", "new");
     }
 
     @Override

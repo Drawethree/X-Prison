@@ -18,7 +18,7 @@ public class GangDisbandCommand extends GangCommand {
     }
 
     public GangDisbandCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+        super(plugin, "disband", "dis");
     }
 
     @Override

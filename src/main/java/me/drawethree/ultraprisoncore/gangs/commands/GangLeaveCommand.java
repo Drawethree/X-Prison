@@ -14,7 +14,7 @@ public class GangLeaveCommand extends GangCommand {
     }
 
     public GangLeaveCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+        super(plugin, "leave", "quit");
     }
 
     @Override

@@ -3,6 +3,9 @@ package me.drawethree.ultraprisoncore.gangs.models;
 import lombok.Getter;
 import lombok.Setter;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;
+import me.drawethree.ultraprisoncore.gangs.api.events.GangLeaveEvent;
+import me.lucko.helper.Events;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -52,6 +55,14 @@ public class Gang {
             return false;
         }
 
+        GangLeaveEvent event = new GangLeaveEvent(p,this);
+
+        Events.callSync(event);
+
+        if (event.isCancelled()) {
+            return false;
+        }
+
         this.gangMembers.remove(p.getUniqueId());
         this.getOnlinePlayers().forEach(player -> player.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-player-left").replace("%player%", p.getName())));
         p.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-left").replace("%gang%", this.name));
@@ -61,6 +72,14 @@ public class Gang {
     public boolean joinPlayer(Player p) {
 
         if (this.gangMembers.contains(p.getUniqueId())) {
+            return false;
+        }
+
+        GangJoinEvent event = new GangJoinEvent(p,this);
+
+        Events.callSync(event);
+
+        if (event.isCancelled()) {
             return false;
         }
 

@@ -13,7 +13,7 @@ public class GangTopCommand extends GangCommand {
     }
 
     public GangTopCommand(UltraPrisonGangs plugin) {
-        super(plugin);
+        super(plugin, "top", "leaderboard");
     }
 
     @Override

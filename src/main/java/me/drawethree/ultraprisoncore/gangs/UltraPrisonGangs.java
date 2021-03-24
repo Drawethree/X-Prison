@@ -100,7 +100,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
                 .handler(c -> {
                     if (c.args().size() == 0 && c.sender() instanceof Player) {
                         GangCommand.getCommand("help").execute(c.sender(), c.args());
-                        new GangHelpGUI((Player) c.sender()).open();
+                        //new GangHelpGUI((Player) c.sender()).open();
                         return;
                     }
                     GangCommand subCommand = GangCommand.getCommand(Objects.requireNonNull(c.rawArg(0)));

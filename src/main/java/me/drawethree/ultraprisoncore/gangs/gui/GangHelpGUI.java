@@ -14,7 +14,6 @@ import java.util.Arrays;
 
 public class GangHelpGUI extends Gui {
 
-	// the keyboard buttons
 	private static final MenuScheme LAYOUT = new MenuScheme()
 			.mask("111111111")
 			.mask("110101011")
