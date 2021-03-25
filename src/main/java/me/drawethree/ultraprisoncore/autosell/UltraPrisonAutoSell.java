@@ -166,6 +166,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				}
 			});
 			lastEarnings.clear();
+			lastItems.clear();
 		}, this.broadcastTime, TimeUnit.SECONDS, this.broadcastTime, TimeUnit.SECONDS);
 	}
 

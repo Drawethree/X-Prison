@@ -29,7 +29,7 @@ messages:
   gang-value-add: "&e&lGANGS &8» &aYou have added %value% to %gang%."
   gang-value-remove: "&e&lGANGS &8» &aYou have removed %value% from %gang%."
   gang-player-kicked: "&e&lGANGS &8» &7Player %player% was kicked from gang!"
-  gang-kicked: "&e&lGANGS &8» &cYou have been removed from gang %gang%!"
+  gang-kicked: "&e&lGANGS &8»  &cYou have been removed from gang %gang%!"
   gang-full: "&e&lGANGS &8» &cYour gang is full!"
   gang-chat-off: "&e&lGANGS &8» &7You have toggled gang chat &cOFF"
   gang-chat-on: "&e&lGANGS &8» &7You have toggled gang chat &aON"
