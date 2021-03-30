@@ -403,7 +403,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 	}
 
 	public double getCurrentEarnings(Player player) {
-		return lastEarnings.containsKey(player.getUniqueId()) ? lastEarnings.get(player.getUniqueId()) : 0.0;
+		return lastEarnings.getOrDefault(player.getUniqueId(), 0.0);
 	}
 
 	public double getPriceForBrokenBlock(IWrappedRegion region, Block block) {

@@ -1,5 +1,6 @@
 max-gang-members: 5
 gang-top-update: 1
+max-gang-name-length: 10
 messages:
   no-permission: "&e&lGANGS &8» &cYou do not have permission!"
   gang-already-exists: "&e&lGANGS &8» &cGang with that name or similar name already exists!"
@@ -34,6 +35,7 @@ messages:
   gang-chat-off: "&e&lGANGS &8» &7You have toggled gang chat &cOFF"
   gang-chat-on: "&e&lGANGS &8» &7You have toggled gang chat &aON"
   gang-top-updating: "&e&lGANGS &8» &cPlease wait, gang top is updating!"
+  gang-name-long: "&e&lGANGS &8» &cGang name must contain max 10 characters."
 gang-help-menu:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lGANG HELP MENU "
