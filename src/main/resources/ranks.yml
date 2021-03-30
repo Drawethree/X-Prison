@@ -17,6 +17,7 @@ messages:
   max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
   max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
 reset_rank_after_prestige: false
+prestige_top_update_interval: 10
 unlimited_prestiges:
   enabled: false
   max_prestige: 1000000

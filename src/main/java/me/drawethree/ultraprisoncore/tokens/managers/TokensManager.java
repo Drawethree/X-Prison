@@ -50,6 +50,7 @@ public class TokensManager {
 
 	private LinkedHashMap<Long, BlockReward> blockRewards = new LinkedHashMap<>();
 
+	private int topUpdateInterval;
 	private Task task;
 
 	private boolean updating;
@@ -67,6 +68,7 @@ public class TokensManager {
 		this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
 		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
+		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
 		this.tokenMessageOnPlayers = new ArrayList<>();
 
 		Events.subscribe(PlayerJoinEvent.class)
@@ -115,7 +117,7 @@ public class TokensManager {
 			this.updateBlocksTopWeekly();
 			this.updateTokensTop();
 			this.updating = false;
-		}, 1, TimeUnit.MINUTES, 1, TimeUnit.HOURS);
+		}, 30, TimeUnit.SECONDS, this.topUpdateInterval, TimeUnit.MINUTES);
 	}
 
 	private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
@@ -676,6 +678,7 @@ public class TokensManager {
 		this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
 		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
+		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
 		this.loadBlockRewards();
 	}
 

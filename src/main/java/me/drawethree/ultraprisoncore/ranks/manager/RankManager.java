@@ -46,6 +46,7 @@ public class RankManager {
     private Map<Long, List<String>> unlimitedPrestigesRewards;
     private LinkedHashMap<UUID, Integer> top10Prestige;
     private Task task;
+	private int prestigeTopUpdateInterval;
     private boolean unlimitedPrestigesRewardPerPrestigeEnabled;
     private List<String> unlimitedPrestigesRewardPerPrestige;
 
@@ -127,6 +128,7 @@ public class RankManager {
 
         this.resetRankAfterPrestige = plugin.getConfig().get().getBoolean("reset_rank_after_prestige");
 
+		this.prestigeTopUpdateInterval = plugin.getConfig().get().getInt("prestige_top_update_interval");
 
         this.loadUnlimitedPrestigesRewards();
 
@@ -351,7 +353,7 @@ public class RankManager {
             this.saveAllDataSync();
             this.updatePrestigeTop();
             this.updating = false;
-        }, 1, TimeUnit.MINUTES, 1, TimeUnit.HOURS);
+		}, 30, TimeUnit.SECONDS, this.prestigeTopUpdateInterval, TimeUnit.MINUTES);
     }
 
     public void stopUpdating() {
