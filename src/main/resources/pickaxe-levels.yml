@@ -7,46 +7,6 @@ levels:
     blocks_required: 1000
     rewards:
       - 'eco give %player% 1000'
-  3:
-    display_name: "&bLevel 3 Pickaxe"
-    blocks_required: 5000
-    rewards:
-      - 'eco give %player% 5000'
-  4:
-    display_name: "&cLevel 4 Pickaxe"
-    blocks_required: 10000
-    rewards:
-      - 'eco give %player% 10000'
-  5:
-    display_name: "&dLevel 5 Pickaxe"
-    blocks_required: 20000
-    rewards:
-      - 'eco give %player% 20000'
-  6:
-    display_name: "&eLevel 6 Pickaxe"
-    blocks_required: 50000
-    rewards:
-      - 'eco give %player% 50000'
-  7:
-    display_name: "&aLevel 7 Pickaxe"
-    blocks_required: 100000
-    rewards:
-      - 'eco give %player% 100000'
-  8:
-    display_name: "&bLevel 8 Pickaxe"
-    blocks_required: 250000
-    rewards:
-      - 'eco give %player% 250000'
-  9:
-    display_name: "&cLevel 9 Pickaxe"
-    blocks_required: 500000
-    rewards:
-      - 'eco give %player% 500000'
-  10:
-    display_name: "&e&lLevel 10 Pickaxe"
-    blocks_required: 1000000
-    rewards:
-      - 'eco give %player% 1000000'
 messages:
   pickaxe-level-up: "&e&lPICKAXE &8» &7Your current pickaxe just leveled up to &eLevel %level%&7!"
   pickaxe-progress: "&e&lPICKAXE &8» &7Current progress: &c%blocks%&7/&a%blocks_required% Blocks"
