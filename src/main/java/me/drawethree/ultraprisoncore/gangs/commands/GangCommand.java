@@ -24,7 +24,7 @@ public abstract class GangCommand {
         registerCommand(new GangTopCommand(UltraPrisonGangs.getInstance()));
         registerCommand(new GangAdminCommand(UltraPrisonGangs.getInstance()));
         registerCommand(new GangValueCommand(UltraPrisonGangs.getInstance()));
-        registerCommand(new GangChatCommand(UltraPrisonGangs.getInstance()));
+        //registerCommand(new GangChatCommand(UltraPrisonGangs.getInstance()));
     }
 
 
