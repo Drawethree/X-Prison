@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class GangsManager {
 
-    private  int maxGangMembers = 5;
+    private int maxGangMembers = 5;
     private int gangUpdateDelay = 1;
     private int maxGangNameLength = 10;
 
@@ -44,6 +44,7 @@ public class GangsManager {
     private List<String> gangHelpMenu;
 
     private boolean updating;
+    private boolean enableColorCodes;
     private List<Gang> topGangs;
 
     private Task task;
@@ -58,9 +59,10 @@ public class GangsManager {
         this.loadGangs();
         this.updateTop10();
 
-        Events.subscribe(AsyncPlayerChatEvent.class, EventPriority.MONITOR)
+        Events.subscribe(AsyncPlayerChatEvent.class, EventPriority.HIGHEST)
                 .filter(e -> this.hasGangChatEnabled(e.getPlayer()))
                 .handler(e -> {
+
                     Optional<Gang> gangOptional = this.getPlayerGang(e.getPlayer());
                     if (!gangOptional.isPresent()) {
                         return;
@@ -95,7 +97,7 @@ public class GangsManager {
         this.gangUpdateDelay = this.plugin.getConfig().get().getInt("gang-top-update");
         this.maxGangMembers = this.plugin.getConfig().get().getInt("max-gang-members");
         this.maxGangNameLength = this.plugin.getConfig().get().getInt("max-gang-name-length");
-
+        this.enableColorCodes = this.plugin.getConfig().get().getBoolean("color-codes-in-gang-name");
     }
 
     public void saveDataOnDisable() {
@@ -119,8 +121,13 @@ public class GangsManager {
             return false;
         }
 
-        if (!checkGangName(name)) {
+        GangCreateResult nameCheck = checkGangName(name);
+
+        if (nameCheck == GangCreateResult.NAME_TOO_LONG) {
             creator.sendMessage(this.plugin.getMessage("gang-name-long"));
+            return false;
+        } else if (nameCheck == GangCreateResult.NAME_CONTAINS_COLORS) {
+            creator.sendMessage(this.plugin.getMessage("gang-name-colors"));
             return false;
         }
 
@@ -137,7 +144,7 @@ public class GangsManager {
 
         Gang g = new Gang(name, creator.getUniqueId());
 
-        GangCreateEvent gangCreateEvent = new GangCreateEvent(creator,g);
+        GangCreateEvent gangCreateEvent = new GangCreateEvent(creator, g);
 
         this.plugin.getCore().debug("Calling GangCreateEvent for gang " + g.getName() + ".");
 
@@ -157,8 +164,23 @@ public class GangsManager {
         return true;
     }
 
-    private boolean checkGangName(String name) {
-        return ChatColor.stripColor(Text.colorize(name)).length() <= this.maxGangNameLength;
+    private GangCreateResult checkGangName(String name) {
+        if (this.enableColorCodes) {
+            if (ChatColor.stripColor(Text.colorize(name)).length() > this.maxGangNameLength) {
+                return GangCreateResult.NAME_TOO_LONG;
+            }
+            return GangCreateResult.VALID;
+        } else {
+
+            if (!ChatColor.translateAlternateColorCodes('&', name).equals(name)) {
+                return GangCreateResult.NAME_CONTAINS_COLORS;
+            }
+
+            if (name.length() > this.maxGangNameLength) {
+                return GangCreateResult.NAME_TOO_LONG;
+            }
+            return GangCreateResult.VALID;
+        }
     }
 
     public boolean invitePlayer(Player invitedBy, Player invited) {
@@ -419,6 +441,7 @@ public class GangsManager {
         }
         return true;
     }
+
     public boolean forceAdd(CommandSender sender, Player target, Optional<Gang> gangOptional) {
 
         if (target == null) {

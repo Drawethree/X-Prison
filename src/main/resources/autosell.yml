@@ -17,3 +17,9 @@ auto_sell_broadcast:
     - " &8&l➥ &e&lITEMS SOLD: &f%items%"
     - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 regions: {}
+inventory_full_notification:
+  enabled: true
+  title:
+    - "&e&lInventory full!"
+    - "&fType /sellall to sell your inventory"
+  chat: '&c&l(!) &eYour inventory is full! Type /sellall to sell your inventory'
