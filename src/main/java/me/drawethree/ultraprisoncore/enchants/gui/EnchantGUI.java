@@ -22,8 +22,8 @@ import org.bukkit.inventory.ItemStack;
 public class EnchantGUI extends Gui {
 
 
-	private static final String GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
-	private static final Item EMPTY_SLOT_ITEM = ItemStackBuilder.
+	private static String GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
+	private static Item EMPTY_SLOT_ITEM = ItemStackBuilder.
 			of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
 
 	private static int PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.pickaxe_slot");
@@ -99,5 +99,13 @@ public class EnchantGUI extends Gui {
 
 		this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());
 		//this.getPlayer().setItemInHand(pickAxe);
+	}
+
+	public static void reload() {
+		GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
+		EMPTY_SLOT_ITEM = ItemStackBuilder.
+				of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
+		PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.pickaxe_slot");
+		GUI_LINES = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.lines");
 	}
 }

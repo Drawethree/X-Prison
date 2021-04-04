@@ -21,11 +21,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class DisenchantGUI extends Gui {
 
-	private static final String GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.title"));
-	private static final Item EMPTY_SLOT_ITEM = ItemStackBuilder.
+	private static String GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.title"));
+	private static Item EMPTY_SLOT_ITEM = ItemStackBuilder.
 			of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.empty_slots")).toItem()).buildItem().build();
 
-	private static final Item HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.help_item.material")).toMaterial())
+	private static Item HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.help_item.material")).toMaterial())
 			.name(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.help_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
 
 	private static int HELP_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("disenchant_menu.help_item.slot");
@@ -100,5 +100,16 @@ public class DisenchantGUI extends Gui {
 
 		this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());
 		//this.getPlayer().setItemInHand(pickAxe);
+	}
+
+	public static void reload() {
+		GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.title"));
+		EMPTY_SLOT_ITEM = ItemStackBuilder.
+				of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.empty_slots")).toItem()).buildItem().build();
+		HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.help_item.material")).toMaterial())
+				.name(UltraPrisonEnchants.getInstance().getConfig().get().getString("disenchant_menu.help_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
+		HELP_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("disenchant_menu.help_item.slot");
+		PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("disenchant_menu.pickaxe_slot");
+		GUI_LINES = UltraPrisonEnchants.getInstance().getConfig().get().getInt("disenchant_menu.lines");
 	}
 }
