@@ -462,7 +462,7 @@ public abstract class SQLDatabase extends Database {
 
     @Override
     public void updateGang(Gang g) {
-        this.execute("UPDATE " + MySQLDatabase.GANGS_TABLE_NAME + " SET " + MySQLDatabase.GANGS_MEMBERS_COLNAME + "=? WHERE " + MySQLDatabase.GANGS_NAME_COLNAME + "=?", StringUtils.join(g.getMembersOffline().stream().map(OfflinePlayer::getUniqueId).map(UUID::toString).toArray(),","),g.getName());
+        this.execute("UPDATE " + MySQLDatabase.GANGS_TABLE_NAME + " SET " + MySQLDatabase.GANGS_MEMBERS_COLNAME + "=?," + MySQLDatabase.GANGS_VALUE_COLNAME + "=? WHERE " + MySQLDatabase.GANGS_NAME_COLNAME + "=?", StringUtils.join(g.getMembersOffline().stream().map(OfflinePlayer::getUniqueId).map(UUID::toString).toArray(), ","), g.getValue(), g.getName());
     }
 
     @Override
