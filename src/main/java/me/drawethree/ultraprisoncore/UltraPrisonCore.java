@@ -189,7 +189,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
                 .handler(c -> {
 					if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload")) {
 						this.reload(c.sender());
-					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("help") && c.sender() instanceof Player) {
+                    } else if (((c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("help")) || c.args().size() == 0) && c.sender() instanceof Player) {
 						new HelpGui((Player) c.sender()).open();
 					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb")) {
 						if (c.sender() instanceof Player) {
