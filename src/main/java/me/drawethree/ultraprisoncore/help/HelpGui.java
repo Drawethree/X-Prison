@@ -11,19 +11,26 @@ import org.bukkit.entity.Player;
 
 public class HelpGui extends Gui {
 
-	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
+	private static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
 			.mask("110000011")
 			.mask("100000001")
 			.mask("110000011")
 			.mask("011111110");
 
-	protected static final MenuScheme LAYOUT_RED = new MenuScheme()
+	private static final MenuScheme LAYOUT_RED = new MenuScheme()
 			.mask("100000001")
 			.mask("000000000")
 			.mask("000000000")
 			.mask("000000000")
 			.mask("100000001");
+
+	private static final MenuScheme CONTENT = new MenuScheme()
+			.mask("000000000")
+			.mask("000111000")
+			.mask("001111100")
+			.mask("000111000")
+			.mask("000000000");
 
 
 	public HelpGui(Player player) {

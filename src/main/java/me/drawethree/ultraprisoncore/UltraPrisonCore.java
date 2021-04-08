@@ -185,25 +185,24 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
     private void registerMainCommand() {
         Commands.create()
-                .assertPermission("ultraprison.admin")
                 .handler(c -> {
-					if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload")) {
+                    if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						this.reload(c.sender());
                     } else if (((c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("help")) || c.args().size() == 0) && c.sender() instanceof Player) {
 						new HelpGui((Player) c.sender()).open();
-					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb")) {
+                    } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						if (c.sender() instanceof Player) {
 							new ClearDBGui(this.pluginDatabase, (Player) c.sender()).open();
 						} else {
 							this.pluginDatabase.resetAllData(c.sender());
 						}
-					} else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v"))) {
+                    } else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v")) && c.sender().hasPermission("ultraprisoncore.admin")) {
 						c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
-					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug")) {
+                    } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						DEBUG_MODE = !DEBUG_MODE;
 						c.sender().sendMessage(Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
 					}
-                }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore");
+                }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore", "upc");
     }
 
     private void reload(CommandSender sender) {

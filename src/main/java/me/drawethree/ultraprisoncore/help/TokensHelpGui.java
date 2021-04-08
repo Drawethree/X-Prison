@@ -45,6 +45,34 @@ public class TokensHelpGui extends Gui {
 				populator.accept(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(14).name(" ").buildItem().build());
 			}
 
+			//Info
+			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
+					"&7Tokens is a currency that allows",
+					"&7your players to upgrade their",
+					"&7pickaxe enchants."
+			).buildItem().build());
+
+			//Commands
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&f/tokens [player]",
+					"&7View yours or player's tokens balance.",
+					" ",
+					"&f/tokenstop",
+					"&7View a list of players with most tokens.",
+					" ",
+					"&f/tokens [add/remove/set] [player] [amount]",
+					"&7Add, remove or set player's tokens balance.",
+					" ",
+					"&f/tokens pay [player] [amount]",
+					"&7Give an other player tokens from your balance.",
+					" ",
+					"&f/tokens withdraw [amount] [value]",
+					"&7Withdraw your tokens to a physical form.",
+					" ",
+					"&f/tokens help",
+					"&7Displays the help usage for tokens."
+			).buildItem().build());
+
 			//Back
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lBack").lore("&7Back to main gui.").build(() -> {
 				this.close();

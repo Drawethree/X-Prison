@@ -51,7 +51,7 @@ public class GangsHelpGui extends Gui {
 			//Commands
 			this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
 					"&f/gang create [name]",
-					"&7Create a gang",
+					"&7Create a gang.",
 					" ",
 					"&f/gang invite [player]",
 					"&7Invite a player to your gang.",
@@ -72,11 +72,11 @@ public class GangsHelpGui extends Gui {
 					"&7Accept a gang invite.",
 					" ",
 					"&f/gang disband",
-					"&7Disband your gang"
+					"&7Disband your gang."
 			).buildItem().build());
 
 			//Commands
-			this.setItem(23, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
+			this.setItem(23, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eAdmin Commands").lore(
 					"&f/gang value [add/remove] [gang] [amount]",
 					"&7Add/remove value from/to a gang.",
 					" ",

@@ -59,7 +59,7 @@ public class PrestigesHelpGui extends Gui {
 					" ",
 					"&f/maxprestige",
 					"&7Attempt to buy highest prestige possible",
-					"&7based on your balance",
+					"&7based on your balance.",
 					" ",
 					"&f/prestigetop",
 					"&7Display top prestige users.",

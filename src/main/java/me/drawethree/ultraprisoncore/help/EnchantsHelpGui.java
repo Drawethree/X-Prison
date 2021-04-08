@@ -47,10 +47,39 @@ public class EnchantsHelpGui extends Gui {
 
 
 			//Info
-			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore("&7Enchants are made", "&7to make your prison server", "&7more unique!", "&7You can customize all", "&7enchants in &fenchants.yml", "&7You can also create your own", "&7custom enchants using our API.", "&7Tutorial can be found on Wiki.").buildItem().build());
+			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
+					"&7Enchants are made",
+					"&7to make your prison server",
+					"&7more unique!",
+					"&7You can customize all",
+					"&7enchants in &fenchants.yml",
+					"&7You can also create your own",
+					"&7custom enchants using our API.",
+					"&7Tutorial can be found on Wiki."
+			).buildItem().build());
 
 			//Commands
-			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore("&f/givepickaxe [player] [enchant:rawname=level]", "&7Example: /givepickaxe Drawethree fortune=10,layer=50", "&7Give your players a custom pickaxe to mine with.", " ", "&f/enchant", "&7Open up the enchanting GUI.", " ", "&f/disenchant", "&7Opens up the disenchanting GUI.", " ", "&f/value", "&7Display the total value of tokens", "&7of your held pickaxe.", " ", "&f/explosive ", "&fToggle the explosive enchant. ", " ", "&f/layer", "&7Toggle the layer enchant.").buildItem().build());
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&f/givepickaxe [player] [enchant:rawname=level]",
+					"&7Example: /givepickaxe Drawethree fortune=10,layer=50",
+					"&7Give your players a custom pickaxe to mine with.",
+					" ",
+					"&f/enchant",
+					"&7Open up the enchanting GUI.",
+					" ",
+					"&f/disenchant",
+					"&7Opens up the disenchanting GUI.",
+					" ",
+					"&f/value",
+					"&7Display the total value of tokens",
+					"&7of your held pickaxe.",
+					" ",
+					"&f/explosive",
+					"&fToggle the explosive enchant.",
+					" ",
+					"&f/layer",
+					"&7Toggle the layer enchant."
+			).buildItem().build());
 
 			//Back
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lBack").lore("&7Back to main gui.").build(() -> {

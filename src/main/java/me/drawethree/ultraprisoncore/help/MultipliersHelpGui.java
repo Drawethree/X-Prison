@@ -45,6 +45,28 @@ public class MultipliersHelpGui extends Gui {
 				populator.accept(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(14).name(" ").buildItem().build());
 			}
 
+
+			//Info
+			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
+					"&7Multipliers allows your players",
+					"&7to earn more money when they",
+					"&7are mining."
+			).buildItem().build());
+
+			//Commands
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&f/gmulti [multiplier] [time in minutes]",
+					"&7Example: /gmulti 1.0 10",
+					"&7Set the global multiplier for all players on server.",
+					" ",
+					"&f/pmulti [player] [multiplier] [time in minutes]",
+					"&7Example: /pmulti Drawethree 1.0 10",
+					"&7Set the personal multiplier for player.",
+					" ",
+					"&f/multi",
+					"&7Check your active multipliers."
+			).buildItem().build());
+
 			//Back
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lBack").lore("&7Back to main gui.").build(() -> {
 				this.close();

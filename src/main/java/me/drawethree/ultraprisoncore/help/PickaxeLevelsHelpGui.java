@@ -45,6 +45,20 @@ public class PickaxeLevelsHelpGui extends Gui {
 				populator.accept(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(14).name(" ").buildItem().build());
 			}
 
+			//Info
+			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
+					"&7Pickaxe levels allows your",
+					"&7players to level up their pickaxes",
+					"&7and unlock various rewards by",
+					"&7breaking blocks."
+			).buildItem().build());
+
+			//Commands
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&cThere are no commands associated with this module.",
+					"&cEverything is customizable in &fpickaxe-levels.yml"
+			).buildItem().build());
+
 			//Back
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lBack").lore("&7Back to main gui.").build(() -> {
 				this.close();

@@ -60,10 +60,10 @@ public class RanksHelpGui extends Gui {
 					" ",
 					"&f/maxrankup",
 					"&7Attempt to buy highest rank possible",
-					"&7based on your balance",
+					"&7based on your balance.",
 					" ",
 					"&f/setrank [player] [rank_id]",
-					"&7Forcibly set player's rank"
+					"&7Forcibly set player's rank."
 			).buildItem().build());
 
 			//Back
