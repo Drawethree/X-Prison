@@ -12,12 +12,14 @@ import me.drawethree.ultraprisoncore.database.implementations.SQLiteDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.help.HelpGui;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.gui.ClearDBGui;
 import me.jet315.prisonmines.JetsPrisonMines;
 import me.jet315.prisonmines.JetsPrisonMinesAPI;
@@ -102,6 +104,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
         this.gangs = new UltraPrisonGangs(this);
 
+		SkullUtils.init();
+
         if (!this.setupEconomy()) {
             this.getLogger().warning(String.format("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin..."));
             this.getServer().getPluginManager().disablePlugin(this);
@@ -183,14 +187,16 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
         Commands.create()
                 .assertPermission("ultraprison.admin")
                 .handler(c -> {
-                    if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload")) {
-                        this.reload(c.sender());
-                    } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb")) {
-                        if (c.sender() instanceof Player) {
-                            new ClearDBGui(this.pluginDatabase, (Player) c.sender()).open();
-                        } else {
-                            this.pluginDatabase.resetAllData(c.sender());
-                        }
+					if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload")) {
+						this.reload(c.sender());
+					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("help") && c.sender() instanceof Player) {
+						new HelpGui((Player) c.sender()).open();
+					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb")) {
+						if (c.sender() instanceof Player) {
+							new ClearDBGui(this.pluginDatabase, (Player) c.sender()).open();
+						} else {
+							this.pluginDatabase.resetAllData(c.sender());
+						}
 					} else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v"))) {
 						c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
 					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug")) {
