@@ -53,6 +53,7 @@ public class GangsManager {
         this.plugin = plugin;
         this.pendingInvites = new HashMap<>(25);
         this.gangChatEnabledPlayers = new ArrayList<>(50);
+        this.topGangs = new ArrayList<>();
 
         this.reloadConfig();
 
