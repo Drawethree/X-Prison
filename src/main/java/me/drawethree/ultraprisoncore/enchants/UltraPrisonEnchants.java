@@ -75,8 +75,12 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
         this.config.reload();
 
+
         this.loadMessages();
         this.enchantsManager.reload();
+
+        EnchantGUI.reload();
+        DisenchantGUI.reload();
 
         UltraPrisonEnchantment.reloadAll();
     }

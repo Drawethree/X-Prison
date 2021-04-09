@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -25,7 +26,8 @@ public class SkullUtils {
 	}
 
 	public static ItemStack getCustomTextureHead(String value) {
-		ItemStack head = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+		ItemStack head = CompMaterial.PLAYER_HEAD.toItem();
+
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
 
 		GameProfile profile = new GameProfile(UUID.randomUUID(), "");
