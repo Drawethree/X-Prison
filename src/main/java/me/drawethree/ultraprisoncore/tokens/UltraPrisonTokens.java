@@ -228,7 +228,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
                 .handler(c -> {
                     if (c.args().size() == 3) {
 
-                        Player target = c.arg(1).parseOrFail(Player.class);
+                        OfflinePlayer target = c.arg(1).parseOrFail(OfflinePlayer.class);
                         long amount = c.arg(2).parseOrFail(Long.class);
 
                         switch (c.rawArg(0).toLowerCase()) {

@@ -8,7 +8,7 @@ messages:
   admin_set_tokens: "&aSuccessfuly set &e%player%'s &atokens to &e%tokens%."
   admin_give_tokens: "&aSuccessfuly given &e%tokens% &atokens to &e%player%."
   admin_remove_tokens: "&aSuccessfuly removed &e%tokens% &atokens from &e%player%."
-  admin_set_blocks: "&aSuccessfuly set &e%blocks%'s &ablocks to &e%tokens%."
+  admin_set_blocks: "&aSuccessfuly set &e%blocks%'s &ablocks to &e%blocks%."
   admin_give_blocks: "&aSuccessfuly given &e%blocks% &ablocks to &e%player%."
   admin_remove_blocks: "&aSuccessfuly removed &e%blocks% &ablocks from &e%player%."
   not_token_item: "&cThis is not a token item!"

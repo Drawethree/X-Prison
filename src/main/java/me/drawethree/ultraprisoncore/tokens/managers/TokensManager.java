@@ -383,17 +383,19 @@ public class TokensManager {
 		});
 	}
 
-	public void addBlocksBroken(CommandSender sender, Player player, long amount) {
+	public void addBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
-		UltraPrisonBlockBreakEvent event = new UltraPrisonBlockBreakEvent(player, amount);
+		if (player.isOnline()) {
+			UltraPrisonBlockBreakEvent event = new UltraPrisonBlockBreakEvent((Player) player, amount);
 
-		Events.call(event);
+			Events.call(event);
 
-		if (event.isCancelled()) {
-			return;
+			if (event.isCancelled()) {
+				return;
+			}
+
+			amount = event.getAmount();
 		}
-
-		amount = event.getAmount();
 
 
 		if (amount <= 0) {
@@ -420,7 +422,7 @@ public class TokensManager {
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
 
 				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					nextReward.giveTo(player);
+					nextReward.giveTo((Player) player);
 					nextReward = this.getNextBlockReward(nextReward);
 				}
 			}
@@ -445,7 +447,7 @@ public class TokensManager {
 		return null;
 	}
 
-	public void removeBlocksBroken(CommandSender sender, Player player, long amount) {
+	public void removeBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
 		if (amount <= 0) {
 			sender.sendMessage(Text.colorize("&cPlease specify amount greater than 0!"));
@@ -470,7 +472,7 @@ public class TokensManager {
 		});
 	}
 
-	public void setBlocksBroken(CommandSender sender, Player player, long amount) {
+	public void setBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
 		if (amount < 0) {
 			sender.sendMessage(Text.colorize("&cPlease specify positive amount!"));
@@ -489,7 +491,7 @@ public class TokensManager {
 				blocksCacheWeekly.put(player.getUniqueId(), amount);
 
 				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					nextReward.giveTo(player);
+					nextReward.giveTo((Player) player);
 					nextReward = this.getNextBlockReward(nextReward);
 				}
 			}
