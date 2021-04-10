@@ -16,6 +16,7 @@ import me.lucko.helper.text.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -57,6 +58,10 @@ public class TokensManager {
 	private boolean displayTokenMessages;
 	private long nextResetWeekly;
 
+	private String tokenItemDisplayName;
+	private ItemStack tokenItem;
+	private List<String> tokenItemLore;
+
 	private List<UUID> tokenMessageOnPlayers;
 
 	public TokensManager(UltraPrisonTokens plugin) {
@@ -69,6 +74,9 @@ public class TokensManager {
 		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
 		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
+		this.tokenItemDisplayName = plugin.getConfig().get().getString("tokens.item.name");
+		this.tokenItemLore = plugin.getConfig().get().getStringList("tokens.item.lore");
+		this.tokenItem = CompMaterial.fromString(plugin.getConfig().get().getString("tokens.item.material")).toItem();
 		this.tokenMessageOnPlayers = new ArrayList<>();
 
 		Events.subscribe(PlayerJoinEvent.class)
@@ -350,8 +358,8 @@ public class TokensManager {
 		});
 	}
 
-	public static ItemStack createTokenItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(CompMaterial.SUNFLOWER.toItem()).amount(value).name("&e&l" + String.format("%,d", amount) + " TOKENS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+	private ItemStack createTokenItem(long amount, int value) {
+		ItemStack item = ItemStackBuilder.of(this.tokenItem.clone()).amount(value).name(this.tokenItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.tokenItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
 		NBTItem nbt = new NBTItem(item);
 		nbt.setLong("token-amount", amount);
 		return nbt.getItem();
@@ -679,6 +687,9 @@ public class TokensManager {
 		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
 		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
+		this.tokenItemDisplayName = plugin.getConfig().get().getString("tokens.item.name");
+		this.tokenItemLore = plugin.getConfig().get().getStringList("tokens.item.lore");
+		this.tokenItem = CompMaterial.fromString(plugin.getConfig().get().getString("tokens.item.material")).toItem();
 		this.loadBlockRewards();
 	}
 
@@ -721,5 +732,10 @@ public class TokensManager {
 		}
 
 
+	}
+
+
+	public Material getTokenItemMaterial() {
+		return this.tokenItem.getType();
 	}
 }

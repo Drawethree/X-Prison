@@ -121,7 +121,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
     private void registerEvents() {
 
         Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == CompMaterial.SUNFLOWER.toMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+                .filter(e -> e.getItem() != null && e.getItem().getType() == this.tokensManager.getTokenItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
                 .handler(e -> {
                     if (e.getItem().hasItemMeta()) {
                         e.setCancelled(true);
