@@ -180,7 +180,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     private void reloadModule(UltraPrisonModule module) {
         module.reload();
         this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s reloaded.", module.getName())));
-
     }
 
     private void registerMainCommand() {
