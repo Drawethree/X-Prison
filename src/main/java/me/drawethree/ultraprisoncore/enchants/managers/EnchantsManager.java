@@ -40,6 +40,8 @@ public class EnchantsManager {
 	private List<String> PICKAXE_LORE;
 	@Getter
 	private boolean openEnchantMenuOnRightClickBlock;
+	@Getter
+	private boolean allowEnchantsOutside;
 
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
@@ -442,6 +444,7 @@ public class EnchantsManager {
 		this.DISENCHANT_GUI_ITEM_LORE = plugin.getConfig().get().getStringList("disenchant_menu.item.lore");
 		this.PICKAXE_LORE = plugin.getConfig().get().getStringList("Pickaxe.lore");
 		this.openEnchantMenuOnRightClickBlock = plugin.getConfig().get().getBoolean("open-menu-on-right-click-block");
+		this.allowEnchantsOutside = plugin.getConfig().get().getBoolean("allow-enchants-outside-mine-regions");
 	}
 
 

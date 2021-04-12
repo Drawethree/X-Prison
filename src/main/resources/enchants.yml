@@ -1,4 +1,5 @@
 open-menu-on-right-click-block: false
+allow-enchants-outside-mine-regions: false
 enchant_menu:
   title: "&7Enchants Menu"
   empty_slots: STAINED_GLASS_PANE:7
