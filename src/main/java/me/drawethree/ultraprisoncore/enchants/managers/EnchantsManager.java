@@ -124,6 +124,7 @@ public class EnchantsManager {
 	}
 
 	public long getBlocksBroken(ItemStack item) {
+
 		if (item == null || item.getType() == Material.AIR) {
 			return 0;
 		}
@@ -134,7 +135,7 @@ public class EnchantsManager {
 			return 0;
 		}
 
-		return nbtItem.getInteger("blocks-broken");
+		return nbtItem.getLong("blocks-broken");
 	}
 
 	public synchronized void addBlocksBrokenToItem(Player p, int amount) {
@@ -145,11 +146,22 @@ public class EnchantsManager {
 
 		NBTItem nbtItem = new NBTItem(p.getItemInHand());
 
-		if (!nbtItem.hasKey("blocks-broken")) {
-			nbtItem.setInteger("blocks-broken", 0);
+		try {
+			int amountToConvert = nbtItem.getInteger("blocks-broken");
+
+			if (amountToConvert > 0) {
+				amount += amountToConvert;
+				nbtItem.removeKey("blocks-broken");
+			}
+		} catch (Exception e) {
+			//Nothing to migrate
 		}
 
-		nbtItem.setInteger("blocks-broken", nbtItem.getInteger("blocks-broken") + amount);
+		if (!nbtItem.hasKey("blocks-broken")) {
+			nbtItem.setLong("blocks-broken", 0L);
+		}
+
+		nbtItem.setLong("blocks-broken", nbtItem.getLong("blocks-broken") + amount);
 
 		p.setItemInHand(nbtItem.getItem());
 		applyLoreToPickaxe(p.getItemInHand());
