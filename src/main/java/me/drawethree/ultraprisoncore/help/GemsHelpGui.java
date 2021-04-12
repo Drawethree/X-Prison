@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.help;
 
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
@@ -36,13 +37,15 @@ public class GemsHelpGui extends Gui {
 		if (isFirstDraw()) {
 
 			MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
+
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
 			}
 
 			populator = LAYOUT_RED.newPopulator(this);
+
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(14).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
 			}
 
 			//Info
