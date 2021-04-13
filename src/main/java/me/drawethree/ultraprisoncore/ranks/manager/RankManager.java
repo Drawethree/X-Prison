@@ -46,7 +46,7 @@ public class RankManager {
     private Map<Long, List<String>> unlimitedPrestigesRewards;
     private LinkedHashMap<UUID, Integer> top10Prestige;
     private Task task;
-	private int prestigeTopUpdateInterval;
+    private int prestigeTopUpdateInterval;
     private boolean unlimitedPrestigesRewardPerPrestigeEnabled;
     private List<String> unlimitedPrestigesRewardPerPrestige;
 
@@ -128,7 +128,7 @@ public class RankManager {
 
         this.resetRankAfterPrestige = plugin.getConfig().get().getBoolean("reset_rank_after_prestige");
 
-		this.prestigeTopUpdateInterval = plugin.getConfig().get().getInt("prestige_top_update_interval");
+        this.prestigeTopUpdateInterval = plugin.getConfig().get().getInt("prestige_top_update_interval");
 
         this.loadUnlimitedPrestigesRewards();
 
@@ -264,6 +264,48 @@ public class RankManager {
         return this.getPlayerPrestige(p).getId() == this.maxPrestige.getId();
     }
 
+    public boolean buyMaxRank(Player p) {
+
+        if (isMaxRank(p)) {
+            p.sendMessage(this.plugin.getMessage("prestige_needed"));
+            return false;
+        }
+
+        double amountNeeded = 0;
+
+        Rank currentRank = this.getPlayerRank(p);
+        Rank toBuy = getNextRank(currentRank.getId());
+
+        amountNeeded += toBuy.getCost();
+
+        if (!this.plugin.getCore().getEconomy().has(p,amountNeeded)) {
+            p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+            return false;
+        }
+
+        while (this.plugin.getCore().getEconomy().has(p, amountNeeded)) {
+
+            Rank next = getNextRank(toBuy.getId());
+
+            if (next == null) { //max rank reached
+                break;
+            }
+
+            toBuy = next;
+            amountNeeded += toBuy.getCost();
+        }
+
+        this.plugin.getCore().getEconomy().withdrawPlayer(p, amountNeeded);
+
+        for (int i = currentRank.getId() + 1; i <= toBuy.getId(); i++) {
+            this.ranksById.get(i).runCommands(p);
+        }
+
+        this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
+        p.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
+        return true;
+    }
+
     public boolean buyNextRank(Player p) {
 
         if (isMaxRank(p)) {
@@ -353,7 +395,7 @@ public class RankManager {
             this.saveAllDataSync();
             this.updatePrestigeTop();
             this.updating = false;
-		}, 30, TimeUnit.SECONDS, this.prestigeTopUpdateInterval, TimeUnit.MINUTES);
+        }, 30, TimeUnit.SECONDS, this.prestigeTopUpdateInterval, TimeUnit.MINUTES);
     }
 
     public void stopUpdating() {
@@ -440,7 +482,7 @@ public class RankManager {
         }
 
 
-		player.sendMessage(this.plugin.getCore().getEnchants().getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
+        player.sendMessage(this.plugin.getCore().getEnchants().getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
     }
 
 

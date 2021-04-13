@@ -119,10 +119,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        boolean buy = this.rankManager.buyNextRank(c.sender());
-                        while (buy) {
-                            buy = this.rankManager.buyNextRank(c.sender());
-                        }
+                        this.rankManager.buyMaxRank(c.sender());
                     }
                 }).registerAndBind(core, "maxrankup", "mru");
         Commands.create()

@@ -36,12 +36,16 @@ public class DisenchantGUI extends Gui {
 	@Setter
 	private ItemStack pickAxe;
 
-	public DisenchantGUI(Player player, ItemStack pickAxe) {
+	@Getter
+	private int pickaxePlayerInventorySlot;
+
+	public DisenchantGUI(Player player, ItemStack pickAxe, int pickaxePlayerInventorySlot) {
 		super(player, GUI_LINES, GUI_TITLE);
 
 		this.pickAxe = pickAxe;
+		this.pickaxePlayerInventorySlot = pickaxePlayerInventorySlot;
 
-		Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
+		/*Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
 
@@ -76,7 +80,7 @@ public class DisenchantGUI extends Gui {
 							this.getPlayer().closeInventory();
 						}
 					}).bindWith(this);
-		}
+		}*/
 	}
 
 	@Override
@@ -86,7 +90,6 @@ public class DisenchantGUI extends Gui {
 			for (int i = 0; i < this.getHandle().getSize(); i++) {
 				this.setItem(i, EMPTY_SLOT_ITEM);
 			}
-
 			this.setItem(HELP_ITEM_SLOT, HELP_ITEM);
 		}
 
@@ -99,7 +102,6 @@ public class DisenchantGUI extends Gui {
 		}
 
 		this.setItem(PICKAXE_ITEM_SLOT, Item.builder(pickAxe).build());
-		//this.getPlayer().setItemInHand(pickAxe);
 	}
 
 	public static void reload() {

@@ -194,8 +194,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                         return;
                     }
 
-                    c.sender().setItemInHand(null);
-                    new DisenchantGUI(c.sender(), pickAxe).open();
+                    int pickaxeSlot = this.enchantsManager.getInventorySlot(c.sender(), pickAxe);
+                    this.core.debug("Pickaxe slot is: " + pickaxeSlot);
+                    new DisenchantGUI(c.sender(), pickAxe, pickaxeSlot).open();
                 }).registerAndBind(core, "disenchant", "dise", "de", "disenchantmenu", "dismenu");
 
         Commands.create()
@@ -208,8 +209,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                         return;
                     }
 
-                    c.sender().setItemInHand(null);
-                    new EnchantGUI(c.sender(), pickAxe).open();
+                    int pickaxeSlot = this.enchantsManager.getInventorySlot(c.sender(), pickAxe);
+                    this.core.debug("Pickaxe slot is: " + pickaxeSlot);
+                    new EnchantGUI(c.sender(), pickAxe, pickaxeSlot).open();
                 }).registerAndBind(core, "enchantmenu", "enchmenu");
 
         Commands.create()
@@ -273,8 +275,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .handler(e -> {
                     e.setCancelled(true);
                     ItemStack pickAxe = e.getItem();
-                    e.getPlayer().setItemInHand(null);
-                    new EnchantGUI(e.getPlayer(), pickAxe).open();
+                    int pickaxeSlot = this.enchantsManager.getInventorySlot(e.getPlayer(), pickAxe);
+                    this.core.debug("Pickaxe slot is: " + pickaxeSlot);
+                    new EnchantGUI(e.getPlayer(), pickAxe, pickaxeSlot).open();
                 }).bindWith(core);
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
@@ -287,13 +290,13 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
         Events.subscribe(BlockBreakEvent.class, EventPriority.LOWEST)
                 .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
                 .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().noneMatch(region -> region.getId().toLowerCase().startsWith("mine")))
-                .filter(e-> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
+                .filter(e -> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
                 .handler(e -> e.setCancelled(true)).bindWith(core);
 
     }
 
     public String getMessage(String key) {
-		return messages.getOrDefault(key.toLowerCase(), Text.colorize("&cMessage " + key + " not found."));
+        return messages.getOrDefault(key.toLowerCase(), Text.colorize("&cMessage " + key + " not found."));
     }
 
     public boolean hasLayerDisabled(Player p) {

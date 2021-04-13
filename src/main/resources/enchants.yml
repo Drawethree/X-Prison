@@ -1,5 +1,6 @@
 open-menu-on-right-click-block: false
 allow-enchants-outside-mine-regions: false
+refund-percentage: 50.0
 enchant_menu:
   title: "&7Enchants Menu"
   empty_slots: STAINED_GLASS_PANE:7
@@ -18,21 +19,42 @@ enchant_menu:
       - "&7&o(( &f&oMiddle-Click&7&o to add 100 levels ))"
       - " "
       - "&c&lYou must have at least Level %pickaxe_level% on your pickaxe"
+  help_item:
+    material: NAME_TAG
+    slot: 15
+    name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - "&6&l* &eLeft-Click &8» &7Buy 1 Level"
+      - " "
+      - "&6&l* &eRight-Click &8» &7Buy 10 Levels"
+      - " "
+      - "&6&l* &eMiddle-Click &8» &7Buy 100 Levels"
+      - " "
+      - "&7&o(( &f&oClick&7&o on the enchant to buy ))"
+  disenchant_item:
+    material: FLINT_AND_STEEL
+    slot: 11
+    name: "&c&lDISENCHANTING"
+    lore:
+      - " "
+      - "&6&l* &eClick to open Disenchant GUI"
+      - " "
 disenchant_menu:
   title: "&7Disenchant Menu"
   empty_slots: STAINED_GLASS_PANE:7
   lines: 6
-  pickaxe_slot: 12
+  pickaxe_slot: 13
   item:
     lore:
       - "&6&l* &eCurrent Level: &f%current_level%"
-      - "&6&l* &eRefunded Price: &f%cost%"
+      - "&6&l* &eRefunded Price: &f%refund%"
       - " "
       - "&7&o(( &f&oLeft-Click&7&o to refund 1 level ))"
       - "&7&o(( &f&oRight-Click&7&o to refund 10 levels ))"
   help_item:
     material: NAME_TAG
-    slot: 14
+    slot: 15
     name: "&6&lHOW IT WORKS?"
     lore:
       - " "
