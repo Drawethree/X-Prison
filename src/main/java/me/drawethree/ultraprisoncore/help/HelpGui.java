@@ -66,7 +66,7 @@ public class HelpGui extends Gui {
 				new AutoSellHelpGui(this.getPlayer()).open();
 			}));
 			//Enchants
-			this.setItem(14, ItemStackBuilder.of(Material.BOOK).name("&e&lEnchants").lore("&7Click to see detailed info", "&7about Enchants feature.").build(() -> {
+			this.setItem(14, ItemStackBuilder.of(CompMaterial.ENCHANTED_BOOK.toItem()).name("&e&lEnchants").lore("&7Click to see detailed info", "&7about Enchants feature.").build(() -> {
 				this.close();
 				new EnchantsHelpGui(this.getPlayer()).open();
 			}));
@@ -91,7 +91,7 @@ public class HelpGui extends Gui {
 				new PrestigesHelpGui(this.getPlayer()).open();
 			}));
 			//PickaxeLevels
-			this.setItem(24, ItemStackBuilder.of(Material.EXP_BOTTLE).name("&e&lPickaxe Levels").lore("&7Click to see detailed info", "&7about Pickaxe leveling feature.").build(() -> {
+			this.setItem(24, ItemStackBuilder.of(CompMaterial.EXPERIENCE_BOTTLE.toItem()).name("&e&lPickaxe Levels").lore("&7Click to see detailed info", "&7about Pickaxe leveling feature.").build(() -> {
 				this.close();
 				new PickaxeLevelsHelpGui(this.getPlayer()).open();
 			}));

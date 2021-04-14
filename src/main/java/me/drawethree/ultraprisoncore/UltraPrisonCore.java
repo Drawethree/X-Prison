@@ -24,6 +24,7 @@ import me.drawethree.ultraprisoncore.utils.gui.ClearDBGui;
 import me.jet315.prisonmines.JetsPrisonMines;
 import me.jet315.prisonmines.JetsPrisonMinesAPI;
 import me.lucko.helper.Commands;
+import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import me.lucko.helper.text.Text;
 import net.milkbowl.vault.economy.Economy;
@@ -31,6 +32,8 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.HashMap;
@@ -149,9 +152,17 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
             }
         }
 
-        this.startEvents();
+        this.registerMainEvents();
         this.registerMainCommand();
         this.startMetrics();
+    }
+
+    private void registerMainEvents() {
+        //Updating of mapping table
+        Events.subscribe(PlayerJoinEvent.class, EventPriority.LOW)
+                .handler(e -> {
+                    this.pluginDatabase.updatePlayerNickname(e.getPlayer());
+                }).bindWith(this);
     }
 
     private void startMetrics() {

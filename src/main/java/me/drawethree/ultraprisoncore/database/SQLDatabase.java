@@ -38,6 +38,7 @@ public abstract class SQLDatabase extends Database {
     public static final String MULTIPLIERS_TABLE_NAME = "UltraPrison_Multipliers";
     public static final String AUTOMINER_TABLE_NAME = "UltraPrison_AutoMiner";
     public static final String GANGS_TABLE_NAME = "UltraPrison_Gangs";
+    public static final String UUID_PLAYERNAME_TABLE_NAME = "UltraPrison_Nicknames";
 
     public static final String RANKS_UUID_COLNAME = "UUID";
     public static final String RANKS_RANK_COLNAME = "id_rank";
@@ -56,6 +57,9 @@ public abstract class SQLDatabase extends Database {
     public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "vote_multiplier";
     public static final String MULTIPLIERS_TIMELEFT_COLNAME = "vote_multiplier_timeleft";
 
+    public static final String UUID_PLAYERNAME_UUID_COLNAME = "UUID";
+    public static final String UUID_PLAYERNAME_NICK_COLNAME = "nickname";
+
     public static final String AUTOMINER_UUID_COLNAME = "UUID";
     public static final String AUTOMINER_TIME_COLNAME = "time";
 
@@ -72,7 +76,8 @@ public abstract class SQLDatabase extends Database {
             BLOCKS_WEEKLY_TABLE_NAME,
             MULTIPLIERS_TABLE_NAME,
             AUTOMINER_TABLE_NAME,
-            GANGS_TABLE_NAME
+            GANGS_TABLE_NAME,
+            UUID_PLAYERNAME_TABLE_NAME
     };
 
     protected UltraPrisonCore plugin;
@@ -123,6 +128,7 @@ public abstract class SQLDatabase extends Database {
             execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
             execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (name))");
+            execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
         });
     }
 
@@ -130,12 +136,17 @@ public abstract class SQLDatabase extends Database {
     public void resetAllData(CommandSender sender) {
         Schedulers.async().run(() -> {
             for (String table : ALL_TABLES) {
-                if (table == null || table.isEmpty()) {
+                if (table == null || table.isEmpty() || table.equals(UUID_PLAYERNAME_TABLE_NAME)) {
                     continue;
                 }
                 execute("TRUNCATE TABLE " + table);
             }
         });
+    }
+
+    @Override
+    public void updatePlayerNickname(OfflinePlayer player) {
+        this.executeAsync("INSERT INTO " + MySQLDatabase.UUID_PLAYERNAME_TABLE_NAME + " VALUES(?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.UUID_PLAYERNAME_NICK_COLNAME + "=?", player.getUniqueId().toString(), player.getName(), player.getName());
     }
 
     @Override

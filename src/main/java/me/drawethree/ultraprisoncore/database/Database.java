@@ -84,4 +84,6 @@ public abstract class Database {
 	public abstract void deleteGang(Gang g);
 
 	public abstract void createGang(Gang g);
+
+	public abstract void updatePlayerNickname(OfflinePlayer player);
 }
