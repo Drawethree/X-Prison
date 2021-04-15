@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.*;
+import me.drawethree.ultraprisoncore.utils.TextUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.text3.Text;
 import org.apache.commons.lang.Validate;
@@ -14,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 @Getter
 public abstract class UltraPrisonEnchantment implements Refundable {
@@ -31,7 +33,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     private String rawName;
     private String name;
     private Material material;
-    private String description;
+    private List<String> description;
     private boolean enabled;
     private int guiSlot;
     private int maxLevel;
@@ -51,7 +53,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.rawName = this.plugin.getConfig().get().getString("enchants." + id + ".RawName");
         this.name = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
         this.material = CompMaterial.fromString(this.plugin.getConfig().get().getString("enchants." + id + ".Material")).toMaterial();
-        this.description = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Description"));
+        this.description = TextUtils.colorize(this.plugin.getConfig().get().getStringList("enchants." + id + ".Description"));
         this.enabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Enabled");
         this.guiSlot = this.plugin.getConfig().get().getInt("enchants." + id + ".InGuiSlot");
         this.maxLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Max");

@@ -108,7 +108,8 @@ enchants:
     Increase-Cost-by: 10
     Max: 500
     Cost: 10
-    Description: '&7&o(( Ability to mine blocks faster ))'
+    Description:
+      - '&7&o(( Ability to mine blocks faster ))'
     Refund:
       Enabled: false
       InGuiSlot: 27
@@ -121,7 +122,8 @@ enchants:
     Increase-Cost-by: 75
     Max: 300
     Cost: 75
-    Description: '&7&o(( Prevents your pickaxe from breaking while mining ))'
+    Description:
+      - '&7&o(( Prevents your pickaxe from breaking while mining ))'
     Refund:
       Enabled: false
       InGuiSlot: 28
@@ -135,7 +137,8 @@ enchants:
     Max: -1
     Chance: 100
     Cost: 75
-    Description: '&7&o(( Ability to receive more blocks while mining ))'
+    Description:
+      - '&7&o(( Ability to receive more blocks while mining ))'
     Refund:
       Enabled: false
       InGuiSlot: 29
@@ -149,7 +152,8 @@ enchants:
     Max: 5
     Chance: 5
     Cost: 2500
-    Description: '&7&o(( Ability to swing your pickaxe faster while mining ))'
+    Description:
+      - '&7&o(( Ability to swing your pickaxe faster while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 30
@@ -162,7 +166,8 @@ enchants:
     Increase-Cost-by: 10000
     Max: 2
     Cost: 10000
-    Description: '&7&o(( Ability to move faster while holding your pickaxe ))'
+    Description:
+      - '&7&o(( Ability to move faster while holding your pickaxe ))'
     Refund:
       Enabled: true
       InGuiSlot: 31
@@ -175,7 +180,8 @@ enchants:
     Increase-Cost-by: 5000
     Max: 5
     Cost: 5000
-    Description: '&7&o(( Ability to jump higher while holding your pickaxe ))'
+    Description:
+      - '&7&o(( Ability to jump higher while holding your pickaxe ))'
     Refund:
       Enabled: true
       InGuiSlot: 32
@@ -188,7 +194,8 @@ enchants:
     Increase-Cost-by: 0
     Max: 1
     Cost: 10000
-    Description: '&7&o(( Ability to see in the dark while mining ))'
+    Description:
+      - '&7&o(( Ability to see in the dark while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 33
@@ -202,7 +209,8 @@ enchants:
     Max: 250
     Chance: 9.0E-5
     Cost: 350
-    Description: '&7&o(( Ability to receive x2 Tokens And Money for short time ))'
+    Description:
+      - '&7&o(( Ability to receive x2 Tokens And Money for short time ))'
     Refund:
       Enabled: true
       InGuiSlot: 34
@@ -217,7 +225,8 @@ enchants:
     Max: 500
     Chance: 0.2
     Cost: 125
-    Description: '&7&o(( Explodes nearby blocks while mining ))'
+    Description:
+      - '&7&o(( Explodes nearby blocks while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 35
@@ -231,7 +240,8 @@ enchants:
     Increase-Cost-by: 200
     Max: 500
     Cost: 200
-    Description: '&7&o(( Ability to break full layer of your mine while mining))'
+    Description:
+      - '&7&o(( Ability to break full layer of your mine while mining))'
     Refund:
       Enabled: true
       InGuiSlot: 36
@@ -248,7 +258,8 @@ enchants:
     Min-Money: 1000000000000
     Cost: 25
     Messages-Enabled: true
-    Description: '&7&o(( Chance to give to everyone online money while mining ))'
+    Description:
+      - '&7&o(( Chance to give to everyone online money while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 37
@@ -264,7 +275,8 @@ enchants:
     Max-Money: 5000000000000
     Min-Money: 2500000000000
     Cost: 35
-    Description: '&7&o(( Ability to receive more money while mining ))'
+    Description:
+      - '&7&o(( Ability to receive more money while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 38
@@ -281,7 +293,8 @@ enchants:
     Min-Tokens: 5000
     Cost: 25
     Messages-Enabled: true
-    Description: '&7&o(( Chance to give to everyone online tokens while mining ))'
+    Description:
+      - '&7&o(( Chance to give to everyone online tokens while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 39
@@ -297,7 +310,8 @@ enchants:
     Max-Tokens: 75
     Min-Tokens: 35
     Cost: 12
-    Description: '&7&o(( Ability to gain more tokens while mining ))'
+    Description:
+      - '&7&o(( Ability to gain more tokens while mining ))'
     Refund:
       Enabled: true
       InGuiSlot: 40
@@ -311,7 +325,8 @@ enchants:
     Max: 250
     Chance: 9.0E-5
     Cost: 350
-    Description: '&7&o(( Ability to find crate keys while mining ))'
+    Description:
+      - '&7&o(( Ability to find crate keys while mining ))'
     Commands:
       - cc give physical Coal 1 %player%
       - cc give physical Iron 1 %player%
@@ -334,7 +349,8 @@ enchants:
     Increase-Cost-by: 175
     Max: 500
     Cost: 175
-    Description: '&7&o(( Ability to find prestige levels while mining. ))'
+    Description:
+      - '&7&o(( Ability to find prestige levels while mining. ))'
     Refund:
       Enabled: true
       InGuiSlot: 42
@@ -349,7 +365,8 @@ enchants:
     Max: 750
     Chance: 5.0E-6
     Cost: 225
-    Description: '&7&o(( Ability to give everyone global boosters while mining ))'
+    Description:
+      - '&7&o(( Ability to give everyone global boosters while mining ))'
     Commands:
       - tempGlobalMultiplier 0.1 5 minutes
       - tempGlobalMultiplier 0.09 5 minutes
@@ -374,7 +391,8 @@ enchants:
     Max: 250
     Chance: 9.0E-5
     Cost: 350
-    Description: '&7&o(( Ability to give everyone crate keys while mining ))'
+    Description:
+      - '&7&o(( Ability to give everyone crate keys while mining ))'
     Pickaxe-Level-Required: 1
     Commands:
       - cc giveall physical Token 1
@@ -395,7 +413,8 @@ enchants:
     Max: 1
     Chance: 1.0
     Cost: 1000
-    Description: '&7&o(( Ability to sell all items while mining ))'
+    Description:
+      - '&7&o(( Ability to sell all items while mining ))'
     Pickaxe-Level-Required: 1
     Refund:
       Enabled: true
@@ -410,7 +429,8 @@ enchants:
     Max: 250
     Chance: 9.0E-5
     Cost: 5000
-    Description: '&7&o(( Ability to find store vouchers while mining ))'
+    Description:
+      - '&7&o(( Ability to find store vouchers while mining ))'
     Pickaxe-Level-Required: 1
     Refund:
       Enabled: true
