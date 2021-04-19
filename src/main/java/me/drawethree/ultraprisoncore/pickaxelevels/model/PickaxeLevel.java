@@ -1,6 +1,5 @@
 package me.drawethree.ultraprisoncore.pickaxelevels.model;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lucko.helper.Schedulers;
@@ -31,9 +30,9 @@ public class PickaxeLevel {
 	}
 
 	public String getDisplayName(Player p) {
-		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+		/*if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			return PlaceholderAPI.replacePlaceholders(p, this.displayName).replace("%player%", p.getName());
-		}
+		}*/
 		return this.displayName.replace("%player%", p.getName());
 	}
 }

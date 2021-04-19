@@ -20,7 +20,8 @@ enchant_menu:
       - " "
       - "&c&lYou must have at least Level %pickaxe_level% on your pickaxe"
   help_item:
-    material: NAME_TAG
+    material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2YzY2E0ZjdjOTJkZGUzYTc3ZWM1MTBhNzRiYThjMmU4ZDBlYzdiODBmMGUzNDhjYzZkZGRkNmI0NThiZCJ9fX0=
     slot: 15
     name: "&6&lHOW IT WORKS?"
     lore:
@@ -33,7 +34,8 @@ enchant_menu:
       - " "
       - "&7&o(( &f&oClick&7&o on the enchant to buy ))"
   disenchant_item:
-    material: FLINT_AND_STEEL
+    material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTg5NTBkMWEwYjhjY2YwNjNlNzUxOWZlMzY5Y2FkMTVjY2UzMjA1NmZhNDcyYTk5YWEzMGI1ZmI0NDhmZjYxNCJ9fX0=
     slot: 11
     name: "&c&lDISENCHANTING"
     lore:
@@ -53,7 +55,8 @@ disenchant_menu:
       - "&7&o(( &f&oLeft-Click&7&o to refund 1 level ))"
       - "&7&o(( &f&oRight-Click&7&o to refund 10 levels ))"
   help_item:
-    material: NAME_TAG
+    material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2YzY2E0ZjdjOTJkZGUzYTc3ZWM1MTBhNzRiYThjMmU4ZDBlYzdiODBmMGUzNDhjYzZkZGRkNmI0NThiZCJ9fX0=
     slot: 15
     name: "&6&lHOW IT WORKS?"
     lore:
@@ -102,7 +105,8 @@ enchants:
   '1':
     RawName: "efficiency"
     Name: '&aEfficiency'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 27
     Increase-Cost-by: 10
@@ -116,7 +120,8 @@ enchants:
   '2':
     RawName: "unbreaking"
     Name: '&bUnbreaking'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 28
     Increase-Cost-by: 75
@@ -130,7 +135,8 @@ enchants:
   '3':
     RawName: "fortune"
     Name: '&cFortune'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 29
     Increase-Cost-by: 75
@@ -145,7 +151,8 @@ enchants:
   '4':
     RawName: "haste"
     Name: '&dHaste'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 30
     Increase-Cost-by: 2500
@@ -160,7 +167,8 @@ enchants:
   '5':
     RawName: "speed"
     Name: '&aSpeed'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 31
     Increase-Cost-by: 10000
@@ -174,7 +182,8 @@ enchants:
   '6':
     RawName: "jumpboost"
     Name: '&bJump Boost'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 32
     Increase-Cost-by: 5000
@@ -188,7 +197,8 @@ enchants:
   '7':
     RawName: "nightvision"
     Name: '&cNight Vision'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 33
     Increase-Cost-by: 0
@@ -202,7 +212,8 @@ enchants:
   '8':
     RawName: "luckybooster"
     Name: '&cLucky Booster'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 34
     Increase-Cost-by: 350
@@ -217,7 +228,8 @@ enchants:
   '9':
     RawName: "explosive"
     Name: '&aExplosive'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 35
     Increase-Cost-by: 125
@@ -233,7 +245,8 @@ enchants:
   '10':
     RawName: "layer"
     Name: '&bLayer'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     Chance: 9.0E-5
     InGuiSlot: 36
@@ -248,7 +261,8 @@ enchants:
   '11':
     RawName: "charity"
     Name: '&cCharity'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 37
     Increase-Cost-by: 25
@@ -266,7 +280,8 @@ enchants:
   '12':
     RawName: "salary"
     Name: '&dSalary'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 38
     Increase-Cost-by: 35
@@ -283,7 +298,8 @@ enchants:
   '13':
     RawName: "blessing"
     Name: '&eBlessing'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 39
     Increase-Cost-by: 25
@@ -301,7 +317,8 @@ enchants:
   '14':
     RawName: "tokenator"
     Name: '&aTokenator'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 40
     Increase-Cost-by: 6
@@ -318,7 +335,8 @@ enchants:
   '15':
     RawName: "keyfinder"
     Name: '&bKey Finder'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 41
     Increase-Cost-by: 350
@@ -341,7 +359,8 @@ enchants:
   '16':
     RawName: "prestigefinder"
     Name: '&aPrestige Finder'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     Min-Levels: 1
     Max-Levels: 10
@@ -358,7 +377,8 @@ enchants:
   '17':
     RawName: "blockbooster"
     Name: '&dBlock Booster'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 43
     Increase-Cost-by: 225
@@ -384,7 +404,8 @@ enchants:
   '18':
     RawName: "keyalls"
     Name: '&cKeyalls'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 44
     Increase-Cost-by: 350
@@ -406,7 +427,8 @@ enchants:
   '19':
     RawName: "autosell"
     Name: '&eAutosell'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 45
     Increase-Cost-by: 0
@@ -422,7 +444,8 @@ enchants:
   '20':
     RawName: "voucher"
     Name: '&bVoucher Finder'
-    Material: BOOK
+    Material: PLAYER_HEAD
+    Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
     Enabled: true
     InGuiSlot: 46
     Increase-Cost-by: 5000
