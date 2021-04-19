@@ -32,6 +32,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     protected final int id;
     private String rawName;
     private String name;
+    private String base64;
     private Material material;
     private List<String> description;
     private boolean enabled;
@@ -61,6 +62,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
         this.requiredPickaxeLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Pickaxe-Level-Required");
         this.messagesEnabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Messages-Enabled", true);
+        this.base64 = this.plugin.getConfig().get().getString("enchants." + id + ".Base64", null);
     }
 
     public abstract String getAuthor();

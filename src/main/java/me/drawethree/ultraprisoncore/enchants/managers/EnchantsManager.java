@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
+import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -418,6 +419,11 @@ public class EnchantsManager {
 	public Item getGuiItem(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
 		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getMaterial());
+
+		if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
+			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
+		}
+
 		builder.name(enchantment.getName());
 		builder.lore(translateLore(enchantment, ENCHANT_GUI_ITEM_LORE, currentLevel));
 
