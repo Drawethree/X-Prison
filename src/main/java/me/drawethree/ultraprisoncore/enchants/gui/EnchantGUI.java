@@ -2,15 +2,20 @@ package me.drawethree.ultraprisoncore.enchants.gui;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class EnchantGUI extends Gui {
@@ -44,6 +49,13 @@ public class EnchantGUI extends Gui {
 
         this.pickAxe = pickAxe;
         this.pickaxePlayerInventorySlot = pickaxePlayerInventorySlot;
+
+        Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
+                .filter(e -> e.getInventory().equals(this.getHandle()))
+                .handler(e -> {
+                    UltraPrisonCore.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(),this.pickAxe);
+                    UltraPrisonCore.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(),this.pickAxe);
+                }).bindWith(this);
     }
 
 

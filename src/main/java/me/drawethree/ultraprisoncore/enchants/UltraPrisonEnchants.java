@@ -22,11 +22,13 @@ import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
@@ -40,7 +42,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     @Getter
     private static UltraPrisonEnchants instance;
-    private final HashMap<UUID, ItemStack> currentPickaxes = new HashMap<>();
 
     @Getter
     private UltraPrisonEnchantsAPI api;
@@ -102,7 +103,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
         this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();
 
-        Schedulers.async().runRepeating(() -> {
+        /*Schedulers.async().runRepeating(() -> {
             Players.all().stream().forEach(player -> {
                 ItemStack inHand = player.getItemInHand();
                 ItemStack lastEquipped = currentPickaxes.get(player.getUniqueId());
@@ -129,7 +130,8 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                     }
                 }
             });
-        }, 20, 20);
+        }, 20, 20);*/
+
         this.registerCommands();
         this.registerEvents();
     }
@@ -292,6 +294,21 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().noneMatch(region -> region.getId().toLowerCase().startsWith("mine")))
                 .filter(e -> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
                 .handler(e -> e.setCancelled(true)).bindWith(core);
+        Events.subscribe(PlayerItemHeldEvent.class, EventPriority.HIGHEST)
+                .handler(e-> {
+
+                    ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
+                    ItemStack previousItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
+
+                    if (previousItem != null && previousItem.getType() == Material.DIAMOND_PICKAXE) {
+                        this.enchantsManager.handlePickaxeUnequip(e.getPlayer(),previousItem);
+                    }
+
+                    if (newItem != null && newItem.getType() == Material.DIAMOND_PICKAXE) {
+                        this.enchantsManager.handlePickaxeEquip(e.getPlayer(),newItem);
+                    }
+
+                }).bindWith(core);
 
     }
 
