@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
 import me.drawethree.ultraprisoncore.gangs.gui.DisbandGangAdminGUI;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.utils.MapUtil;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
@@ -19,9 +20,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class GangsManager {
 
@@ -45,7 +46,7 @@ public class GangsManager {
 
     private boolean updating;
     private boolean enableColorCodes;
-    private List<Gang> topGangs;
+	private Map<Gang, BigInteger> topGangs;
 
     private Task task;
 
@@ -53,7 +54,7 @@ public class GangsManager {
         this.plugin = plugin;
         this.pendingInvites = new HashMap<>(25);
         this.gangChatEnabledPlayers = new ArrayList<>(50);
-        this.topGangs = new ArrayList<>();
+		this.topGangs = new HashMap<>();
 
         this.reloadConfig();
 
@@ -273,7 +274,7 @@ public class GangsManager {
         for (String s : this.gangInfoFormat) {
             returnList.add(s
                     .replace("%gang_top%", String.format("%,d", this.getGangTopPosition(g)))
-                    .replace("%gang_value%", String.format("%,d", g.getValue()))
+					.replace("%gang_value%", String.format("%,d", this.topGangs.getOrDefault(g, BigInteger.ZERO)))
                     .replace("%gang%", Text.colorize(g.getName()))
                     .replace("%gang_owner%", g.getOwnerOffline().getName())
                     .replace("%gang_members%", StringUtils.join(g.getMembersOffline().stream().map(OfflinePlayer::getName).toArray(), ", ")));
@@ -380,17 +381,41 @@ public class GangsManager {
 
 
     public int getGangTopPosition(Gang gang) {
-        if (!this.topGangs.contains(gang)) {
+		if (!this.topGangs.containsKey(gang)) {
             return -1;
         }
-        return this.topGangs.indexOf(gang) + 1;
+
+		int index = 0;
+
+		for (Gang g : this.topGangs.keySet()) {
+			if (g == gang) {
+				return index + 1;
+			}
+			index++;
+		}
+		return -1;
     }
 
     private void updateTop10() {
         this.updating = true;
         task = Schedulers.async().runRepeating(() -> {
             this.updating = true;
-            this.topGangs = this.gangs.values().stream().sorted(Comparator.comparingInt(Gang::getValue).reversed()).collect(Collectors.toList());
+			this.topGangs = new HashMap<>();
+
+			for (Gang g : this.gangs.values()) {
+				BigInteger blocksBroken = BigInteger.ZERO;
+				for (OfflinePlayer p : g.getMembersOffline()) {
+					long pBlocks = this.plugin.getCore().getTokens().getTokensManager().getPlayerBrokenBlocks(p);
+					blocksBroken = blocksBroken.add(BigInteger.valueOf(pBlocks));
+				}
+				blocksBroken = blocksBroken.add(BigInteger.valueOf(this.plugin.getCore().getTokens().getTokensManager().getPlayerTokens(g.getOwnerOffline())));
+				topGangs.put(g, blocksBroken);
+			}
+
+			this.topGangs = MapUtil.sortByValue(topGangs);
+
+
+
             this.updating = false;
         }, this.gangUpdateDelay, TimeUnit.MINUTES, this.gangUpdateDelay, TimeUnit.MINUTES);
     }
@@ -428,10 +453,11 @@ public class GangsManager {
         for (String s : this.gangTopFormat) {
             if (s.startsWith("{FOR_EACH_GANG}")) {
                 String rawContent = s.replace("{FOR_EACH_GANG} ", "");
+				Iterator<Gang> gangIterator = this.topGangs.keySet().iterator();
                 for (int i = 0; i < 10; i++) {
                     try {
-                        Gang gang = this.topGangs.get(i);
-                        sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%gang%", Text.colorize(gang.getName())).replace("%value%", String.valueOf(gang.getValue()))));
+						Gang gang = gangIterator.next();
+						sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%gang%", Text.colorize(gang.getName())).replace("%value%", String.format("%,d", this.topGangs.get(gang)))));
                     } catch (Exception e) {
                         break;
                     }

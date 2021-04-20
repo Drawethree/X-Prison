@@ -1,5 +1,7 @@
 package me.drawethree.ultraprisoncore.ranks.manager;
 
+import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerPrestigeEvent;
+import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerRankUpEvent;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
@@ -295,6 +297,15 @@ public class RankManager {
             amountNeeded += toBuy.getCost();
         }
 
+		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(p, currentRank, toBuy);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.");
+			return false;
+		}
+
         this.plugin.getCore().getEconomy().withdrawPlayer(p, amountNeeded);
 
         for (int i = currentRank.getId() + 1; i <= toBuy.getId(); i++) {
@@ -326,6 +337,15 @@ public class RankManager {
             return false;
         }
 
+		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(p, currentRank, toBuy);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.");
+			return false;
+		}
+
         this.plugin.getCore().getEconomy().withdrawPlayer(p, toBuy.getCost());
         toBuy.runCommands(p);
         this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
@@ -352,6 +372,15 @@ public class RankManager {
             p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
             return false;
         }
+
+		UltraPrisonPlayerPrestigeEvent event = new UltraPrisonPlayerPrestigeEvent(p, currentPrestige, toBuy);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.");
+			return false;
+		}
 
         doPrestige(p, toBuy);
 
@@ -425,6 +454,8 @@ public class RankManager {
 
         Prestige startPrestige = this.getPlayerPrestige(p);
 
+		Prestige currentPrestige = startPrestige;
+
         Prestige nextPrestige = this.getNextPrestige(startPrestige);
 
         if (!this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
@@ -435,7 +466,18 @@ public class RankManager {
         p.sendMessage(this.plugin.getMessage("max_prestige_started"));
 
         while (!isMaxPrestige(p) && isMaxRank(p) && this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
+
+			UltraPrisonPlayerPrestigeEvent event = new UltraPrisonPlayerPrestigeEvent(p, currentPrestige, nextPrestige);
+
+			Events.callSync(event);
+
+			if (event.isCancelled()) {
+				this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.");
+				continue;
+			}
+
             doPrestige(p, nextPrestige);
+			currentPrestige = nextPrestige;
             nextPrestige = this.getNextPrestige(nextPrestige);
         }
 
@@ -549,6 +591,15 @@ public class RankManager {
     public boolean setRank(Player target, Rank rank, CommandSender sender) {
 
         Rank currentRank = this.getPlayerRank(target);
+
+		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(target, currentRank, rank);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.");
+			return false;
+		}
 
         rank.runCommands(target);
 
