@@ -62,7 +62,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     private String inventoryFullChat;
 
 
-    private CooldownMap<Player> inventoryFullCooldown = CooldownMap.create(Cooldown.of(2,TimeUnit.SECONDS));
+    private CooldownMap<Player> inventoryFullCooldown = CooldownMap.create(Cooldown.of(2, TimeUnit.SECONDS));
 
     public UltraPrisonAutoSell(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
@@ -351,7 +351,6 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
                             regions = new HashSet<>();
                             regions.add(optRegion.get());
-
                         } else {
                             regions = WorldGuardWrapper.getInstance().getRegions(c.sender().getLocation());
                         }
@@ -388,22 +387,26 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                     totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
                                 }
 
-                                core.getEconomy().depositPlayer(c.sender(), totalPrice);
+                                UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(c.sender(), autoSellRegion, totalPrice);
 
-                                if (totalPrice > 0.0) {
-                                    c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalPrice)));
+                                Events.callSync(event);
+
+                                if (event.isCancelled()) {
+                                    this.core.debug("UltraPrisonSellAllEvent was cancelled.");
+                                    return;
                                 }
 
-                                //Call post autosell
-                                UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(c.sender(), autoSellRegion);
-                                Events.call(event);
+                                core.getEconomy().depositPlayer(c.sender(), event.getSellPrice());
+
+                                if (event.getSellPrice() > 0.0) {
+                                    c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", event.getSellPrice())));
+                                }
+
                                 break;
                             }
                         }
                     }
                 }).registerAndBind(core, "sellall");
-
-
     }
 
     private void toggleAutoSell(Player player) {

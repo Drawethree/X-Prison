@@ -12,22 +12,32 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 
 @Getter
-public class UltraPrisonSellAllEvent extends Event {
+public class UltraPrisonSellAllEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
     private final AutoSellRegion region;
 
+    @Getter
+    @Setter
+    private double sellPrice;
+
+    @Getter
+    @Setter
+    private boolean cancelled;
+
     /**
      * Called when mined blocks are automatically sold
      *
      * @param player         Player
      * @param reg            AutoSellRegion where block was mined
+     * @param sellPrice      Amount what will player receive after selling
      */
-    public UltraPrisonSellAllEvent(Player player, AutoSellRegion reg) {
+    public UltraPrisonSellAllEvent(Player player, AutoSellRegion reg, double sellPrice) {
         this.player = player;
         this.region = reg;
+        this.sellPrice = sellPrice;
     }
 
     @Override

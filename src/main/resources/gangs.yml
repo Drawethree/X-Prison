@@ -2,6 +2,7 @@ max-gang-members: 5
 gang-top-update: 1
 max-gang-name-length: 10
 color-codes-in-gang-name: true
+gang-chat-priority: LOW
 messages:
   no-permission: "&e&lGANGS &8» &cYou do not have permission!"
   gang-already-exists: "&e&lGANGS &8» &cGang with that name or similar name already exists!"
@@ -12,7 +13,7 @@ messages:
   gang-cant-invite: "&e&lGANGS &8» &cThat player is already in some gang!"
   gang-invite-success: "&e&lGANGS &8» &aYou have successfully invited player %player% to join your gang!"
   gang-invite-pending: "&e&lGANGS &8» &cThat player has already some gang invite pending!"
-  gang-invite-received: "&e&lGANGS &8» &aYou have been invited to join %gang% gang! Type /gang accept %gang% to join within next 5 minutes."
+  gang-invite-received: "&e&lGANGS &8» &aYou have been invited to join %gang% &agang! Type &e/gang accept &ato join within next &e5 minutes&a."
   gang-player-left: "&e&lGANGS &8» &cPlayer %player% has left your gang."
   gang-player-joined: "&e&lGANGS &8» &aPlayer %player% has joined your gang."
   gang-joined: "&e&lGANGS &8» &aYou have joined Gang %gang%"
@@ -35,6 +36,7 @@ messages:
   gang-full: "&e&lGANGS &8» &cYour gang is full!"
   gang-chat-off: "&e&lGANGS &8» &7You have toggled gang chat &cOFF"
   gang-chat-on: "&e&lGANGS &8» &7You have toggled gang chat &aON"
+  gang-chat-format: "&e&l[GC] &f%player% &8» &f%message%"
   gang-top-updating: "&e&lGANGS &8» &cPlease wait, gang top is updating!"
   gang-name-long: "&e&lGANGS &8» &cGang name must contain max 10 characters."
   gang-name-colors: "&e&lGANGS &8» &cGang name must not contain colors."

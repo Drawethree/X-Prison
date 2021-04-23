@@ -43,6 +43,8 @@ public class GangsManager {
     private List<String> gangAdminHelpMenu;
     private List<String> gangHelpMenu;
 
+    private EventPriority gangChatPriority;
+
     private boolean updating;
     private boolean enableColorCodes;
 	private List<Gang> topGangs;
@@ -59,22 +61,23 @@ public class GangsManager {
         this.loadGangs();
         this.updateTop10();
 
-        Events.subscribe(AsyncPlayerChatEvent.class, EventPriority.HIGHEST)
+        Events.subscribe(AsyncPlayerChatEvent.class, this.gangChatPriority)
                 .filter(e -> this.hasGangChatEnabled(e.getPlayer()))
                 .handler(e -> {
 
                     Optional<Gang> gangOptional = this.getPlayerGang(e.getPlayer());
+
                     if (!gangOptional.isPresent()) {
                         return;
                     }
 
                     e.setCancelled(true);
+                    e.getRecipients().clear();
 
                     Gang gang = gangOptional.get();
 
-                    e.getRecipients().removeIf(player -> !gang.containsPlayer(player));
-                    for (Player p : e.getRecipients()) {
-                        p.sendMessage(String.format(Text.colorize("&e&l[Gang] &f%s &8» &f%s"), e.getPlayer().getDisplayName(), e.getMessage()));
+                    for (Player p : gang.getOnlinePlayers()) {
+                        p.sendMessage(this.plugin.getMessage("gang-chat-format").replace("%player%", e.getPlayer().getName()).replace("%message%", e.getMessage()).replace("%gang%", gang.getName()));
                     }
                 }).bindWith(this.plugin.getCore());
     }
@@ -98,6 +101,7 @@ public class GangsManager {
         this.maxGangMembers = this.plugin.getConfig().get().getInt("max-gang-members");
         this.maxGangNameLength = this.plugin.getConfig().get().getInt("max-gang-name-length");
         this.enableColorCodes = this.plugin.getConfig().get().getBoolean("color-codes-in-gang-name");
+        this.gangChatPriority = EventPriority.valueOf(this.plugin.getConfig().get().getString("gang-chat-priority"));
     }
 
     public void saveDataOnDisable() {
