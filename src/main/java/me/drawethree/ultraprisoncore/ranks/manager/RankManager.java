@@ -275,19 +275,25 @@ public class RankManager {
 
 		Rank currentRank = this.getPlayerRank(p);
 
-		Rank toBuy = getNextRank(currentRank.getId());
+		int finalRankId = currentRank.getId();
 
-		if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-			p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+		for (int i = currentRank.getId(); i < maxRank.getId(); i++) {
+			double cost = this.getRankById(i + 1).getCost();
+			if (!this.plugin.getCore().getEconomy().has(p, cost)) {
+				break;
+			}
+			this.plugin.getCore().getEconomy().withdrawPlayer(p, cost);
+			finalRankId = i + 1;
+		}
+
+		if (finalRankId == currentRank.getId()) {
+			p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", this.getNextRank(currentRank.getId()).getCost())));
 			return false;
 		}
 
-		while (getNextRank(toBuy.getId()) != null && this.plugin.getCore().getEconomy().has(p, getNextRank(toBuy.getId()).getCost())) {
-			this.plugin.getCore().getEconomy().withdrawPlayer(p, getNextRank(toBuy.getId()).getCost());
-			toBuy = this.getNextRank(toBuy.getId());
-		}
+		Rank finalRank = this.getRankById(finalRankId);
 
-		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(p, currentRank, toBuy);
+		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(p, currentRank, finalRank);
 
 		Events.callSync(event);
 
@@ -296,12 +302,12 @@ public class RankManager {
 			return false;
 		}
 
-		for (int i = currentRank.getId() + 1; i <= toBuy.getId(); i++) {
+		for (int i = currentRank.getId() + 1; i <= finalRank.getId(); i++) {
 			this.ranksById.get(i).runCommands(p);
 		}
 
-		this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
-		p.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
+		this.onlinePlayersRanks.put(p.getUniqueId(), finalRank.getId());
+		p.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", finalRank.getPrefix()));
 		return true;
 	}
 
