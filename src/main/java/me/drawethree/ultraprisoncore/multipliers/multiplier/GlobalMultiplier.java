@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.multipliers.multiplier;
 
+import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 
@@ -9,25 +10,15 @@ public class GlobalMultiplier extends Multiplier {
 
     public GlobalMultiplier(double multiplier, int duration) {
         super(multiplier, duration);
-        if (endTime > Time.nowMillis()) {
-            if (task != null) {
-                task.cancel();
-            }
-            task = Schedulers.async().runLater(() -> {
-                setMultiplier(0.0);
-                setEndTime(0);
-            }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
+        if (this.multiplier > UltraPrisonMultipliers.getInstance().getGlobalMultiMax()) {
+            this.multiplier = UltraPrisonMultipliers.getInstance().getGlobalMultiMax();
         }
-    }
-
-    public GlobalMultiplier(double multiplier, long timeLeft) {
-        super(multiplier, timeLeft);
         if (endTime > Time.nowMillis()) {
             if (task != null) {
                 task.cancel();
             }
             task = Schedulers.async().runLater(() -> {
-                setMultiplier(0.0);
+                setMultiplier(0.0, UltraPrisonMultipliers.getInstance().getGlobalMultiMax());
                 setEndTime(0);
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
         }
@@ -44,7 +35,7 @@ public class GlobalMultiplier extends Multiplier {
                 task.cancel();
             }
             task = Schedulers.async().runLater(() -> {
-                setMultiplier(0.0);
+                setMultiplier(0.0, UltraPrisonMultipliers.getInstance().getGlobalMultiMax());
                 setEndTime(0);
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
         }
@@ -56,9 +47,9 @@ public class GlobalMultiplier extends Multiplier {
 
         this.startTime = System.currentTimeMillis();
 
-		if (this.endTime < this.startTime) {
-			this.endTime = this.startTime;
-		}
+        if (this.endTime < this.startTime) {
+            this.endTime = this.startTime;
+        }
 
         this.endTime += TimeUnit.MINUTES.toMillis(minutes);
 
@@ -67,7 +58,7 @@ public class GlobalMultiplier extends Multiplier {
                 task.cancel();
             }
             task = Schedulers.async().runLater(() -> {
-                setMultiplier(0.0);
+                setMultiplier(0.0, UltraPrisonMultipliers.getInstance().getGlobalMultiMax());
                 setEndTime(0);
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
         }

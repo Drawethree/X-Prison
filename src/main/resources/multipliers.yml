@@ -9,6 +9,9 @@ ranks: {}
  #vip: 0.5
  #default: 0.1
 global-multiplier:
+  max: 10.0
   multiplier: 0.0
   timeLeft: -1
 rank-multiplier-update-time: 5
+player-multiplier:
+  max: 10.0

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class Multiplier {
 
     protected Promise<Void> task;
-    @Setter
+
     protected double multiplier;
 
     protected long startTime;
@@ -71,18 +71,22 @@ public abstract class Multiplier {
 
     public abstract void setDuration(long endTime);
 
-    public void addMultiplier(double amount /*double maxMultiplier*/) {
-       /* if ( (this.multiplier + amount) > maxMultiplier) {
+    public void setMultiplier(double amount, double maxMultiplier) {
+        if ( amount > maxMultiplier) {
+            this.multiplier = maxMultiplier;
+        } else {
+            this.multiplier = amount;
+        }
+    }
+
+    public void addMultiplier(double amount, double maxMultiplier) {
+
+        if ( (this.multiplier + amount) > maxMultiplier) {
             this.multiplier = maxMultiplier;
         } else {
             this.multiplier += amount;
         }
-        */
-        if (this.multiplier + amount > 10000) {
-            this.multiplier = 10000;
-        } else {
-            this.multiplier += amount;
-        }
+
     }
 
     public abstract void addDuration(int minutes);

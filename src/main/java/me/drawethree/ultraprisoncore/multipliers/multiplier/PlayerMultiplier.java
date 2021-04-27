@@ -16,6 +16,10 @@ public class PlayerMultiplier extends Multiplier {
     public PlayerMultiplier(UUID playerUUID, double multiplier, int duration) {
         super(multiplier, duration);
 
+        if (this.multiplier > UltraPrisonMultipliers.getInstance().getPlayerMultiMax()) {
+            this.multiplier = UltraPrisonMultipliers.getInstance().getPlayerMultiMax();
+        }
+
         this.playerUUID = playerUUID;
         if (endTime > Time.nowMillis()) {
             if (task != null) {
@@ -30,6 +34,11 @@ public class PlayerMultiplier extends Multiplier {
 
     public PlayerMultiplier(UUID playerUUID, double multiplier, long timeLeft) {
         super(multiplier, timeLeft);
+
+        if (this.multiplier > UltraPrisonMultipliers.getInstance().getPlayerMultiMax()) {
+            this.multiplier = UltraPrisonMultipliers.getInstance().getPlayerMultiMax();
+        }
+
         this.playerUUID = playerUUID;
 
         if (timeLeft > Time.nowMillis()) {

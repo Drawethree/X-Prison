@@ -57,11 +57,15 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
     private Task rankUpdateTask;
     private int rankMultiplierUpdateTime;
 
+    @Getter
+    private double globalMultiMax;
+    @Getter
+    private double playerMultiMax;
+
     public UltraPrisonMultipliers(UltraPrisonCore UltraPrisonCore) {
         instance = this;
         this.core = UltraPrisonCore;
     }
-
 
 
     private void loadRankMultipliers() {
@@ -107,6 +111,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         this.personalMultipliers = new HashMap<>();
 
         this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
+        this.globalMultiMax = this.getConfig().get().getDouble("global-multiplier.max");
+        this.playerMultiMax = this.getConfig().get().getDouble("player-multiplier.max");
 
         this.loadMessages();
         this.loadRankMultipliers();
@@ -171,7 +177,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         long timeLeft = this.config.get().getLong("global-multiplier.timeLeft");
 
         GLOBAL_MULTIPLIER = new GlobalMultiplier(0.0, 0);
-        GLOBAL_MULTIPLIER.setMultiplier(multi);
+        GLOBAL_MULTIPLIER.setMultiplier(multi,this.globalMultiMax);
 
         if (timeLeft > Time.nowMillis()) {
             GLOBAL_MULTIPLIER.setDuration(timeLeft);
@@ -196,8 +202,6 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
             if (multiplier == null) {
                 multiplier = new PlayerMultiplier(player.getUniqueId(), 0, 0);
             }
-
-            System.out.println(multiplier.toString());
 
             personalMultipliers.put(player.getUniqueId(), multiplier);
 
@@ -239,7 +243,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private void registerCommands() {
         Commands.create()
-				.assertPermission("ultraprison.multipliers.admin")
+                .assertPermission("ultraprison.multipliers.admin")
                 .handler(c -> {
                     if (c.args().size() == 2) {
                         double amount = c.arg(0).parseOrFail(Double.class).doubleValue();
@@ -248,7 +252,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                     }
                 }).registerAndBind(core, "globalmultiplier", "gmulti");
         Commands.create()
-				.assertPermission("ultraprison.multipliers.admin")
+                .assertPermission("ultraprison.multipliers.admin")
                 .handler(c -> {
                     if (c.args().size() == 3) {
                         Player onlinePlayer = Players.getNullable(c.rawArg(0));
@@ -274,7 +278,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
         if (personalMultipliers.containsKey(onlinePlayer.getUniqueId())) {
             PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
-            multiplier.addMultiplier(amount);
+            multiplier.addMultiplier(amount, this.playerMultiMax);
             multiplier.addDuration(minutes);
             personalMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
         } else {
@@ -290,7 +294,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
     private void setupGlobalMultiplier(CommandSender sender, int time, double amount) {
 
-        GLOBAL_MULTIPLIER.addMultiplier(amount);
+        GLOBAL_MULTIPLIER.addMultiplier(amount, this.globalMultiMax);
         GLOBAL_MULTIPLIER.addDuration(time);
         sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
     }
@@ -318,7 +322,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
         for (String perm : permissionToMultiplier.keySet()) {
             if (p.hasPermission(perm)) {
-                toReturn.addMultiplier(permissionToMultiplier.get(perm));
+                toReturn.addMultiplier(permissionToMultiplier.get(perm), this.playerMultiMax);
                 break;
             }
         }
