@@ -285,8 +285,6 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
             personalMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes));
         }
 
-        System.out.println(personalMultipliers.get(onlinePlayer.getUniqueId()).getEndTime());
-
         onlinePlayer.sendMessage(messages.get("personal_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
         sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &ePersonal Multiplier &ato &e%.2f &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));
     }
