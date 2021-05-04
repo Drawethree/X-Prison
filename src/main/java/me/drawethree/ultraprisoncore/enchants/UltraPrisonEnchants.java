@@ -1,7 +1,6 @@
 package me.drawethree.ultraprisoncore.enchants;
 
 import lombok.Getter;
-import lombok.NonNull;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
@@ -15,7 +14,6 @@ import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
@@ -102,36 +100,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
         this.enchantsManager = new EnchantsManager(this);
         this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();
-
-        /*Schedulers.async().runRepeating(() -> {
-            Players.all().stream().forEach(player -> {
-                ItemStack inHand = player.getItemInHand();
-                ItemStack lastEquipped = currentPickaxes.get(player.getUniqueId());
-
-                if (lastEquipped == null && inHand != null && inHand.getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial() && !player.getWorld().getName().equalsIgnoreCase("pvp")) {
-                    currentPickaxes.put(player.getUniqueId(), inHand);
-                    Schedulers.sync().run(() -> this.enchantsManager.handlePickaxeEquip(player, inHand));
-                    return;
-                }
-
-                if (lastEquipped != null) {
-                    if (inHand != null && inHand.getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
-                        //Check if they are not the same
-                        if (!areItemsSame(lastEquipped, inHand)) {
-                            Schedulers.sync().run(() -> {
-                                this.enchantsManager.handlePickaxeUnequip(player, lastEquipped);
-                                this.enchantsManager.handlePickaxeEquip(player, inHand);
-                            });
-                            currentPickaxes.put(player.getUniqueId(), inHand);
-                        }
-                    } else if (inHand == null || inHand.getType() != CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
-                        Schedulers.sync().run(() -> this.enchantsManager.handlePickaxeUnequip(player, lastEquipped));
-                        currentPickaxes.remove(player.getUniqueId());
-                    }
-                }
-            });
-        }, 20, 20);*/
-
         this.registerCommands();
         this.registerEvents();
     }
@@ -323,25 +291,4 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     public boolean hasExplosiveDisabled(Player p) {
         return disabledExplosive.contains(p.getUniqueId());
     }
-
-    private boolean areItemsSame(@NonNull ItemStack last, @NonNull ItemStack current) {
-        List<String> loreLast = last.getItemMeta().getLore();
-        List<String> loreCurrent = current.getItemMeta().getLore();
-
-        if (loreLast == null || loreCurrent == null) {
-            return false;
-        }
-
-        for (int i = 0; i < 3; i++) {
-            try {
-                loreLast.remove(0);
-                loreCurrent.remove(0);
-            } catch (Exception e) {
-                break;
-            }
-        }
-
-        return loreLast.equals(loreCurrent);
-    }
-
 }

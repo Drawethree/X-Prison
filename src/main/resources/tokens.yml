@@ -18,11 +18,6 @@ messages:
   tokens_received_console: "&e&lTOKENS &8» &7You have received &f%tokens% tokens&7."
   not_a_number: "&c%input% is not a number!"
   player_not_online: "&cPlayer &e%player% &cis not online!"
-  top_format_tokens: "&f&l#%position%. &e%player% &8» &7%amount% tokens"
-  top_format_blocks: "&f&l#%position%. &e%player% &8» &7%amount% blocks"
-  top_format_blocks_your: "&eYour Position &f#%position% &8» &7%blocks% blocks"
-  top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
-  top_spacer_line_bottom: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   top_updating: "&c&lLeaderboard is currently updating..."
   top_weekly_reset: "&7&oTime Left: %time%"
   token_message_disabled: "&e&lTOKENS &8» &7Messages &c&lOFF"
@@ -41,3 +36,18 @@ tokens:
 next-reset-weekly: 0
 display-token-messages: true
 top_update_interval: 10
+tokens-top-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lTOKENS TOP"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%tokens% Tokens"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+blocks-top-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lBLOCKS TOP"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+blocks-top-weekly-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lBLOCKS TOP WEEKLY"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"

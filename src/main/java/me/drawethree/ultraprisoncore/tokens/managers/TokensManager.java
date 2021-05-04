@@ -33,13 +33,11 @@ import java.util.concurrent.TimeUnit;
 public class TokensManager {
 
 
-	private String SPACER_LINE_BOTTOM;
 	private UltraPrisonTokens plugin;
 
-	private String SPACER_LINE;
-	private String TOP_FORMAT_BLOCKS;
-	private String TOP_FORMAT_BLOCKS_YOUR;
-	private String TOP_FORMAT_TOKENS;
+	private List<String> tokensTopFormat;
+	private List<String> blocksTopFormat;
+	private List<String> blocksTopFormatWeekly;
 
 	private HashMap<UUID, Long> tokensCache = new HashMap<>();
 	private HashMap<UUID, Long> blocksCache = new HashMap<>();
@@ -66,11 +64,9 @@ public class TokensManager {
 
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
-		this.SPACER_LINE = plugin.getMessage("top_spacer_line");
-		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
-		this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
-		this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
-		this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
+		this.tokensTopFormat = this.plugin.getConfig().get().getStringList("tokens-top-format");
+		this.blocksTopFormat = this.plugin.getConfig().get().getStringList("blocks-top-format");
+		this.blocksTopFormatWeekly = this.plugin.getConfig().get().getStringList("blocks-top-weekly-format");
 		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
 		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
@@ -503,119 +499,104 @@ public class TokensManager {
 
 	private void updateTokensTop() {
 		top10Tokens = new LinkedHashMap<>();
-		this.plugin.getCore().getLogger().info("Starting updating TokensTop");
+		this.plugin.getCore().debug("Starting updating TokensTop");
 		this.top10Tokens = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Tokens();
-		this.plugin.getCore().getLogger().info("TokensTop updated!");
+		this.plugin.getCore().debug("TokensTop updated!");
 	}
 
 	private void updateBlocksTop() {
 		top10Blocks = new LinkedHashMap<>();
-		this.plugin.getCore().getLogger().info("Starting updating BlocksTop");
+		this.plugin.getCore().debug("Starting updating BlocksTop");
 		this.top10Blocks = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Blocks();
-		this.plugin.getCore().getLogger().info("BlocksTop updated!");
+		this.plugin.getCore().debug("BlocksTop updated!");
 	}
 
 	private void updateBlocksTopWeekly() {
 		top10BlocksWeekly = new LinkedHashMap<>();
-		this.plugin.getCore().getLogger().info("Starting updating BlocksTop - Weekly");
+		this.plugin.getCore().debug("Starting updating BlocksTop - Weekly");
 		this.top10BlocksWeekly = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10BlocksWeekly();
-		this.plugin.getCore().getLogger().info("BlocksTop updated!");
+		this.plugin.getCore().debug("BlocksTop updated!");
 	}
 
 	public void sendTokensTop(CommandSender sender) {
-		Schedulers.async().run(() -> {
-			sender.sendMessage(Text.colorize(SPACER_LINE));
-			if (this.updating) {
-				sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-				return;
-			}
-			for (int i = 0; i < 10; i++) {
-				try {
-					UUID uuid = (UUID) top10Tokens.keySet().toArray()[i];
-					OfflinePlayer player = Players.getOfflineNullable(uuid);
-					String name;
-					if (player.getName() == null) {
-						name = "Unknown Player";
-					} else {
-						name = player.getName();
+		if (this.updating) {
+			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			return;
+		}
+
+		for (String s : this.tokensTopFormat) {
+			if (s.startsWith("{FOR_EACH_PLAYER}")) {
+				String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
+				for (int i = 0; i < 10; i++) {
+					try {
+						UUID uuid = (UUID) top10Tokens.keySet().toArray()[i];
+						OfflinePlayer player = Players.getOfflineNullable(uuid);
+						String name;
+						if (player.getName() == null) {
+							name = "Unknown Player";
+						} else {
+							name = player.getName();
+						}
+						long tokens = top10Tokens.get(uuid);
+						sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens))));
+					} catch (Exception e) {
+						break;
 					}
-					long tokens = top10Tokens.get(uuid);
-					sender.sendMessage(TOP_FORMAT_TOKENS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", tokens)));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					break;
 				}
+			} else {
+				sender.sendMessage(me.lucko.helper.text3.Text.colorize(s));
 			}
-			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-		});
+		}
 	}
 
 	public void sendBlocksTop(CommandSender sender) {
-		Schedulers.async().run(() -> {
-			sender.sendMessage(Text.colorize(SPACER_LINE));
-			if (this.updating) {
-				sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE));
-				return;
+		if (this.updating) {
+			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			return;
+		}
+
+		for (String s : this.blocksTopFormat) {
+			if (s.startsWith("{FOR_EACH_PLAYER}")) {
+				sendBlocksTop(sender, s, top10Blocks);
+			} else {
+				sender.sendMessage(Text.colorize(s));
 			}
-			for (int i = 0; i < 10; i++) {
-				try {
-					UUID uuid = (UUID) top10Blocks.keySet().toArray()[i];
-					OfflinePlayer player = Players.getOfflineNullable(uuid);
-					String name;
-					if (player.getName() == null) {
-						name = "Unknown Player";
-					} else {
-						name = player.getName();
-					}
-					long blocks = top10Blocks.get(uuid);
-					sender.sendMessage(TOP_FORMAT_BLOCKS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", blocks)));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					break;
+		}
+	}
+
+	private void sendBlocksTop(CommandSender sender, String s, LinkedHashMap<UUID, Long> top) {
+		String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
+		for (int i = 0; i < 10; i++) {
+			try {
+				UUID uuid = (UUID) top.keySet().toArray()[i];
+				OfflinePlayer player = Players.getOfflineNullable(uuid);
+				String name;
+				if (player.getName() == null) {
+					name = "Unknown Player";
+				} else {
+					name = player.getName();
 				}
+				long blocks = top.get(uuid);
+				sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%blocks%", String.format("%,d", blocks))));
+			} catch (Exception e) {
+				break;
 			}
-			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-		});
+		}
 	}
 
 	public void sendBlocksTopWeekly(CommandSender sender) {
-		Schedulers.async().run(() -> {
-			sender.sendMessage(Text.colorize(SPACER_LINE));
-			sender.sendMessage(plugin.getMessage("top_weekly_reset").replace("%time%", this.getTimeLeftUntilWeeklyReset()));
-			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
+		if (this.updating) {
+			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			return;
+		}
 
-			if (this.updating || top10BlocksWeekly.isEmpty()) {
-				sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-				return;
+		for (String s : this.blocksTopFormatWeekly) {
+			if (s.startsWith("{FOR_EACH_PLAYER}")) {
+				sendBlocksTop(sender, s, top10BlocksWeekly);
+			} else {
+				sender.sendMessage(Text.colorize(s));
 			}
-
-			for (int i = 0; i < 10; i++) {
-				try {
-					UUID uuid = (UUID) top10BlocksWeekly.keySet().toArray()[i];
-					OfflinePlayer player = Players.getOfflineNullable(uuid);
-					String name;
-					if (player.getName() == null) {
-						name = "Unknown Player";
-					} else {
-						name = player.getName();
-					}
-					long blocks = top10BlocksWeekly.get(uuid);
-					sender.sendMessage(TOP_FORMAT_BLOCKS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", blocks)).replace("%blocks%", String.format("%,d", blocks)));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					break;
-				}
-			}
-
-			if (sender instanceof Player) {
-				sender.sendMessage(Text.colorize(SPACER_LINE));
-				Player p = (Player) sender;
-				sender.sendMessage(TOP_FORMAT_BLOCKS_YOUR.replace("%position%", String.format("%,d", this.getBlocksTopWeeklyPosition(p)))
-						.replace("%amount%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId())))
-						.replace("%blocks%", String.format("%,d", top10BlocksWeekly.get(p.getUniqueId()))));
-			}
-			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-		});
+		}
 	}
 
 
@@ -672,7 +653,7 @@ public class TokensManager {
 
 		timeLeft -= seconds * 1000;
 
-		return new StringBuilder().append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").toString();
+		return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
 	}
 
 	public void saveWeeklyReset() {
@@ -681,11 +662,10 @@ public class TokensManager {
 	}
 
 	public void reloadConfig() {
-		this.SPACER_LINE = plugin.getMessage("top_spacer_line");
-		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
-		this.TOP_FORMAT_BLOCKS = plugin.getMessage("top_format_blocks");
-		this.TOP_FORMAT_BLOCKS_YOUR = plugin.getMessage("top_format_blocks_your");
-		this.TOP_FORMAT_TOKENS = plugin.getMessage("top_format_tokens");
+		this.tokensTopFormat = this.plugin.getConfig().get().getStringList("tokens-top-format");
+		this.blocksTopFormat = this.plugin.getConfig().get().getStringList("blocks-top-format");
+		this.blocksTopFormatWeekly = this.plugin.getConfig().get().getStringList("blocks-top-weekly-format");
+
 		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
 		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
 		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");

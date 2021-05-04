@@ -13,7 +13,7 @@ public class GangValueCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang value <add/remove> <gang> <amount>";
+        return ChatColor.RED + "/gang value <add/remove> <gang/player> <amount>";
     }
 
     public GangValueCommand(UltraPrisonGangs plugin) {
