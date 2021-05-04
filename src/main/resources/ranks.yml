@@ -6,9 +6,6 @@ messages:
   not_enough_money_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need &a$%cost%'
   last_prestige: '&e&lPRESTIGE &8» &7You are at the last Prestige and have no more Prestiges.'
   not_last_rank: '&e&lPRESTIGE &8» &7You must be last rank to prestige.'
-  top_format_prestige: "&f&l#%position%. &e%player% &8» &7%prestige% Prestige"
-  top_spacer_line: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
-  top_spacer_line_bottom: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   top_updating: "&c&lLeaderboard is currently updating..."
   rank_set: "&e&lRANKUP &8» &7You have set %player%'s rank to %rank%"
   prestige_set: "&e&lPRESTIGE &8» &7You have set %player%'s prestige to %amount%"
@@ -16,6 +13,11 @@ messages:
   prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
   max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
   max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
+prestige-top-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lPRESTIGE TOP"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%prestige% Prestige"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 reset_rank_after_prestige: false
 prestige_top_update_interval: 10
 unlimited_prestiges:

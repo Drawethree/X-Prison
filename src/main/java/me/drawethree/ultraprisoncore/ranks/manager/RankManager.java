@@ -23,20 +23,18 @@ import java.util.concurrent.TimeUnit;
 
 public class RankManager {
 
-	private LinkedHashMap<Integer, Rank> ranksById;
-	private LinkedHashMap<Long, Prestige> prestigeById;
+	private Map<Integer, Rank> ranksById;
+	private Map<Long, Prestige> prestigeById;
 
-	private HashMap<UUID, Integer> onlinePlayersRanks = new HashMap<>();
-	private HashMap<UUID, Long> onlinePlayersPrestige = new HashMap<>();
+	private Map<UUID, Integer> onlinePlayersRanks = new HashMap<>();
+	private Map<UUID, Long> onlinePlayersPrestige = new HashMap<>();
 
 	private UltraPrisonRankup plugin;
 
 	private Rank maxRank;
 	private Prestige maxPrestige;
 
-	private String SPACER_LINE_BOTTOM;
-	private String SPACER_LINE;
-	private String TOP_FORMAT_PRESTIGE;
+	private List<String> prestigeTopFormat;
 	private boolean updating;
 	private boolean unlimitedPrestiges;
 	private double unlimitedPrestigeCost;
@@ -111,10 +109,7 @@ public class RankManager {
 	}
 
 	public void reload() {
-		this.SPACER_LINE = plugin.getMessage("top_spacer_line");
-		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
-		this.TOP_FORMAT_PRESTIGE = plugin.getMessage("top_format_prestige");
-
+		this.prestigeTopFormat = plugin.getConfig().get().getStringList("prestige-top-format");
 		this.unlimitedPrestiges = plugin.getConfig().get().getBoolean("unlimited_prestiges.enabled");
 		this.unlimitedPrestigeCost = plugin.getConfig().get().getDouble("unlimited_prestiges.prestige_cost");
 		this.unlimitedPrestigePrefix = Text.colorize(plugin.getConfig().get().getString("unlimited_prestiges.prefix"));
@@ -384,31 +379,34 @@ public class RankManager {
 	}
 
 	public void sendPrestigeTop(CommandSender sender) {
-		Schedulers.async().run(() -> {
-			sender.sendMessage(Text.colorize(SPACER_LINE));
-			if (this.updating) {
-				sender.sendMessage(this.plugin.getMessage("top_updating"));
-				sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-				return;
-			}
-			for (int i = 0; i < 10; i++) {
-				try {
-					UUID uuid = (UUID) top10Prestige.keySet().toArray()[i];
-					OfflinePlayer player = Players.getOfflineNullable(uuid);
-					String name;
-					if (player.getName() == null) {
-						name = "Unknown Player";
-					} else {
-						name = player.getName();
+		if (this.updating) {
+			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			return;
+		}
+
+		for (String s : this.prestigeTopFormat) {
+			if (s.startsWith("{FOR_EACH_PLAYER}")) {
+				String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
+				for (int i = 0; i < 10; i++) {
+					try {
+						UUID uuid = (UUID) top10Prestige.keySet().toArray()[i];
+						OfflinePlayer player = Players.getOfflineNullable(uuid);
+						String name;
+						if (player.getName() == null) {
+							name = "Unknown Player";
+						} else {
+							name = player.getName();
+						}
+						long prestige = top10Prestige.get(uuid);
+						sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige))));
+					} catch (Exception e) {
+						break;
 					}
-					long prestige = top10Prestige.get(uuid);
-					sender.sendMessage(TOP_FORMAT_PRESTIGE.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige)));
-				} catch (ArrayIndexOutOfBoundsException e) {
-					break;
 				}
+			} else {
+				sender.sendMessage(me.lucko.helper.text3.Text.colorize(s));
 			}
-			sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
-		});
+		}
 	}
 
 	private void updateTop10() {
