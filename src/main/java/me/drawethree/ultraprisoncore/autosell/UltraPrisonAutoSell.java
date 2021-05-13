@@ -10,6 +10,7 @@ import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.utils.MaterialUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -56,6 +57,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
     private UltraPrisonCore core;
     private boolean enabled;
     private boolean enableAutosellAutomatically;
+    private boolean autoSmelt;
 
     private boolean inventoryFullNoticiation;
     private List<String> inventoryFullTitle;
@@ -136,6 +138,12 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         this.loadMessages();
         this.broadcastTime = this.getConfig().get().getInt("auto_sell_broadcast.time");
         this.autoSellBroadcastMessage = this.getConfig().get().getStringList("auto_sell_broadcast.message");
+        this.enableAutosellAutomatically = this.getConfig().get().getBoolean("enable-autosell-automatically");
+        this.autoSmelt = this.getConfig().get().getBoolean("auto-smelt");
+
+        this.inventoryFullNoticiation = this.getConfig().get().getBoolean("inventory_full_notification.enabled");
+        this.inventoryFullTitle = this.getConfig().get().getStringList("inventory_full_notification.title");
+        this.inventoryFullChat = this.getConfig().get().getString("inventory_full_notification.chat");
         this.loadAutoSellRegions();
     }
 
@@ -152,6 +160,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         this.broadcastTime = this.getConfig().get().getInt("auto_sell_broadcast.time");
         this.autoSellBroadcastMessage = this.getConfig().get().getStringList("auto_sell_broadcast.message");
         this.enableAutosellAutomatically = this.getConfig().get().getBoolean("enable-autosell-automatically");
+        this.autoSmelt = this.getConfig().get().getBoolean("auto-smelt");
 
         this.inventoryFullNoticiation = this.getConfig().get().getBoolean("inventory_full_notification.enabled");
         this.inventoryFullTitle = this.getConfig().get().getStringList("inventory_full_notification.title");
@@ -200,9 +209,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                     if (!enabledAutoSell.contains(e.getPlayer().getUniqueId())) {
 
                         if (e.getPlayer().getInventory().firstEmpty() != -1) {
-                            e.getPlayer().getInventory().addItem(new ItemStack(e.getBlock().getType(), 1 + fortuneLevel));
+                            e.getPlayer().getInventory().addItem(new ItemStack(this.autoSmelt ? MaterialUtils.getSmeltedForm(e.getBlock().getType()) : e.getBlock().getType(), 1 + fortuneLevel));
                         } else {
-
                             if (this.inventoryFullNoticiation && inventoryFullCooldown.test(e.getPlayer())) {
                                 if (this.inventoryFullTitle != null && !this.inventoryFullTitle.isEmpty() && !this.inventoryFullTitle.get(0).isEmpty() && !this.inventoryFullTitle.get(1).isEmpty()) {
                                     e.getPlayer().sendTitle(Text.colorize(this.inventoryFullTitle.get(0)), Text.colorize(this.inventoryFullTitle.get(1)));

@@ -8,6 +8,7 @@ messages:
   no_permission_sell: "&e&l(!) &cYou do not have permission to sell in this region! (%perm%)"
   no_permission_autosell_toggle: "&e&l(!) &cYou do not have permission to toggle autosell feature!"
 enable-autosell-automatically: true
+auto-smelt: false
 auto_sell_broadcast:
   time: 60
   message:
