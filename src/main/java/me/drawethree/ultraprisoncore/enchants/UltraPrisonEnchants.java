@@ -213,7 +213,8 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                         return;
                     }
 
-                    Players.all().forEach(p -> p.sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe)))));
+                    c.sender().sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe))));
+                    //Players.all().forEach(p -> p.sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe)))));
 
                 }).registerAndBind(core, "value");
     }
