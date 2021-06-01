@@ -71,7 +71,7 @@ public class EnchantsManager {
 			if (i == null) {
 				continue;
 			}
-			if (i.getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
+			if (this.plugin.getCore().isPickaxeSupported(i.getType())) {
 				return i;
 			}
 		}
@@ -79,7 +79,7 @@ public class EnchantsManager {
 	}
 
 	public void updatePickaxe(ItemStack item) {
-		if (item == null || item.getType() != Material.DIAMOND_PICKAXE) {
+		if (item == null || !this.plugin.getCore().isPickaxeSupported(item.getType())) {
 			return;
 		}
 

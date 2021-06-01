@@ -11,7 +11,6 @@ import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
 import me.drawethree.ultraprisoncore.tokens.commands.TokensCommand;
 import me.drawethree.ultraprisoncore.tokens.managers.TokensManager;
-import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
@@ -134,7 +133,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
         Events.subscribe(BlockBreakEvent.class)
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
                     this.handleBlockBreak(e.getPlayer(), 1);
                 }).bindWith(core);

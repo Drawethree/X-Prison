@@ -11,7 +11,6 @@ import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoos
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
-import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.cooldown.Cooldown;
@@ -20,7 +19,6 @@ import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -159,7 +157,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .handler(c -> {
                     ItemStack pickAxe = c.sender().getItemInHand();
 
-                    if (pickAxe == null || pickAxe.getType() != CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
+                    if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
                         c.sender().sendMessage(getMessage("no_pickaxe_found"));
                         return;
                     }
@@ -174,7 +172,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .handler(c -> {
                     ItemStack pickAxe = c.sender().getItemInHand();
 
-                    if (pickAxe == null || pickAxe.getType() != CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
+                    if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
                         c.sender().sendMessage(getMessage("no_pickaxe_found"));
                         return;
                     }
@@ -208,7 +206,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                     }
                     ItemStack pickAxe = c.sender().getItemInHand();
 
-                    if (pickAxe == null || pickAxe.getType() != CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
+                    if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
                         c.sender().sendMessage(getMessage("value_no_pickaxe"));
                         return;
                     }
@@ -241,7 +239,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     private void registerEvents() {
         Events.subscribe(PlayerInteractEvent.class)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+                .filter(e -> e.getItem() != null && this.getCore().isPickaxeSupported(e.getItem().getType()))
                 .filter(e -> (e.getAction() == Action.RIGHT_CLICK_AIR || (e.getAction() == Action.RIGHT_CLICK_BLOCK && this.enchantsManager.isOpenEnchantMenuOnRightClickBlock())))
                 .handler(e -> {
                     e.setCancelled(true);
@@ -252,14 +250,14 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 }).bindWith(core);
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .filter(e -> this.enchantsManager.isAllowEnchantsOutside() || WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
                 .handler(e -> {
                     enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);
                     enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand());
                 }).bindWith(core);
         Events.subscribe(BlockBreakEvent.class, EventPriority.LOWEST)
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().noneMatch(region -> region.getId().toLowerCase().startsWith("mine")))
                 .filter(e -> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
                 .handler(e -> e.setCancelled(true)).bindWith(core);
@@ -269,11 +267,11 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                     ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
                     ItemStack previousItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 
-                    if (previousItem != null && previousItem.getType() == Material.DIAMOND_PICKAXE) {
+                    if (previousItem != null && this.getCore().isPickaxeSupported(previousItem.getType())) {
                         this.enchantsManager.handlePickaxeUnequip(e.getPlayer(),previousItem);
                     }
 
-                    if (newItem != null && newItem.getType() == Material.DIAMOND_PICKAXE) {
+                    if (newItem != null && this.getCore().isPickaxeSupported(newItem.getType())) {
                         this.enchantsManager.handlePickaxeEquip(e.getPlayer(),newItem);
                     }
 

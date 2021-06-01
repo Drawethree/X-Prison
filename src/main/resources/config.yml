@@ -15,3 +15,5 @@ modules:
   autominer: true
   pickaxe_levels: true
   gangs: true
+supported-pickaxes:
+  - DIAMOND_PICKAXE

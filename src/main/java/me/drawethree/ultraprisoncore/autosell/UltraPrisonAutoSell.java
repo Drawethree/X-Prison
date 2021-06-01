@@ -203,7 +203,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 }, 20)).bindWith(this.core);
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+                .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.core.isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
                     int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
                     if (!enabledAutoSell.contains(e.getPlayer().getUniqueId())) {

@@ -8,13 +8,11 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
-import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.text.Text;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -120,7 +118,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && e.getPlayer().getItemInHand().getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial())
+                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
                     //Check for next level progression
 
@@ -136,7 +134,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         Events.subscribe(PlayerItemHeldEvent.class)
                 .handler(e -> {
                     ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
-                    if (item != null && item.getType() == Material.DIAMOND_PICKAXE) {
+                    if (item != null && this.getCore().isPickaxeSupported(item.getType())) {
                         e.getPlayer().getInventory().setItem(e.getNewSlot(), this.addDefaultPickaxeLevel(item, e.getPlayer()));
                     }
                 }).bindWith(core);
@@ -169,7 +167,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     }
 
     public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
-        if (itemStack == null || itemStack.getType() != Material.DIAMOND_PICKAXE) {
+        if (itemStack == null || !this.getCore().isPickaxeSupported(itemStack.getType())) {
             return null;
         }
 
@@ -232,7 +230,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
             if (i == null) {
                 continue;
             }
-            if (i.getType() == CompMaterial.DIAMOND_PICKAXE.toMaterial()) {
+            if (this.getCore().isPickaxeSupported(i.getType())) {
                 return i;
             }
         }

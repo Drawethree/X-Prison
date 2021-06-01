@@ -6,6 +6,8 @@ public class MaterialUtils {
 
 	public static Material getSmeltedForm(Material m) {
 		switch (m) {
+			case STONE:
+				return Material.COBBLESTONE;
 			case COAL_ORE:
 				return Material.COAL;
 			case DIAMOND_ORE:

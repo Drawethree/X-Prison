@@ -20,6 +20,7 @@ import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.drawethree.ultraprisoncore.utils.gui.ClearDBGui;
 import me.jet315.prisonmines.JetsPrisonMines;
 import me.jet315.prisonmines.JetsPrisonMinesAPI;
@@ -30,6 +31,7 @@ import me.lucko.helper.text.Text;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -38,7 +40,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Getter
@@ -64,6 +68,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     private UltraPrisonAutoMiner autoMiner;
     private UltraPrisonPickaxeLevels pickaxeLevels;
     private UltraPrisonGangs gangs;
+
+    private List<Material> supportedPickaxes;
 
     private JetsPrisonMinesAPI jetsPrisonMinesAPI;
 
@@ -95,6 +101,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
             this.getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(CompMaterial::fromString).map(CompMaterial::getMaterial).collect(Collectors.toList());
+
+        for (Material m : this.supportedPickaxes) {
+            this.getLogger().info("Added support for " + m);
         }
 
         this.tokens = new UltraPrisonTokens(this);
@@ -277,5 +289,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
         economy = rsp.getProvider();
         return economy != null;
+    }
+
+    public boolean isPickaxeSupported(Material m) {
+        return this.supportedPickaxes.contains(m);
     }
 }
