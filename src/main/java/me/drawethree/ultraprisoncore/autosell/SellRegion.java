@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 @AllArgsConstructor
-public class AutoSellRegion {
+public class SellRegion {
 
     private IWrappedRegion region;
     @Getter

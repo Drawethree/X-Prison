@@ -1,9 +1,11 @@
 package me.drawethree.ultraprisoncore.autosell.api;
 
+import me.drawethree.ultraprisoncore.autosell.SellRegion;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
-import org.bukkit.block.Block;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
+
+import java.util.Collection;
 
 public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 
@@ -19,12 +21,17 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
     }
 
     @Override
-    public double getPriceForBrokenBlock(IWrappedRegion region, Block block) {
-        return plugin.getPriceForBrokenBlock(region, block);
+    public double getPriceForBlock(String regionName, Material material) {
+        return plugin.getPriceForBrokenBlock(regionName, material);
     }
 
     @Override
     public boolean hasAutoSellEnabled(Player p) {
         return plugin.hasAutoSellEnabled(p);
+    }
+
+    @Override
+    public Collection<SellRegion> getSellRegions() {
+        return plugin.getAutoSellRegions();
     }
 }

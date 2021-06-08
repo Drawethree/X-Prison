@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.api.events;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.drawethree.ultraprisoncore.autosell.AutoSellRegion;
+import me.drawethree.ultraprisoncore.autosell.SellRegion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -15,7 +15,7 @@ public class UltraPrisonSellAllEvent extends Event implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 
 	private final Player player;
-	private final AutoSellRegion region;
+	private final SellRegion region;
 
 	@Getter
 	@Setter
@@ -29,10 +29,10 @@ public class UltraPrisonSellAllEvent extends Event implements Cancellable {
 	 * Called when mined blocks are automatically sold
 	 *
 	 * @param player    Player
-	 * @param reg       AutoSellRegion where block was mined
+	 * @param reg       SellRegion where block was mined
 	 * @param sellPrice Amount what will player receive after selling
 	 */
-	public UltraPrisonSellAllEvent(Player player, AutoSellRegion reg, double sellPrice) {
+	public UltraPrisonSellAllEvent(Player player, SellRegion reg, double sellPrice) {
 		this.player = player;
 		this.region = reg;
 		this.sellPrice = sellPrice;
