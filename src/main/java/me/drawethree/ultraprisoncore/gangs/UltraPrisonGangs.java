@@ -104,6 +104,10 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
                     }
                     GangCommand subCommand = GangCommand.getCommand(Objects.requireNonNull(c.rawArg(0)));
                     if (subCommand != null) {
+						if (!subCommand.canExecute(c.sender())) {
+							c.sender().sendMessage(this.getMessage("no-permission"));
+							return;
+						}
                         subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
                     } else {
                         GangCommand.getCommand("help").execute(c.sender(), c.args());
