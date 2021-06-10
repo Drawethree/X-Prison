@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.nio.file.FileStore;
 import java.util.HashMap;
 
 import static me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion.V;
@@ -1097,9 +1098,11 @@ public enum CompMaterial {
 	ZOMBIE_PIGMAN_SPAWN_EGG("MONSTER_EGG", 57),
 	ZOMBIE_SPAWN_EGG("MONSTER_EGG", 54),
 	ZOMBIE_VILLAGER_SPAWN_EGG("MONSTER_EGG"),
+	LEGACY_GLOWING_REDSTONE_ORE("GLOWING_REDSTONE_ORE", 0),
 	ZOMBIE_WALL_HEAD("SKULL"),
 	ZOMBIFIED_PIGLIN_SPAWN_EGG("MONSTER_EGG", "PIG_ZOMBIE_SPAWN_EGG", 57);
 
+	public static final FileStore GLOWING_REDSTONE_ORE = ;
 	// Safety compatibility check
 	public static boolean COMPATIBLE = true;
 

@@ -315,7 +315,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
                         if (type == Material.REDSTONE_ORE) {
                             getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
-                            getConfig().set("regions." + region.getId() + ".items." + Material.GLOWING_REDSTONE_ORE.name(), price);
+                            getConfig().set("regions." + region.getId() + ".items." + CompMaterial.LEGACY_GLOWING_REDSTONE_ORE.toMaterial().name(), price);
                             getConfig().save();
                         }
 
