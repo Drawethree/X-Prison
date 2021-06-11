@@ -92,14 +92,14 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
     @Override
     public void enable() {
         this.enabled = true;
-
         this.config = this.core.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
-
         this.enchantsManager = new EnchantsManager(this);
         this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
         this.loadMessages();
         this.registerCommands();
         this.registerEvents();
+
+        UltraPrisonEnchantment.loadDefaultEnchantments();
     }
 
     @Override

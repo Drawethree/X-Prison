@@ -131,7 +131,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     }
 
 
-    private static void loadDefaultEnchantments() {
+    public static void loadDefaultEnchantments() {
         new EfficiencyEnchant(UltraPrisonEnchants.getInstance()).register();
         new UnbreakingEnchant(UltraPrisonEnchants.getInstance()).register();
         new FortuneEnchant(UltraPrisonEnchants.getInstance()).register();
