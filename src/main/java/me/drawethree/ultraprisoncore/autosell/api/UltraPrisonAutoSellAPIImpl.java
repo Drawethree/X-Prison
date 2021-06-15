@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.autosell.api;
 
 import me.drawethree.ultraprisoncore.autosell.SellRegion;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -33,5 +34,10 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
     @Override
     public Collection<SellRegion> getSellRegions() {
         return plugin.getAutoSellRegions();
+    }
+
+    @Override
+    public SellRegion getSellRegionAtLocation(Location location) {
+        return plugin.getAutoSellRegion(location);
     }
 }

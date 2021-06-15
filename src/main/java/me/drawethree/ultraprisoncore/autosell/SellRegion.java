@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.autosell;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
@@ -31,5 +32,9 @@ public class SellRegion {
 
     public Set<Material> getSellingMaterials() {
         return this.sellPrices.keySet();
+    }
+
+    public boolean contains(Location loc) {
+        return this.region.contains(loc);
     }
 }

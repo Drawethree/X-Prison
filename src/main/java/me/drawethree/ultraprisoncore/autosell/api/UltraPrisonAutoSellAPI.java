@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.autosell.api;
 
 import me.drawethree.ultraprisoncore.autosell.SellRegion;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -37,4 +38,11 @@ public interface UltraPrisonAutoSellAPI {
      * @return Collection of all loaded and active Sell Regions
      */
     Collection<SellRegion> getSellRegions();
+
+    /**
+     * Method to get SellRegion at specified location
+     *
+     * @return Sell Region at given location or null if not present.
+     */
+    SellRegion getSellRegionAtLocation(Location location);
 }

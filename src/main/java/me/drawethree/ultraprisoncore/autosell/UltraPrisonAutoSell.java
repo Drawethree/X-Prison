@@ -457,4 +457,12 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         return this.regionsAutoSell.values();
     }
 
+    public SellRegion getAutoSellRegion(Location location) {
+        for (SellRegion region : this.regionsAutoSell.values()) {
+            if (region.contains(location)) {
+                return region;
+            }
+        }
+        return null;
+    }
 }
