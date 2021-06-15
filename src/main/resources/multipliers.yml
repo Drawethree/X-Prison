@@ -8,6 +8,7 @@ ranks: {}
  #donor: 0.7
  #vip: 0.5
  #default: 0.1
+use-luckperms-groups: true
 global-multiplier:
   max: 10.0
   multiplier: 0.0

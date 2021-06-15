@@ -77,8 +77,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
             return;
         }
 
+		boolean useLuckPerms = getConfig().get().getBoolean("use-luckperms-groups", false);
+
+		String permPrefix = useLuckPerms ? "group." : "ultraprison.multiplier.";
         for (String rank : section.getKeys(false)) {
-            String perm = "ultraprison.multiplier." + rank;
+			String perm = permPrefix + rank;
             double multiplier = getConfig().get().getDouble("ranks." + rank);
             this.permissionToMultiplier.put(perm, multiplier);
             this.core.getLogger().info("Loaded rank multiplier." + rank + " with multiplier " + multiplier + " (" + perm + ")");
