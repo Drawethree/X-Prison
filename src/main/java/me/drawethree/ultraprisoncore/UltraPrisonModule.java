@@ -7,4 +7,5 @@ public interface UltraPrisonModule {
     void enable();
     void disable();
     String getName();
+
 }

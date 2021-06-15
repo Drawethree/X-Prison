@@ -383,13 +383,14 @@ public class EnchantsManager {
 
 			long cost = enchantment.getCostOfLevel(currentLevel);
 
-			plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), cost);
-
 			this.removeEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), currentLevel);
 			gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
 			totalRefunded += (cost * (this.refundPercentage / 100.0));
 		}
+
+		plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
+
 
 		gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(substraction)).replace("%enchant%", enchantment.getName()));
 		gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
