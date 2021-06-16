@@ -12,7 +12,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class SellRegion {
 
-    private IWrappedRegion region;
+	@Getter
+	private IWrappedRegion region;
     @Getter
     private String permissionRequired;
     private Map<Material, Double> sellPrices;
