@@ -206,6 +206,10 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     }
 
     private void registerMainCommand() {
+
+        List<String> commandAliases = this.getConfig().getStringList("main-command-aliases");
+        String[] commandAliasesArray = commandAliases.toArray(new String[commandAliases.size()]);
+
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
@@ -224,7 +228,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 						DEBUG_MODE = !DEBUG_MODE;
 						c.sender().sendMessage(Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
 					}
-                }).registerAndBind(this, "prisoncore", "ultraprison", "prison", "ultraprisoncore", "upc");
+                }).registerAndBind(this, commandAliasesArray);
     }
 
     private void reload(CommandSender sender) {

@@ -438,7 +438,7 @@ enchants:
     Pickaxe-Level-Required: 1
     Refund:
       Enabled: true
-      InGuiSlot: 45
+      InGuiSlot: 46
     Commands:
       '1':
         command: 'voucher give %player% 5$'
@@ -455,6 +455,22 @@ enchants:
       '5':
         command: 'voucher give %player% 50$'
         chance: 1
+  '21':
+    RawName: "nuke"
+    Name: '&cNuke'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 47
+    Increase-Cost-by: 0
+    Max: 100
+    Chance: 0.001
+    Cost: 1000
+    Description:
+      - '&7&o(( Ability to break whole mine while mining ))'
+    Pickaxe-Level-Required: 1
+    Refund:
+      Enabled: true
+      InGuiSlot: 47
 Pickaxe:
   lore:
     - '&8&m------------------------'
@@ -481,3 +497,4 @@ Pickaxe:
     - '%Enchant-18%'
     - '%Enchant-19%'
     - '%Enchant-20%'
+    - '%Enchant-21%'

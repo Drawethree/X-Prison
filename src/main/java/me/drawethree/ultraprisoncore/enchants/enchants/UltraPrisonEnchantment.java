@@ -152,6 +152,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
         new FuelEnchant(UltraPrisonEnchants.getInstance()).register();
         new AutoSellEnchant(UltraPrisonEnchants.getInstance()).register();
         new VoucherFinderEnchant(UltraPrisonEnchants.getInstance()).register();
+        new NukeEnchant(UltraPrisonEnchants.getInstance()).register();
     }
 
     public static void reloadAll() {

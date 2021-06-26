@@ -17,3 +17,9 @@ modules:
   gangs: true
 supported-pickaxes:
   - DIAMOND_PICKAXE
+main-command-aliases:
+  - upc
+  - prisoncore
+  - ultraprison
+  - prison
+  - ultraprisoncore
