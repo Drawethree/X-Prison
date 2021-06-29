@@ -96,6 +96,7 @@ public class SQLiteDatabase extends SQLDatabase {
 		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
+
 	@Override
 	public void addIntoBlocksWeekly(OfflinePlayer player) {
 		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_WEEKLY_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
