@@ -43,21 +43,6 @@ public class KeyFinderEnchant extends UltraPrisonEnchantment {
         this.commandsToExecute = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
     }
 
-
-    private int getDelayBetweenKeys(int enchantLevel) {
-        if (enchantLevel <= 49) {
-            return 30;
-        } else if (enchantLevel <= 99) {
-            return 25;
-        } else if (enchantLevel <= 149) {
-            return 20;
-        } else if (enchantLevel <= 199) {
-            return 15;
-        } else {
-            return 10;
-        }
-    }
-
     @Override
     public String getAuthor() {
         return "Drawethree";

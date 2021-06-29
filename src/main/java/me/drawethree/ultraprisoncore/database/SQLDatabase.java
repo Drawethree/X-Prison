@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
+import me.lucko.helper.utils.Log;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -445,7 +446,6 @@ public abstract class SQLDatabase extends Database {
         try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GANGS_TABLE_NAME)) {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
-
                     String gangName = set.getString(GANGS_NAME_COLNAME);
                     UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
                     List<UUID> members = new ArrayList<>();
@@ -455,14 +455,13 @@ public abstract class SQLDatabase extends Database {
                             UUID uuid = UUID.fromString(s);
                             members.add(uuid);
                         } catch (Exception e) {
-                            continue;
+                            Log.warn("Unable to fetch UUID: " + s);
+                            e.printStackTrace();
                         }
                     }
 
                     int value = set.getInt(GANGS_VALUE_COLNAME);
-
-                    Gang gang = new Gang(gangName, owner, members,value);
-                    returnList.add(gang);
+                    returnList.add(new Gang(gangName, owner, members, value));
                 }
             }
         } catch (SQLException e) {
