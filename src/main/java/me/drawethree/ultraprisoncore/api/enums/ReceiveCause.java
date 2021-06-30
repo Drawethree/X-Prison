@@ -7,5 +7,6 @@ public enum ReceiveCause {
 	MINING,
 	PAY,
 	GIVE,
-	REDEEM;
+	REDEEM,
+	LUCKY_BLOCK;
 }

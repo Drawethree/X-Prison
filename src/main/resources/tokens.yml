@@ -23,6 +23,7 @@ messages:
   token_message_disabled: "&e&lTOKENS &8» &7Messages &c&lOFF"
   token_message_enabled: "&e&lTOKENS &8» &7Messages &a&lON"
   tokens_received_mining: "&e&lTOKENS &8» &7You found &6%amount% Tokens &7while mining"
+  lucky_block_mined: "&e&lLUCKY BLOCK &8» &7You have mined a &e&lLUCKY BLOCK &7and received &6%amount% Tokens!"
 tokens:
   breaking:
     chance: 5.0
@@ -33,6 +34,8 @@ tokens:
     name: "&e&l%amount% TOKENS"
     lore:
       - "&7Right-Click to Redeem"
+lucky-blocks:
+  SPONGE: 1000
 next-reset-weekly: 0
 display-token-messages: true
 top_update_interval: 10

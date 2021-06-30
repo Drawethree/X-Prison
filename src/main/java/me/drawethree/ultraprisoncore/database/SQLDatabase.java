@@ -446,11 +446,15 @@ public abstract class SQLDatabase extends Database {
         try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GANGS_TABLE_NAME)) {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
+
                     String gangName = set.getString(GANGS_NAME_COLNAME);
                     UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
                     List<UUID> members = new ArrayList<>();
 
                     for (String s : set.getString(GANGS_MEMBERS_COLNAME).split(",")) {
+                        if (s.isEmpty()) {
+                            continue;
+                        }
                         try {
                             UUID uuid = UUID.fromString(s);
                             members.add(uuid);

@@ -111,7 +111,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
                 plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
                 plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
-                plugin.getCore().getTokens().handleBlockBreak(p, blockCount);
+                plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
             }
 			long timeEnd = Time.nowMillis();
 			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.");

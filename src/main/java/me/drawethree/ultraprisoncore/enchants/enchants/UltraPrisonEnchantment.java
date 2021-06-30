@@ -23,10 +23,6 @@ public abstract class UltraPrisonEnchantment implements Refundable {
     private static HashMap<Integer, UltraPrisonEnchantment> allEnchantmentsById = new HashMap<>();
     private static HashMap<String, UltraPrisonEnchantment> allEnchantmentsByName = new HashMap<>();
 
-    static {
-        loadDefaultEnchantments();
-    }
-
     protected final UltraPrisonEnchants plugin;
 
     protected final int id;

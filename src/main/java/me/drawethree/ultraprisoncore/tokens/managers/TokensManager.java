@@ -38,7 +38,6 @@ public class TokensManager {
 	private List<String> tokensTopFormat;
 	private List<String> blocksTopFormat;
 	private List<String> blocksTopFormatWeekly;
-
 	private HashMap<UUID, Long> tokensCache = new HashMap<>();
 	private HashMap<UUID, Long> blocksCache = new HashMap<>();
 	private HashMap<UUID, Long> blocksCacheWeekly = new HashMap<>();
@@ -237,6 +236,8 @@ public class TokensManager {
 					p.getPlayer().sendMessage(plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 				} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
 					p.getPlayer().sendMessage(this.plugin.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+				} else if (cause == ReceiveCause.LUCKY_BLOCK && !this.hasOffTokenMessages(p.getPlayer())) {
+					p.getPlayer().sendMessage(this.plugin.getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
 				}
 			}
 
