@@ -81,14 +81,14 @@ public class GemsManager {
     private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
         if (async) {
             Schedulers.async().run(() -> {
-                this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.get(player.getUniqueId()));
+				this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
                 if (removeFromCache) {
                     gemsCache.remove(player.getUniqueId());
                 }
                 this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
             });
         } else {
-            this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.get(player.getUniqueId()));
+			this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
             if (removeFromCache) {
                 gemsCache.remove(player.getUniqueId());
             }
@@ -100,7 +100,7 @@ public class GemsManager {
         this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saving all player data - gems");
         Schedulers.sync().run(() -> {
             for (UUID uuid : gemsCache.keySet()) {
-                this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.get(uuid));
+				this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
             }
             gemsCache.clear();
             this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database - gems");
