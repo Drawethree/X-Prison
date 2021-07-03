@@ -17,6 +17,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -57,7 +58,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	private UltraPrisonCore core;
 
 	private HashMap<String, String> messages;
-	private Map<Material, Long> luckyBlockRewards;
+	private Map<Material, List<String>> luckyBlockRewards;
 
 	private double chance;
 	private long minAmount;
@@ -95,13 +96,13 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 		for (String key : this.getConfig().get().getConfigurationSection("lucky-blocks").getKeys(false)) {
 			CompMaterial material = CompMaterial.fromString(key);
-			long reward = this.getConfig().get().getLong("lucky-blocks." + key);
-			if (reward <= 0) {
+			List<String> rewards = this.getConfig().get().getStringList("lucky-blocks." + key);
+			if (rewards.isEmpty()) {
 				continue;
 			}
-			this.luckyBlockRewards.put(material.toMaterial(), reward);
-			this.getCore().debug("Loaded LuckyBlock: " + material.toMaterial().name() + ": " + reward);
+			this.luckyBlockRewards.put(material.toMaterial(), rewards);
 		}
+
 	}
 
 
@@ -169,9 +170,10 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 			//Lucky block check
 			if (this.luckyBlockRewards.containsKey(block.getType())) {
-				long reward = this.luckyBlockRewards.get(block.getType());
-				reward = luckyBooster ? reward * 2 : reward;
-				tokensManager.giveTokens(p, reward, null, ReceiveCause.LUCKY_BLOCK);
+				List<String> rewards = this.luckyBlockRewards.get(block.getType());
+				for (String s : rewards) {
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+				}
 			}
 
 			double random = ThreadLocalRandom.current().nextDouble(100);

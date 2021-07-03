@@ -35,7 +35,8 @@ tokens:
     lore:
       - "&7Right-Click to Redeem"
 lucky-blocks:
-  SPONGE: 1000
+  SPONGE:
+    - tokens give %player% 1000
 next-reset-weekly: 0
 display-token-messages: true
 top_update_interval: 10
