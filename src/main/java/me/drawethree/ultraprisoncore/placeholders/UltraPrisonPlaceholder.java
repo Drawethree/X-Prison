@@ -131,6 +131,8 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
             return formatNumber(plugin.getRanks().getRankManager().getNextRankCost(player));
         } else if (identifier.equalsIgnoreCase("prestige")) {
             return plugin.getRanks().getApi().getPlayerPrestige(player).getPrefix();
+        } else if (identifier.equalsIgnoreCase("prestige_id")) {
+            return String.valueOf(plugin.getRanks().getApi().getPlayerPrestige(player).getId());
         } else if (identifier.equalsIgnoreCase("autominer_time")) {
             return plugin.getAutoMiner().getTimeLeft(player);
         } else if (identifier.equalsIgnoreCase("tokens_formatted") || identifier.equalsIgnoreCase("tokens_3")) {

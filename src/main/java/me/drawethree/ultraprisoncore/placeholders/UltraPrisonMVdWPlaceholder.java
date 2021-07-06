@@ -53,6 +53,8 @@ public class UltraPrisonMVdWPlaceholder {
         });
 
         PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige", event -> plugin.getRanks().getApi().getPlayerPrestige(event.getPlayer()).getPrefix());
+        PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige_id", event -> String.valueOf(plugin.getRanks().getApi().getPlayerPrestige(event.getPlayer()).getId()));
+
 
         PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_autominer_time", event -> plugin.getAutoMiner().getTimeLeft(event.getPlayer()));
 

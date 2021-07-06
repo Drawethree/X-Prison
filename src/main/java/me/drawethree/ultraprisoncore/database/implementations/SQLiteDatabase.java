@@ -38,7 +38,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
 		final HikariConfig hikari = new HikariConfig();
 
-		hikari.setPoolName("ultraprison-" + POOL_COUNTER.getAndIncrement());
+		hikari.setPoolName("ultraprison-1");
 
 		hikari.setDriverClassName("org.sqlite.JDBC");
 		hikari.setJdbcUrl("jdbc:sqlite:" + this.filePath);
@@ -47,7 +47,7 @@ public class SQLiteDatabase extends SQLDatabase {
 		hikari.setMinimumIdle(MINIMUM_IDLE);
 		hikari.setMaxLifetime(MAX_LIFETIME);
 		hikari.setConnectionTimeout(CONNECTION_TIMEOUT);
-		hikari.setMaximumPoolSize(MAXIMUM_POOL_SIZE);
+		hikari.setMaximumPoolSize(1);
 		hikari.setLeakDetectionThreshold(LEAK_DETECTION_THRESHOLD);
 
 		this.hikari = new HikariDataSource(hikari);
