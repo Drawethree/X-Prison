@@ -28,6 +28,7 @@ import java.util.Map;
 
 public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
+    public static final String MODULE_NAME = "Pickaxe Levels";
 
     private static final String ADMIN_PERMISSION = "ultraprison.pickaxe.admin";
     private static final String NBT_TAG_INDETIFIER = "ultra-prison-pickaxe-level";
@@ -154,7 +155,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Pickaxe Levels";
+        return MODULE_NAME;
     }
 
     private void registerCommands() {
@@ -205,23 +206,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     }
 
     private ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
-
-        NBTItem nbtItem = new NBTItem(item);
-
-        if (nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-            return item;
-        }
-
-        nbtItem.setInteger(NBT_TAG_INDETIFIER, 1);
-
-        ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
-        if (defaultLevel.getDisplayName() != null && !defaultLevel.getDisplayName().isEmpty()) {
-            builder = builder.name(defaultLevel.getDisplayName(p));
-        }
-
-        item = builder.build();
-        this.core.getEnchants().getEnchantsManager().updatePickaxe(item);
-        return item;
+        return setPickaxeLevel(item, this.defaultLevel, p);
     }
 
 
@@ -252,15 +237,15 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
             double treshold = required / 20.0;
             long collected = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
 
-            String result = "";
+            StringBuilder result = new StringBuilder();
             for (int i = 0; i < 20; i++) {
                 if (collected >= treshold * (i + 1)) {
-                    result += "&a:";
+                    result.append("&a:");
                 } else {
-                    result += "&c:";
+                    result.append("&c:");
                 }
             }
-            return Text.colorize(result);
+            return Text.colorize(result.toString());
 
         } else {
             return Text.colorize("&a::::::::::::::::::::");

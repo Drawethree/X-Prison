@@ -196,7 +196,7 @@ public class RankManager {
 		return this.ranksById.getOrDefault(id + 1, null);
 	}
 
-	public Rank getPreviousRank(long id) {
+	public Rank getPreviousRank(int id) {
 		return this.ranksById.getOrDefault(id - 1, null);
 	}
 
@@ -206,9 +206,7 @@ public class RankManager {
 			return origin.getCost();
 		}
 
-		double cost = origin.getId() == 0 ? (this.unlimitedPrestigeCost) : (origin.getCost() * this.increaseCostBy);
-
-		return cost;
+		return origin.getId() == 0 ? (this.unlimitedPrestigeCost) : (origin.getCost() * this.increaseCostBy);
 	}
 
 

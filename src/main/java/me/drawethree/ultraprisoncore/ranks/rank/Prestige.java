@@ -19,7 +19,6 @@ public class Prestige {
 
 	public void runCommands(Player p) {
 		if (commandsToExecute != null) {
-
 			if (!Bukkit.isPrimaryThread()) {
 				Schedulers.sync().run(() -> {
 					executeCommands(p);
@@ -32,11 +31,7 @@ public class Prestige {
 
 	private void executeCommands(Player p) {
 		for (String cmd : commandsToExecute) {
-			if (!Bukkit.isPrimaryThread()) {
-				Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix)));
-			} else {
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix));
-			}
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix));
 		}
 	}
 

@@ -22,15 +22,19 @@ public class Rank {
 
 			if (!Bukkit.isPrimaryThread()) {
 				Schedulers.async().run(() -> {
-					for (String cmd : commandsToExecute) {
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix));
-					}
+					executeCommands(p);
 				});
 			} else {
 				for (String cmd : commandsToExecute) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix));
+					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix).replace("%Rank%", prefix));
 				}
 			}
+		}
+	}
+
+	private void executeCommands(Player p) {
+		for (String cmd : commandsToExecute) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix).replace("%Rank%", prefix));
 		}
 	}
 

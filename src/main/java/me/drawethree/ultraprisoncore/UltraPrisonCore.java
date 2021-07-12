@@ -182,7 +182,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     }
 
     private void loadModule(UltraPrisonModule module) {
-        this.loadedModules.put(module.getName(), module);
+        this.loadedModules.put(module.getName().toLowerCase(), module);
         module.enable();
         this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s loaded.", module.getName())));
     }
@@ -227,7 +227,16 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
                     } else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						DEBUG_MODE = !DEBUG_MODE;
 						c.sender().sendMessage(Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
-					}
+                    } else if (c.args().size() == 2 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
+                        UltraPrisonModule module = this.getModuleByName(c.rawArg(1));
+                        if (module == null) {
+                            c.sender().sendMessage(Text.colorize("&cModule " + c.rawArg(1) + " is not loaded."));
+                            return;
+                        }
+                        this.reloadModule(module);
+                        c.sender().sendMessage(Text.colorize("&aModule " + c.rawArg(1) + " reloaded."));
+
+                    }
                 }).registerAndBind(this, commandAliasesArray);
     }
 
@@ -262,7 +271,14 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
     }
 
     public boolean isModuleEnabled(String moduleName) {
-        return this.loadedModules.containsKey(moduleName);
+        return this.loadedModules.containsKey(moduleName.toLowerCase());
+    }
+
+    public UltraPrisonModule getModuleByName(String name) {
+        if (!this.isModuleEnabled(name)) {
+            return null;
+        }
+        return this.loadedModules.get(name.toLowerCase());
     }
 
     private void registerPlaceholders() {

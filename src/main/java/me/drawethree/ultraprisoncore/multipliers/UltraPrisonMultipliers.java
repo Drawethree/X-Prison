@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
-
     public static final String MODULE_NAME = "Multipliers";
 
     private static GlobalMultiplier GLOBAL_MULTIPLIER;
@@ -249,8 +248,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                 .assertPermission("ultraprison.multipliers.admin")
                 .handler(c -> {
                     if (c.args().size() == 2) {
-                        double amount = c.arg(0).parseOrFail(Double.class).doubleValue();
-                        int minutes = c.arg(1).parseOrFail(Integer.class).intValue();
+                        double amount = c.arg(0).parseOrFail(Double.class);
+                        int minutes = c.arg(1).parseOrFail(Integer.class);
                         setupGlobalMultiplier(c.sender(), minutes, amount);
                     }
                 }).registerAndBind(core, "globalmultiplier", "gmulti");
@@ -259,8 +258,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                 .handler(c -> {
                     if (c.args().size() == 3) {
                         Player onlinePlayer = Players.getNullable(c.rawArg(0));
-                        double amount = c.arg(1).parseOrFail(Double.class).doubleValue();
-                        int minutes = c.arg(2).parseOrFail(Integer.class).intValue();
+                        double amount = c.arg(1).parseOrFail(Double.class);
+                        int minutes = c.arg(2).parseOrFail(Integer.class);
                         setupPersonalMultiplier(c.sender(), onlinePlayer, amount, minutes);
                     }
                 }).registerAndBind(core, "personalmultiplier", "pmulti");

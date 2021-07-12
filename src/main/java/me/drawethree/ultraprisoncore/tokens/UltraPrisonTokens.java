@@ -38,6 +38,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
 
+	public static final String MODULE_NAME = "Tokens";
 	public static final String TOKENS_ADMIN_PERM = "ultraprison.tokens.admin";
 
 	@Getter
@@ -135,7 +136,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	@Override
 	public String getName() {
-		return "Tokens";
+		return MODULE_NAME;
 	}
 
 	private void registerEvents() {

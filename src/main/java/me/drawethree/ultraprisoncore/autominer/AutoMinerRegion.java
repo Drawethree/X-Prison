@@ -40,7 +40,6 @@ public class AutoMinerRegion {
                 if (region.contains(p.getLocation())) {
                     if (!parent.hasAutoMinerTime(p)) {
                         sendActionBar(p, parent.getMessage("auto_miner_disabled"));
-                        continue;
                     } else {
                         sendActionBar(p, parent.getMessage("auto_miner_enabled"));
                         this.executeCommands(p);

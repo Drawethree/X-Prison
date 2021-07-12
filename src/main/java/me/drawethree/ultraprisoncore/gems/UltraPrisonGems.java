@@ -18,6 +18,8 @@ import java.util.HashMap;
 
 public final class UltraPrisonGems implements UltraPrisonModule {
 
+    public static final String MODULE_NAME = "Gems";
+
     public static final String GEMS_ADMIN_PERM = "ultraprison.gems.admin";
 
     @Getter
@@ -78,11 +80,10 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Gems";
+        return MODULE_NAME;
     }
 
     private void registerEvents() {
-        //TODO: add support ?
         /*Events.subscribe(PlayerInteractEvent.class)
                 .filter(e -> e.getItem() != null && e.getItem().getType() == Material.DOUBLE_PLANT && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
                 .handler(e -> {

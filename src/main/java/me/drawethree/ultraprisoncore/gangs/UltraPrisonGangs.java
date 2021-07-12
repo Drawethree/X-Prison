@@ -18,6 +18,8 @@ import java.util.Objects;
 
 public final class UltraPrisonGangs implements UltraPrisonModule {
 
+    public static final String MODULE_NAME = "Gangs";
+
     public static final String GANGS_ADMIN_PERM = "ultraprison.gangs.admin";
 
     @Getter
@@ -88,7 +90,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Gangs";
+        return MODULE_NAME;
     }
 
     private void registerEvents() {

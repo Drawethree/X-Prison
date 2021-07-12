@@ -23,6 +23,8 @@ import java.util.*;
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 
+    public static final String MODULE_NAME = "Auto Miner";
+
     @Getter
     private static UltraPrisonAutoMiner instance;
     @Getter
@@ -162,7 +164,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Auto Miner";
+        return MODULE_NAME;
     }
 
     private void registerCommands() {
@@ -218,8 +220,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
             return "0s";
         }
 
-        int secondsLeft = autoMinerTimes.get(p.getUniqueId());
-        int timeLeft = secondsLeft;
+        int timeLeft = autoMinerTimes.get(p.getUniqueId());
 
         long days = timeLeft / (24 * 60 * 60);
         timeLeft -= days * (24 * 60 * 60);
@@ -232,9 +233,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
         long seconds = timeLeft;
 
-        timeLeft -= seconds;
-
-        return new StringBuilder().append(days).append("d ").append(hours).append("h ").append(minutes).append("m ").append(seconds).append("s").toString();
+        return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
     }
 
 

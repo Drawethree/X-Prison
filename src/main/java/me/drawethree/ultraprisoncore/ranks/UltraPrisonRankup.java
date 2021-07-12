@@ -21,6 +21,8 @@ import java.util.UUID;
 @Getter
 public final class UltraPrisonRankup implements UltraPrisonModule {
 
+    public static final String MODULE_NAME = "Ranks & Prestiges";
+
     @Getter
     private FileManager.Config config;
 
@@ -88,7 +90,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Ranks & Prestiges";
+        return MODULE_NAME;
     }
 
     private void registerCommands() {
@@ -127,11 +129,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         this.rankManager.buyNextPrestige(c.sender());
-                    } /*else if (c.args().size() == 1) {
-                        int amountOfLevels = c.arg(0).parseOrFail(Integer.class);
-                        this.rankManager.buyPrestige(c.sender(), amountOfLevels);
                     }
-                    */
                 }).registerAndBind(core, "prestige");
         Commands.create()
                 .assertPlayer()

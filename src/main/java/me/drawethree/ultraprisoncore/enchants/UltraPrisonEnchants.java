@@ -36,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonEnchants implements UltraPrisonModule {
 
+
+    public static final String MODULE_NAME = "Enchants";
     @Getter
     private static UltraPrisonEnchants instance;
 
@@ -114,7 +116,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Enchants";
+        return MODULE_NAME;
     }
 
     private void registerCommands() {

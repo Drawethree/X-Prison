@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.utils.MaterialUtils;
@@ -22,6 +23,7 @@ import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -36,6 +38,7 @@ import java.util.stream.Collectors;
 
 public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
+    public static final String MODULE_NAME = "Auto Sell";
 
     private static final String ADMIN_PERMISSION = "ultraprison.autosell.admin";
     private static final String AUTOSELL_TOGGLE_PERMISSION = "ultraprison.autosell.toggle";
@@ -164,7 +167,6 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         this.inventoryFullNoticiation = this.getConfig().get().getBoolean("inventory_full_notification.enabled");
         this.inventoryFullTitle = this.getConfig().get().getStringList("inventory_full_notification.title");
         this.inventoryFullChat = this.getConfig().get().getString("inventory_full_notification.chat");
-
         this.loadAutoSellRegions();
         this.loadMessages();
         this.registerCommands();
@@ -204,7 +206,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                 .filter(EventFilters.ignoreCancelled())
                 .filter(e -> !e.isCancelled() && e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.core.isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
-                    int fortuneLevel = core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3);
+                    int fortuneLevel = core.isModuleEnabled(UltraPrisonEnchants.MODULE_NAME) ? core.getEnchants().getApi().getEnchantLevel(e.getPlayer().getItemInHand(), 3) : e.getPlayer().getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_BLOCKS);
+
                     if (!enabledAutoSell.contains(e.getPlayer().getUniqueId())) {
 
                         if (e.getPlayer().getInventory().firstEmpty() != -1) {
@@ -235,7 +238,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                 SellRegion region = regionsAutoSell.get(reg.getId());
 
                                 int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-                                double amount = core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier);
+                                double amount = core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME) ? core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier) : (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier;
 
                                 UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), region, e.getBlock(), amount);
 
@@ -253,10 +256,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                                     amountOfItems += item.getAmount() * amplifier;
                                 }
 
-                                boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
+                                boolean luckyBooster = core.isModuleEnabled(UltraPrisonEnchants.MODULE_NAME) && LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
 
                                 core.getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? amount * 2 : amount);
-                                core.getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
+                                this.addToCurrentEarnings(e.getPlayer(), luckyBooster ? amount * 2 : amount);
 
                                 this.lastItems.put(e.getPlayer().getUniqueId(), this.lastItems.getOrDefault(e.getPlayer().getUniqueId(), 0L) + amountOfItems);
 
@@ -277,7 +280,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
     @Override
     public String getName() {
-        return "Auto Sell";
+        return MODULE_NAME;
     }
 
     private void registerCommands() {
@@ -300,7 +303,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
                             return;
                         }
 
-                        double price = c.arg(0).parseOrFail(Double.class).doubleValue();
+                        double price = c.arg(0).parseOrFail(Double.class);
                         Material type = c.sender().getItemInHand().getType();
                         IWrappedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
 
