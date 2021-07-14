@@ -179,7 +179,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
         long timeLeft = this.config.get().getLong("global-multiplier.timeLeft");
 
         GLOBAL_MULTIPLIER = new GlobalMultiplier(0.0, 0);
-        GLOBAL_MULTIPLIER.setMultiplier(multi,this.globalMultiMax);
+        GLOBAL_MULTIPLIER.setMultiplier(multi, this.globalMultiMax);
 
         if (timeLeft > Time.nowMillis()) {
             GLOBAL_MULTIPLIER.setDuration(timeLeft);
@@ -261,6 +261,9 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                         double amount = c.arg(1).parseOrFail(Double.class);
                         int minutes = c.arg(2).parseOrFail(Integer.class);
                         setupPersonalMultiplier(c.sender(), onlinePlayer, amount, minutes);
+                    } else if (c.args().size() == 2 && c.rawArg(1).equalsIgnoreCase("reset")) {
+                        Player onlinePlayer = Players.getNullable(c.rawArg(0));
+                        resetPersonalMultiplier(c.sender(), onlinePlayer);
                     }
                 }).registerAndBind(core, "personalmultiplier", "pmulti");
         Commands.create()
@@ -270,6 +273,22 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
                     c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", String.valueOf(rankMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier()).getMultiplier())));
                     c.sender().sendMessage(messages.get("vote_multi").replace("%multiplier%", String.valueOf(personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getMultiplier())).replace("%duration%", personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getTimeLeft()));
                 }).registerAndBind(core, "multiplier", "multi");
+    }
+
+    private void resetPersonalMultiplier(CommandSender sender, Player onlinePlayer) {
+        if (onlinePlayer == null || !onlinePlayer.isOnline()) {
+            sender.sendMessage(Text.colorize("&cPlayer must be online!"));
+            return;
+        }
+
+        if (personalMultipliers.containsKey(onlinePlayer.getUniqueId())) {
+            PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
+            multiplier.reset();
+            sender.sendMessage(Text.colorize(String.format("&aYou have reset &e%s's &ePersonal Multiplier.", onlinePlayer.getName())));
+            onlinePlayer.sendMessage(messages.get("personal_multi_reset"));
+        } else {
+            sender.sendMessage(Text.colorize(String.format("&cCould not fetch the &e%s's &ePersonal Multiplier.", onlinePlayer.getName())));
+        }
     }
 
     private void setupPersonalMultiplier(CommandSender sender, Player onlinePlayer, double amount, int minutes) {

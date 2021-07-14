@@ -82,4 +82,13 @@ public class PlayerMultiplier extends Multiplier {
             }, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
         }
     }
+
+    public void reset() {
+        if (this.task != null) {
+            task.cancel();
+        }
+        this.multiplier = 0.0;
+        this.startTime = 0;
+        this.endTime = 0;
+    }
 }

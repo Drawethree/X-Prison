@@ -90,4 +90,5 @@ public abstract class Multiplier {
     }
 
     public abstract void addDuration(int minutes);
+
 }
