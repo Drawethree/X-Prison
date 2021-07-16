@@ -1,0 +1,49 @@
+messages:
+  rank_up: '&e&lRANKUP &8» &7Congratulations, you ranked up from %Rank-1% &7to %Rank-2%&7.'
+  not_enough_money: '&e&lRANKUP &8» &7You don''t have enough money to rankup. You need $%cost%'
+  prestige_needed: '&e&lRANKUP &8» &7In order to continue to the next stage do &f/prestige&7.'
+  prestige_up: '&e&lPRESTIGE &8» &7Congratulations, you prestiged up to &f%Prestige%'
+  not_enough_money_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need &a$%cost%'
+  last_prestige: '&e&lPRESTIGE &8» &7You are at the last Prestige and have no more Prestiges.'
+  not_last_rank: '&e&lPRESTIGE &8» &7You must be last rank to prestige.'
+  top_updating: "&c&lLeaderboard is currently updating..."
+  rank_set: "&e&lRANKUP &8» &7You have set %player%'s rank to %rank%"
+  prestige_set: "&e&lPRESTIGE &8» &7You have set %player%'s prestige to %amount%"
+  prestige_add: "&e&lPRESTIGE &8» &7You have added %amount% prestige to  %player%"
+  prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
+  max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
+  max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
+prestige-top-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lPRESTIGE TOP"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%prestige% Prestige"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+reset_rank_after_prestige: false
+prestige_top_update_interval: 10
+unlimited_prestiges:
+  enabled: false
+  max_prestige: 1000000
+  prestige_cost: 1000000
+  increase_cost:
+    enabled: true
+    increase_cost_by: 1.25
+  prefix: '&2&lP%prestige%'
+  rewards-per-prestige:
+    enabled: false
+    rewards:
+      - 'eco give %player% 1'
+  rewards:
+    10:
+      - 'eco give %player% 10'
+    100:
+      - 'eco give %player% 100'
+    1000:
+      - 'eco give %player% 1000'
+    10000:
+      - 'eco give %player% 10000'
+Ranks:
+  '1':
+    Prefix: '&a&lA'
+Prestige:
+  '0':
+    Prefix: '&f&lP0'

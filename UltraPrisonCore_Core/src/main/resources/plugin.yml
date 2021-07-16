@@ -1,0 +1,12 @@
+name: UltraPrisonCore
+version: ${project.version}
+main: me.drawethree.ultraprisoncore.UltraPrisonCore
+depend: [Vault, WorldGuard, WorldEdit, helper]
+softdepend:
+  - PlaceholderAPI
+  - JetsPrisonMines
+  - MVdWPlaceholderAPI
+  - Multiverse-Core
+authors: [Drawethree]
+api-version: 1.13
+load: POSTWORLD
