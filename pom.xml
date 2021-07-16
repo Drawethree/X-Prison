@@ -9,23 +9,23 @@
     <version>1.4.0</version>
 
     <modules>
-        <module>UltraPrisonCore_Core</module>
-        <module>UltraPrisonCore_1_8_R1</module>
-        <module>UltraPrisonCore_1_8_R2</module>
-        <module>UltraPrisonCore_1_8_R3</module>
-        <module>UltraPrisonCore_1_9_R1</module>
-        <module>UltraPrisonCore_1_9_R2</module>
-        <module>UltraPrisonCore_1_10_R1</module>
-        <module>UltraPrisonCore_1_11_R1</module>
-        <module>UltraPrisonCore_1_12_R1</module>
-        <module>UltraPrisonCore_1_13_R1</module>
-        <module>UltraPrisonCore_1_13_R2</module>
-        <module>UltraPrisonCore_1_14_R1</module>
-        <module>UltraPrisonCore_1_15_R1</module>
-        <module>UltraPrisonCore_1_16_R1</module>
-        <module>UltraPrisonCore_1_16_R2</module>
-        <module>UltraPrisonCore_1_16_R3</module>
-        <module>UltraPrisonCore-Dist</module>
+        <module>core</module>
+        <module>modules/v1_8_R1</module>
+        <module>modules/v1_8_R2</module>
+        <module>modules/v1_8_R3</module>
+        <module>modules/v1_9_R1</module>
+        <module>modules/v1_9_R2</module>
+        <module>modules/v1_10_R1</module>
+        <module>modules/v1_11_R1</module>
+        <module>modules/v1_12_R1</module>
+        <module>modules/v1_13_R1</module>
+        <module>modules/v1_13_R2</module>
+        <module>modules/v1_14_R1</module>
+        <module>modules/v1_15_R1</module>
+        <module>modules/v1_16_R1</module>
+        <module>modules/v1_16_R2</module>
+        <module>modules/v1_16_R3</module>
+        <module>distribution</module>
     </modules>
 
 
