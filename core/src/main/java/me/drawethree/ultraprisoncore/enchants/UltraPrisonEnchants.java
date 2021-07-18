@@ -18,6 +18,7 @@ import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -127,11 +128,11 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .handler(c -> {
 
                     if (c.args().size() == 0) {
-                        c.sender().sendMessage(Text.colorize("&c/givepickaxe <player> <enchant:<id>=<level>>,..."));
+                        c.sender().sendMessage(Text.colorize("&c/givepickaxe <player> <[enchant1]=[level1],[enchant2]=[level2],...[enchantX]=[levelX]> <pickaxe_name>"));
                         return;
                     }
 
-                    String input = null;
+                    String input = null, name = null;
                     Player target = null;
 
                     if (c.args().size() == 1) {
@@ -139,9 +140,13 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                     } else if (c.args().size() == 2) {
                         target = c.arg(0).parseOrFail(Player.class);
                         input = c.rawArg(1);
+                    } else if (c.args().size() == 3) {
+                        target = c.arg(0).parseOrFail(Player.class);
+                        input = c.rawArg(1);
+                        name = StringUtils.join(c.args().subList(2, c.args().size()), " ");
                     }
 
-                    this.enchantsManager.givePickaxe(target, input, c.sender());
+                    this.enchantsManager.givePickaxe(target, input, name, c.sender());
                 }).registerAndBind(core, "givepickaxe");
 
         Commands.create()
@@ -264,17 +269,17 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
                 .filter(e -> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
                 .handler(e -> e.setCancelled(true)).bindWith(core);
         Events.subscribe(PlayerItemHeldEvent.class, EventPriority.HIGHEST)
-                .handler(e-> {
+                .handler(e -> {
 
                     ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
                     ItemStack previousItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 
                     if (previousItem != null && this.getCore().isPickaxeSupported(previousItem.getType())) {
-                        this.enchantsManager.handlePickaxeUnequip(e.getPlayer(),previousItem);
+                        this.enchantsManager.handlePickaxeUnequip(e.getPlayer(), previousItem);
                     }
 
                     if (newItem != null && this.getCore().isPickaxeSupported(newItem.getType())) {
-                        this.enchantsManager.handlePickaxeEquip(e.getPlayer(),newItem);
+                        this.enchantsManager.handlePickaxeEquip(e.getPlayer(), newItem);
                     }
 
                 }).bindWith(core);

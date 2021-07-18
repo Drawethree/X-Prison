@@ -7,13 +7,14 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
-import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
+import me.drawethree.ultraprisoncore.gangs.commands.*;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public final class UltraPrisonGangs implements UltraPrisonModule {
@@ -38,7 +39,8 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     @Getter
     private UltraPrisonCore core;
 
-    private HashMap<String, String> messages;
+    private Map<String, String> messages;
+    private Map<String, GangCommand> commands;
 
     private boolean enabled;
 
@@ -97,14 +99,30 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     }
 
     private void registerCommands() {
+        this.commands = new HashMap<>();
+
+        registerCommand(new GangHelpCommand(this));
+        registerCommand(new GangHelpCommand(this));
+        registerCommand(new GangInfoCommand(this));
+        registerCommand(new GangCreateCommand(this));
+        registerCommand(new GangInviteCommand(this));
+        registerCommand(new GangAcceptCommand(this));
+        registerCommand(new GangLeaveCommand(this));
+        registerCommand(new GangDisbandCommand(this));
+        registerCommand(new GangKickCommand(this));
+        registerCommand(new GangTopCommand(this));
+        registerCommand(new GangAdminCommand(this));
+        registerCommand(new GangValueCommand(this));
+        //registerCommand(new GangChatCommand(this));
+
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 0 && c.sender() instanceof Player) {
-                        GangCommand.getCommand("help").execute(c.sender(), c.args());
+                        this.getCommand("help").execute(c.sender(), c.args());
                         //new GangHelpGUI((Player) c.sender()).open();
                         return;
                     }
-                    GangCommand subCommand = GangCommand.getCommand(Objects.requireNonNull(c.rawArg(0)));
+                    GangCommand subCommand = this.getCommand(Objects.requireNonNull(c.rawArg(0)));
                     if (subCommand != null) {
 						if (!subCommand.canExecute(c.sender())) {
 							c.sender().sendMessage(this.getMessage("no-permission"));
@@ -112,9 +130,9 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 						}
                         subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
                     } else {
-                        GangCommand.getCommand("help").execute(c.sender(), c.args());
+                        this.getCommand("help").execute(c.sender(), c.args());
                     }
-                }).registerAndBind(core,  "gang", "gangs");
+                }).registerAndBind(core, "gang", "gangs");
     }
 
     private void loadMessages() {
@@ -126,5 +144,21 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
     public String getMessage(String key) {
         return messages.get(key);
+    }
+
+    private void registerCommand(GangCommand command) {
+        this.commands.put(command.getName(), command);
+
+        if (command.getAliases() == null || command.getAliases().length == 0) {
+            return;
+        }
+
+        for (String alias : command.getAliases()) {
+            this.commands.put(alias, command);
+        }
+    }
+
+    private GangCommand getCommand(String arg) {
+        return commands.get(arg.toLowerCase());
     }
 }

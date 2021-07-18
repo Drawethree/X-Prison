@@ -351,6 +351,10 @@ public class EnchantsManager {
 		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
 
 		this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + addition);
+
+		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + addition);
+
 		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
 		if (addition == 1) {
@@ -375,6 +379,8 @@ public class EnchantsManager {
 
 		long totalRefunded = 0;
 
+		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+
 		for (int i = 0; i < substraction; i++, currentLevel--) {
 
 			if (currentLevel <= 0) {
@@ -389,8 +395,9 @@ public class EnchantsManager {
 			totalRefunded += (cost * (this.refundPercentage / 100.0));
 		}
 
-		plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
+		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
 
+		plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
 
 		gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(substraction)).replace("%enchant%", enchantment.getName()));
 		gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
@@ -484,6 +491,8 @@ public class EnchantsManager {
 		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
 
 		this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + levelsToBuy);
+		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + levelsToBuy);
 		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
 		if (levelsToBuy == 1) {
@@ -539,9 +548,13 @@ public class EnchantsManager {
 		this.refundPercentage = plugin.getConfig().get().getDouble("refund-percentage");
 	}
 
-	// /givepickaxe <player> <enchant:18=1;...>
-	public void givePickaxe(Player target, String input, CommandSender sender) {
-		ItemStack pickaxe = new ItemStack(Material.DIAMOND_PICKAXE, 1);
+	// /givepickaxe <player> <enchant:18=1;...> <name>
+	public void givePickaxe(Player target, String input, String name, CommandSender sender) {
+		ItemStackBuilder pickaxeBuilder = ItemStackBuilder.of(Material.DIAMOND_PICKAXE);
+		if (name != null) {
+			pickaxeBuilder.name(name);
+		}
+		ItemStack pickaxe = pickaxeBuilder.build();
 
 		String[] split = input.split(",");
 
@@ -561,7 +574,6 @@ public class EnchantsManager {
 				int enchantLevel = Integer.parseInt(enchantData[1]);
 				pickaxe = this.addEnchant(pickaxe, enchantment.getId(), enchantLevel);
 			} catch (Exception e) {
-				continue;
 			}
 		}
 
