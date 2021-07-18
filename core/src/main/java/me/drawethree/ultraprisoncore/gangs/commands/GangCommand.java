@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 
 public abstract class GangCommand {
 
-    private UltraPrisonGangs plugin;
+    protected UltraPrisonGangs plugin;
     @Getter
     private String name;
     @Getter

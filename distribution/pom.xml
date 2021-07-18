@@ -9,9 +9,13 @@
         <artifactId>UltraPrisonCore</artifactId>
         <version>1.4.0</version>
     </parent>
+
+    <properties>
+        <release.status>BETA</release.status>
+    </properties>
     <build>
         <directory>../target</directory>
-        <finalName>UltraPrisonCore-${project.version}</finalName>
+        <finalName>UltraPrisonCore-${project.version}-${release.status}</finalName>
         <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
