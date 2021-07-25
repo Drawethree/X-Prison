@@ -9,7 +9,7 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
-import me.drawethree.ultraprisoncore.tokens.commands.TokensCommand;
+import me.drawethree.ultraprisoncore.tokens.commands.*;
 import me.drawethree.ultraprisoncore.tokens.managers.TokensManager;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
@@ -59,7 +59,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	@Getter
 	private UltraPrisonCore core;
 
-	private HashMap<String, String> messages;
+	private Map<String, String> messages;
+	private Map<String, TokensCommand> commands;
 	private Map<Material, List<String>> luckyBlockRewards;
 
 	private double chance;
@@ -194,13 +195,23 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	}
 
 	private void registerCommands() {
+
+		this.commands = new HashMap<>();
+		this.commands.put("give", new TokensGiveCommand(this));
+		this.commands.put("add", new TokensGiveCommand(this));
+		this.commands.put("pay", new TokensPayCommand(this));
+		this.commands.put("remove", new TokensRemoveCommand(this));
+		this.commands.put("set", new TokensSetCommand(this));
+		this.commands.put("withdraw", new TokensWithdrawCommand(this));
+		this.commands.put("help", new TokensHelpCommand(this));
+
 		Commands.create()
 				.handler(c -> {
 					if (c.args().size() == 0 && c.sender() instanceof Player) {
 						this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
 						return;
 					}
-					TokensCommand subCommand = TokensCommand.getCommand(c.rawArg(0));
+					TokensCommand subCommand = this.getCommand(c.rawArg(0));
 					if (subCommand != null) {
 						subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
 					} else {
@@ -292,5 +303,9 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	public String getMessage(String key) {
 		return messages.get(key);
+	}
+
+	private TokensCommand getCommand(String arg) {
+		return commands.get(arg.toLowerCase());
 	}
 }

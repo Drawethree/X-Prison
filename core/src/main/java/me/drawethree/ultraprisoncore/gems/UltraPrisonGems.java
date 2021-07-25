@@ -6,7 +6,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
-import me.drawethree.ultraprisoncore.gems.commands.GemsCommand;
+import me.drawethree.ultraprisoncore.gems.commands.*;
 import me.drawethree.ultraprisoncore.gems.managers.GemsManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.text.Text;
@@ -37,6 +37,7 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     private UltraPrisonCore core;
 
     private HashMap<String, String> messages;
+    private HashMap<String, GemsCommand> commands;
     private boolean enabled;
 
     public UltraPrisonGems(UltraPrisonCore UltraPrisonCore) {
@@ -69,7 +70,6 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     }
 
 
-
     @Override
     public void disable() {
         this.gemsManager.stopUpdating();
@@ -95,13 +95,24 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     }
 
     private void registerCommands() {
+
+        this.commands = new HashMap<>();
+        this.commands.put("give", new GemsGiveCommand(this));
+        this.commands.put("add", new GemsGiveCommand(this));
+        this.commands.put("remove", new GemsRemoveCommand(this));
+        this.commands.put("set", new GemsSetCommand(this));
+        this.commands.put("help", new GemsHelpCommand(this));
+        this.commands.put("pay", new GemsPayCommand(this));
+
         Commands.create()
                 .handler(c -> {
+
                     if (c.args().size() == 0 && c.sender() instanceof Player) {
                         this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
                         return;
                     }
-                    GemsCommand subCommand = GemsCommand.getCommand(c.rawArg(0));
+
+                    GemsCommand subCommand = this.getCommand(c.rawArg(0));
                     if (subCommand != null) {
                         subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
                     } else {
@@ -128,5 +139,9 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
     public String getMessage(String key) {
         return messages.get(key);
+    }
+
+    private GemsCommand getCommand(String arg) {
+        return commands.get(arg.toLowerCase());
     }
 }
