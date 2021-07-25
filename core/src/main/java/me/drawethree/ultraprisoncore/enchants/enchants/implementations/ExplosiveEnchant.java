@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class ExplosiveEnchant extends UltraPrisonEnchantment {
+
 	private double chance;
 	private int cooldown;
 	private final CooldownMap<Player> cooldownMap;
@@ -76,8 +77,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 				final Location startLocation = e.getBlock().getLocation();
 
-				boolean autoSellModule = plugin.getCore().getAutoSell().isEnabled();
-				boolean autoSellPlayerEnabled = plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
 
 				for (int x = startLocation.getBlockX() - (radius == 4 ? 0 : (radius / 2)); x <= startLocation.getBlockX() + (radius == 4 ? radius - 1 : (radius / 2)); x++) {
 					for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius - 1 : (radius / 2)); z++) {
@@ -88,7 +88,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 							}
 							blockCount++;
 							blocksAffected.add(b1);
-							if (autoSellModule && autoSellPlayerEnabled) {
+							if (autoSellPlayerEnabled) {
 								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1.getType()) + 0.0) * amplifier);
 							} else {
 								p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
@@ -104,11 +104,11 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
 
-				double total = luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit);
+				double total = this.plugin.isMultipliersModule() ? luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) : luckyBooster ? totalDeposit * 2 : totalDeposit;
 
 				plugin.getCore().getEconomy().depositPlayer(p, total);
 
-				if (autoSellModule) {
+				if (this.plugin.isAutoSellModule()) {
 					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
 				}
 

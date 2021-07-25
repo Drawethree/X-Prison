@@ -546,6 +546,7 @@ public class EnchantsManager {
 		this.openEnchantMenuOnRightClickBlock = plugin.getConfig().get().getBoolean("open-menu-on-right-click-block");
 		this.allowEnchantsOutside = plugin.getConfig().get().getBoolean("allow-enchants-outside-mine-regions");
 		this.refundPercentage = plugin.getConfig().get().getDouble("refund-percentage");
+
 	}
 
 	// /givepickaxe <player> <enchant:18=1;...> <name>
