@@ -571,7 +571,7 @@ public class RankManager {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) - amount);
 		}
 
-		sender.sendMessage(this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+		sender.sendMessage(this.plugin.getMessage("prestige_remove").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
 	}
 
 	public Rank getRankById(int id) {

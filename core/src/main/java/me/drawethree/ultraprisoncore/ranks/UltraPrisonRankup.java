@@ -173,6 +173,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
                                 break;
                             case "remove":
                                 this.rankManager.removePlayerPrestige(c.sender(), target, amount);
+                                break;
                             default:
                                 c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
                                 c.sender().sendMessage(Text.colorize("&e&lPRESTIGE ADMIN HELP MENU "));
