@@ -202,7 +202,8 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
 			case "gang_members_amount": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				if (optionalGang.isPresent()) {
-					return String.valueOf(optionalGang.get().getMembersOffline().size());
+					// +1 because of leader
+					return String.valueOf(optionalGang.get().getMembersOffline().size() + 1);
 				}
 				return "";
 			}

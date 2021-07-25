@@ -113,7 +113,8 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_members_amount", event -> {
 			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			if (optionalGang.isPresent()) {
-				return String.valueOf(optionalGang.get().getMembersOffline().size());
+				// +1 because of leader
+				return String.valueOf(optionalGang.get().getMembersOffline().size() + 1);
 			}
 			return "";
 		});
