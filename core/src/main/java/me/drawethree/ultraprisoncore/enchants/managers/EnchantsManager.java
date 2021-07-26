@@ -368,9 +368,7 @@ public class EnchantsManager {
 		return true;
 	}
 
-	public boolean disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel,
-							  int substraction) {
-
+	public boolean disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
 		if (currentLevel <= 0) {
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
@@ -404,6 +402,39 @@ public class EnchantsManager {
 		return true;
 	}
 
+	public boolean disenchantMax(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel) {
+
+		if (currentLevel <= 0) {
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
+			return false;
+		}
+
+		int levelsToRefund = currentLevel;
+
+		long totalRefunded = 0;
+
+		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+
+		while (currentLevel > 0) {
+			long cost = enchantment.getCostOfLevel(currentLevel);
+
+			this.removeEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), currentLevel);
+			gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+
+			totalRefunded += (cost * (this.refundPercentage / 100.0));
+
+			currentLevel--;
+		}
+
+		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+
+		plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
+
+		gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(levelsToRefund)).replace("%enchant%", enchantment.getName()));
+		gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
+		return true;
+	}
+
 	public Item getRefundGuiItem(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
 		Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : CompMaterial.BARRIER.toMaterial();
 		ItemStackBuilder builder = ItemStackBuilder.of(m);
@@ -425,8 +456,11 @@ public class EnchantsManager {
 			} else if (handler.getClick() == ClickType.RIGHT) {
 				this.disenchant(enchantment, gui, level, 10);
 				gui.redraw();
+			} else if (handler.getClick() == ClickType.DROP) {
+				this.disenchantMax(enchantment, gui, level);
+				gui.redraw();
 			}
-		}, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.LEFT, ClickType.RIGHT).build() : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
+		}, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.LEFT, ClickType.RIGHT, ClickType.DROP).build() : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
 	}
 
 	public Item getGuiItem(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {

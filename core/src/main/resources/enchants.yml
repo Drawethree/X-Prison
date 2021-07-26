@@ -57,6 +57,8 @@ disenchant_menu:
       - " "
       - "&7&o(( &f&oLeft-Click&7&o to refund 1 level ))"
       - "&7&o(( &f&oRight-Click&7&o to refund 10 levels ))"
+      - "&7&o(( &f&oMiddle-Click&7&o to refund 100 levels ))"
+      - "&7&o(( &f&oPress 'Q'&7&o to refund ALL levels ))"
   help_item:
     material: NAME_TAG
     slot: 15
@@ -69,6 +71,7 @@ disenchant_menu:
       - " "
       - "&6&l* &eMiddle-Click &8» &7-100 Levels"
       - " "
+      - "&6&l* &e'Q' &8» &7-ALL Levels"
       - "&7&o(( &f&oClick&7&o on the enchant name to disenchant ))"
 messages:
   no_pickaxe_found: "&cYou do not have any diamond pickaxe!"
