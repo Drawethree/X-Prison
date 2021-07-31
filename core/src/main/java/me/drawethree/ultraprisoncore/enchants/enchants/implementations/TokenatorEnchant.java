@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TokenatorEnchant extends UltraPrisonEnchantment {
-    private long maxAmount;
+
+	private long maxAmount;
     private long minAmount;
     private double chance;
 

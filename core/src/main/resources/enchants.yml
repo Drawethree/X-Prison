@@ -426,6 +426,7 @@ enchants:
     Description:
       - '&7&o(( Ability to sell all items while mining ))'
     Pickaxe-Level-Required: 1
+    Messages-Enabled: true
     Refund:
       Enabled: true
       InGuiSlot: 45

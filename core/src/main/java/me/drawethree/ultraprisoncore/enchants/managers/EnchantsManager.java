@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
+import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -91,18 +92,21 @@ public class EnchantsManager {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = new ArrayList<>();
 
+		PickaxeLevel currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item);
+		PickaxeLevel nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(currentLevel);
+
+		boolean pickaxeLevels = this.plugin.getCore().isModuleEnabled(UltraPrisonPickaxeLevels.MODULE_NAME);
+		Pattern pt = Pattern.compile("%Enchant-\\d+%");
+
 		for (String s : PICKAXE_LORE) {
 			s = s.replace("%Blocks%", String.valueOf(getBlocksBroken(item)));
 
-			if (this.plugin.getCore().isModuleEnabled("Pickaxe Levels")) {
-				PickaxeLevel currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item);
-				PickaxeLevel nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(currentLevel);
+			if (pickaxeLevels) {
 				s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
 				s = s.replace("%PickaxeLevel%", currentLevel == null ? "0" : String.valueOf(currentLevel.getLevel()));
 				s = s.replace("%PickaxeProgress%", this.plugin.getCore().getPickaxeLevels().getProgressBar(item));
 			}
 
-			Pattern pt = Pattern.compile("%Enchant-\\d+%");
 			Matcher matcher = pt.matcher(s);
 
 			if (matcher.find()) {

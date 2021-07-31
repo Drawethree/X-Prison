@@ -7,7 +7,7 @@
     <parent>
         <groupId>me.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.4.3</version>
+        <version>1.4.6</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -138,6 +138,11 @@
         <dependency>
             <groupId>me.drawethree</groupId>
             <artifactId>UltraPrisonCore_1_16_R3</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.drawethree</groupId>
+            <artifactId>UltraPrisonCore_1_17_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

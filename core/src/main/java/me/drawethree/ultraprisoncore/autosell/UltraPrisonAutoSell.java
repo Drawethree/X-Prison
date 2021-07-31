@@ -368,58 +368,64 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 							regions = WorldGuardWrapper.getInstance().getRegions(c.sender().getLocation());
 						}
 
-						if (regions == null || regions.isEmpty()) {
-							c.sender().sendMessage(getMessage("not_in_region"));
-							return;
-						}
-
-						for (IWrappedRegion region : regions) {
-							if (regionsAutoSell.containsKey(region.getId())) {
-
-								SellRegion sellRegion = regionsAutoSell.get(region.getId());
-
-								if (sellRegion.getPermissionRequired() != null && !sellRegion.getPermissionRequired().isEmpty() && !c.sender().hasPermission(sellRegion.getPermissionRequired())) {
-									c.sender().sendMessage(getMessage("no_permission_sell").replace("%perm%", sellRegion.getPermissionRequired()));
-									return;
-								}
-
-								double totalPrice = 0;
-
-								List<ItemStack> toRemove = new ArrayList<>();
-
-								for (Material m : sellRegion.getSellingMaterials()) {
-									for (ItemStack item : Arrays.stream(c.sender().getInventory().getContents()).filter(i -> i != null && i.getType() == m).collect(Collectors.toList())) {
-										totalPrice += item.getAmount() * sellRegion.getSellPriceFor(m);
-										toRemove.add(item);
-									}
-								}
-
-								toRemove.forEach(i -> c.sender().getInventory().removeItem(i));
-
-								if (this.multipliersModule) {
-									totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(c.sender(), totalPrice);
-								}
-
-								UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(c.sender(), sellRegion, totalPrice);
-
-								Events.callSync(event);
-
-								if (event.isCancelled()) {
-									this.core.debug("UltraPrisonSellAllEvent was cancelled.");
-									return;
-								}
-
-								core.getEconomy().depositPlayer(c.sender(), event.getSellPrice());
-
-								if (event.getSellPrice() > 0.0) {
-									c.sender().sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", event.getSellPrice())));
-								}
-
-								break;
-							}
-						}
+						sellAll(c.sender(), regions, true);
 					}
 				}).registerAndBind(core, "sellall");
+	}
+
+	public void sellAll(Player sender, Set<IWrappedRegion> regions, boolean sendMessage) {
+
+		if (regions == null || regions.isEmpty()) {
+			if (sendMessage) {
+				sender.sendMessage(this.getMessage("not_in_region"));
+			}
+			return;
+		}
+
+		for (IWrappedRegion region : regions) {
+			if (regionsAutoSell.containsKey(region.getId())) {
+
+				SellRegion sellRegion = regionsAutoSell.get(region.getId());
+
+				if (sellRegion.getPermissionRequired() != null && !sellRegion.getPermissionRequired().isEmpty() && !sender.hasPermission(sellRegion.getPermissionRequired())) {
+					sender.sendMessage(getMessage("no_permission_sell").replace("%perm%", sellRegion.getPermissionRequired()));
+					return;
+				}
+
+				double totalPrice = 0;
+
+				List<ItemStack> toRemove = new ArrayList<>();
+
+				for (Material m : sellRegion.getSellingMaterials()) {
+					for (ItemStack item : Arrays.stream(sender.getInventory().getContents()).filter(i -> i != null && i.getType() == m).collect(Collectors.toList())) {
+						totalPrice += item.getAmount() * sellRegion.getSellPriceFor(m);
+						toRemove.add(item);
+					}
+				}
+
+				toRemove.forEach(i -> sender.getInventory().removeItem(i));
+
+				if (this.multipliersModule) {
+					totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(sender, totalPrice);
+				}
+
+				UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(sender, sellRegion, totalPrice);
+
+				Events.callSync(event);
+
+				if (event.isCancelled()) {
+					this.core.debug("UltraPrisonSellAllEvent was cancelled.");
+					return;
+				}
+
+				core.getEconomy().depositPlayer(sender, event.getSellPrice());
+
+				if (event.getSellPrice() > 0.0 && sendMessage) {
+					sender.sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", event.getSellPrice())));
+				}
+				break;
+			}
+		}
 	}
 
 	private void toggleAutoSell(Player player) {
