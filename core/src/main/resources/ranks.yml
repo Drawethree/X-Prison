@@ -1,9 +1,11 @@
 messages:
   rank_up: '&e&lRANKUP &8» &7Congratulations, you ranked up from %Rank-1% &7to %Rank-2%&7.'
   not_enough_money: '&e&lRANKUP &8» &7You don''t have enough money to rankup. You need $%cost%'
+  not_enough_tokens: '&e&lRANKUP &8» &7You don''t have enough tokens to rankup. You need %cost% Tokens.'
   prestige_needed: '&e&lRANKUP &8» &7In order to continue to the next stage do &f/prestige&7.'
   prestige_up: '&e&lPRESTIGE &8» &7Congratulations, you prestiged up to &f%Prestige%'
-  not_enough_money_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need &a$%cost%'
+  not_enough_money_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need &a$%cost%.'
+  not_enough_tokens_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need %cost% Tokens.'
   last_prestige: '&e&lPRESTIGE &8» &7You are at the last Prestige and have no more Prestiges.'
   not_last_rank: '&e&lPRESTIGE &8» &7You must be last rank to prestige.'
   top_updating: "&c&lLeaderboard is currently updating..."
@@ -20,6 +22,7 @@ prestige-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 reset_rank_after_prestige: false
 prestige_top_update_interval: 10
+use_tokens_currency: false
 unlimited_prestiges:
   enabled: false
   max_prestige: 1000000
@@ -44,6 +47,17 @@ unlimited_prestiges:
 Ranks:
   '1':
     Prefix: '&a&lA'
+  '2':
+    Prefix: '&b&lB'
+    Cost: 500000
+    CMD:
+      - lp user %player% perm set essentials.warps.B
 Prestige:
   '0':
     Prefix: '&f&lP0'
+  '1':
+    Prefix: '&2&lP1'
+    Cost: 30000000000
+    CMD:
+      - tokens give 25000 %player%
+      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*

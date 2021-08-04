@@ -49,6 +49,7 @@ public class RankManager {
 	private int prestigeTopUpdateInterval;
 	private boolean unlimitedPrestigesRewardPerPrestigeEnabled;
 	private List<String> unlimitedPrestigesRewardPerPrestige;
+	private boolean useTokensCurrency;
 
 	public RankManager(UltraPrisonRankup plugin) {
 		this.plugin = plugin;
@@ -126,6 +127,10 @@ public class RankManager {
 		this.resetRankAfterPrestige = plugin.getConfig().get().getBoolean("reset_rank_after_prestige");
 
 		this.prestigeTopUpdateInterval = plugin.getConfig().get().getInt("prestige_top_update_interval");
+		this.useTokensCurrency = plugin.getConfig().get().getBoolean("use_tokens_currency");
+
+		this.plugin.getCore().getLogger().info("Using " + (useTokensCurrency ? "Tokens" : "Money") + " currency for Ranks & Prestiges.");
+
 
 		this.loadUnlimitedPrestigesRewards();
 
@@ -272,10 +277,12 @@ public class RankManager {
 
 		for (int i = currentRank.getId(); i < maxRank.getId(); i++) {
 			double cost = this.getRankById(i + 1).getCost();
-			if (!this.plugin.getCore().getEconomy().has(p, cost)) {
+			if (!this.isTransactionAllowed(p, cost)) {
 				break;
 			}
-			this.plugin.getCore().getEconomy().withdrawPlayer(p, cost);
+			if (!this.completeTransaction(p, cost)) {
+				break;
+			}
 			finalRankId = i + 1;
 		}
 
@@ -319,8 +326,12 @@ public class RankManager {
 			return false;
 		}
 
-		if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-			p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+		if (!this.isTransactionAllowed(p, toBuy.getCost())) {
+			if (this.useTokensCurrency) {
+				p.sendMessage(this.plugin.getMessage("not_enough_tokens").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+			} else {
+				p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+			}
 			return false;
 		}
 
@@ -333,11 +344,40 @@ public class RankManager {
 			return false;
 		}
 
-		this.plugin.getCore().getEconomy().withdrawPlayer(p, toBuy.getCost());
+		if (!this.completeTransaction(p, toBuy.getCost())) {
+			return false;
+		}
+
 		toBuy.runCommands(p);
+
 		this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
+
 		p.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
 		return true;
+	}
+
+	private boolean completeTransaction(Player p, double cost) {
+		if (this.useTokensCurrency) {
+			this.plugin.getCore().getTokens().getApi().removeTokens(p, (long) cost);
+			return true;
+		} else {
+			return this.plugin.getCore().getEconomy().withdrawPlayer(p, cost).transactionSuccess();
+		}
+	}
+
+	private boolean isTransactionAllowed(Player p, double cost) {
+		if (this.useTokensCurrency) {
+			if (!this.plugin.getCore().getTokens().getApi().hasEnough(p, (long) cost)) {
+				return false;
+			}
+			return true;
+		} else {
+			if (!this.plugin.getCore().getEconomy().has(p, cost)) {
+				return false;
+			}
+			return true;
+		}
+
 	}
 
 	public boolean buyNextPrestige(Player p) {
@@ -355,8 +395,12 @@ public class RankManager {
 		Prestige currentPrestige = this.getPlayerPrestige(p);
 		Prestige toBuy = getNextPrestige(currentPrestige);
 
-		if (!this.plugin.getCore().getEconomy().has(p, toBuy.getCost())) {
-			p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+		if (!this.isTransactionAllowed(p, toBuy.getCost())) {
+			if (this.useTokensCurrency) {
+				p.sendMessage(this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+			} else {
+				p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+			}
 			return false;
 		}
 
@@ -448,14 +492,18 @@ public class RankManager {
 
 		Prestige nextPrestige = this.getNextPrestige(startPrestige);
 
-		if (!this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
-			p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+		if (!this.isTransactionAllowed(p, nextPrestige.getCost())) {
+			if (this.useTokensCurrency) {
+				p.sendMessage(this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+			} else {
+				p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+			}
 			return false;
 		}
 
 		p.sendMessage(this.plugin.getMessage("max_prestige_started"));
 
-		while (!isMaxPrestige(p) && isMaxRank(p) && this.plugin.getCore().getEconomy().has(p, nextPrestige.getCost())) {
+		while (!isMaxPrestige(p) && isMaxRank(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
 
 			UltraPrisonPlayerPrestigeEvent event = new UltraPrisonPlayerPrestigeEvent(p, currentPrestige, nextPrestige);
 
@@ -479,7 +527,11 @@ public class RankManager {
 	}
 
 	private void doPrestige(Player p, Prestige nextPrestige) {
-		this.plugin.getCore().getEconomy().withdrawPlayer(p, nextPrestige.getCost());
+
+		if (!this.completeTransaction(p, nextPrestige.getCost())) {
+			return;
+		}
+
 		this.onlinePlayersPrestige.put(p.getUniqueId(), nextPrestige.getId());
 
 		nextPrestige.runCommands(p);
@@ -610,7 +662,9 @@ public class RankManager {
 		Rank current = this.getPlayerRank(player);
 		Rank next = this.getNextRank(current.getId());
 
-		int progress = (int) ((this.plugin.getCore().getEconomy().getBalance(player) / next.getCost()) * 100);
+		double currentBalance = this.useTokensCurrency ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
+
+		int progress = (int) ((currentBalance / next.getCost()) * 100);
 
 		if (progress > 100) {
 			progress = 100;
@@ -627,7 +681,9 @@ public class RankManager {
 		Prestige current = this.getPlayerPrestige(player);
 		Prestige next = this.getNextPrestige(current);
 
-		int progress = (int) ((this.plugin.getCore().getEconomy().getBalance(player) / next.getCost()) * 100);
+		double currentBalance = this.useTokensCurrency ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
+
+		int progress = (int) ((currentBalance / next.getCost()) * 100);
 
 		if (progress > 100) {
 			progress = 100;
