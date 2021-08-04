@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.drawethree</groupId>
     <artifactId>UltraPrisonCore</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.7</version>
 
     <modules>
         <module>core</module>
@@ -24,6 +24,7 @@
         <module>modules/v1_16_R1</module>
         <module>modules/v1_16_R2</module>
         <module>modules/v1_16_R3</module>
+        <module>modules/v1_17_R1</module>
         <module>distribution</module>
     </modules>
 
@@ -48,4 +49,30 @@
         <build.minecraft.version>1.8.8</build.minecraft.version>
     </properties>-->
 
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.14.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper</artifactId>
+            <version>5.6.8</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

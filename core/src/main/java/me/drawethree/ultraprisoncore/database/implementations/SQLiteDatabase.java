@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQLiteDatabase extends SQLDatabase {
@@ -53,6 +54,7 @@ public class SQLiteDatabase extends SQLDatabase {
 		this.hikari = new HikariDataSource(hikari);
 
 		this.createTables();
+		this.runSQLUpdates();
 	}
 
 	private void createDBFile() {
@@ -78,6 +80,29 @@ public class SQLiteDatabase extends SQLDatabase {
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (name))");
 			execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
+		});
+	}
+
+
+	@Override
+	public void runSQLUpdates() {
+
+		// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table
+		Schedulers.async().run(() -> {
+			try (Connection con = this.hikari.getConnection();
+				 PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Gangs")) {
+				try (ResultSet set = statement.executeQuery()) {
+					if (set.next()) {
+						try {
+							set.findColumn("uuid");
+						} catch (SQLException e) {
+							execute("alter table UltraPrison_Gangs add column uuid varchar(36) not null", null);
+						}
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		});
 	}
 

@@ -165,7 +165,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	public void handleBlockBreak(Player p, List<Block> blocks) {
 		long startTime = System.currentTimeMillis();
-		tokensManager.addBlocksBroken(null, p, blocks.size());
+		tokensManager.addBlocksBroken(p, blocks);
 
 		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p.getPlayer());
 

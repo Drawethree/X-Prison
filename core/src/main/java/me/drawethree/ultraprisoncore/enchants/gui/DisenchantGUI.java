@@ -27,11 +27,9 @@ public class DisenchantGUI extends Gui {
 	private static int PICKAXE_ITEM_SLOT;
 	private static int GUI_LINES;
 
-
 	static {
 		reload();
 	}
-
 
 	@Getter
 	@Setter

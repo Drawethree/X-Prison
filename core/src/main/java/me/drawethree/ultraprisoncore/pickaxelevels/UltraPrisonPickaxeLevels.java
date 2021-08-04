@@ -28,228 +28,228 @@ import java.util.Map;
 
 public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
-    public static final String MODULE_NAME = "Pickaxe Levels";
+	public static final String MODULE_NAME = "Pickaxe Levels";
 
-    private static final String ADMIN_PERMISSION = "ultraprison.pickaxe.admin";
-    private static final String NBT_TAG_INDETIFIER = "ultra-prison-pickaxe-level";
+	private static final String ADMIN_PERMISSION = "ultraprison.pickaxe.admin";
+	private static final String NBT_TAG_INDETIFIER = "ultra-prison-pickaxe-level";
 
-    @Getter
-    private FileManager.Config config;
+	@Getter
+	private FileManager.Config config;
 
-    private Map<Integer, PickaxeLevel> pickaxeLevels;
-    private Map<String, String> messages;
-    private PickaxeLevel defaultLevel;
-    private PickaxeLevel maxLevel;
-    @Getter
-    private UltraPrisonPickaxeLevelsAPI api;
-    @Getter
-    private UltraPrisonCore core;
-    private boolean enabled;
+	private Map<Integer, PickaxeLevel> pickaxeLevels;
+	private Map<String, String> messages;
+	private PickaxeLevel defaultLevel;
+	private PickaxeLevel maxLevel;
+	@Getter
+	private UltraPrisonPickaxeLevelsAPI api;
+	@Getter
+	private UltraPrisonCore core;
+	private boolean enabled;
 
-    public UltraPrisonPickaxeLevels(UltraPrisonCore UltraPrisonCore) {
-        this.core = UltraPrisonCore;
-    }
+	public UltraPrisonPickaxeLevels(UltraPrisonCore UltraPrisonCore) {
+		this.core = UltraPrisonCore;
+	}
 
-    private void loadMessages() {
-        messages = new HashMap<>();
-        for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key.toLowerCase(), Text.colorize(this.getConfig().get().getString("messages." + key)));
-        }
-    }
+	private void loadMessages() {
+		messages = new HashMap<>();
+		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key.toLowerCase(), Text.colorize(this.getConfig().get().getString("messages." + key)));
+		}
+	}
 
-    private void loadPickaxeLevels() {
-        pickaxeLevels = new LinkedHashMap<>();
+	private void loadPickaxeLevels() {
+		pickaxeLevels = new LinkedHashMap<>();
 
-        ConfigurationSection section = this.getConfig().get().getConfigurationSection("levels");
-        if (section == null) {
-            return;
-        }
+		ConfigurationSection section = this.getConfig().get().getConfigurationSection("levels");
+		if (section == null) {
+			return;
+		}
 
-        for (String level : section.getKeys(false)) {
+		for (String level : section.getKeys(false)) {
 
-            int levelId = Integer.parseInt(level);
+			int levelId = Integer.parseInt(level);
 
-            String displayName = Text.colorize(this.getConfig().get().getString("levels." + level + ".display_name"));
-            long blocksRequire = this.getConfig().get().getLong("levels." + level + ".blocks_required");
-            List<String> rewards = this.getConfig().get().getStringList("levels." + level + ".rewards");
-
-
-            PickaxeLevel pickaxeLevel = new PickaxeLevel(levelId, blocksRequire, displayName, rewards);
-
-            if (levelId == 1) {
-                this.defaultLevel = pickaxeLevel;
-            }
-
-            this.pickaxeLevels.put(levelId, pickaxeLevel);
-            this.maxLevel = pickaxeLevel;
-
-            this.core.getLogger().info("Loaded Pickaxe Level " + levelId);
-        }
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void reload() {
-        this.config.reload();
-        this.loadMessages();
-        this.loadPickaxeLevels();
-    }
-
-    @Override
-    public void enable() {
-        this.enabled = true;
-
-        this.config = this.core.getFileManager().getConfig("pickaxe-levels.yml").copyDefaults(true).save();
+			String displayName = Text.colorize(this.getConfig().get().getString("levels." + level + ".display_name"));
+			long blocksRequire = this.getConfig().get().getLong("levels." + level + ".blocks_required");
+			List<String> rewards = this.getConfig().get().getStringList("levels." + level + ".rewards");
 
 
-        this.loadPickaxeLevels();
-        this.loadMessages();
-        this.registerCommands();
-        this.registerListeners();
+			PickaxeLevel pickaxeLevel = new PickaxeLevel(levelId, blocksRequire, displayName, rewards);
 
-        this.api = new UltraPrisonPickaxeLevelsAPIImpl(this);
-    }
+			if (levelId == 1) {
+				this.defaultLevel = pickaxeLevel;
+			}
 
-    private void registerListeners() {
+			this.pickaxeLevels.put(levelId, pickaxeLevel);
+			this.maxLevel = pickaxeLevel;
 
-        Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(EventFilters.ignoreCancelled())
-                .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
-                .filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
-                .handler(e -> {
-                    //Check for next level progression
+			this.core.getLogger().info("Loaded Pickaxe Level " + levelId);
+		}
+	}
 
-                    PickaxeLevel currentLevel = this.getPickaxeLevel(e.getPlayer().getItemInHand());
-                    PickaxeLevel nextLevel = this.getNextPickaxeLevel(currentLevel);
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-                    if (nextLevel != null && this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand()) >= nextLevel.getBlocksRequired()) {
-                        nextLevel.giveRewards(e.getPlayer());
-                        e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), nextLevel, e.getPlayer()));
-                        e.getPlayer().sendMessage(this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(nextLevel.getLevel())));
-                    }
-                }).bindWith(core);
-        Events.subscribe(PlayerItemHeldEvent.class)
-                .handler(e -> {
-                    ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
-                    if (item != null && this.getCore().isPickaxeSupported(item.getType())) {
-                        e.getPlayer().getInventory().setItem(e.getNewSlot(), this.addDefaultPickaxeLevel(item, e.getPlayer()));
-                    }
-                }).bindWith(core);
-    }
+	@Override
+	public void reload() {
+		this.config.reload();
+		this.loadMessages();
+		this.loadPickaxeLevels();
+	}
 
-    public PickaxeLevel getNextPickaxeLevel(PickaxeLevel currentLevel) {
-        if (currentLevel == null || currentLevel == maxLevel) {
-            return null;
-        }
-        return this.pickaxeLevels.get(currentLevel.getLevel() + 1);
-    }
+	@Override
+	public void enable() {
+		this.enabled = true;
 
-    @Override
-    public void disable() {
-        this.enabled = false;
-    }
-
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
-
-    private void registerCommands() {
-
-    }
+		this.config = this.core.getFileManager().getConfig("pickaxe-levels.yml").copyDefaults(true).save();
 
 
-    public String getMessage(String key) {
-        return messages.get(key.toLowerCase());
-    }
+		this.loadPickaxeLevels();
+		this.loadMessages();
+		this.registerCommands();
+		this.registerListeners();
 
-    public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
-        if (itemStack == null || !this.getCore().isPickaxeSupported(itemStack.getType())) {
-            return null;
-        }
+		this.api = new UltraPrisonPickaxeLevelsAPIImpl(this);
+	}
 
-        NBTItem nbtItem = new NBTItem(itemStack);
+	private void registerListeners() {
 
-        if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-            return defaultLevel;
-        }
+		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
+				.filter(EventFilters.ignoreCancelled())
+				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
+				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.handler(e -> {
+					//Check for next level progression
 
-        return this.pickaxeLevels.get(nbtItem.getInteger(NBT_TAG_INDETIFIER));
-    }
+					PickaxeLevel currentLevel = this.getPickaxeLevel(e.getPlayer().getItemInHand());
+					PickaxeLevel nextLevel = this.getNextPickaxeLevel(currentLevel);
 
-    public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
+					if (nextLevel != null && this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand()) >= nextLevel.getBlocksRequired()) {
+						nextLevel.giveRewards(e.getPlayer());
+						e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), nextLevel, e.getPlayer()));
+						e.getPlayer().sendMessage(this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(nextLevel.getLevel())));
+					}
+				}).bindWith(core);
+		Events.subscribe(PlayerItemHeldEvent.class)
+				.handler(e -> {
+					ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
+					if (item != null && this.getCore().isPickaxeSupported(item.getType()) && this.getPickaxeLevel(item) == null) {
+						e.getPlayer().getInventory().setItem(e.getNewSlot(), this.addDefaultPickaxeLevel(item, e.getPlayer()));
+					}
+				}).bindWith(core);
+	}
 
-        if (level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
-            return item;
-        }
+	public PickaxeLevel getNextPickaxeLevel(PickaxeLevel currentLevel) {
+		if (currentLevel == null || currentLevel == maxLevel) {
+			return null;
+		}
+		return this.pickaxeLevels.get(currentLevel.getLevel() + 1);
+	}
 
-        NBTItem nbtItem = new NBTItem(item);
+	@Override
+	public void disable() {
+		this.enabled = false;
+	}
 
-        if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-            nbtItem.setInteger(NBT_TAG_INDETIFIER, 0);
-        }
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
 
-        nbtItem.setInteger(NBT_TAG_INDETIFIER, level.getLevel());
+	private void registerCommands() {
 
-        ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
-        if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
-            builder = builder.name(level.getDisplayName(p));
-        }
-
-        item = builder.build();
-        this.core.getEnchants().getEnchantsManager().updatePickaxe(item);
-        return item;
-    }
-
-    private ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
-        return setPickaxeLevel(item, this.defaultLevel, p);
-    }
+	}
 
 
-    public ItemStack findPickaxe(Player p) {
-        for (ItemStack i : p.getInventory()) {
-            if (i == null) {
-                continue;
-            }
-            if (this.getCore().isPickaxeSupported(i.getType())) {
-                return i;
-            }
-        }
-        return null;
-    }
+	public String getMessage(String key) {
+		return messages.get(key.toLowerCase());
+	}
 
-    public String getProgressBar(Player player) {
-        ItemStack pickaxe = findPickaxe(player);
-        return this.getProgressBar(pickaxe);
-    }
+	public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
+		if (itemStack == null || !this.getCore().isPickaxeSupported(itemStack.getType())) {
+			return null;
+		}
 
-    public String getProgressBar(ItemStack item) {
+		NBTItem nbtItem = new NBTItem(itemStack);
 
-        PickaxeLevel level = this.getPickaxeLevel(item);
-        PickaxeLevel nextLevel = this.getNextPickaxeLevel(level);
+		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
+			return defaultLevel;
+		}
 
-        if (nextLevel != null) {
-            long required = nextLevel.getBlocksRequired() - level.getBlocksRequired();
-            double treshold = required / 20.0;
-            long collected = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
+		return this.pickaxeLevels.get(nbtItem.getInteger(NBT_TAG_INDETIFIER));
+	}
 
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < 20; i++) {
-                if (collected >= treshold * (i + 1)) {
-                    result.append("&a:");
-                } else {
-                    result.append("&c:");
-                }
-            }
-            return Text.colorize(result.toString());
+	public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
 
-        } else {
-            return Text.colorize("&a::::::::::::::::::::");
-        }
+		if (level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
+			return item;
+		}
 
-    }
+		NBTItem nbtItem = new NBTItem(item);
+
+		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
+			nbtItem.setInteger(NBT_TAG_INDETIFIER, 0);
+		}
+
+		nbtItem.setInteger(NBT_TAG_INDETIFIER, level.getLevel());
+
+		ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
+		if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
+			builder = builder.name(level.getDisplayName(p));
+		}
+
+		item = builder.build();
+		this.core.getEnchants().getEnchantsManager().updatePickaxe(item);
+		return item;
+	}
+
+	private ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
+		return setPickaxeLevel(item, this.defaultLevel, p);
+	}
+
+
+	public ItemStack findPickaxe(Player p) {
+		for (ItemStack i : p.getInventory()) {
+			if (i == null) {
+				continue;
+			}
+			if (this.getCore().isPickaxeSupported(i.getType())) {
+				return i;
+			}
+		}
+		return null;
+	}
+
+	public String getProgressBar(Player player) {
+		ItemStack pickaxe = findPickaxe(player);
+		return this.getProgressBar(pickaxe);
+	}
+
+	public String getProgressBar(ItemStack item) {
+
+		PickaxeLevel level = this.getPickaxeLevel(item);
+		PickaxeLevel nextLevel = this.getNextPickaxeLevel(level);
+
+		if (nextLevel != null) {
+			long required = nextLevel.getBlocksRequired() - level.getBlocksRequired();
+			double treshold = required / 20.0;
+			long collected = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
+
+			StringBuilder result = new StringBuilder();
+			for (int i = 0; i < 20; i++) {
+				if (collected >= treshold * (i + 1)) {
+					result.append("&a:");
+				} else {
+					result.append("&c:");
+				}
+			}
+			return Text.colorize(result.toString());
+
+		} else {
+			return Text.colorize("&a::::::::::::::::::::");
+		}
+
+	}
 }

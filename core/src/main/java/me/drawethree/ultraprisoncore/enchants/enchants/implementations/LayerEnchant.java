@@ -18,7 +18,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class LayerEnchant extends UltraPrisonEnchantment {
-
 	private double chance;
 
 
@@ -59,8 +58,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
 				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
 
-				boolean autoSellModule = plugin.getCore().getAutoSell().isEnabled();
-				boolean autoSellPlayerEnabled = plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
 
 				for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
 					for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
@@ -70,7 +68,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 						}
 						blockCount++;
 						blocksAffected.add(b1);
-						if (autoSellModule && autoSellPlayerEnabled) {
+						if (autoSellPlayerEnabled) {
 							totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1.getType()) + 0.0) * amplifier);
 						} else {
 							p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
@@ -82,15 +80,18 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 				if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
 					plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
 				}
+
 				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-				double total = luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit);
+				double total = this.plugin.isMultipliersModule() ? luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) : luckyBooster ? totalDeposit * 2 : totalDeposit;
 
 				plugin.getCore().getEconomy().depositPlayer(p, total);
-				if (plugin.getCore().getAutoSell().isEnabled()) {
+
+				if (plugin.isAutoSellModule()) {
 					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
 				}
+
 				plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
-				plugin.getCore().getTokens().getTokensManager().addBlocksBroken(null, p, blockCount);
+				plugin.getCore().getTokens().getTokensManager().addBlocksBroken(p, blocksAffected);
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
 
 			}

@@ -183,6 +183,37 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
 					return "";
 				}
 			}
+			case "gang_has_gang":
+				return this.plugin.getGangs().getGangsManager().getPlayerGang(player).isPresent() ? "Yes" : "No";
+			case "gang_is_leader": {
+				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				if (optionalGang.isPresent()) {
+					return optionalGang.get().isOwner(player) ? "Yes" : "No";
+				}
+				return "";
+			}
+			case "gang_leader_name": {
+				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				if (optionalGang.isPresent()) {
+					return optionalGang.get().getOwnerOffline().getName();
+				}
+				return "";
+			}
+			case "gang_members_amount": {
+				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				if (optionalGang.isPresent()) {
+					// +1 because of leader
+					return String.valueOf(optionalGang.get().getMembersOffline().size() + 1);
+				}
+				return "";
+			}
+			case "gang_members_online": {
+				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				if (optionalGang.isPresent()) {
+					return String.valueOf(optionalGang.get().getOnlinePlayers().size());
+				}
+				return "";
+			}
 			default:
 				return null;
 		}

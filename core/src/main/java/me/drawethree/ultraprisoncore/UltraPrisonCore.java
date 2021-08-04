@@ -153,11 +153,11 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		if (this.getConfig().getBoolean("modules.multipliers")) {
 			this.loadModule(multipliers);
 		}
-		if (this.getConfig().getBoolean("modules.enchants")) {
-			this.loadModule(enchants);
-		}
 		if (this.getConfig().getBoolean("modules.autosell")) {
 			this.loadModule(autoSell);
+		}
+		if (this.getConfig().getBoolean("modules.enchants")) {
+			this.loadModule(enchants);
 		}
 		if (this.getConfig().getBoolean("modules.autominer")) {
 			this.loadModule(autoMiner);

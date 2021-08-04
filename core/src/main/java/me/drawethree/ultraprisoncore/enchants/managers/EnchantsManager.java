@@ -7,10 +7,12 @@ import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
+import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.text.Text;
@@ -91,18 +93,27 @@ public class EnchantsManager {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = new ArrayList<>();
 
+		boolean pickaxeLevels = this.plugin.getCore().isModuleEnabled(UltraPrisonPickaxeLevels.MODULE_NAME);
+
+		PickaxeLevel currentLevel = null;
+		PickaxeLevel nextLevel = null;
+
+		if (pickaxeLevels) {
+			currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item);
+			nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(currentLevel);
+		}
+
+		Pattern pt = Pattern.compile("%Enchant-\\d+%");
+
 		for (String s : PICKAXE_LORE) {
 			s = s.replace("%Blocks%", String.valueOf(getBlocksBroken(item)));
 
-			if (this.plugin.getCore().isModuleEnabled("Pickaxe Levels")) {
-				PickaxeLevel currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item);
-				PickaxeLevel nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(currentLevel);
+			if (pickaxeLevels) {
 				s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
 				s = s.replace("%PickaxeLevel%", currentLevel == null ? "0" : String.valueOf(currentLevel.getLevel()));
 				s = s.replace("%PickaxeProgress%", this.plugin.getCore().getPickaxeLevels().getProgressBar(item));
 			}
 
-			Pattern pt = Pattern.compile("%Enchant-\\d+%");
 			Matcher matcher = pt.matcher(s);
 
 			if (matcher.find()) {
@@ -313,6 +324,22 @@ public class EnchantsManager {
 		return item;
 	}
 
+	public ItemStack setEnchant(ItemStack item, Player p, int id, int level) {
+		UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantById(id);
+
+		if (enchantment == null || item == null) {
+			return item;
+		}
+
+		NBTItem nbtItem = new NBTItem(item);
+
+		nbtItem.setInteger(NBT_TAG_INDETIFIER + id, level);
+
+		nbtItem.mergeCustomNBT(item);
+		this.applyLoreToPickaxe(item);
+		return item;
+	}
+
 	public boolean buyEnchnant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
 
 		if (currentLevel >= enchantment.getMaxLevel()) {
@@ -368,9 +395,7 @@ public class EnchantsManager {
 		return true;
 	}
 
-	public boolean disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel,
-							  int substraction) {
-
+	public boolean disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
 		if (currentLevel <= 0) {
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
@@ -404,6 +429,47 @@ public class EnchantsManager {
 		return true;
 	}
 
+	public void disenchantMax(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel) {
+
+		if (currentLevel <= 0) {
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
+			return;
+		}
+
+		Schedulers.async().run(() -> {
+			int current = currentLevel;
+			int levelsToRefund = current;
+
+			long totalRefunded = 0;
+
+			enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), current);
+
+			while (current > 0) {
+				long cost = enchantment.getCostOfLevel(current);
+				totalRefunded += (cost * (this.refundPercentage / 100.0));
+				current--;
+			}
+
+			int finalCurrent = current;
+
+			Schedulers.sync().run(() -> {
+				this.setEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), finalCurrent);
+				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+			});
+
+			enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), current);
+
+			plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
+
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(levelsToRefund)).replace("%enchant%", enchantment.getName()));
+			gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
+
+			if (gui.isValid()) {
+				gui.redraw();
+			}
+		});
+	}
+
 	public Item getRefundGuiItem(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
 		Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : CompMaterial.BARRIER.toMaterial();
 		ItemStackBuilder builder = ItemStackBuilder.of(m);
@@ -425,8 +491,10 @@ public class EnchantsManager {
 			} else if (handler.getClick() == ClickType.RIGHT) {
 				this.disenchant(enchantment, gui, level, 10);
 				gui.redraw();
+			} else if (handler.getClick() == ClickType.DROP) {
+				this.disenchantMax(enchantment, gui, level);
 			}
-		}, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.LEFT, ClickType.RIGHT).build() : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
+		}, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.LEFT, ClickType.RIGHT, ClickType.DROP).build() : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getMessage("enchant_cant_disenchant")));
 	}
 
 	public Item getGuiItem(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
@@ -455,55 +523,63 @@ public class EnchantsManager {
 				gui.redraw();
 			} else if (handler.getClick() == ClickType.DROP) {
 				this.buyMaxEnchant(enchantment, gui, currentLevel);
-				gui.redraw();
 			}
 		}, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.RIGHT, ClickType.LEFT, ClickType.DROP).build();
 	}
 
-	private boolean buyMaxEnchant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
+	private void buyMaxEnchant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
 		if (currentLevel >= enchantment.getMaxLevel()) {
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level"));
-			return false;
+			return;
 		}
 
-		int levelsToBuy = 0;
-		long totalCost = 0;
+		Schedulers.async().run(() -> {
+			int levelsToBuy = 0;
+			long totalCost = 0;
 
-		while ((currentLevel + levelsToBuy + 1) <= enchantment.getMaxLevel() && this.plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost + enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1))) {
-			levelsToBuy += 1;
-			totalCost += enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1);
-		}
+			while ((currentLevel + levelsToBuy + 1) <= enchantment.getMaxLevel() && this.plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost + enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1))) {
+				levelsToBuy += 1;
+				totalCost += enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1);
+			}
 
-		if (levelsToBuy == 0) {
-			gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
-			return false;
-		}
+			if (levelsToBuy == 0) {
+				gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
+				return;
+			}
 
-		UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + levelsToBuy);
+			UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + levelsToBuy);
 
-		Events.call(event);
+			Events.callSync(event);
 
-		if (event.isCancelled()) {
-			return false;
-		}
+			if (event.isCancelled()) {
+				return;
+			}
 
-		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
+			plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
 
-		this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + levelsToBuy);
-		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
-		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + levelsToBuy);
-		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+			int finalLevelsToBuy = levelsToBuy;
 
-		if (levelsToBuy == 1) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
-		} else {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought_multiple")
-					.replace("%amount%", String.valueOf(levelsToBuy))
-					.replace("%enchant%", enchantment.getName())
-					.replace("%tokens%", String.format("%,d", totalCost)));
-		}
-		return true;
+			Schedulers.sync().run(() -> {
+				this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + finalLevelsToBuy);
+				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + finalLevelsToBuy);
+				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+			});
+
+			if (levelsToBuy == 1) {
+				gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
+			} else {
+				gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought_multiple")
+						.replace("%amount%", String.valueOf(levelsToBuy))
+						.replace("%enchant%", enchantment.getName())
+						.replace("%tokens%", String.format("%,d", totalCost)));
+			}
+
+			if (gui.isValid()) {
+				gui.redraw();
+			}
+		});
 	}
 
 	private List<String> translateLore(UltraPrisonEnchantment enchantment, List<String> guiItemLore,
@@ -546,6 +622,7 @@ public class EnchantsManager {
 		this.openEnchantMenuOnRightClickBlock = plugin.getConfig().get().getBoolean("open-menu-on-right-click-block");
 		this.allowEnchantsOutside = plugin.getConfig().get().getBoolean("allow-enchants-outside-mine-regions");
 		this.refundPercentage = plugin.getConfig().get().getDouble("refund-percentage");
+
 	}
 
 	// /givepickaxe <player> <enchant:18=1;...> <name>

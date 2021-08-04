@@ -87,7 +87,6 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     public void disable() {
         this.gangsManager.saveDataOnDisable();
         this.enabled = false;
-
     }
 
     @Override
@@ -113,6 +112,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
         registerCommand(new GangTopCommand(this));
         registerCommand(new GangAdminCommand(this));
         registerCommand(new GangValueCommand(this));
+        registerCommand(new GangRenameCommand(this));
         //registerCommand(new GangChatCommand(this));
 
         Commands.create()

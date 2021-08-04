@@ -18,6 +18,7 @@ import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -380,20 +381,8 @@ public class TokensManager {
 		});
 	}
 
+
 	public void addBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
-
-		if (player.isOnline()) {
-			UltraPrisonBlockBreakEvent event = new UltraPrisonBlockBreakEvent((Player) player, amount);
-
-			Events.callSync(event);
-
-			if (event.isCancelled()) {
-				return;
-			}
-
-			amount = event.getAmount();
-		}
-
 
 		if (amount <= 0) {
 			if (sender != null) {
@@ -426,6 +415,44 @@ public class TokensManager {
 
 			if (sender != null) {
 				sender.sendMessage(plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
+			}
+		});
+	}
+
+	public void addBlocksBroken(OfflinePlayer player, List<Block> blocks) {
+
+		if (player.isOnline()) {
+			UltraPrisonBlockBreakEvent event = new UltraPrisonBlockBreakEvent((Player) player, blocks);
+
+			Events.callSync(event);
+
+			if (event.isCancelled()) {
+				return;
+			}
+
+			blocks = event.getBlocks();
+		}
+
+		long finalAmount = blocks.size();
+
+		Schedulers.async().run(() -> {
+
+			long currentBroken = getPlayerBrokenBlocks(player);
+			long currentBrokenWeekly = getPlayerBrokenBlocksWeekly(player);
+
+			BlockReward nextReward = this.getNextBlockReward(player);
+
+			if (!player.isOnline()) {
+				this.plugin.getCore().getPluginDatabase().updateBlocks(player, currentBroken + finalAmount);
+				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, currentBrokenWeekly + finalAmount);
+			} else {
+				blocksCache.put(player.getUniqueId(), currentBroken + finalAmount);
+				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
+
+				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
+					nextReward.giveTo((Player) player);
+					nextReward = this.getNextBlockReward(nextReward);
+				}
 			}
 		});
 	}

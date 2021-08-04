@@ -25,9 +25,7 @@ public class Rank {
 					executeCommands(p);
 				});
 			} else {
-				for (String cmd : commandsToExecute) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix).replace("%Rank%", prefix));
-				}
+				executeCommands(p);
 			}
 		}
 	}
