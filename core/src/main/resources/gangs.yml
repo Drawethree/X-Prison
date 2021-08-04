@@ -40,6 +40,8 @@ messages:
   gang-top-updating: "&e&lGANGS &8» &cPlease wait, gang top is updating!"
   gang-name-long: "&e&lGANGS &8» &cGang name must contain max 10 characters."
   gang-name-colors: "&e&lGANGS &8» &cGang name must not contain colors."
+  gang-rename: "&e&lGANGS &8» &aYour Gang was renamed to %gang%."
+  gang-force-rename: "&e&lGANGS &8» &aYou have renamed %player%'s gang to %gang%"
 gang-help-menu:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lGANG HELP MENU "
@@ -48,6 +50,7 @@ gang-help-menu:
   - "&e/gang invite [player]"
   - "&e/gang kick [player]"
   - "&e/gang info [player]"
+  - "&e/gang rename [new_gang_name]"
   - "&e/gang chat"
   - "&e/gang top"
   - "&e/gang accept"
@@ -62,6 +65,7 @@ gang-admin-help-menu:
   - "&e/gang value remove [gang] [value]"
   - "&e/gang admin add [player] [gang]"
   - "&e/gang admin remove [player] [gang]"
+  - "&e/gang admin rename [player] [new_gang_name]"
   - "&e/gang admin disband [gang]"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 gang-info-format:

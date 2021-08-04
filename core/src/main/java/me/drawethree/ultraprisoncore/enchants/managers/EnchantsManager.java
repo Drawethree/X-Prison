@@ -327,7 +327,7 @@ public class EnchantsManager {
 	public ItemStack setEnchant(ItemStack item, Player p, int id, int level) {
 		UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantById(id);
 
-		if (enchantment == null || item == null || level == 0) {
+		if (enchantment == null || item == null) {
 			return item;
 		}
 
@@ -450,8 +450,10 @@ public class EnchantsManager {
 				current--;
 			}
 
+			int finalCurrent = current;
+
 			Schedulers.sync().run(() -> {
-				this.setEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), currentLevel - levelsToRefund);
+				this.setEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), finalCurrent);
 				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 			});
 
@@ -465,7 +467,6 @@ public class EnchantsManager {
 			if (gui.isValid()) {
 				gui.redraw();
 			}
-
 		});
 	}
 
