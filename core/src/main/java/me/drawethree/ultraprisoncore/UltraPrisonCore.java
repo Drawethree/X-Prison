@@ -37,6 +37,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.HashMap;
@@ -322,6 +323,10 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	public boolean isPickaxeSupported(Material m) {
 		return this.supportedPickaxes.contains(m);
+	}
+
+	public boolean isPickaxeSupported(ItemStack item) {
+		return isPickaxeSupported(item.getType());
 	}
 
 	private boolean loadNMSProvider() {

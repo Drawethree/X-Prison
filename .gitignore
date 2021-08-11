@@ -1,6 +1,7 @@
 target
 dependency-reduced-pom.xml
-src/test
+*/src/test
 .idea
 UltraPrisonCore.iml
 .circleci
+*.iml

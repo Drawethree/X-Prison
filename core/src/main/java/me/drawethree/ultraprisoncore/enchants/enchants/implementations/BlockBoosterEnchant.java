@@ -7,6 +7,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +30,9 @@ public class BlockBoosterEnchant extends UltraPrisonEnchantment {
 		Events.subscribe(UltraPrisonBlockBreakEvent.class)
 				.handler(e -> {
 					if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
-						e.getBlocks().addAll(e.getBlocks());
+						for (Block b : e.getBlocks()) {
+							e.getBlocks().add(b);
+						}
 					}
 				}).bindWith(instance.getCore());
 	}

@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
@@ -279,6 +280,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().noneMatch(region -> region.getId().toLowerCase().startsWith("mine")))
 				.filter(e -> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
 				.handler(e -> e.setCancelled(true)).bindWith(core);
+		// Switching pickaxes
 		Events.subscribe(PlayerItemHeldEvent.class, EventPriority.HIGHEST)
 				.handler(e -> {
 
@@ -294,7 +296,13 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					}
 
 				}).bindWith(core);
-
+		// Dropping pickaxe
+		Events.subscribe(PlayerDropItemEvent.class, EventPriority.HIGHEST)
+				.handler(e -> {
+					if (this.getCore().isPickaxeSupported(e.getItemDrop().getItemStack())) {
+						this.enchantsManager.handlePickaxeUnequip(e.getPlayer(), e.getItemDrop().getItemStack());
+					}
+				}).bindWith(core);
 	}
 
 	public String getMessage(String key) {

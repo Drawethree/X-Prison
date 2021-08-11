@@ -32,8 +32,7 @@ public class TokenatorEnchant extends UltraPrisonEnchantment {
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-            long randAmount;
-            randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+            long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
             plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), randAmount);
         }
     }
