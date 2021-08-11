@@ -49,8 +49,12 @@ public class EnchantsManager {
 	@Getter
 	private double refundPercentage;
 
+
+	private List<UUID> lockedPlayers;
+
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
+		this.lockedPlayers = new ArrayList<>();
 		this.reload();
 	}
 
@@ -436,6 +440,13 @@ public class EnchantsManager {
 			return;
 		}
 
+		if (this.lockedPlayers.contains(gui.getPlayer().getUniqueId())) {
+			gui.getPlayer().sendMessage(plugin.getMessage("transaction_in_progress"));
+			return;
+		}
+
+		this.lockedPlayers.add(gui.getPlayer().getUniqueId());
+
 		Schedulers.async().run(() -> {
 			int current = currentLevel;
 			int levelsToRefund = current;
@@ -452,21 +463,19 @@ public class EnchantsManager {
 
 			int finalCurrent = current;
 
+			this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
+
 			Schedulers.sync().run(() -> {
 				this.setEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), finalCurrent);
 				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), finalCurrent);
+				gui.redraw();
 			});
-
-			enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), current);
 
 			plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
 
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(levelsToRefund)).replace("%enchant%", enchantment.getName()));
 			gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
-
-			if (gui.isValid()) {
-				gui.redraw();
-			}
 		});
 	}
 
@@ -534,6 +543,13 @@ public class EnchantsManager {
 			return;
 		}
 
+		if (this.lockedPlayers.contains(gui.getPlayer().getUniqueId())) {
+			gui.getPlayer().sendMessage(plugin.getMessage("transaction_in_progress"));
+			return;
+		}
+
+		this.lockedPlayers.add(gui.getPlayer().getUniqueId());
+
 		Schedulers.async().run(() -> {
 			int levelsToBuy = 0;
 			long totalCost = 0;
@@ -544,6 +560,7 @@ public class EnchantsManager {
 			}
 
 			if (levelsToBuy == 0) {
+				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 				gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
 				return;
 			}
@@ -553,6 +570,7 @@ public class EnchantsManager {
 			Events.callSync(event);
 
 			if (event.isCancelled()) {
+				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 				return;
 			}
 
@@ -560,11 +578,13 @@ public class EnchantsManager {
 
 			int finalLevelsToBuy = levelsToBuy;
 
+			this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 			Schedulers.sync().run(() -> {
-				this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + finalLevelsToBuy);
 				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				this.addEnchant(gui.getPlayer(), gui.getPickAxe(), enchantment.getId(), currentLevel + finalLevelsToBuy);
 				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + finalLevelsToBuy);
 				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+				gui.redraw();
 			});
 
 			if (levelsToBuy == 1) {
@@ -576,9 +596,6 @@ public class EnchantsManager {
 						.replace("%tokens%", String.format("%,d", totalCost)));
 			}
 
-			if (gui.isValid()) {
-				gui.redraw();
-			}
 		});
 	}
 

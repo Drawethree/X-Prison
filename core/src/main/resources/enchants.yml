@@ -106,6 +106,7 @@ messages:
   pickaxe_received: "&e&lENCHANT &8» &fYou have received pickaxe from &e%sender%"
   pickaxe_inventory_full: "&e&lENCHANT &8» &e%player% &chas full inventory!"
   prestige_finder: "&e&lPRESTIGE FINDER &8» &7You've just found a &fX%prestige% Prestige Level &7while mining."
+  transaction_in_progress: "&e&lENCHANT &8» &cPlease wait for your other transaction to complete."
 enchants:
   '1':
     RawName: "efficiency"
@@ -121,7 +122,7 @@ enchants:
     Description:
       - '&7&o(( Ability to mine blocks faster ))'
     Refund:
-      Enabled: false
+      Enabled: true
       InGuiSlot: 27
   '2':
     RawName: "unbreaking"
@@ -135,7 +136,7 @@ enchants:
     Description:
       - '&7&o(( Prevents your pickaxe from breaking while mining ))'
     Refund:
-      Enabled: false
+      Enabled: true
       InGuiSlot: 28
   '3':
     RawName: "fortune"
@@ -150,7 +151,7 @@ enchants:
     Description:
       - '&7&o(( Ability to receive more blocks while mining ))'
     Refund:
-      Enabled: false
+      Enabled: true
       InGuiSlot: 29
   '4':
     RawName: "haste"

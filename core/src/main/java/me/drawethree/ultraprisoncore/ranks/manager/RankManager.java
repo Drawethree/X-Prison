@@ -231,7 +231,7 @@ public class RankManager {
 			long prestige = this.onlinePlayersPrestige.getOrDefault(p.getUniqueId(), 0L);
 			return new Prestige(prestige, this.calculatePrestigeCost(prestige), this.unlimitedPrestigePrefix.replace("%prestige%", String.format("%,d", prestige)), null);
 		} else {
-			return this.prestigeById.getOrDefault(this.onlinePlayersPrestige.get(p.getUniqueId()), this.prestigeById.get(0));
+			return this.prestigeById.getOrDefault(this.onlinePlayersPrestige.get(p.getUniqueId()), this.prestigeById.get(0L));
 		}
 	}
 
