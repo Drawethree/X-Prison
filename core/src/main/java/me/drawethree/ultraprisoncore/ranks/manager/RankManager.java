@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.ranks.manager;
 
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerPrestigeEvent;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerRankUpEvent;
-import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
+import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import me.lucko.helper.Events;
@@ -29,7 +29,7 @@ public class RankManager {
 	private Map<UUID, Integer> onlinePlayersRanks = new HashMap<>();
 	private Map<UUID, Long> onlinePlayersPrestige = new HashMap<>();
 
-	private UltraPrisonRankup plugin;
+	private UltraPrisonRanks plugin;
 
 	private Rank maxRank;
 	private Prestige maxPrestige;
@@ -51,7 +51,7 @@ public class RankManager {
 	private List<String> unlimitedPrestigesRewardPerPrestige;
 	private boolean useTokensCurrency;
 
-	public RankManager(UltraPrisonRankup plugin) {
+	public RankManager(UltraPrisonRanks plugin) {
 		this.plugin = plugin;
 		this.reload();
 

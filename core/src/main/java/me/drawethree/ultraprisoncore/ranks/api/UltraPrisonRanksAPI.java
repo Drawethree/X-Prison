@@ -5,7 +5,7 @@ import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 
-public interface UltraPrisonRankupAPI {
+public interface UltraPrisonRanksAPI {
 
 	/**
 	 * Method to get player Rank
@@ -46,7 +46,6 @@ public interface UltraPrisonRankupAPI {
 	 * @param rank   Rank
 	 */
 	void setPlayerRank(Player player, Rank rank);
-
 
 	/**
 	 * Sets a prestige to online player

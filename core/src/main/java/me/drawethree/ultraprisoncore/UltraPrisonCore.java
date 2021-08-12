@@ -18,7 +18,7 @@ import me.drawethree.ultraprisoncore.nms.NMSProvider;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder;
-import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
+import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -63,7 +63,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	private UltraPrisonTokens tokens;
 	private UltraPrisonGems gems;
-	private UltraPrisonRankup ranks;
+	private UltraPrisonRanks ranks;
 	private UltraPrisonMultipliers multipliers;
 	private UltraPrisonEnchants enchants;
 	private UltraPrisonAutoSell autoSell;
@@ -121,7 +121,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 		this.tokens = new UltraPrisonTokens(this);
 		this.gems = new UltraPrisonGems(this);
-		this.ranks = new UltraPrisonRankup(this);
+		this.ranks = new UltraPrisonRanks(this);
 		this.multipliers = new UltraPrisonMultipliers(this);
 		this.enchants = new UltraPrisonEnchants(this);
 		this.autoSell = new UltraPrisonAutoSell(this);

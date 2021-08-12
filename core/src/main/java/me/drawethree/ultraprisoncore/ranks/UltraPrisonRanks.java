@@ -4,8 +4,8 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
-import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRankupAPI;
-import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRankupAPIImpl;
+import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPI;
+import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPIImpl;
 import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import me.lucko.helper.Commands;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-public final class UltraPrisonRankup implements UltraPrisonModule {
+public final class UltraPrisonRanks implements UltraPrisonModule {
 
     public static final String MODULE_NAME = "Ranks & Prestiges";
 
@@ -29,7 +29,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
     private RankManager rankManager;
 
     @Getter
-    private UltraPrisonRankupAPI api;
+    private UltraPrisonRanksAPI api;
 
     private HashMap<String, String> messages;
 
@@ -39,7 +39,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
     private UltraPrisonCore core;
     private boolean enabled;
 
-    public UltraPrisonRankup(UltraPrisonCore UltraPrisonCore) {
+    public UltraPrisonRanks(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
     }
 
@@ -63,7 +63,7 @@ public final class UltraPrisonRankup implements UltraPrisonModule {
 
         this.loadMessages();
         this.rankManager = new RankManager(this);
-        api = new UltraPrisonRankupAPIImpl(this);
+        api = new UltraPrisonRanksAPIImpl(this);
         this.prestigingPlayers = new ArrayList<>(10);
         this.registerCommands();
         this.rankManager.loadAllData();

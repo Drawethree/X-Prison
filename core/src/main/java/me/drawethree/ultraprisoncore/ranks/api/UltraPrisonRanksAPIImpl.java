@@ -1,15 +1,15 @@
 package me.drawethree.ultraprisoncore.ranks.api;
 
-import me.drawethree.ultraprisoncore.ranks.UltraPrisonRankup;
+import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 
-public class UltraPrisonRankupAPIImpl implements UltraPrisonRankupAPI {
+public class UltraPrisonRanksAPIImpl implements UltraPrisonRanksAPI {
 
-    private UltraPrisonRankup plugin;
+    private UltraPrisonRanks plugin;
 
-    public UltraPrisonRankupAPIImpl(UltraPrisonRankup plugin) {
+    public UltraPrisonRanksAPIImpl(UltraPrisonRanks plugin) {
         this.plugin = plugin;
     }
 
