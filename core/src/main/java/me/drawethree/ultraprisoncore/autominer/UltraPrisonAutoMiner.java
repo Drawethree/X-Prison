@@ -185,7 +185,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
                     }
 
                 }).registerAndBind(core, "adminautominer", "aam");
-	}
+    }
 
     private void givePlayerAutoMinerTime(CommandSender sender, Player p, long time) {
 
@@ -249,5 +249,16 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     public boolean hasAutominerOff(Player p) {
         return disabledAutoMiner.contains(p.getUniqueId());
+    }
+
+    public int getAutoMinerTime(Player player) {
+        return this.autoMinerTimes.getOrDefault(player.getUniqueId(), 0);
+    }
+
+    public boolean isInAutoMinerRegion(Player player) {
+        if (this.region == null) {
+            return false;
+        }
+        return this.region.getRegion().contains(player.getLocation());
     }
 }

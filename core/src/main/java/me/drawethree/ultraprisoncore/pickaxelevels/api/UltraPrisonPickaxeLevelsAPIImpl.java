@@ -23,4 +23,9 @@ public class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevels
 		ItemStack item = this.plugin.findPickaxe(player);
 		return this.getPickaxeLevel(item);
 	}
+
+	@Override
+	public void setPickaxeLevel(Player player, ItemStack item, PickaxeLevel level) {
+		this.plugin.setPickaxeLevel(item, level, player);
+	}
 }

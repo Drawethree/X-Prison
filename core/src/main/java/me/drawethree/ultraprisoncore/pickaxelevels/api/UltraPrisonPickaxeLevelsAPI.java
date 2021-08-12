@@ -10,7 +10,7 @@ public interface UltraPrisonPickaxeLevelsAPI {
 	 * Method to get PickaxeLevel of itemstack
 	 *
 	 * @param item ItemStack
-	 * @return PickaxeLevel.class
+	 * @return instance of PickaxeLevel
 	 */
 	PickaxeLevel getPickaxeLevel(ItemStack item);
 
@@ -18,7 +18,16 @@ public interface UltraPrisonPickaxeLevelsAPI {
 	 * Method to get PickaxeLevel of Player
 	 *
 	 * @param player Player
-	 * @return PickaxeLevel.class
+	 * @return instance of PickaxeLevel
 	 */
 	PickaxeLevel getPickaxeLevel(Player player);
+
+	/**
+	 * Method to set PickaxeLevel of itemstack
+	 *
+	 * @param player Player
+	 * @param item   ItemStack to change
+	 * @param level  PickaxeLevel to set
+	 */
+	void setPickaxeLevel(Player player, ItemStack item, PickaxeLevel level);
 }

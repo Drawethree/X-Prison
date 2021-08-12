@@ -17,6 +17,7 @@ public interface UltraPrisonRankupAPI {
 
 	/**
 	 * Method to get player Prestige
+	 *
 	 * @param p Player
 	 * @return Prestige
 	 */
@@ -24,6 +25,7 @@ public interface UltraPrisonRankupAPI {
 
 	/**
 	 * Method to get next player rank
+	 *
 	 * @param player Player
 	 * @return null if he has max rank, otherwise next Rank
 	 */
@@ -31,9 +33,35 @@ public interface UltraPrisonRankupAPI {
 
 	/**
 	 * Method to get player's rankup progress
+	 *
 	 * @param player Player
 	 * @return int 0-100 percentage
 	 */
 	int getRankupProgress(Player player);
+
+	/**
+	 * Sets a rank to online player
+	 *
+	 * @param player Player
+	 * @param rank   Rank
+	 */
+	void setPlayerRank(Player player, Rank rank);
+
+
+	/**
+	 * Sets a prestige to online player
+	 *
+	 * @param player   Player
+	 * @param prestige Prestige
+	 */
+	void setPlayerPrestige(Player player, Prestige prestige);
+
+	/**
+	 * Sets a prestige to online player
+	 *
+	 * @param player   Player
+	 * @param prestige Prestige
+	 */
+	void setPlayerPrestige(Player player, long prestige);
 
 }

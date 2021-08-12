@@ -5,7 +5,7 @@ import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 
-public class UltraPrisonRankupAPIImpl implements UltraPrisonRankupAPI{
+public class UltraPrisonRankupAPIImpl implements UltraPrisonRankupAPI {
 
     private UltraPrisonRankup plugin;
 
@@ -31,5 +31,21 @@ public class UltraPrisonRankupAPIImpl implements UltraPrisonRankupAPI{
     @Override
     public int getRankupProgress(Player player) {
         return plugin.getRankManager().getRankupProgress(player);
+    }
+
+    @Override
+    public void setPlayerRank(Player player, Rank rank) {
+        plugin.getRankManager().setRank(player, rank, null);
+    }
+
+    @Override
+    public void setPlayerPrestige(Player player, Prestige prestige) {
+        plugin.getRankManager().setPlayerPrestige(null, player, prestige.getId());
+    }
+
+    @Override
+    public void setPlayerPrestige(Player player, long prestige) {
+        plugin.getRankManager().setPlayerPrestige(null, player, prestige);
+
     }
 }

@@ -606,7 +606,9 @@ public class RankManager {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), amount);
 		}
 
-		sender.sendMessage(this.plugin.getMessage("prestige_set").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+		if (sender != null) {
+			sender.sendMessage(this.plugin.getMessage("prestige_set").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+		}
 	}
 
 	public void removePlayerPrestige(CommandSender sender, Player target, long amount) {
@@ -647,8 +649,10 @@ public class RankManager {
 
 		this.onlinePlayersRanks.put(target.getUniqueId(), rank.getId());
 
-		sender.sendMessage(this.plugin.getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
-		target.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
+		if (sender != null) {
+			sender.sendMessage(this.plugin.getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
+			target.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
+		}
 
 		return true;
 	}
