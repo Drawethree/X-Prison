@@ -66,6 +66,20 @@ public class MySQLDatabase extends SQLDatabase {
 				e.printStackTrace();
 			}
 		});
+
+		// v1.4.11 - Renamed multipliers table columns
+		Schedulers.async().run(() -> {
+			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='UltraPrison_Multipliers' AND column_name ='vote_multiplier'")) {
+				try (ResultSet set = statement.executeQuery()) {
+					if (set.next()) {
+						execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
+						execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	@Override
@@ -76,7 +90,8 @@ public class MySQLDatabase extends SQLDatabase {
 			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TOKEN_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))");
 			execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");

@@ -1,19 +1,29 @@
 messages:
-  vote_multi: "&eVote Multiplier - %multiplier% &7(&a%duration%&7)"
-  rank_multi: "&eRank Multiplier - %multiplier% &7(&aPERMAMENT&7)"
-  global_multi: "&eGlobal Multiplier - %multiplier% &7(&a%duration%&7)"
-  personal_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Sell Multiplier x %multiplier% for %minutes% minutes."
-  personal_multi_reset: "&e&l(!) &cYour multiplier was reset."
+  sell_multi: "&eSell Multiplier - x%multiplier% &7(&a%duration%&7)"
+  token_multi: "&eToken Multiplier - x%multiplier% &7(&a%duration%&7)"
+  rank_multi: "&eRank Multiplier - x%multiplier% &7(&aPERMAMENT&7)"
+  global_sell_multi: "&eGlobal Sell Multiplier - %multiplier% &7(&a%duration%&7)"
+  sell_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Sell Multiplier x%multiplier% for %minutes% minutes."
+  token_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Token Multiplier x%multiplier% for %minutes% minutes."
+  sell_multi_reset: "&e&l(!) &cYour sell multiplier was reset."
+  token_multi_reset: "&e&l(!) &cYour token multiplier was reset."
 ranks: {}
- #ultra: 1.0
- #donor: 0.7
- #vip: 0.5
- #default: 0.1
+  #ultra: 1.0
+  #donor: 0.7
+  #vip: 0.5
+#default: 0.1
 use-luckperms-groups: true
 global-multiplier:
-  max: 10.0
-  multiplier: 0.0
-  timeLeft: -1
+  sell:
+    max: 10.0
+    multiplier: 0.0
+    timeLeft: -1
+  tokens:
+    max: 10.0
+    multiplier: 0.0
+    timeLeft: -1
 rank-multiplier-update-time: 5
-player-multiplier:
+sell-multiplier:
+  max: 10.0
+token-multiplier:
   max: 10.0

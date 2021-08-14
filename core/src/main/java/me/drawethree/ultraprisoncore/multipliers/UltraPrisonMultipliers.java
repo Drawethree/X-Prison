@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
@@ -29,325 +30,465 @@ import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
-    public static final String MODULE_NAME = "Multipliers";
+	public static final String MODULE_NAME = "Multipliers";
 
-    private static GlobalMultiplier GLOBAL_MULTIPLIER;
+	@Getter
+	private static UltraPrisonMultipliers instance;
 
-    @Getter
-    private static UltraPrisonMultipliers instance;
+	@Getter
+	private FileManager.Config config;
 
-    @Getter
-    private FileManager.Config config;
+	@Getter
+	private UltraPrisonMultipliersAPI api;
 
-    @Getter
-    private UltraPrisonMultipliersAPI api;
+	private GlobalMultiplier globalSellMultiplier;
+	private GlobalMultiplier globalTokenMultiplier;
+	private HashMap<UUID, Multiplier> rankMultipliers;
+	private HashMap<UUID, PlayerMultiplier> sellMultipliers;
+	private HashMap<UUID, PlayerMultiplier> tokenMultipliers;
 
-    private HashMap<UUID, Multiplier> rankMultipliers;
-    private HashMap<UUID, PlayerMultiplier> personalMultipliers;
+	private HashMap<String, String> messages;
+	private LinkedHashMap<String, Double> permissionToMultiplier;
 
-    private HashMap<String, String> messages;
-    private LinkedHashMap<String, Double> permissionToMultiplier;
+	@Getter
+	private UltraPrisonCore core;
+	private boolean enabled;
+
+	private Task rankUpdateTask;
+	private int rankMultiplierUpdateTime;
+
+	@Getter
+	private double globalSellMultiMax;
+	@Getter
+	private double globalTokenMultiMax;
+	@Getter
+	private double playerSellMultiMax;
+	@Getter
+	private double playerTokenMultiMax;
+
+	public UltraPrisonMultipliers(UltraPrisonCore UltraPrisonCore) {
+		instance = this;
+		this.core = UltraPrisonCore;
+	}
 
 
-    @Getter
-    private UltraPrisonCore core;
-    private boolean enabled;
+	private void loadRankMultipliers() {
+		this.permissionToMultiplier = new LinkedHashMap<>();
 
-    private Task rankUpdateTask;
-    private int rankMultiplierUpdateTime;
+		ConfigurationSection section = getConfig().get().getConfigurationSection("ranks");
 
-    @Getter
-    private double globalMultiMax;
-    @Getter
-    private double playerMultiMax;
-
-    public UltraPrisonMultipliers(UltraPrisonCore UltraPrisonCore) {
-        instance = this;
-        this.core = UltraPrisonCore;
-    }
-
-
-    private void loadRankMultipliers() {
-        this.permissionToMultiplier = new LinkedHashMap<>();
-
-        ConfigurationSection section = getConfig().get().getConfigurationSection("ranks");
-
-        if (section == null) {
-            return;
-        }
+		if (section == null) {
+			return;
+		}
 
 		boolean useLuckPerms = getConfig().get().getBoolean("use-luckperms-groups", false);
 
 		String permPrefix = useLuckPerms ? "group." : "ultraprison.multiplier.";
-        for (String rank : section.getKeys(false)) {
+		for (String rank : section.getKeys(false)) {
 			String perm = permPrefix + rank;
-            double multiplier = getConfig().get().getDouble("ranks." + rank);
-            this.permissionToMultiplier.put(perm, multiplier);
-            this.core.getLogger().info("Loaded rank multiplier." + rank + " with multiplier " + multiplier + " (" + perm + ")");
-        }
-    }
+			double multiplier = getConfig().get().getDouble("ranks." + rank);
+			this.permissionToMultiplier.put(perm, multiplier);
+			this.core.getLogger().info("Loaded rank multiplier." + rank + " with multiplier " + multiplier + " (" + perm + ")");
+		}
+	}
 
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    @Override
-    public void reload() {
-        this.config.reload();
+	@Override
+	public void reload() {
+		this.config.reload();
 
-        this.loadMessages();
-        this.loadRankMultipliers();
+		this.loadMessages();
+		this.loadRankMultipliers();
 
-        this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
-    }
+		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
+	}
 
-    @Override
-    public void enable() {
+	@Override
+	public void enable() {
 
-        this.enabled = true;
-        this.config = this.core.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
+		this.enabled = true;
+		this.config = this.core.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
 
-        this.rankMultipliers = new HashMap<>();
-        this.personalMultipliers = new HashMap<>();
+		this.rankMultipliers = new HashMap<>();
+		this.sellMultipliers = new HashMap<>();
+		this.tokenMultipliers = new HashMap<>();
 
-        this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
-        this.globalMultiMax = this.getConfig().get().getDouble("global-multiplier.max");
-        this.playerMultiMax = this.getConfig().get().getDouble("player-multiplier.max");
+		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
+		this.globalSellMultiMax = this.getConfig().get().getDouble("global-multiplier.sell.max");
+		this.globalTokenMultiMax = this.getConfig().get().getDouble("global-multiplier.tokens.max");
+		this.playerSellMultiMax = this.getConfig().get().getDouble("player-multiplier.max");
+		this.playerTokenMultiMax = this.getConfig().get().getDouble("token-multiplier.max");
 
-        this.loadMessages();
-        this.loadRankMultipliers();
-        this.registerCommands();
-        this.registerEvents();
-        this.removeExpiredMultipliers();
-        this.loadGlobalMultiplier();
-        this.loadOnlineMultipliers();
-        api = new UltraPrisonMultipliersAPIImpl(this);
+		this.loadMessages();
+		this.loadRankMultipliers();
+		this.registerCommands();
+		this.registerEvents();
+		this.removeExpiredMultipliers();
+		this.loadGlobalMultipliers();
+		this.loadOnlineMultipliers();
+		api = new UltraPrisonMultipliersAPIImpl(this);
 
-        this.rankUpdateTask = Schedulers.async().runRepeating(() -> {
-            Players.all().forEach(p -> {
-                this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
+		this.rankUpdateTask = Schedulers.async().runRepeating(() -> {
+			Players.all().forEach(p -> {
+				this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
 
-            });
-        }, this.rankMultiplierUpdateTime, TimeUnit.MINUTES, this.rankMultiplierUpdateTime, TimeUnit.MINUTES);
-    }
+			});
+		}, this.rankMultiplierUpdateTime, TimeUnit.MINUTES, this.rankMultiplierUpdateTime, TimeUnit.MINUTES);
+	}
 
-    private void loadOnlineMultipliers() {
-        Players.all().forEach(p -> {
-            this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
-            this.loadPersonalMultiplier(p);
-        });
-    }
+	private void loadOnlineMultipliers() {
+		Players.all().forEach(p -> {
+			this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
+			this.loadSellMultiplier(p);
+			this.loadTokenMultiplier(p);
+		});
+	}
 
-    private void registerEvents() {
-        Events.subscribe(PlayerJoinEvent.class)
-                .handler(e -> {
-                    this.rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
-                    this.loadPersonalMultiplier(e.getPlayer());
-                }).bindWith(core);
-        Events.subscribe(PlayerQuitEvent.class)
-                .handler(e -> {
-                    this.rankMultipliers.remove(e.getPlayer().getUniqueId());
-                    this.savePersonalMultiplier(e.getPlayer(), true);
-                }).bindWith(core);
-    }
+	private void registerEvents() {
+		Events.subscribe(PlayerJoinEvent.class)
+				.handler(e -> {
+					this.rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
+					this.loadSellMultiplier(e.getPlayer());
+					this.loadTokenMultiplier(e.getPlayer());
+				}).bindWith(core);
+		Events.subscribe(PlayerQuitEvent.class)
+				.handler(e -> {
+					this.rankMultipliers.remove(e.getPlayer().getUniqueId());
+					this.saveSellMultiplier(e.getPlayer(), true);
+					this.saveTokenMultiplier(e.getPlayer(), true);
+				}).bindWith(core);
+	}
 
-    private void savePersonalMultiplier(Player player, boolean async) {
+	private void saveSellMultiplier(Player player, boolean async) {
 
-        if (!personalMultipliers.containsKey(player.getUniqueId())) {
-            return;
-        }
+		if (!this.sellMultipliers.containsKey(player.getUniqueId())) {
+			return;
+		}
 
-        PlayerMultiplier multiplier = personalMultipliers.get(player.getUniqueId());
+		PlayerMultiplier multiplier = this.sellMultipliers.get(player.getUniqueId());
 
-        if (async) {
-            Schedulers.async().run(() -> {
-                this.core.getPluginDatabase().savePersonalMultiplier(player, multiplier);
-                this.personalMultipliers.remove(player.getUniqueId());
-                this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
-            });
-        } else {
-            this.core.getPluginDatabase().savePersonalMultiplier(player, multiplier);
-            this.personalMultipliers.remove(player.getUniqueId());
-            this.core.getLogger().info(String.format("Saved multiplier of player %s", player.getName()));
-        }
-    }
+		if (async) {
+			Schedulers.async().run(() -> {
+				this.core.getPluginDatabase().saveSellMultiplier(player, multiplier);
+				this.sellMultipliers.remove(player.getUniqueId());
+				this.core.getLogger().info(String.format("Saved Sell Multiplier of player %s", player.getName()));
+			});
+		} else {
+			this.core.getPluginDatabase().saveSellMultiplier(player, multiplier);
+			this.sellMultipliers.remove(player.getUniqueId());
+			this.core.getLogger().info(String.format("Saved Sell Multiplier of player %s", player.getName()));
+		}
+	}
 
-    private void loadGlobalMultiplier() {
-        double multi = this.config.get().getDouble("global-multiplier.multiplier");
-        long timeLeft = this.config.get().getLong("global-multiplier.timeLeft");
+	private void saveTokenMultiplier(Player player, boolean async) {
+		if (!this.tokenMultipliers.containsKey(player.getUniqueId())) {
+			return;
+		}
 
-        GLOBAL_MULTIPLIER = new GlobalMultiplier(0.0, 0);
-        GLOBAL_MULTIPLIER.setMultiplier(multi, this.globalMultiMax);
+		PlayerMultiplier multiplier = this.tokenMultipliers.get(player.getUniqueId());
 
-        if (timeLeft > Time.nowMillis()) {
-            GLOBAL_MULTIPLIER.setDuration(timeLeft);
-        } else {
-            GLOBAL_MULTIPLIER.setDuration(0);
-        }
+		if (async) {
+			Schedulers.async().run(() -> {
+				this.core.getPluginDatabase().saveTokenMultiplier(player, multiplier);
+				this.tokenMultipliers.remove(player.getUniqueId());
+				this.core.getLogger().info(String.format("Saved Token Multiplier of player %s", player.getName()));
+			});
+		} else {
+			this.core.getPluginDatabase().saveTokenMultiplier(player, multiplier);
+			this.tokenMultipliers.remove(player.getUniqueId());
+			this.core.getLogger().info(String.format("Saved Token Multiplier of player %s", player.getName()));
+		}
+	}
 
-        this.core.getLogger().info(String.format("Loaded Global Multiplier %.2fx", multi));
-    }
+	private void loadGlobalMultipliers() {
+		double multiSell = this.config.get().getDouble("global-multiplier.sell.multiplier");
+		long timeLeftSell = this.config.get().getLong("global-multiplier.sell.timeLeft");
 
-    private void saveGlobalMultiplier() {
-        this.config.set("global-multiplier.multiplier", GLOBAL_MULTIPLIER.getMultiplier());
-        this.config.set("global-multiplier.timeLeft", GLOBAL_MULTIPLIER.getEndTime());
-        this.config.save();
-        this.core.getLogger().info("Saved Global Multiplier into multipliers.yml");
-    }
+		double multiTokens = this.config.get().getDouble("global-multiplier.tokens.multiplier");
+		long timeLeftTokens = this.config.get().getLong("global-multiplier.tokens.timeLeft");
 
-    private void loadPersonalMultiplier(Player player) {
-        Schedulers.async().run(() -> {
-            PlayerMultiplier multiplier = this.core.getPluginDatabase().getPlayerPersonalMultiplier(player);
+		this.globalSellMultiplier = new GlobalMultiplier(0.0, 0, this.globalSellMultiMax);
+		this.globalSellMultiplier.setMultiplier(multiSell, this.globalSellMultiMax);
 
-            if (multiplier == null) {
-                multiplier = new PlayerMultiplier(player.getUniqueId(), 0, 0);
-            }
+		this.globalTokenMultiplier = new GlobalMultiplier(0.0, 0, this.globalTokenMultiMax);
+		this.globalTokenMultiplier.setMultiplier(multiTokens, this.globalTokenMultiMax);
 
-            personalMultipliers.put(player.getUniqueId(), multiplier);
+		if (timeLeftSell > Time.nowMillis()) {
+			this.globalSellMultiplier.setDuration(timeLeftSell);
+		} else {
+			this.globalSellMultiplier.setDuration(0);
+		}
 
-            this.core.getLogger().info(String.format("Loaded multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
-        });
-    }
+		if (timeLeftTokens > Time.nowMillis()) {
+			this.globalTokenMultiplier.setDuration(timeLeftSell);
+		} else {
+			this.globalTokenMultiplier.setDuration(0);
+		}
 
-    private void removeExpiredMultipliers() {
-        Schedulers.async().run(() -> {
-            this.core.getPluginDatabase().removeExpiredMultipliers();
-            this.core.getLogger().info("Removed expired multipliers from database");
-        });
-    }
+		this.core.getLogger().info(String.format("Loaded Global Sell Multiplier %.2fx", multiSell));
+		this.core.getLogger().info(String.format("Loaded Global Token Multiplier %.2fx", multiTokens));
 
+	}
 
-    @Override
-    public void disable() {
-        this.saveAllMultipliers();
-        this.rankUpdateTask.stop();
-        this.enabled = false;
-    }
+	private void saveGlobalMultipliers() {
+		this.config.set("global-multiplier.sell.multiplier", this.globalSellMultiplier.getMultiplier());
+		this.config.set("global-multiplier.sell.timeLeft", this.globalSellMultiplier.getEndTime());
+		this.config.set("global-multiplier.tokens.multiplier", this.globalTokenMultiplier.getMultiplier());
+		this.config.set("global-multiplier.tokens.timeLeft", this.globalTokenMultiplier.getEndTime());
+		this.config.save();
+		this.core.getLogger().info("Saved Global Multipliers into multipliers.yml");
+	}
 
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
+	private void loadSellMultiplier(Player player) {
+		Schedulers.async().run(() -> {
+			PlayerMultiplier multiplier = this.core.getPluginDatabase().getSellMultiplier(player);
 
-    private void saveAllMultipliers() {
-        Players.all().forEach(p -> savePersonalMultiplier(p, false));
-        this.saveGlobalMultiplier();
-    }
+			if (multiplier == null) {
+				return;
+			}
 
-    private void loadMessages() {
-        messages = new HashMap<>();
-        for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key.toLowerCase(), Text.colorize(getConfig().get().getString("messages." + key)));
-        }
-    }
+			this.sellMultipliers.put(player.getUniqueId(), multiplier);
 
-    private void registerCommands() {
-        Commands.create()
-                .assertPermission("ultraprison.multipliers.admin")
-                .handler(c -> {
-                    if (c.args().size() == 2) {
-                        double amount = c.arg(0).parseOrFail(Double.class);
-                        int minutes = c.arg(1).parseOrFail(Integer.class);
-                        setupGlobalMultiplier(c.sender(), minutes, amount);
-                    }
-                }).registerAndBind(core, "globalmultiplier", "gmulti");
-        Commands.create()
-                .assertPermission("ultraprison.multipliers.admin")
-                .handler(c -> {
-                    if (c.args().size() == 3) {
-                        Player onlinePlayer = Players.getNullable(c.rawArg(0));
-                        double amount = c.arg(1).parseOrFail(Double.class);
-                        int minutes = c.arg(2).parseOrFail(Integer.class);
-                        setupPersonalMultiplier(c.sender(), onlinePlayer, amount, minutes);
-                    } else if (c.args().size() == 2 && c.rawArg(1).equalsIgnoreCase("reset")) {
-                        Player onlinePlayer = Players.getNullable(c.rawArg(0));
-                        resetPersonalMultiplier(c.sender(), onlinePlayer);
-                    }
-                }).registerAndBind(core, "personalmultiplier", "pmulti");
-        Commands.create()
-                .assertPlayer()
-                .handler(c -> {
-                    c.sender().sendMessage(messages.get("global_multi").replace("%multiplier%", String.valueOf(GLOBAL_MULTIPLIER.getMultiplier())).replace("%duration%", GLOBAL_MULTIPLIER.getTimeLeft()));
-                    c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", String.valueOf(rankMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier()).getMultiplier())));
-                    c.sender().sendMessage(messages.get("vote_multi").replace("%multiplier%", String.valueOf(personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getMultiplier())).replace("%duration%", personalMultipliers.getOrDefault(c.sender().getUniqueId(), Multiplier.getDefaultPlayerMultiplier(c.sender().getUniqueId())).getTimeLeft()));
-                }).registerAndBind(core, "multiplier", "multi");
-    }
+			this.core.getLogger().info(String.format("Loaded Sell Multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
+		});
+	}
 
-    private void resetPersonalMultiplier(CommandSender sender, Player onlinePlayer) {
-        if (onlinePlayer == null || !onlinePlayer.isOnline()) {
-            sender.sendMessage(Text.colorize("&cPlayer must be online!"));
-            return;
-        }
+	private void loadTokenMultiplier(Player player) {
+		Schedulers.async().run(() -> {
+			PlayerMultiplier multiplier = this.core.getPluginDatabase().getTokenMultiplier(player);
 
-        if (personalMultipliers.containsKey(onlinePlayer.getUniqueId())) {
-            PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
-            multiplier.reset();
-            sender.sendMessage(Text.colorize(String.format("&aYou have reset &e%s's &ePersonal Multiplier.", onlinePlayer.getName())));
-            onlinePlayer.sendMessage(messages.get("personal_multi_reset"));
-        } else {
-            sender.sendMessage(Text.colorize(String.format("&cCould not fetch the &e%s's &ePersonal Multiplier.", onlinePlayer.getName())));
-        }
-    }
+			if (multiplier == null) {
+				return;
+			}
 
-    private void setupPersonalMultiplier(CommandSender sender, Player onlinePlayer, double amount, int minutes) {
-        if (onlinePlayer == null || !onlinePlayer.isOnline()) {
-            sender.sendMessage(Text.colorize("&cPlayer must be online!"));
-            return;
-        }
+			this.tokenMultipliers.put(player.getUniqueId(), multiplier);
 
-        if (personalMultipliers.containsKey(onlinePlayer.getUniqueId())) {
-            PlayerMultiplier multiplier = personalMultipliers.get(onlinePlayer.getUniqueId());
-            multiplier.addMultiplier(amount, this.playerMultiMax);
-            multiplier.addDuration(minutes);
-            personalMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
-        } else {
-            personalMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes));
-        }
+			this.core.getLogger().info(String.format("Loaded Token Multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
+		});
+	}
 
-        onlinePlayer.sendMessage(messages.get("personal_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
-        sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &ePersonal Multiplier &ato &e%.2f &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));
-    }
+	private void removeExpiredMultipliers() {
+		Schedulers.async().run(() -> {
+			this.core.getPluginDatabase().removeExpiredMultipliers();
+			this.core.getLogger().info("Removed expired multipliers from database");
+		});
+	}
 
 
-    private void setupGlobalMultiplier(CommandSender sender, int time, double amount) {
+	@Override
+	public void disable() {
+		this.saveAllMultipliers();
+		this.rankUpdateTask.stop();
+		this.enabled = false;
+	}
 
-        GLOBAL_MULTIPLIER.addMultiplier(amount, this.globalMultiMax);
-        GLOBAL_MULTIPLIER.addDuration(time);
-        sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
-    }
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
 
-
-    public double getGlobalMultiplier() {
-        return GLOBAL_MULTIPLIER.getMultiplier();
-    }
-
-    public double getPersonalMultiplier(Player p) {
-        return personalMultipliers.getOrDefault(p.getUniqueId(), Multiplier.getDefaultPlayerMultiplier(p.getUniqueId())).getMultiplier();
-    }
-
-    public double getRankMultiplier(Player p) {
-        return rankMultipliers.getOrDefault(p.getUniqueId(), Multiplier.getDefaultPlayerMultiplier()).getMultiplier();
-    }
-
-    public void removePersonalMultiplier(UUID uuid) {
-        personalMultipliers.remove(uuid);
-    }
+	private void saveAllMultipliers() {
+		Players.all().forEach(p -> {
+			saveSellMultiplier(p, false);
+			saveTokenMultiplier(p, false);
+		});
+		this.saveGlobalMultipliers();
+	}
 
 
-    private Multiplier calculateRankMultiplier(Player p) {
-        PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1);
+	private void loadMessages() {
+		messages = new HashMap<>();
+		for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key.toLowerCase(), Text.colorize(getConfig().get().getString("messages." + key)));
+		}
+	}
 
-        for (String perm : permissionToMultiplier.keySet()) {
-            if (p.hasPermission(perm)) {
-                toReturn.addMultiplier(permissionToMultiplier.get(perm), this.playerMultiMax);
-                break;
-            }
-        }
+	private void registerCommands() {
+		Commands.create()
+				.assertPermission("ultraprison.multipliers.admin")
+				.handler(c -> {
+					if (c.args().size() == 3) {
+						String type = c.rawArg(0);
+						double amount = c.arg(1).parseOrFail(Double.class);
+						int minutes = c.arg(2).parseOrFail(Integer.class);
+						setupGlobalMultiplier(c.sender(), type, minutes, amount);
+					}
+				}).registerAndBind(core, "globalmultiplier", "gmulti");
+		Commands.create()
+				.assertPermission("ultraprison.multipliers.admin")
+				.handler(c -> {
+					if (c.args().size() == 3) {
+						Player onlinePlayer = Players.getNullable(c.rawArg(0));
+						double amount = c.arg(1).parseOrFail(Double.class);
+						int minutes = c.arg(2).parseOrFail(Integer.class);
+						setupSellMultiplier(c.sender(), onlinePlayer, amount, minutes);
+					} else if (c.args().size() == 2 && c.rawArg(1).equalsIgnoreCase("reset")) {
+						Player onlinePlayer = Players.getNullable(c.rawArg(0));
+						resetSellMultiplier(c.sender(), onlinePlayer);
+					}
+				}).registerAndBind(core, "sellmulti", "sellmultiplier", "smulti");
+		Commands.create()
+				.assertPermission("ultraprison.multipliers.admin")
+				.handler(c -> {
+					if (c.args().size() == 3) {
+						Player onlinePlayer = Players.getNullable(c.rawArg(0));
+						double amount = c.arg(1).parseOrFail(Double.class);
+						int minutes = c.arg(2).parseOrFail(Integer.class);
+						setupTokenMultiplier(c.sender(), onlinePlayer, amount, minutes);
+					} else if (c.args().size() == 2 && c.rawArg(1).equalsIgnoreCase("reset")) {
+						Player onlinePlayer = Players.getNullable(c.rawArg(0));
+						resetTokenMultiplier(c.sender(), onlinePlayer);
+					}
+				}).registerAndBind(core, "tokenmulti", "tokenmultiplier", "tmulti");
+		Commands.create()
+				.assertPlayer()
+				.handler(c -> {
+					PlayerMultiplier sellMulti = this.getSellMultiplier(c.sender());
+					PlayerMultiplier tokenMulti = this.getTokenMultiplier(c.sender());
+					Multiplier rankMulti = this.getRankMultiplier(c.sender());
+					c.sender().sendMessage(messages.get("global_sell_multi").replace("%multiplier%", String.valueOf(this.globalSellMultiplier.getMultiplier())).replace("%duration%", this.globalSellMultiplier.getTimeLeft()));
+					c.sender().sendMessage(messages.get("global_token_multi").replace("%multiplier%", String.valueOf(this.globalTokenMultiplier.getMultiplier())).replace("%duration%", this.globalTokenMultiplier.getTimeLeft()));
+					c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", rankMulti == null ? "0.0" : String.valueOf(rankMulti.getMultiplier())));
+					c.sender().sendMessage(messages.get("sell_multi").replace("%multiplier%", sellMulti == null ? "0.0" : String.valueOf(sellMulti.getMultiplier())).replace("%duration%", sellMulti == null ? "" : sellMulti.getTimeLeft()));
+					c.sender().sendMessage(messages.get("token_multi").replace("%multiplier%", tokenMulti == null ? "0.0" : String.valueOf(tokenMulti.getMultiplier())).replace("%duration%", tokenMulti == null ? "" : tokenMulti.getTimeLeft()));
+				}).registerAndBind(core, "multiplier", "multi");
+	}
 
-        return toReturn;
-    }
+	private void resetSellMultiplier(CommandSender sender, Player onlinePlayer) {
+		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
+			sender.sendMessage(Text.colorize("&cPlayer must be online!"));
+			return;
+		}
+
+		if (sellMultipliers.containsKey(onlinePlayer.getUniqueId())) {
+			PlayerMultiplier multiplier = sellMultipliers.get(onlinePlayer.getUniqueId());
+			multiplier.reset();
+			sender.sendMessage(Text.colorize(String.format("&aYou have reset &e%s's &eSell Multiplier.", onlinePlayer.getName())));
+			onlinePlayer.sendMessage(messages.get("sell_multi_reset"));
+		} else {
+			sender.sendMessage(Text.colorize(String.format("&cCould not fetch the &e%s's &eSell Multiplier.", onlinePlayer.getName())));
+		}
+	}
+
+	private void resetTokenMultiplier(CommandSender sender, Player onlinePlayer) {
+		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
+			sender.sendMessage(Text.colorize("&cPlayer must be online!"));
+			return;
+		}
+
+		if (tokenMultipliers.containsKey(onlinePlayer.getUniqueId())) {
+			PlayerMultiplier multiplier = tokenMultipliers.get(onlinePlayer.getUniqueId());
+			multiplier.reset();
+			sender.sendMessage(Text.colorize(String.format("&aYou have reset &e%s's &eToken Multiplier.", onlinePlayer.getName())));
+			onlinePlayer.sendMessage(messages.get("token_multi_reset"));
+		} else {
+			sender.sendMessage(Text.colorize(String.format("&cCould not fetch the &e%s's &eToken Multiplier.", onlinePlayer.getName())));
+		}
+	}
+
+	private void setupSellMultiplier(CommandSender sender, Player onlinePlayer, double amount, int minutes) {
+		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
+			sender.sendMessage(Text.colorize("&cPlayer must be online!"));
+			return;
+		}
+
+		if (sellMultipliers.containsKey(onlinePlayer.getUniqueId())) {
+			PlayerMultiplier multiplier = sellMultipliers.get(onlinePlayer.getUniqueId());
+			multiplier.addMultiplier(amount, this.playerSellMultiMax);
+			multiplier.addDuration(minutes);
+			sellMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
+		} else {
+			sellMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes, MultiplierType.SELL));
+		}
+
+		onlinePlayer.sendMessage(messages.get("sell_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
+		sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &eSell Multiplier &ato &e%.2f &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));
+	}
+
+	private void setupTokenMultiplier(CommandSender sender, Player onlinePlayer, double amount, int minutes) {
+		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
+			sender.sendMessage(Text.colorize("&cPlayer must be online!"));
+			return;
+		}
+
+		if (tokenMultipliers.containsKey(onlinePlayer.getUniqueId())) {
+			PlayerMultiplier multiplier = tokenMultipliers.get(onlinePlayer.getUniqueId());
+			multiplier.addMultiplier(amount, this.playerTokenMultiMax);
+			multiplier.addDuration(minutes);
+			tokenMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
+		} else {
+			tokenMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, minutes, MultiplierType.TOKENS));
+		}
+
+		onlinePlayer.sendMessage(messages.get("token_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%minutes%", String.valueOf(minutes)));
+		sender.sendMessage(Text.colorize(String.format("&aYou have set &e%s's &eToken Multiplier &ato &e%.2f &afor &e%d &aminutes.", onlinePlayer.getName(), amount, minutes)));
+	}
+
+
+	private void setupGlobalMultiplier(CommandSender sender, String type, int time, double amount) {
+		switch (type.toLowerCase()) {
+			case "sell":
+			case "money":
+				this.globalSellMultiplier.addMultiplier(amount, this.globalSellMultiMax);
+				this.globalSellMultiplier.addDuration(time);
+				sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Sell Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
+				break;
+			case "tokens":
+			case "token":
+				this.globalTokenMultiplier.addMultiplier(amount, this.globalTokenMultiMax);
+				this.globalTokenMultiplier.addDuration(time);
+				sender.sendMessage(Text.colorize(String.format("&aYou have set the &eGlobal Token Multiplier &ato &e%.2f &afor &e%d &aminutes.", amount, time)));
+				break;
+		}
+	}
+
+
+	public GlobalMultiplier getGlobalSellMultiplier() {
+		return this.globalSellMultiplier;
+	}
+
+	public GlobalMultiplier getGlobalTokenMultiplier() {
+		return this.globalTokenMultiplier;
+	}
+
+	public PlayerMultiplier getSellMultiplier(Player p) {
+		return sellMultipliers.get(p.getUniqueId());
+	}
+
+	public PlayerMultiplier getTokenMultiplier(Player p) {
+		return tokenMultipliers.get(p.getUniqueId());
+	}
+
+	public Multiplier getRankMultiplier(Player p) {
+		return rankMultipliers.get(p.getUniqueId());
+	}
+
+	public void removeSellMultiplier(UUID uuid) {
+		sellMultipliers.remove(uuid);
+	}
+
+	public void removeTokenMultiplier(UUID uuid) {
+		tokenMultipliers.remove(uuid);
+	}
+
+
+	private Multiplier calculateRankMultiplier(Player p) {
+		PlayerMultiplier toReturn = new PlayerMultiplier(p.getUniqueId(), 0.0, -1, MultiplierType.SELL);
+
+		for (String perm : this.permissionToMultiplier.keySet()) {
+			if (p.hasPermission(perm)) {
+				toReturn.addMultiplier(this.permissionToMultiplier.get(perm), 100.0);
+				break;
+			}
+		}
+
+		return toReturn;
+	}
 
 
 }

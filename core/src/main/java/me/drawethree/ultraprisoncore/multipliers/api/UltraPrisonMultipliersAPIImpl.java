@@ -1,35 +1,66 @@
 package me.drawethree.ultraprisoncore.multipliers.api;
 
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
+import me.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
+import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.entity.Player;
 
 public class UltraPrisonMultipliersAPIImpl implements UltraPrisonMultipliersAPI {
 
-    private UltraPrisonMultipliers plugin;
+	private UltraPrisonMultipliers plugin;
 
-    public UltraPrisonMultipliersAPIImpl(UltraPrisonMultipliers plugin) {
+	public UltraPrisonMultipliersAPIImpl(UltraPrisonMultipliers plugin) {
 
-        this.plugin = plugin;
-    }
+		this.plugin = plugin;
+	}
 
-    @Override
-    public double getGlobalMultiplier() {
-        return plugin.getGlobalMultiplier();
-    }
+	@Override
+	public GlobalMultiplier getGlobalSellMultiplier() {
+		return plugin.getGlobalSellMultiplier();
+	}
 
-    @Override
-    public double getVoteMultiplier(Player p) {
-        return plugin.getPersonalMultiplier(p);
-    }
+	@Override
+	public GlobalMultiplier getGlobalTokenMultiplier() {
+		return plugin.getGlobalTokenMultiplier();
+	}
 
-    @Override
-    public double getRankMultiplier(Player p) {
-        return plugin.getRankMultiplier(p);
-    }
+	@Override
+	public PlayerMultiplier getSellMultiplier(Player p) {
+		return plugin.getSellMultiplier(p);
+	}
 
-    @Override
-    public double getPlayerMultiplier(Player p) {
-        return this.getGlobalMultiplier() + this.getVoteMultiplier(p) + this.getRankMultiplier(p);
-    }
+	@Override
+	public PlayerMultiplier getTokenMultiplier(Player p) {
+		return plugin.getTokenMultiplier(p);
+	}
+
+	@Override
+	public Multiplier getRankMultiplier(Player p) {
+		return plugin.getRankMultiplier(p);
+	}
+
+	@Override
+	public double getPlayerMultiplier(Player p, MultiplierType type) {
+		double toReturn = 1.0;
+
+		PlayerMultiplier sellMulti = this.getSellMultiplier(p);
+		PlayerMultiplier tokenMulti = this.getTokenMultiplier(p);
+		Multiplier rankMulti = this.getRankMultiplier(p);
+
+		switch (type) {
+			case SELL:
+				toReturn += this.getGlobalSellMultiplier().getMultiplier();
+				toReturn += sellMulti == null ? 0.0 : sellMulti.getMultiplier();
+				break;
+			case TOKENS:
+				toReturn += this.getGlobalTokenMultiplier().getMultiplier();
+				toReturn += tokenMulti == null ? 0.0 : tokenMulti.getMultiplier();
+				break;
+		}
+		toReturn += rankMulti == null ? 0.0 : rankMulti.getMultiplier();
+		return toReturn;
+	}
 
 }

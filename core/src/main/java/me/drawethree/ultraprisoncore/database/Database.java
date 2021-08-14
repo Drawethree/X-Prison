@@ -19,8 +19,6 @@ public abstract class Database {
 		this.plugin = plugin;
 	}
 
-	public abstract PlayerMultiplier getPlayerPersonalMultiplier(OfflinePlayer player);
-
 	public abstract long getPlayerTokens(OfflinePlayer player);
 
 	public abstract long getPlayerGems(OfflinePlayer player);
@@ -53,8 +51,6 @@ public abstract class Database {
 
 	public abstract long getPlayerBrokenBlocksWeekly(OfflinePlayer player);
 
-	public abstract void savePersonalMultiplier(Player player, PlayerMultiplier multiplier);
-
 	public abstract void saveAutoMiner(Player p, int timeLeft);
 
 	public abstract Map<UUID, Integer> getTop10Prestiges();
@@ -86,4 +82,12 @@ public abstract class Database {
 	public abstract void createGang(Gang g);
 
 	public abstract void updatePlayerNickname(OfflinePlayer player);
+
+	public abstract void saveSellMultiplier(Player player, PlayerMultiplier multiplier);
+
+	public abstract void saveTokenMultiplier(Player player, PlayerMultiplier multiplier);
+
+	public abstract PlayerMultiplier getSellMultiplier(Player player);
+
+	public abstract PlayerMultiplier getTokenMultiplier(Player player);
 }

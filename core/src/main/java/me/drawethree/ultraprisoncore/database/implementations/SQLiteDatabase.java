@@ -76,7 +76,8 @@ public class SQLiteDatabase extends SQLDatabase {
 			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, vote_multiplier double, vote_multiplier_timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))");
+			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TOKEN_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (name))");
 			execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
@@ -89,16 +90,30 @@ public class SQLiteDatabase extends SQLDatabase {
 
 		// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table
 		Schedulers.async().run(() -> {
-			try (Connection con = this.hikari.getConnection();
-				 PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Gangs")) {
-				try (ResultSet set = statement.executeQuery()) {
-					if (set.next()) {
-						try {
-							set.findColumn("uuid");
-						} catch (SQLException e) {
-							execute("alter table UltraPrison_Gangs add column uuid varchar(36) not null", null);
-						}
+			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Gangs"); ResultSet set = statement.executeQuery()) {
+				if (set.next()) {
+					try {
+						set.findColumn("uuid");
+					} catch (SQLException e) {
+						execute("alter table UltraPrison_Gangs add column uuid varchar(36) not null", null);
 					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
+
+		// v1.4.11 - Renamed multipliers table columns
+		Schedulers.async().run(() -> {
+			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Multipliers"); ResultSet set = statement.executeQuery()) {
+				if (set.next()) {
+					try {
+						set.findColumn("sell_multiplier");
+					} catch (Exception e) {
+						execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
+						execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
+					}
+
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -120,7 +135,6 @@ public class SQLiteDatabase extends SQLDatabase {
 	public void addIntoBlocks(OfflinePlayer player) {
 		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
-
 
 	@Override
 	public void addIntoBlocksWeekly(OfflinePlayer player) {
@@ -149,14 +163,27 @@ public class SQLiteDatabase extends SQLDatabase {
 	}
 
 	@Override
-	public void savePersonalMultiplier(Player player, PlayerMultiplier multiplier) {
+	public void saveSellMultiplier(Player player, PlayerMultiplier multiplier) {
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " VALUES(?,?,?)")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
 			statement.setLong(3, multiplier.getEndTime());
 			statement.execute();
 		} catch (SQLException e) {
-			this.plugin.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
+			this.plugin.getLogger().warning("Could not save sell multiplier for player " + player.getName() + "!");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void saveTokenMultiplier(Player player, PlayerMultiplier multiplier) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TOKEN_TABLE_NAME + " VALUES(?,?,?)")) {
+			statement.setString(1, player.getUniqueId().toString());
+			statement.setDouble(2, multiplier.getMultiplier());
+			statement.setLong(3, multiplier.getEndTime());
+			statement.execute();
+		} catch (SQLException e) {
+			this.plugin.getLogger().warning("Could not save token multiplier for player " + player.getName() + "!");
 			e.printStackTrace();
 		}
 	}

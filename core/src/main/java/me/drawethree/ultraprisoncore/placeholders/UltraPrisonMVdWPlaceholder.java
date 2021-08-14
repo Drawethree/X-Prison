@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.placeholders;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.ChatColor;
@@ -40,10 +41,36 @@ public class UltraPrisonMVdWPlaceholder {
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems", event -> String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
 
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier", event -> {
+			PlayerMultiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(event.getPlayer());
+			if (sellMulti == null) {
+				return String.format("%.2f", 1.0);
+			} else {
+				return String.format("%.2f", (1.0 + sellMulti.getMultiplier()));
+			}
+		});
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier", event -> String.format("%.2f", (1.0 + plugin.getMultipliers().getApi().getPlayerMultiplier(event.getPlayer()))));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_sell", event -> {
+			PlayerMultiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(event.getPlayer());
+			if (sellMulti == null) {
+				return String.format("%.2f", 1.0);
+			} else {
+				return String.format("%.2f", (1.0 + sellMulti.getMultiplier()));
+			}
+		});
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_global", event -> String.format("%.2f", plugin.getMultipliers().getApi().getGlobalMultiplier()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_token", event -> {
+			PlayerMultiplier tokenMulti = plugin.getMultipliers().getApi().getTokenMultiplier(event.getPlayer());
+			if (tokenMulti == null) {
+				return String.format("%.2f", 1.0);
+			} else {
+				return String.format("%.2f", (1.0 + tokenMulti.getMultiplier()));
+			}
+		});
+
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_global", event -> String.format("%.2f", plugin.getMultipliers().getApi().getGlobalSellMultiplier().getMultiplier()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_global_sell", event -> String.format("%.2f", plugin.getMultipliers().getApi().getGlobalSellMultiplier().getMultiplier()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_global_token", event -> String.format("%.2f", plugin.getMultipliers().getApi().getGlobalTokenMultiplier().getMultiplier()));
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rank", event -> plugin.getRanks().getApi().getPlayerRank(event.getPlayer()).getPrefix());
 

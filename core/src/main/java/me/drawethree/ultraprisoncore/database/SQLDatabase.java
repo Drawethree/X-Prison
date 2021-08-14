@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
@@ -37,6 +38,8 @@ public abstract class SQLDatabase extends Database {
 	public static final String BLOCKS_TABLE_NAME = "UltraPrison_BlocksBroken";
 	public static final String BLOCKS_WEEKLY_TABLE_NAME = "UltraPrison_BlocksBrokenWeekly";
 	public static final String MULTIPLIERS_TABLE_NAME = "UltraPrison_Multipliers";
+	public static final String MULTIPLIERS_TOKEN_TABLE_NAME = "UltraPrison_Token_Multipliers";
+
 	public static final String AUTOMINER_TABLE_NAME = "UltraPrison_AutoMiner";
 	public static final String GANGS_TABLE_NAME = "UltraPrison_Gangs";
 	public static final String UUID_PLAYERNAME_TABLE_NAME = "UltraPrison_Nicknames";
@@ -57,6 +60,10 @@ public abstract class SQLDatabase extends Database {
 	public static final String MULTIPLIERS_UUID_COLNAME = "UUID";
 	public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "vote_multiplier";
 	public static final String MULTIPLIERS_TIMELEFT_COLNAME = "vote_multiplier_timeleft";
+
+	public static final String MULTIPLIERS_TOKEN_UUID_COLNAME = "UUID";
+	public static final String MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME = "token_multiplier";
+	public static final String MULTIPLIERS_TOKEN_TIMELEFT_COLNAME = "token_multiplier_timeleft";
 
 	public static final String UUID_PLAYERNAME_UUID_COLNAME = "UUID";
 	public static final String UUID_PLAYERNAME_NICK_COLNAME = "nickname";
@@ -247,7 +254,7 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public PlayerMultiplier getPlayerPersonalMultiplier(OfflinePlayer player) {
+	public PlayerMultiplier getSellMultiplier(Player player) {
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_UUID_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
@@ -255,12 +262,32 @@ public abstract class SQLDatabase extends Database {
 					double multiplier = set.getDouble(MySQLDatabase.MULTIPLIERS_MULTIPLIER_COLNAME);
 					long endTime = set.getLong(MySQLDatabase.MULTIPLIERS_TIMELEFT_COLNAME);
 					if (endTime > Time.nowMillis()) {
-						return new PlayerMultiplier(player.getUniqueId(), multiplier, endTime);
+						return new PlayerMultiplier(player.getUniqueId(), multiplier, endTime, MultiplierType.SELL);
 					}
 				}
 			}
 		} catch (SQLException e) {
-			this.plugin.getLogger().warning("Could not load multiplier for player " + player.getName() + "!");
+			this.plugin.getLogger().warning("Could not load sell multiplier for player " + player.getName() + "!");
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public PlayerMultiplier getTokenMultiplier(Player player) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.MULTIPLIERS_TOKEN_TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_TOKEN_UUID_COLNAME + "=?")) {
+			statement.setString(1, player.getUniqueId().toString());
+			try (ResultSet set = statement.executeQuery()) {
+				if (set.next()) {
+					double multiplier = set.getDouble(MySQLDatabase.MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME);
+					long endTime = set.getLong(MySQLDatabase.MULTIPLIERS_TOKEN_TIMELEFT_COLNAME);
+					if (endTime > Time.nowMillis()) {
+						return new PlayerMultiplier(player.getUniqueId(), multiplier, endTime, MultiplierType.TOKENS);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			this.plugin.getLogger().warning("Could not load token multiplier for player " + player.getName() + "!");
 			e.printStackTrace();
 		}
 		return null;
@@ -316,7 +343,7 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public void savePersonalMultiplier(Player player, PlayerMultiplier multiplier) {
+	public void saveSellMultiplier(Player player, PlayerMultiplier multiplier) {
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_MULTIPLIER_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_TIMELEFT_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
@@ -325,7 +352,22 @@ public abstract class SQLDatabase extends Database {
 			statement.setLong(5, multiplier.getEndTime());
 			statement.execute();
 		} catch (SQLException e) {
-			this.plugin.getLogger().warning("Could not save multiplier for player " + player.getName() + "!");
+			this.plugin.getLogger().warning("Could not save sell multiplier for player " + player.getName() + "!");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void saveTokenMultiplier(Player player, PlayerMultiplier multiplier) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + MySQLDatabase.MULTIPLIERS_TOKEN_TABLE_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_TOKEN_TIMELEFT_COLNAME + "=?")) {
+			statement.setString(1, player.getUniqueId().toString());
+			statement.setDouble(2, multiplier.getMultiplier());
+			statement.setLong(3, multiplier.getEndTime());
+			statement.setDouble(4, multiplier.getMultiplier());
+			statement.setLong(5, multiplier.getEndTime());
+			statement.execute();
+		} catch (SQLException e) {
+			this.plugin.getLogger().warning("Could not save token multiplier for player " + player.getName() + "!");
 			e.printStackTrace();
 		}
 	}

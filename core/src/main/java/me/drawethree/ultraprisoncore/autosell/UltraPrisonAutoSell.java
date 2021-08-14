@@ -11,6 +11,7 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.utils.MaterialUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
@@ -241,7 +242,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 								SellRegion region = regionsAutoSell.get(reg.getId());
 
 								int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-								double amount = core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME) ? core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier) : (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier;
+								double amount = core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME) ? core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier, MultiplierType.SELL) : (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier;
 
 								UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), region, e.getBlock(), amount);
 
@@ -406,7 +407,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				toRemove.forEach(i -> sender.getInventory().removeItem(i));
 
 				if (this.multipliersModule) {
-					totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(sender, totalPrice);
+					totalPrice = (long) core.getMultipliers().getApi().getTotalToDeposit(sender, totalPrice, MultiplierType.SELL);
 				}
 
 				UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(sender, sellRegion, totalPrice);

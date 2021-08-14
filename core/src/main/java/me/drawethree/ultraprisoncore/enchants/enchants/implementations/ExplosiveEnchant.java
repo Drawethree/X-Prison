@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.time.Time;
@@ -104,7 +105,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
 
-				double total = this.plugin.isMultipliersModule() ? luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit) : luckyBooster ? totalDeposit * 2 : totalDeposit;
+				double total = this.plugin.isMultipliersModule() ? luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : luckyBooster ? totalDeposit * 2 : totalDeposit;
 
 				plugin.getCore().getEconomy().depositPlayer(p, total);
 
