@@ -65,7 +65,7 @@ public interface UltraPrisonMultipliersAPI {
 	 * @return new amount to deposit
 	 */
 	default double getTotalToDeposit(Player p, double deposit, MultiplierType type) {
-		return deposit * (1 + this.getPlayerMultiplier(p, type));
+		return deposit * (1.0 + this.getPlayerMultiplier(p, type));
 	}
 
 }

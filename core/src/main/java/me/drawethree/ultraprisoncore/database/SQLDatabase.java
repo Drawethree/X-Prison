@@ -58,8 +58,8 @@ public abstract class SQLDatabase extends Database {
 	public static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
 
 	public static final String MULTIPLIERS_UUID_COLNAME = "UUID";
-	public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "vote_multiplier";
-	public static final String MULTIPLIERS_TIMELEFT_COLNAME = "vote_multiplier_timeleft";
+	public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "sell_multiplier";
+	public static final String MULTIPLIERS_TIMELEFT_COLNAME = "sell_multiplier_timeleft";
 
 	public static final String MULTIPLIERS_TOKEN_UUID_COLNAME = "UUID";
 	public static final String MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME = "token_multiplier";
@@ -295,11 +295,16 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void removeExpiredMultipliers() {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_TIMELEFT_COLNAME + " < " + Time.nowMillis())) {
+		//Sell multipliers
+		try (Connection con = this.hikari.getConnection();
+			 PreparedStatement statement = con.prepareStatement("DELETE FROM " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_TIMELEFT_COLNAME + " < " + Time.nowMillis());
+			 PreparedStatement statement2 = con.prepareStatement("DELETE FROM " + MySQLDatabase.MULTIPLIERS_TOKEN_TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_TOKEN_TIMELEFT_COLNAME + " < " + Time.nowMillis())) {
 			statement.execute();
+			statement2.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	@Override

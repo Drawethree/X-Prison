@@ -43,20 +43,25 @@ public class UltraPrisonMultipliersAPIImpl implements UltraPrisonMultipliersAPI 
 
 	@Override
 	public double getPlayerMultiplier(Player p, MultiplierType type) {
-		double toReturn = 1.0;
+		double toReturn = 0.0;
 
-		PlayerMultiplier sellMulti = this.getSellMultiplier(p);
-		PlayerMultiplier tokenMulti = this.getTokenMultiplier(p);
 		Multiplier rankMulti = this.getRankMultiplier(p);
 
 		switch (type) {
 			case SELL:
+				PlayerMultiplier sellMulti = this.getSellMultiplier(p);
+				if (sellMulti != null && !sellMulti.isExpired()) {
+					toReturn += sellMulti.getMultiplier();
+				}
 				toReturn += this.getGlobalSellMultiplier().getMultiplier();
-				toReturn += sellMulti == null ? 0.0 : sellMulti.getMultiplier();
 				break;
 			case TOKENS:
+				PlayerMultiplier tokenMulti = this.getTokenMultiplier(p);
+				if (tokenMulti != null && !tokenMulti.isExpired()) {
+					toReturn += tokenMulti.getMultiplier();
+
+				}
 				toReturn += this.getGlobalTokenMultiplier().getMultiplier();
-				toReturn += tokenMulti == null ? 0.0 : tokenMulti.getMultiplier();
 				break;
 		}
 		toReturn += rankMulti == null ? 0.0 : rankMulti.getMultiplier();

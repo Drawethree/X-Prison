@@ -2,7 +2,6 @@ package me.drawethree.ultraprisoncore.multipliers.multiplier;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.lucko.helper.promise.Promise;
 import org.bukkit.ChatColor;
 
 import java.util.concurrent.TimeUnit;
@@ -10,18 +9,17 @@ import java.util.concurrent.TimeUnit;
 @Getter
 public abstract class Multiplier {
 
-	protected Promise<Void> task;
-
 	protected double multiplier;
 
 	protected long startTime;
+
 	@Setter
 	protected long endTime;
 
-	Multiplier(double multiplier, int duration) {
+	Multiplier(double multiplier, TimeUnit timeUnit, long duration) {
 		this.multiplier = multiplier;
 		this.startTime = System.currentTimeMillis();
-		this.endTime = duration == 0 ? 0 : (startTime + TimeUnit.MINUTES.toMillis(duration));
+		this.endTime = startTime + timeUnit.toMillis(duration);
 	}
 
 	Multiplier(double multiplier, long endTime) {
@@ -30,9 +28,9 @@ public abstract class Multiplier {
 		this.endTime = endTime;
 	}
 
-	public String getTimeLeft() {
+	public String getTimeLeftString() {
 
-		if (System.currentTimeMillis() > endTime) {
+		if (System.currentTimeMillis() > this.endTime) {
 			return "";
 		}
 
@@ -54,7 +52,7 @@ public abstract class Multiplier {
 		return ChatColor.GRAY + "(" + ChatColor.WHITE + days + "d " + hours + "h " + minutes + "m " + seconds + "s" + ChatColor.GRAY + ")";
 	}
 
-	public abstract void setDuration(long endTime);
+	public abstract void setEndTime(long endTime);
 
 	public void setMultiplier(double amount, double maxMultiplier) {
 		this.multiplier = Math.min(amount, maxMultiplier);
@@ -62,14 +60,17 @@ public abstract class Multiplier {
 
 	public void addMultiplier(double amount, double maxMultiplier) {
 
-		if ((this.multiplier + amount) > maxMultiplier) {
+		if (this.multiplier + amount > maxMultiplier) {
 			this.multiplier = maxMultiplier;
 		} else {
 			this.multiplier += amount;
 		}
-
 	}
 
-	public abstract void addDuration(int minutes);
+	public abstract void addDuration(TimeUnit timeUnit, int duration);
+
+	public boolean isExpired() {
+		return System.currentTimeMillis() > this.endTime;
+	}
 
 }

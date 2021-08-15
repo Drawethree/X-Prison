@@ -6,6 +6,8 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonBlockBreakEvent;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerTokensReceiveEvent;
+import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
@@ -225,6 +227,12 @@ public class TokensManager {
 			}
 
 			long finalAmount = event.getAmount();
+
+			boolean multiModule = this.plugin.getCore().isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+
+			if (multiModule && p.isOnline()) {
+				finalAmount = (long) this.plugin.getCore().getMultipliers().getApi().getTotalToDeposit((Player) p, finalAmount, MultiplierType.TOKENS);
+			}
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount);
 
