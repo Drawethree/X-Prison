@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.ChatColor;
@@ -120,16 +121,16 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
 			case "blocks":
 			case "blocks_2":
 				return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
-			case "multiplier":
 			case "multiplier_sell":
 				return String.format("%.2f", (1.0 + plugin.getMultipliers().getApi().getPlayerMultiplier(player, MultiplierType.SELL)));
 			case "multiplier_token":
 				return String.format("%.2f", (1.0 + plugin.getMultipliers().getApi().getPlayerMultiplier(player, MultiplierType.TOKENS)));
-			case "multiplier_global":
 			case "multiplier_global_sell":
-				return String.format("%.2f", plugin.getMultipliers().getApi().getGlobalSellMultiplier().getMultiplier());
+				GlobalMultiplier sellMulti = plugin.getMultipliers().getApi().getGlobalSellMultiplier();
+				return String.format("%.2f", sellMulti.isExpired() ? 0.0 : sellMulti.getMultiplier());
 			case "multiplier_global_token":
-				return String.format("%.2f", plugin.getMultipliers().getApi().getGlobalTokenMultiplier().getMultiplier());
+				GlobalMultiplier tokenMulti = plugin.getMultipliers().getApi().getGlobalTokenMultiplier();
+				return String.format("%.2f", tokenMulti.isExpired() ? 0.0 : tokenMulti.getMultiplier());
 			case "rank":
 				return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
 			case "next_rank": {
