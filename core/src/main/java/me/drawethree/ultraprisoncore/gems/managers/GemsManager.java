@@ -141,7 +141,7 @@ public class GemsManager {
 
         UltraPrisonPlayerGemsReceiveEvent event = new UltraPrisonPlayerGemsReceiveEvent(cause, p, amount);
 
-        Events.call(event);
+        Events.callSync(event);
 
         if (event.isCancelled()) {
             return;
