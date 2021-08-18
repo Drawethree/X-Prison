@@ -506,3 +506,11 @@ Pickaxe:
     - '%Enchant-19%'
     - '%Enchant-20%'
     - '%Enchant-21%'
+first-join-pickaxe:
+  enabled: true
+  name: "&e%player%'s Pickaxe"
+  material: DIAMOND_PICKAXE
+  enchants:
+    - efficiency 10
+    - unbreaking 10
+    - fortune 10

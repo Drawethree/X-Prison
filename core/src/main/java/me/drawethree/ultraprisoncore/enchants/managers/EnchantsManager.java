@@ -49,8 +49,14 @@ public class EnchantsManager {
 	@Getter
 	private double refundPercentage;
 
-
 	private List<UUID> lockedPlayers;
+
+	@Getter
+	private boolean firstJoinPickaxeEnabled;
+
+	private CompMaterial firstJoinPickaxeMaterial;
+	private List<String> firstJoinPickaxeEnchants;
+	private String firstJoinPickaxeName;
 
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
@@ -639,6 +645,10 @@ public class EnchantsManager {
 		this.openEnchantMenuOnRightClickBlock = plugin.getConfig().get().getBoolean("open-menu-on-right-click-block");
 		this.allowEnchantsOutside = plugin.getConfig().get().getBoolean("allow-enchants-outside-mine-regions");
 		this.refundPercentage = plugin.getConfig().get().getDouble("refund-percentage");
+		this.firstJoinPickaxeEnabled = plugin.getConfig().get().getBoolean("first-join-pickaxe.enabled");
+		this.firstJoinPickaxeMaterial = CompMaterial.fromString(plugin.getConfig().get().getString("first-join-pickaxe.material"));
+		this.firstJoinPickaxeEnchants = plugin.getConfig().get().getStringList("first-join-pickaxe.enchants");
+		this.firstJoinPickaxeName = plugin.getConfig().get().getString("first-join-pickaxe.name");
 
 	}
 
@@ -693,13 +703,28 @@ public class EnchantsManager {
 
 		NBTItem nbtItem = new NBTItem(pickaxe);
 
-
 		if (!nbtItem.hasKey("pickaxe-id")) {
 			nbtItem.setString("pickaxe-id", UUID.randomUUID().toString());
 		}
 
 		pickaxe = nbtItem.getItem();
 		return pickaxe;
+	}
+
+	public ItemStack createFirstJoinPickaxe(Player player) {
+		ItemStack item = ItemStackBuilder.of(this.firstJoinPickaxeMaterial.toItem()).name(this.firstJoinPickaxeName.replace("%player%", player.getName())).build();
+		for (String s : this.firstJoinPickaxeEnchants) {
+			try {
+				String[] data = s.split(" ");
+				UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantByName(data[0]);
+				int level = Integer.parseInt(data[1]);
+				item = this.addEnchant(item, enchantment.getId(), level);
+			} catch (Exception e) {
+				continue;
+			}
+		}
+		this.applyLoreToPickaxe(item);
+		return item;
 	}
 
 	public boolean hasEnchants(ItemStack item) {

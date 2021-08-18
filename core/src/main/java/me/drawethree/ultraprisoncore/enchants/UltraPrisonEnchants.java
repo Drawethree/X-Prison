@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
@@ -160,6 +161,21 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
 					this.enchantsManager.givePickaxe(target, input, name, c.sender());
 				}).registerAndBind(core, "givepickaxe");
+
+		Commands.create()
+				.assertOp()
+				.handler(c -> {
+
+					if (c.args().size() == 0) {
+						c.sender().sendMessage(Text.colorize("&c/givefirstjoinpickaxe <player>"));
+						return;
+					}
+
+					Player target = c.arg(0).parseOrFail(Player.class);
+
+					target.getInventory().addItem(this.enchantsManager.createFirstJoinPickaxe(target));
+					c.sender().sendMessage(Text.colorize("&aYou have given first join pickaxe to &e" + target.getName()));
+				}).registerAndBind(core, "givefirstjoinpickaxe");
 
 		Commands.create()
 				.assertPlayer()
@@ -303,6 +319,13 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 						this.enchantsManager.handlePickaxeUnequip(e.getPlayer(), e.getItemDrop().getItemStack());
 					}
 				}).bindWith(core);
+		//First join pickaxe
+		Events.subscribe(PlayerJoinEvent.class)
+				.filter(e -> !e.getPlayer().hasPlayedBefore() && this.enchantsManager.isFirstJoinPickaxeEnabled())
+				.handler(e -> {
+					ItemStack firstJoinPickaxe = this.enchantsManager.createFirstJoinPickaxe(e.getPlayer());
+					e.getPlayer().getInventory().addItem(firstJoinPickaxe);
+				}).bindWith(core);
 	}
 
 	public String getMessage(String key) {
@@ -316,4 +339,5 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	public boolean hasExplosiveDisabled(Player p) {
 		return disabledExplosive.contains(p.getUniqueId());
 	}
+
 }
