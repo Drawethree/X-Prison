@@ -67,7 +67,7 @@ public class MySQLDatabase extends SQLDatabase {
 			}
 		});
 
-		// v1.4.11 - Renamed multipliers table columns
+		// v1.5.0 - Renamed multipliers table columns
 		Schedulers.async().run(() -> {
 			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='UltraPrison_Multipliers' AND column_name ='vote_multiplier'")) {
 				try (ResultSet set = statement.executeQuery()) {

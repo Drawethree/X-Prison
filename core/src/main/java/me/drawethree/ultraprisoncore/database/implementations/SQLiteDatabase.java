@@ -103,7 +103,7 @@ public class SQLiteDatabase extends SQLDatabase {
 			}
 		});
 
-		// v1.4.11 - Renamed multipliers table columns
+		// v1.5.0 - Renamed multipliers table columns
 		Schedulers.async().run(() -> {
 			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Multipliers"); ResultSet set = statement.executeQuery()) {
 				if (set.next()) {

@@ -45,7 +45,7 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_sell", event -> {
 			PlayerMultiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(event.getPlayer());
 			if (sellMulti == null || sellMulti.isExpired()) {
-				return String.format("%.2f", 1.0);
+				return String.format("%.2f", 0.0);
 			} else {
 				return String.format("%.2f", (1.0 + sellMulti.getMultiplier()));
 			}
@@ -54,7 +54,7 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_token", event -> {
 			PlayerMultiplier tokenMulti = plugin.getMultipliers().getApi().getTokenMultiplier(event.getPlayer());
 			if (tokenMulti == null || tokenMulti.isExpired()) {
-				return String.format("%.2f", 1.0);
+				return String.format("%.2f", 0.0);
 			} else {
 				return String.format("%.2f", (1.0 + tokenMulti.getMultiplier()));
 			}
