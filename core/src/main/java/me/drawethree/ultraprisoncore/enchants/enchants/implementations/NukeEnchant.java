@@ -71,7 +71,6 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 							} else {
 								p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
 							}
-							this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(b1.getWorld(), b1.getX(), b1.getY(), b1.getZ(), 0, (byte) 0, true);
 						}
 					}
 				}
@@ -92,8 +91,11 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 				}
 
 				plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
-				plugin.getCore().getTokens().getTokensManager().addBlocksBroken(p, blocksAffected);
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
+
+				for (Block b1 : blocksAffected) {
+					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(b1.getWorld(), b1.getX(), b1.getY(), b1.getZ(), 0, (byte) 0, true);
+				}
 
 			}
 			long timeEnd = Time.nowMillis();

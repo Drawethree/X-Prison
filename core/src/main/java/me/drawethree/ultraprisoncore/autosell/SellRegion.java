@@ -18,7 +18,6 @@ public class SellRegion {
     private String permissionRequired;
     private Map<Material, Double> sellPrices;
 
-
     public double getSellPriceFor(Material m) {
         return this.sellPrices.getOrDefault(m, 0.0);
     }

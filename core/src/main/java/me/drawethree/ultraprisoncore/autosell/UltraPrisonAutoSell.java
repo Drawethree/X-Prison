@@ -300,6 +300,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				.assertPlayer()
 				.assertPermission(ADMIN_PERMISSION)
 				.handler(c -> {
+					Material type;
+					double price;
 					if (c.args().size() == 1) {
 
 						if (c.sender().getItemInHand() == null) {
@@ -307,44 +309,70 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 							return;
 						}
 
-						double price = c.arg(0).parseOrFail(Double.class);
-						Material type = c.sender().getItemInHand().getType();
-						IWrappedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
-
-						if (region == null) {
-							c.sender().sendMessage(Text.colorize("&cYou must be standing in a region!"));
+						price = c.arg(0).parseOrFail(Double.class);
+						type = c.sender().getItemInHand().getType();
+					} else if (c.args().size() == 2) {
+						try {
+							type = Material.valueOf(c.rawArg(0));
+						} catch (Exception e) {
+							c.sender().sendMessage(Text.colorize("&cInvalid material name!"));
 							return;
 						}
-
-						getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
-						getConfig().set("regions." + region.getId() + ".items." + type.name(), price);
-						getConfig().save();
-
-						if (type == Material.REDSTONE_ORE) {
-							getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
-							getConfig().set("regions." + region.getId() + ".items." + CompMaterial.LEGACY_GLOWING_REDSTONE_ORE.toMaterial().name(), price);
-							getConfig().save();
-						}
-
-						SellRegion sellRegion;
-
-						if (regionsAutoSell.containsKey(region.getId())) {
-							sellRegion = regionsAutoSell.get(region.getId());
-						} else {
-							sellRegion = new SellRegion(region, null, new HashMap<>());
-						}
-
-						if (type == Material.REDSTONE_ORE) {
-							sellRegion.addSellPrice(Material.GLOWING_REDSTONE_ORE, price);
-						}
-
-						sellRegion.addSellPrice(type, price);
-						regionsAutoSell.put(region.getId(), sellRegion);
-
-						c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId())));
-
+						price = c.arg(1).parseOrFail(Double.class);
+					} else {
+						c.sender().sendMessage(Text.colorize("&cInvalid usage!"));
+						c.sender().sendMessage(Text.colorize("&c/sellprice <material> <price> - Sets the sell price of specified material."));
+						c.sender().sendMessage(Text.colorize("&c/sellprice <price> - Sets the sell price of item material you have in your hand."));
+						return;
 					}
-				}).registerAndBind(core, "sellprice");
+
+					if (type == null) {
+						c.sender().sendMessage(Text.colorize("&cUnable to parse material!"));
+						return;
+					}
+
+					if (price <= 0.0) {
+						c.sender().sendMessage(Text.colorize("&cSell price needs to be higher than 0!"));
+						return;
+					}
+
+					IWrappedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
+
+					if (region == null) {
+						c.sender().sendMessage(Text.colorize("&cYou must be standing in a region!"));
+						return;
+					}
+
+					getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
+					getConfig().set("regions." + region.getId() + ".items." + type.name(), price);
+					getConfig().save();
+
+					if (type == Material.REDSTONE_ORE) {
+						getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
+						getConfig().set("regions." + region.getId() + ".items." + CompMaterial.LEGACY_GLOWING_REDSTONE_ORE.toMaterial().name(), price);
+						getConfig().save();
+					}
+
+					SellRegion sellRegion;
+
+					if (regionsAutoSell.containsKey(region.getId())) {
+						sellRegion = regionsAutoSell.get(region.getId());
+					} else {
+						sellRegion = new SellRegion(region, null, new HashMap<>());
+					}
+
+					if (type == Material.REDSTONE_ORE) {
+						sellRegion.addSellPrice(Material.GLOWING_REDSTONE_ORE, price);
+					}
+
+					sellRegion.addSellPrice(type, price);
+					regionsAutoSell.put(region.getId(), sellRegion);
+
+					c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId())));
+
+				}).
+
+				registerAndBind(core, "sellprice");
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
@@ -372,6 +400,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						sellAll(c.sender(), regions, true);
 					}
 				}).registerAndBind(core, "sellall");
+
 	}
 
 	public void sellAll(Player sender, Set<IWrappedRegion> regions, boolean sendMessage) {
