@@ -77,6 +77,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	private JetsPrisonMinesAPI jetsPrisonMinesAPI;
 
+	@Getter
+	private boolean ultraBackpacksEnabled;
+
 	@Override
 	protected void enable() {
 
@@ -139,6 +142,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			this.getLogger().info("Economy provider for Vault found - " + this.getEconomy().getName());
 		}
 
+		this.ultraBackpacksEnabled = this.getServer().getPluginManager().isPluginEnabled("UltraBackpacks");
+
 		this.registerPlaceholders();
 		this.registerJetsPrisonMines();
 
@@ -155,7 +160,11 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			this.loadModule(multipliers);
 		}
 		if (this.getConfig().getBoolean("modules.autosell")) {
-			this.loadModule(autoSell);
+			if (this.ultraBackpacksEnabled) {
+				this.getLogger().info("Module AutoSell will not be loaded because selling system is handled by UltraBackpacks.");
+			} else {
+				this.loadModule(autoSell);
+			}
 		}
 		if (this.getConfig().getBoolean("modules.enchants")) {
 			this.loadModule(enchants);

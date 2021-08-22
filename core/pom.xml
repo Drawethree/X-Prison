@@ -122,5 +122,11 @@
             <version>5.3</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>dev.drawethree</groupId>
+            <artifactId>UltraBackpacks</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

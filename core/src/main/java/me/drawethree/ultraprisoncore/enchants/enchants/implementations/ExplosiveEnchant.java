@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
+import dev.drawethree.ultrabackpacks.UltraBackpacks;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
@@ -92,6 +93,9 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 							if (autoSellPlayerEnabled) {
 								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1.getType()) + 0.0) * amplifier);
 							} else {
+								if (this.plugin.getCore().isUltraBackpacksEnabled()) {
+									continue;
+								}
 								p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
 							}
 						}
@@ -114,6 +118,10 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 				plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
+
+				if (plugin.getCore().isUltraBackpacksEnabled()) {
+					UltraBackpacks.getInstance().getApi().handleBlocksBroken(p, blocksAffected);
+				}
 
 				for (Block b1 : blocksAffected) {
 					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(b1.getWorld(), b1.getX(), b1.getY(), b1.getZ(), 0, (byte) 0, true);
