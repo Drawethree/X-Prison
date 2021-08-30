@@ -4,20 +4,19 @@ import dev.drawethree.ultrabackpacks.UltraBackpacks;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import me.drawethree.ultraprisoncore.utils.RegionUtils;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 public class LayerEnchant extends UltraPrisonEnchantment {
 	private double chance;
@@ -47,10 +46,9 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 
 			long startTime = Time.nowMillis();
 			Block b = e.getBlock();
-			List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
-			if (regions.size() > 0) {
+			IWrappedRegion region = RegionUtils.getMineRegionWithHighestPriority(b.getLocation());
+			if (region != null) {
 				Player p = e.getPlayer();
-				IWrappedRegion region = regions.get(0);
 				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
 
 				List<Block> blocksAffected = new ArrayList<>();

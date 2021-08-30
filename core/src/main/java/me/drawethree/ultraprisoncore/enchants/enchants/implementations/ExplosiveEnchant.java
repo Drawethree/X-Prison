@@ -4,6 +4,7 @@ import dev.drawethree.ultrabackpacks.UltraBackpacks;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import me.drawethree.ultraprisoncore.utils.RegionUtils;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.time.Time;
@@ -13,14 +14,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
@@ -61,10 +60,9 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 			long timeStart = Time.nowMillis();
 			Block b = e.getBlock();
-			List<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(b.getLocation()).stream().filter(reg -> reg.getId().toLowerCase().startsWith("mine")).collect(Collectors.toList());
-			if (regions.size() > 0) {
+			IWrappedRegion region = RegionUtils.getMineRegionWithHighestPriority(b.getLocation());
+			if (region != null) {
 				Player p = e.getPlayer();
-				IWrappedRegion region = regions.get(0);
 				int threshold = this.getMaxLevel() / 3;
 				int radius = enchantLevel <= threshold ? 3 : enchantLevel <= threshold * 2 ? 4 : 5;
 

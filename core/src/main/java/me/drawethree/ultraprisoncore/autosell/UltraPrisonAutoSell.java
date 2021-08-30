@@ -13,6 +13,7 @@ import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoos
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.utils.MaterialUtils;
+import me.drawethree.ultraprisoncore.utils.RegionUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -336,7 +337,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						return;
 					}
 
-					IWrappedRegion region = getFirstRegionAtLocation(c.sender().getLocation());
+					IWrappedRegion region = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
 
 					if (region == null) {
 						c.sender().sendMessage(Text.colorize("&cYou must be standing in a region!"));
@@ -466,11 +467,6 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 			enabledAutoSell.remove(player.getUniqueId());
 			player.sendMessage(getMessage("autosell_disable"));
 		}
-	}
-
-	private IWrappedRegion getFirstRegionAtLocation(Location loc) {
-		Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc);
-		return regions.size() == 0 ? null : regions.iterator().next();
 	}
 
 	public String getMessage(String key) {
