@@ -18,6 +18,7 @@ public class TokensPayCommand extends TokensCommand {
         if (args.size() == 2 && sender instanceof Player) {
             Player p = (Player) sender;
             try {
+
                 long amount = Long.parseLong(args.get(1).replace(",", ""));
 
                 if (0 >= amount) {
@@ -30,6 +31,11 @@ public class TokensPayCommand extends TokensCommand {
                     sender.sendMessage(plugin.getMessage("player_not_online").replace("%player%", target.getName()));
                     return true;
                 }
+
+				if (target.getUniqueId().equals(p.getUniqueId())) {
+					sender.sendMessage(plugin.getMessage("tokens_cant_send_to_yourself"));
+					return true;
+				}
 
                 plugin.getTokensManager().payTokens(p, amount, target);
                 return true;

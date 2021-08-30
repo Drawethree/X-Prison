@@ -30,4 +30,10 @@ public class GlobalMultiplier extends Multiplier {
 
 		this.endTime += unit.toMillis(duration);
 	}
+
+	public void reset() {
+		this.multiplier = 0.0;
+		this.startTime = 0;
+		this.endTime = 0;
+	}
 }

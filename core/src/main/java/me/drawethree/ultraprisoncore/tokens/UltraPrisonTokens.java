@@ -30,7 +30,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -151,15 +151,16 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 						e.setUseInteractedBlock(Event.Result.DENY);
 						this.tokensManager.redeemTokens(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking());
 					}
-				})
-				.bindWith(core);
+				}).bindWith(core);
 
 		Events.subscribe(BlockBreakEvent.class)
 				.filter(EventFilters.ignoreCancelled())
 				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
 				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.handler(e -> {
-					this.handleBlockBreak(e.getPlayer(), Arrays.asList(e.getBlock()));
+					List<Block> blocks = new ArrayList<>(1);
+					blocks.add(e.getBlock());
+					this.handleBlockBreak(e.getPlayer(), blocks);
 				}).bindWith(core);
 	}
 

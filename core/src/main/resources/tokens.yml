@@ -14,6 +14,7 @@ messages:
   not_token_item: "&cThis is not a token item!"
   tokens_redeem: "&e&l(!) &eYou redeemed &f%tokens% &etoken(s)"
   tokens_send: "&eYou have sent %tokens% to %player%"
+  tokens_cant_send_to_yourself: "&c&l(!) &cYou can't send tokens to yourself."
   tokens_received: "&eYou received %tokens% from %player%."
   tokens_received_console: "&e&lTOKENS &8» &7You have received &f%tokens% tokens&7."
   not_a_number: "&c%input% is not a number!"

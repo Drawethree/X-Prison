@@ -328,9 +328,13 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						}
 
 						setupGlobalMultiplier(c.sender(), type, duration, timeUnit, amount);
+					} else if (c.args().size() == 2 && c.rawArg(1).equalsIgnoreCase("reset")) {
+						String type = c.rawArg(0);
+						resetGlobalMultiplier(c.sender(), type);
 					} else {
 						c.sender().sendMessage(Text.colorize("&cInvalid usage!"));
 						c.sender().sendMessage(Text.colorize("&c/gmulti <money/token> <multiplier> <time> <time_unit>"));
+						c.sender().sendMessage(Text.colorize("&c/gmulti <money/token> reset"));
 					}
 				}).registerAndBind(core, "globalmultiplier", "gmulti");
 		Commands.create()
@@ -392,12 +396,27 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 					Multiplier rankMulti = this.getRankMultiplier(c.sender());
 
-					c.sender().sendMessage(messages.get("global_sell_multi").replace("%multiplier%", String.valueOf(this.globalSellMultiplier.getMultiplier())).replace("%duration%", this.globalSellMultiplier.getTimeLeftString()));
-					c.sender().sendMessage(messages.get("global_token_multi").replace("%multiplier%", String.valueOf(this.globalTokenMultiplier.getMultiplier())).replace("%duration%", this.globalTokenMultiplier.getTimeLeftString()));
+					c.sender().sendMessage(messages.get("global_sell_multi").replace("%multiplier%", String.valueOf(this.globalSellMultiplier.isExpired() ? "0.0" : this.globalSellMultiplier.getMultiplier())).replace("%duration%", this.globalSellMultiplier.getTimeLeftString()));
+					c.sender().sendMessage(messages.get("global_token_multi").replace("%multiplier%", String.valueOf(this.globalTokenMultiplier.isExpired() ? "0.0" : this.globalTokenMultiplier.getMultiplier())).replace("%duration%", this.globalTokenMultiplier.getTimeLeftString()));
 					c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", rankMulti == null ? "0.0" : String.valueOf(rankMulti.getMultiplier())));
 					c.sender().sendMessage(messages.get("sell_multi").replace("%multiplier%", sellMulti == null || sellMulti.isExpired() ? "0.0" : String.valueOf(sellMulti.getMultiplier())).replace("%duration%", sellMulti == null || sellMulti.isExpired() ? "" : sellMulti.getTimeLeftString()));
 					c.sender().sendMessage(messages.get("token_multi").replace("%multiplier%", tokenMulti == null || tokenMulti.isExpired() ? "0.0" : String.valueOf(tokenMulti.getMultiplier())).replace("%duration%", tokenMulti == null || tokenMulti.isExpired() ? "" : tokenMulti.getTimeLeftString()));
 				}).registerAndBind(core, "multiplier", "multi");
+	}
+
+	private void resetGlobalMultiplier(CommandSender sender, String type) {
+		switch (type.toLowerCase()) {
+			case "sell":
+			case "money":
+				this.globalSellMultiplier.reset();
+				sender.sendMessage(Text.colorize("&eGlobal Sell Multiplier &awas reset."));
+				break;
+			case "tokens":
+			case "token":
+				this.globalTokenMultiplier.reset();
+				sender.sendMessage(Text.colorize("&eGlobal Token Multiplier &awas reset."));
+				break;
+		}
 	}
 
 	private void resetSellMultiplier(CommandSender sender, Player onlinePlayer) {

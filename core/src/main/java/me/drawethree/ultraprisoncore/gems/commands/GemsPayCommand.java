@@ -31,6 +31,11 @@ public class GemsPayCommand extends GemsCommand {
 					return true;
 				}
 
+				if (target.getUniqueId().equals(p.getUniqueId())) {
+					sender.sendMessage(plugin.getMessage("gems_cant_send_to_yourself"));
+					return true;
+				}
+
 				plugin.getGemsManager().payGems(p, amount, target);
 				return true;
 			} catch (NumberFormatException e) {

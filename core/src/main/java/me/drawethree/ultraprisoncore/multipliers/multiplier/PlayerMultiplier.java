@@ -23,25 +23,6 @@ public class PlayerMultiplier extends Multiplier {
 		}
 
 		this.playerUUID = playerUUID;
-
-
-		/*
-		if (endTime > Time.nowMillis()) {
-			if (task != null) {
-				task.cancel();
-			}
-			task = Schedulers.async().runLater(() -> {
-				switch (this.type) {
-					case SELL:
-						UltraPrisonMultipliers.getInstance().removeSellMultiplier(this.playerUUID);
-						break;
-					case TOKENS:
-						UltraPrisonMultipliers.getInstance().removeTokenMultiplier(this.playerUUID);
-						break;
-				}
-			}, endTime - Time.nowMillis(), TimeUnit.MILLISECONDS);
-		}
-		 */
 	}
 
 	//Old from DB
