@@ -17,7 +17,7 @@ import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.nms.NMSProvider;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
-import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPlaceholder;
+import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -302,7 +302,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	private void registerPlaceholders() {
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-			new UltraPrisonPlaceholder(this).register();
+			new UltraPrisonPAPIPlaceholder(this).register();
 		}
 
 		new UltraPrisonMVdWPlaceholder(this);

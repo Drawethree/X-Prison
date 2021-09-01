@@ -8,7 +8,7 @@ import me.drawethree.ultraprisoncore.gangs.enums.GangCreateResult;
 import me.drawethree.ultraprisoncore.gangs.enums.GangNameCheckResult;
 import me.drawethree.ultraprisoncore.gangs.enums.GangRenameResult;
 import me.drawethree.ultraprisoncore.gangs.gui.DisbandGangAdminGUI;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;

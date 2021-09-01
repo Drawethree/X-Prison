@@ -1,7 +1,7 @@
 package me.drawethree.ultraprisoncore.gangs.api.events;
 
 import lombok.Getter;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

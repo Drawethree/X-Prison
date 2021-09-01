@@ -32,6 +32,10 @@ public class EnchantGUI extends Gui {
     private static Item HELP_ITEM;
     private static ItemStack DISENCHANT_ITEM;
 
+    private static boolean PICKAXE_ITEM_ENABLED;
+    private static boolean HELP_ITEM_ENABLED;
+    private static boolean DISENCHANT_ITEM_ENABLED;
+
     static {
         reload();
     }
@@ -66,11 +70,21 @@ public class EnchantGUI extends Gui {
             for (int i = 0; i < this.getHandle().getSize(); i++) {
                 this.setItem(i, EMPTY_SLOT_ITEM);
             }
+        }
+
+        if (HELP_ITEM_ENABLED) {
             this.setItem(HELP_ITEM_SLOT, HELP_ITEM);
+        }
+
+        if (DISENCHANT_ITEM_ENABLED) {
             this.setItem(DISENCHANT_ITEM_SLOT, ItemStackBuilder.of(DISENCHANT_ITEM).build(() -> {
                 this.close();
                 new DisenchantGUI(this.getPlayer(), this.pickAxe, this.pickaxePlayerInventorySlot).open();
             }));
+        }
+
+        if (PICKAXE_ITEM_ENABLED) {
+            this.setItem(PICKAXE_ITEM_SLOT, Item.builder(this.pickAxe).build());
         }
 
         for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
@@ -80,41 +94,50 @@ public class EnchantGUI extends Gui {
             int level = UltraPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment.getId());
             this.setItem(enchantment.getGuiSlot(), UltraPrisonEnchants.getInstance().getEnchantsManager().getGuiItem(enchantment, this, level));
         }
-
-        this.setItem(PICKAXE_ITEM_SLOT, Item.builder(this.pickAxe).build());
     }
 
     public static void reload() {
+
         GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
         EMPTY_SLOT_ITEM = ItemStackBuilder.
                 of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
-        PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.pickaxe_slot");
         GUI_LINES = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.lines");
 
+        HELP_ITEM_ENABLED = UltraPrisonEnchants.getInstance().getConfig().get().getBoolean("enchant_menu.help_item.enabled", true);
+        PICKAXE_ITEM_ENABLED = UltraPrisonEnchants.getInstance().getConfig().get().getBoolean("enchant_menu.pickaxe_enabled", true);
+        DISENCHANT_ITEM_ENABLED = UltraPrisonEnchants.getInstance().getConfig().get().getBoolean("enchant_menu.disenchant_item.enabled", true);
 
-        String base64 = UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.Base64", null);
+        if (DISENCHANT_ITEM_ENABLED) {
+            String base64 = UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.Base64", null);
 
-        if (base64 != null) {
-            DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-                    .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.disenchant_item.lore")).build();
-        } else {
-            DISENCHANT_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.material")).toMaterial())
-                    .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.disenchant_item.lore")).build();
+            if (base64 != null) {
+                DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+                        .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.disenchant_item.lore")).build();
+            } else {
+                DISENCHANT_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.material")).toMaterial())
+                        .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.disenchant_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.disenchant_item.lore")).build();
+            }
+            DISENCHANT_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.disenchant_item.slot");
+
         }
 
-        base64 = UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.Base64", null);
+        if (HELP_ITEM_ENABLED) {
+            String base64 = UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.Base64", null);
 
-        if (base64 != null) {
-            HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-                    .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.help_item.lore")).buildItem().build();
-        } else {
-            HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.material")).toMaterial())
-                    .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+            if (base64 != null) {
+                HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+                        .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+            } else {
+                HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.material")).toMaterial())
+                        .name(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.help_item.name")).lore(UltraPrisonEnchants.getInstance().getConfig().get().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+            }
+
+            HELP_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.help_item.slot");
+
         }
 
-
-        HELP_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.help_item.slot");
-        PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.pickaxe_slot");
-        DISENCHANT_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.disenchant_item.slot");
+        if (PICKAXE_ITEM_ENABLED) {
+            PICKAXE_ITEM_SLOT = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.pickaxe_slot");
+        }
     }
 }
