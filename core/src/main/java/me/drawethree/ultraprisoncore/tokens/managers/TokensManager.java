@@ -251,7 +251,7 @@ public class TokensManager {
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L));
 
-			if (executor != null) {
+			if (executor != null && !(executor instanceof ConsoleCommandSender)) {
 				executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
 			}
 		});
@@ -420,7 +420,7 @@ public class TokensManager {
 				}
 			}
 
-			if (sender != null) {
+			if (sender != null && !(sender instanceof ConsoleCommandSender)) {
 				sender.sendMessage(plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
 			}
 		});
