@@ -144,9 +144,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 		this.ultraBackpacksEnabled = this.getServer().getPluginManager().isPluginEnabled("UltraBackpacks");
 
-		this.registerPlaceholders();
-		this.registerJetsPrisonMines();
-
 		if (this.getConfig().getBoolean("modules.tokens")) {
 			this.loadModule(tokens);
 		}
@@ -182,6 +179,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 				this.loadModule(pickaxeLevels);
 			}
 		}
+
+		this.registerPlaceholders();
+		this.registerJetsPrisonMines();
 
 		this.registerMainEvents();
 		this.registerMainCommand();

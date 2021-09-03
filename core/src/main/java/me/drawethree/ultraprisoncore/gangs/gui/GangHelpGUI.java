@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.gangs.gui;
 
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Services;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
@@ -33,12 +34,12 @@ public class GangHelpGUI extends Gui {
 		if (isFirstDraw()) {
 			MenuPopulator populator = LAYOUT.newPopulator(this);
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(Material.STAINED_GLASS_PANE).data(15).name("&a").buildItem().build());
+				populator.accept(ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("&a").buildItem().build());
 			}
 
 			populator = BUTTONS.newPopulator(this);
 			populator.acceptIfSpace(ItemStackBuilder.of(Material.BOOK).name("&eGangs Info").lore("&7Create gangs to dominate the server!", "&7Maximum Gang Size: 5").buildItem().build());
-			populator.acceptIfSpace(ItemStackBuilder.of(Material.WORKBENCH).name("&eCreate a Gang").lore("&7Click to create a new gang.").build(() -> {
+			populator.acceptIfSpace(ItemStackBuilder.of(CompMaterial.CRAFTING_TABLE.toItem()).name("&eCreate a Gang").lore("&7Click to create a new gang.").build(() -> {
 				SignPromptFactory factory = Services.load(SignPromptFactory.class);
 				factory.openPrompt(this.getPlayer(), Arrays.asList("", "§e^ ^ ^", "§7Input gang name", ""), responseHandler -> {
 					if (responseHandler.get(0).isEmpty()) {
