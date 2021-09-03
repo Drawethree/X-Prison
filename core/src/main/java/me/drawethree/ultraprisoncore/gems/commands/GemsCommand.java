@@ -15,4 +15,6 @@ public abstract class GemsCommand {
 
     public abstract boolean execute(CommandSender sender, ImmutableList<String> args);
 
+    public abstract boolean canExecute(CommandSender sender);
+
 }

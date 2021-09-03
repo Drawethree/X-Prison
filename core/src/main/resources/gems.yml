@@ -1,4 +1,5 @@
 messages:
+  no_permission: "&c&l(!) &fYou do not have permission to do that!"
   not_enough_gems: "&e&l(!) &eYou don't have enough gems"
   your_gems: "&eYour Gems: %gems%"
   other_gems: "&e%player%'s gems: %gems%"

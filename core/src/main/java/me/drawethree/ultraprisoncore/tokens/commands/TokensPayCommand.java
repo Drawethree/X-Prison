@@ -45,4 +45,9 @@ public class TokensPayCommand extends TokensCommand {
         }
         return false;
     }
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return true;
+    }
 }

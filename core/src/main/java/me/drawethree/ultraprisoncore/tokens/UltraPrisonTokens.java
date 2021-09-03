@@ -216,7 +216,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 					}
 					TokensCommand subCommand = this.getCommand(c.rawArg(0));
 					if (subCommand != null) {
-						subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+						if (subCommand.canExecute(c.sender())) {
+							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+						} else {
+							c.sender().sendMessage(this.getMessage("no_permission"));
+						}
 					} else {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.tokensManager.sendInfoMessage(c.sender(), target, true);
