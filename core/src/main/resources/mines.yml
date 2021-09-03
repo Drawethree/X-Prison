@@ -1,0 +1,5 @@
+messages:
+  no_permission: "&c&l(!) &fYou do not have a permission to do that!"
+  selection_valid: "&aYour selection is valid. You can now create a mine by /mines create <name>"
+  selection_invalid: "&cYour selection is invalid. Please make a selection via our selection tool /mines tool"
+  selection_point_set: "&aPoint %position% set: %location%"

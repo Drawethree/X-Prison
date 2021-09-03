@@ -4,10 +4,10 @@ import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import org.bukkit.command.CommandSender;
 
-public class MineToolCommand extends MineCommand {
+public class MineHelpCommand extends MineCommand {
 
-	public MineToolCommand(UltraPrisonMines plugin) {
-		super(plugin, "tool");
+	public MineHelpCommand(UltraPrisonMines plugin) {
+		super(plugin, "help", "?");
 	}
 
 	@Override
@@ -17,11 +17,11 @@ public class MineToolCommand extends MineCommand {
 
 	@Override
 	public String getUsage() {
-		return "/mines tool - Gives you a selection tool";
+		return "/mines help - Shows usage";
 	}
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(UltraPrisonMines.MINES_ADMIN_PERM);
+		return true;
 	}
 }
