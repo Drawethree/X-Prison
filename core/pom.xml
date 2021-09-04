@@ -15,6 +15,10 @@
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
+    <properties>
+        <ultrabackpacks-version>1.0.4-BETA</ultrabackpacks-version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -124,9 +128,10 @@
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>UltraBackpacks</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
+            <artifactId>ultrabackpacks-api</artifactId>
+            <version>1.0.3-BETA</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../libs/UltraBackpacksAPI-${ultrabackpacks-version}.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

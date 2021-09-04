@@ -1,6 +1,6 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
-import dev.drawethree.ultrabackpacks.UltraBackpacks;
+import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
@@ -118,7 +118,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
 
 				if (plugin.getCore().isUltraBackpacksEnabled()) {
-					UltraBackpacks.getInstance().getApi().handleBlocksBroken(p, blocksAffected);
+					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
 				}
 
 				for (Block b1 : blocksAffected) {
