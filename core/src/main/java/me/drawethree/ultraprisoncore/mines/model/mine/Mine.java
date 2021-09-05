@@ -1,9 +1,11 @@
-package me.drawethree.ultraprisoncore.mines.model;
+package me.drawethree.ultraprisoncore.mines.model.mine;
 
 import com.google.gson.JsonElement;
+import lombok.Getter;
+import lombok.Setter;
+import me.drawethree.ultraprisoncore.mines.model.reset.ResetType;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.gson.GsonSerializable;
-import me.lucko.helper.random.RandomSelector;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
 import org.bukkit.Location;
@@ -16,19 +18,24 @@ import java.util.Map;
 
 public class Mine implements GsonSerializable {
 
+	@Getter
 	private String name;
+	@Getter
 	private Region mineRegion;
-	private Position spawnLocation;
+	@Getter
+	@Setter
+	private Position teleportLocation;
 	private Map<CompMaterial, Double> blockPercentages;
 	private double resetPercentage;
 	private int totalBlocks;
+	private ResetType resetType;
 
 	public Mine(String name, Region region) {
 		this.mineRegion = region;
-		this.spawnLocation = null;
+		this.teleportLocation = null;
 		this.blockPercentages = new HashMap<>();
 		this.resetPercentage = 50.0;
-		this.totalBlocks = calculateTotalBlocks();
+		this.totalBlocks = this.calculateTotalBlocks();
 	}
 
 	public void handleBlockBreaks() {
@@ -77,20 +84,7 @@ public class Mine implements GsonSerializable {
 	}
 
 	public void resetMine() {
-		RandomSelector<CompMaterial> selector = RandomSelector.weighted(this.blockPercentages.keySet(), (material) -> this.blockPercentages.get(material));
-
-		Position min = this.mineRegion.getMin();
-		Position max = this.mineRegion.getMax();
-
-		for (int x = (int) min.getX(); x < max.getX(); x++) {
-			for (int y = (int) min.getY(); y < max.getY(); y++) {
-				for (int z = (int) min.getZ(); z < max.getZ(); z++) {
-					Block b = min.toLocation().getWorld().getBlockAt(x, y, z);
-					CompMaterial pick = selector.pick();
-					b.setType(pick.toMaterial());
-				}
-			}
-		}
+		this.resetType.reset(this, this.blockPercentages);
 	}
 
 	@Nonnull

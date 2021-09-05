@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.mines.model;
+package me.drawethree.ultraprisoncore.mines.model.mine;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

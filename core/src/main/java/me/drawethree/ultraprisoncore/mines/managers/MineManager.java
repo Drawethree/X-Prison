@@ -2,8 +2,8 @@ package me.drawethree.ultraprisoncore.mines.managers;
 
 import com.google.gson.JsonObject;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
-import me.drawethree.ultraprisoncore.mines.model.Mine;
-import me.drawethree.ultraprisoncore.mines.model.MineSelection;
+import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
+import me.drawethree.ultraprisoncore.mines.model.mine.MineSelection;
 import me.drawethree.ultraprisoncore.utils.LocationUtils;
 import me.lucko.helper.gson.GsonProvider;
 import me.lucko.helper.item.ItemStackBuilder;

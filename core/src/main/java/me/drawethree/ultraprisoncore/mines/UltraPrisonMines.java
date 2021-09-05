@@ -92,7 +92,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 		registerCommand(new MineCreateCommand(this));
 		registerCommand(new MineDeleteCommand(this));
-		registerCommand(new MineEditorCommand(this));
+		registerCommand(new MinePanelCommand(this));
 		registerCommand(new MineTeleportCommand(this));
 		registerCommand(new MineToolCommand(this));
 		registerCommand(new MineHelpCommand(this));
