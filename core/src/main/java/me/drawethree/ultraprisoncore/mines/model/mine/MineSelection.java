@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.lucko.helper.serialize.Position;
+import me.lucko.helper.serialize.Region;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,5 +15,9 @@ public class MineSelection {
 
 	public boolean isValid() {
 		return pos1 != null && pos2 != null;
+	}
+
+	public Region toRegion() {
+		return pos1.regionWith(pos2);
 	}
 }

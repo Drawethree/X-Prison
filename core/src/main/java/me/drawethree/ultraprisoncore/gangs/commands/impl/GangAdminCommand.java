@@ -1,7 +1,8 @@
-package me.drawethree.ultraprisoncore.gangs.commands;
+package me.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.models.Gang;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;

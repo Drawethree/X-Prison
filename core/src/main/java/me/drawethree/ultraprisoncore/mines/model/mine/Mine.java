@@ -3,18 +3,25 @@ package me.drawethree.ultraprisoncore.mines.model.mine;
 import com.google.gson.JsonElement;
 import lombok.Getter;
 import lombok.Setter;
-import me.drawethree.ultraprisoncore.mines.model.reset.ResetType;
-import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
+import me.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.gson.GsonSerializable;
+import me.lucko.helper.gson.JsonBuilder;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
+import me.lucko.helper.utils.Players;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class Mine implements GsonSerializable {
 
@@ -22,19 +29,44 @@ public class Mine implements GsonSerializable {
 	private String name;
 	@Getter
 	private Region mineRegion;
+
 	@Getter
 	@Setter
 	private Position teleportLocation;
-	private Map<CompMaterial, Double> blockPercentages;
+
+	@Getter
+	private BlockPalette blockPalette;
+
+	@Getter
+	@Setter
 	private double resetPercentage;
+
+	@Getter
 	private int totalBlocks;
+	@Getter
+	@Setter
 	private ResetType resetType;
 
+	@Getter
+	private boolean resetting;
+
 	public Mine(String name, Region region) {
+		this.name = name;
 		this.mineRegion = region;
 		this.teleportLocation = null;
-		this.blockPercentages = new HashMap<>();
+		this.blockPalette = new BlockPalette();
+		this.resetType = ResetType.INSTANT;
 		this.resetPercentage = 50.0;
+		this.totalBlocks = this.calculateTotalBlocks();
+	}
+
+	public Mine(String name, Region region, Position teleportLocation, BlockPalette palette, ResetType resetType, double resetPercentage) {
+		this.name = name;
+		this.mineRegion = region;
+		this.teleportLocation = teleportLocation;
+		this.blockPalette = palette;
+		this.resetType = resetType;
+		this.resetPercentage = resetPercentage;
 		this.totalBlocks = this.calculateTotalBlocks();
 	}
 
@@ -84,12 +116,42 @@ public class Mine implements GsonSerializable {
 	}
 
 	public void resetMine() {
-		this.resetType.reset(this, this.blockPercentages);
+
+		this.getPlayersInMine().forEach(player -> {
+			player.sendMessage(UltraPrisonMines.getInstance().getMessage("mine_resetting").replace("%mine%", this.name));
+		});
+
+		Schedulers.sync().runLater(() -> {
+			this.resetting = true;
+
+			this.getPlayersInMine().forEach(player -> player.teleport(this.teleportLocation.toLocation()));
+			this.resetType.reset(this, this.blockPalette);
+			this.getPlayersInMine().forEach(player -> {
+				player.sendMessage(UltraPrisonMines.getInstance().getMessage("mine_reset").replace("%mine%", this.name));
+			});
+
+			this.resetting = false;
+		}, 5, TimeUnit.SECONDS);
 	}
 
 	@Nonnull
 	@Override
 	public JsonElement serialize() {
-		return null;
+		return JsonBuilder.object()
+				.addIfAbsent("name", this.name)
+				.addIfAbsent("teleport-location", this.teleportLocation)
+				.addIfAbsent("region", this.mineRegion)
+				.addIfAbsent("blocks", this.blockPalette)
+				.addIfAbsent("reset-type", this.resetType.getName())
+				.addIfAbsent("reset-percentage", this.resetPercentage)
+				.build();
+	}
+
+	public File getFile() {
+		return new File(UltraPrisonCore.getInstance().getDataFolder().getPath() + "/mines/" + this.getName());
+	}
+
+	public List<Player> getPlayersInMine() {
+		return Players.all().stream().filter(player -> this.isInMine(player.getLocation())).collect(Collectors.toList());
 	}
 }

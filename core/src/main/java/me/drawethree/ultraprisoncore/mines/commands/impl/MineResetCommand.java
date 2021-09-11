@@ -1,13 +1,14 @@
-package me.drawethree.ultraprisoncore.mines.commands;
+package me.drawethree.ultraprisoncore.mines.commands.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
+import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import org.bukkit.command.CommandSender;
 
-public class MineTeleportCommand extends MineCommand {
+public class MineResetCommand extends MineCommand {
 
-	public MineTeleportCommand(UltraPrisonMines plugin) {
-		super(plugin, "teleport", "tp");
+	public MineResetCommand(UltraPrisonMines plugin) {
+		super(plugin, "reset");
 	}
 
 	@Override
@@ -17,11 +18,11 @@ public class MineTeleportCommand extends MineCommand {
 
 	@Override
 	public String getUsage() {
-		return "/mines teleport <mine> - Teleports you to a specified mine";
+		return "/mines reset <mine> - Resets mine";
 	}
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return true;
+		return sender.hasPermission(UltraPrisonMines.MINES_ADMIN_PERM);
 	}
 }

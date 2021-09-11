@@ -1,7 +1,8 @@
-package me.drawethree.ultraprisoncore.gangs.commands;
+package me.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.enums.GangCreateResult;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

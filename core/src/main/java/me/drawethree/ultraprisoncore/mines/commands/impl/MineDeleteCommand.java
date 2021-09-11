@@ -1,7 +1,8 @@
-package me.drawethree.ultraprisoncore.mines.commands;
+package me.drawethree.ultraprisoncore.mines.commands.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
+import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import org.bukkit.command.CommandSender;
 
 public class MineDeleteCommand extends MineCommand {
@@ -12,7 +13,11 @@ public class MineDeleteCommand extends MineCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, ImmutableList<String> args) {
-		return false;
+		if (args.size() != 1) {
+			return false;
+		}
+
+		return this.plugin.getManager().deleteMine(sender, args.get(0));
 	}
 
 	@Override

@@ -15,6 +15,7 @@ modules:
   autominer: true
   pickaxe_levels: true
   gangs: true
+  mines: true
 supported-pickaxes:
   - DIAMOND_PICKAXE
 main-command-aliases:

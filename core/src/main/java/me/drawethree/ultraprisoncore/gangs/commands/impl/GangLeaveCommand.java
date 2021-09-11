@@ -1,29 +1,28 @@
-package me.drawethree.ultraprisoncore.gangs.commands;
+package me.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
-import me.lucko.helper.utils.Players;
+import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GangInviteCommand extends GangCommand{
+public class GangLeaveCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang invite [player]";
+        return ChatColor.RED + "/gang leave";
     }
 
-    public GangInviteCommand(UltraPrisonGangs plugin) {
-        super(plugin, "invite", "inv");
+    public GangLeaveCommand(UltraPrisonGangs plugin) {
+        super(plugin, "leave", "quit");
     }
 
     @Override
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
-        if (sender instanceof Player && args.size() == 1) {
+        if (args.size() == 0 && sender instanceof Player) {
             Player p = (Player) sender;
-            Player target = Players.getNullable(args.get(0));
-            return this.plugin.getGangsManager().invitePlayer(p, target);
+            return this.plugin.getGangsManager().leaveGang(p);
         }
         return false;
     }

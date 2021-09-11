@@ -1,28 +1,27 @@
-package me.drawethree.ultraprisoncore.gangs.commands;
+package me.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-
-public class GangChatCommand extends GangCommand {
+public class GangAcceptCommand extends GangCommand {
 
     @Override
     public String getUsage() {
-        return ChatColor.RED + "/gang chat";
+        return ChatColor.RED + "/gang accept";
     }
 
-    public GangChatCommand(UltraPrisonGangs plugin) {
-        super(plugin, "chat", "c");
+    public GangAcceptCommand(UltraPrisonGangs plugin) {
+        super(plugin, "accept", "join");
     }
 
     @Override
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
-        if (args.size() == 0 && sender instanceof Player) {
-            Player p = (Player) sender;
-            return this.plugin.getGangsManager().toggleGangChat(p);
+        if (sender instanceof Player && args.size() == 0) {
+            return this.plugin.getGangsManager().acceptInvite((Player) sender);
         }
         return false;
     }

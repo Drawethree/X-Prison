@@ -6,7 +6,8 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPI;
 import me.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPIImpl;
-import me.drawethree.ultraprisoncore.mines.commands.*;
+import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
+import me.drawethree.ultraprisoncore.mines.commands.impl.*;
 import me.drawethree.ultraprisoncore.mines.managers.MineManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -26,6 +27,9 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 	public static final String MINES_ADMIN_PERM = "ultraprison.mines.admin";
 
+	@Getter
+	private static UltraPrisonMines instance;
+
 	private boolean enabled;
 
 	private Map<String, String> messages;
@@ -42,6 +46,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 
 	public UltraPrisonMines(UltraPrisonCore core) {
+		instance = this;
 		this.core = core;
 		this.enabled = false;
 	}
@@ -58,7 +63,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 	@Override
 	public void disable() {
-
+		this.manager.disable();
 	}
 
 	@Override
@@ -96,15 +101,21 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		registerCommand(new MineTeleportCommand(this));
 		registerCommand(new MineToolCommand(this));
 		registerCommand(new MineHelpCommand(this));
-
+		registerCommand(new MineResetCommand(this));
+		registerCommand(new MineListCommand(this));
+		registerCommand(new MineAddBlockCommand(this));
+		registerCommand(new MineSetTpCommand(this));
 
 		Commands.create()
 				.handler(c -> {
+
 					if (c.args().size() == 0 && c.sender() instanceof Player) {
 						this.getCommand("help").execute(c.sender(), c.args());
 						return;
 					}
+
 					MineCommand subCommand = this.getCommand(Objects.requireNonNull(c.rawArg(0)));
+
 					if (subCommand != null) {
 						if (!subCommand.canExecute(c.sender())) {
 							c.sender().sendMessage(this.getMessage("no_permission"));
