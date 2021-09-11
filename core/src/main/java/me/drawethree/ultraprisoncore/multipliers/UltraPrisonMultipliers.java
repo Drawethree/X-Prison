@@ -393,11 +393,10 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 					PlayerMultiplier sellMulti = this.getSellMultiplier(c.sender());
 					PlayerMultiplier tokenMulti = this.getTokenMultiplier(c.sender());
-
 					Multiplier rankMulti = this.getRankMultiplier(c.sender());
 
-					c.sender().sendMessage(messages.get("global_sell_multi").replace("%multiplier%", String.valueOf(this.globalSellMultiplier.isExpired() ? "0.0" : this.globalSellMultiplier.getMultiplier())).replace("%duration%", this.globalSellMultiplier.getTimeLeftString()));
-					c.sender().sendMessage(messages.get("global_token_multi").replace("%multiplier%", String.valueOf(this.globalTokenMultiplier.isExpired() ? "0.0" : this.globalTokenMultiplier.getMultiplier())).replace("%duration%", this.globalTokenMultiplier.getTimeLeftString()));
+					c.sender().sendMessage(messages.get("global_sell_multi").replace("%multiplier%", String.valueOf(this.globalSellMultiplier.getMultiplier())).replace("%duration%", this.globalSellMultiplier.getTimeLeftString()));
+					c.sender().sendMessage(messages.get("global_token_multi").replace("%multiplier%", String.valueOf(this.globalTokenMultiplier.getMultiplier())).replace("%duration%", this.globalTokenMultiplier.getTimeLeftString()));
 					c.sender().sendMessage(messages.get("rank_multi").replace("%multiplier%", rankMulti == null ? "0.0" : String.valueOf(rankMulti.getMultiplier())));
 					c.sender().sendMessage(messages.get("sell_multi").replace("%multiplier%", sellMulti == null || sellMulti.isExpired() ? "0.0" : String.valueOf(sellMulti.getMultiplier())).replace("%duration%", sellMulti == null || sellMulti.isExpired() ? "" : sellMulti.getTimeLeftString()));
 					c.sender().sendMessage(messages.get("token_multi").replace("%multiplier%", tokenMulti == null || tokenMulti.isExpired() ? "0.0" : String.valueOf(tokenMulti.getMultiplier())).replace("%duration%", tokenMulti == null || tokenMulti.isExpired() ? "" : tokenMulti.getTimeLeftString()));

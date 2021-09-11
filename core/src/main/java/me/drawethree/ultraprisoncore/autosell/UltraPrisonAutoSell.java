@@ -350,7 +350,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
 					if (type == Material.REDSTONE_ORE) {
 						getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
-						getConfig().set("regions." + region.getId() + ".items." + CompMaterial.LEGACY_GLOWING_REDSTONE_ORE.toMaterial().name(), price);
+						getConfig().set("regions." + region.getId() + ".items." + CompMaterial.REDSTONE_ORE.toMaterial().name(), price);
 						getConfig().save();
 					}
 
@@ -363,7 +363,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 					}
 
 					if (type == Material.REDSTONE_ORE) {
-						sellRegion.addSellPrice(Material.GLOWING_REDSTONE_ORE, price);
+						sellRegion.addSellPrice(CompMaterial.REDSTONE_ORE.toMaterial(), price);
 					}
 
 					sellRegion.addSellPrice(type, price);

@@ -15,6 +15,7 @@ import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
+import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
@@ -28,6 +29,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.ArrayList;
@@ -149,7 +151,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 					if (e.getItem().hasItemMeta()) {
 						e.setCancelled(true);
 						e.setUseInteractedBlock(Event.Result.DENY);
-						this.tokensManager.redeemTokens(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking());
+						boolean offHandClick = false;
+						if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
+							offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
+						}
+						this.tokensManager.redeemTokens(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
 					}
 				}).bindWith(core);
 
@@ -216,7 +222,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 					}
 					TokensCommand subCommand = this.getCommand(c.rawArg(0));
 					if (subCommand != null) {
-						subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+						if (subCommand.canExecute(c.sender())) {
+							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+						} else {
+							c.sender().sendMessage(this.getMessage("no_permission"));
+						}
 					} else {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.tokensManager.sendInfoMessage(c.sender(), target, true);

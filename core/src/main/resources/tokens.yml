@@ -1,4 +1,5 @@
 messages:
+  no_permission: "&c&l(!) &fYou do not have permission to do that!"
   not_enough_tokens: "&e&l(!) &eYou don't have enough tokens"
   your_tokens: "&eYour Tokens: %tokens%"
   other_tokens: "&e%player%'s Tokens: %tokens%"

@@ -29,4 +29,9 @@ public class GemsHelpCommand extends GemsCommand {
         }
         return false;
     }
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return true;
+    }
 }

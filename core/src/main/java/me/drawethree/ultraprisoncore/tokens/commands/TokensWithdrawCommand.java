@@ -43,4 +43,9 @@ public class TokensWithdrawCommand extends TokensCommand {
         }
         return false;
     }
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return true;
+    }
 }

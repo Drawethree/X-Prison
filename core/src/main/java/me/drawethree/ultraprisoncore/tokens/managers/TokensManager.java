@@ -257,19 +257,27 @@ public class TokensManager {
 		});
 	}
 
-	public void redeemTokens(Player p, ItemStack item, boolean shiftClick) {
+	public void redeemTokens(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
 		NBTItem nbtItem = new NBTItem(item);
 		if (nbtItem.hasKey("token-amount")) {
 			long tokenAmount = nbtItem.getLong("token-amount");
 			int itemAmount = item.getAmount();
 			if (shiftClick) {
-				p.setItemInHand(null);
+				if (offhand) {
+					p.getInventory().setItemInOffHand(null);
+				} else {
+					p.setItemInHand(null);
+				}
 				this.giveTokens(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
 				p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
 			} else {
 				this.giveTokens(p, tokenAmount, null, ReceiveCause.REDEEM);
 				if (item.getAmount() == 1) {
-					p.setItemInHand(null);
+					if (offhand) {
+						p.getInventory().setItemInOffHand(null);
+					} else {
+						p.setItemInHand(null);
+					}
 				} else {
 					item.setAmount(item.getAmount() - 1);
 				}

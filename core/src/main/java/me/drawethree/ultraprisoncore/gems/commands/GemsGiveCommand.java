@@ -16,10 +16,6 @@ public class GemsGiveCommand extends GemsCommand {
     @Override
     public boolean execute(CommandSender sender, ImmutableList<String> args) {
 
-        if(!sender.isOp()) {
-            return false;
-        }
-
         if(args.size() == 2) {
             try {
                 long amount = Long.parseLong(args.get(1));
@@ -31,5 +27,10 @@ public class GemsGiveCommand extends GemsCommand {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return sender.hasPermission(UltraPrisonGems.GEMS_ADMIN_PERM);
     }
 }

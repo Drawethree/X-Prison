@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.gangs.models;
+package me.drawethree.ultraprisoncore.gangs.model;
 
 import lombok.Getter;
 import lombok.Setter;

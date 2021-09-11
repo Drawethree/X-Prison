@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.database;
 import com.zaxxer.hikari.HikariDataSource;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Schedulers;

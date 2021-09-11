@@ -1,7 +1,7 @@
 package me.drawethree.ultraprisoncore.gangs.api;
 
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Optional;

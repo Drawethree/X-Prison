@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.gems.managers;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerGemsReceiveEvent;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -10,7 +11,6 @@ import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -255,7 +255,7 @@ public class GemsManager {
     }
 
     public static ItemStack createGemsItem(long amount, int value) {
-        return ItemStackBuilder.of(Material.DOUBLE_PLANT).amount(value).name("&e&l" + String.format("%,d", amount) + " GEMS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+        return ItemStackBuilder.of(CompMaterial.SUNFLOWER.toItem()).amount(value).name("&e&l" + String.format("%,d", amount) + " GEMS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
     }
 
     public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {

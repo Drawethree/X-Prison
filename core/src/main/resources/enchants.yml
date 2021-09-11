@@ -6,6 +6,7 @@ enchant_menu:
   empty_slots: STAINED_GLASS_PANE:7
   lines: 6
   pickaxe_slot: 13
+  pickaxe_enabled: true
   item:
     lore:
       - "&7%description%"
@@ -21,6 +22,7 @@ enchant_menu:
       - " "
       - "&c&lYou must have at least Level %pickaxe_level% on your pickaxe"
   help_item:
+    enabled: true
     material: NAME_TAG
     #If you would like to use Base64 custom player skulls, just uncomment this line an change the Material above to PLAYER_HEAD
     #Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2YzY2E0ZjdjOTJkZGUzYTc3ZWM1MTBhNzRiYThjMmU4ZDBlYzdiODBmMGUzNDhjYzZkZGRkNmI0NThiZCJ9fX0=
@@ -38,6 +40,7 @@ enchant_menu:
       - " "
       - "&7&o(( &f&oClick&7&o on the enchant to buy ))"
   disenchant_item:
+    enabled: true
     material: FLINT_AND_STEEL
     slot: 11
     name: "&c&lDISENCHANTING"
@@ -50,6 +53,7 @@ disenchant_menu:
   empty_slots: STAINED_GLASS_PANE:7
   lines: 6
   pickaxe_slot: 13
+  pickaxe_enabled: true
   item:
     lore:
       - "&6&l* &eCurrent Level: &f%current_level%"
@@ -60,6 +64,7 @@ disenchant_menu:
       - "&7&o(( &f&oMiddle-Click&7&o to refund 100 levels ))"
       - "&7&o(( &f&oPress 'Q'&7&o to refund ALL levels ))"
   help_item:
+    enabled: true
     material: NAME_TAG
     slot: 15
     name: "&6&lHOW IT WORKS?"

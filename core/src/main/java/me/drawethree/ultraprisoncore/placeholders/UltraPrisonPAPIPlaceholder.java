@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.placeholders;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
@@ -18,7 +18,7 @@ import java.util.Optional;
  * This class will be registered through the register-method in the
  * plugins onEnable-method.
  */
-public class UltraPrisonPlaceholder extends PlaceholderExpansion {
+public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 
 	private UltraPrisonCore plugin;
 
@@ -29,7 +29,7 @@ public class UltraPrisonPlaceholder extends PlaceholderExpansion {
 	 *
 	 * @param plugin The instance of our plugin.
 	 */
-	public UltraPrisonPlaceholder(UltraPrisonCore plugin) {
+	public UltraPrisonPAPIPlaceholder(UltraPrisonCore plugin) {
 		this.plugin = plugin;
 	}
 

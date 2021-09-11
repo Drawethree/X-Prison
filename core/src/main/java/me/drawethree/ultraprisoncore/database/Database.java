@@ -1,7 +1,7 @@
 package me.drawethree.ultraprisoncore.database;
 
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

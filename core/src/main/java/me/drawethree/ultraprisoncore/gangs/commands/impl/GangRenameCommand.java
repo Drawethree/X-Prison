@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.enums.GangRenameResult;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -44,4 +44,9 @@ public class GemsPayCommand extends GemsCommand {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return true;
+	}
 }

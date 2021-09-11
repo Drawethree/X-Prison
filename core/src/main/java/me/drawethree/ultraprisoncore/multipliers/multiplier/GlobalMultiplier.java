@@ -1,5 +1,7 @@
 package me.drawethree.ultraprisoncore.multipliers.multiplier;
 
+import me.lucko.helper.Schedulers;
+
 import java.util.concurrent.TimeUnit;
 
 public class GlobalMultiplier extends Multiplier {
@@ -10,6 +12,16 @@ public class GlobalMultiplier extends Multiplier {
 		if (this.multiplier > maxMulti) {
 			this.multiplier = maxMulti;
 		}
+
+		Schedulers.async().runRepeating(() -> {
+			if (this.isExpired() && this.isValid()) {
+				this.reset();
+			}
+		}, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS);
+	}
+
+	private boolean isValid() {
+		return this.multiplier > 0;
 	}
 
 	@Override
