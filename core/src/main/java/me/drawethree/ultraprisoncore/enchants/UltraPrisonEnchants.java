@@ -12,6 +12,7 @@ import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoos
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
+import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -66,6 +67,8 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	@Getter
 	private boolean autoSellModule;
 	@Getter
+	private boolean minesModule;
+	@Getter
 	private boolean multipliersModule;
 
 	public UltraPrisonEnchants(UltraPrisonCore UltraPrisonCore) {
@@ -87,6 +90,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
 		this.autoSellModule = this.core.isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME);
 		this.multipliersModule = this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+		this.minesModule = this.core.isModuleEnabled(UltraPrisonMines.MODULE_NAME);
 
 		this.enchantsManager.reload();
 
@@ -110,6 +114,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		this.enchantsManager = new EnchantsManager(this);
 		this.autoSellModule = this.core.isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME);
 		this.multipliersModule = this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+		this.minesModule = this.core.isModuleEnabled(UltraPrisonMines.MODULE_NAME);
 		this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
 		this.loadMessages();
 		this.registerCommands();

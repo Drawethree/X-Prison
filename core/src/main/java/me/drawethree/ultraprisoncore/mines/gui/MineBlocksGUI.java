@@ -18,6 +18,7 @@ public class MineBlocksGUI extends Gui {
 
 	@Override
 	public void redraw() {
+		this.clearItems();
 		for (CompMaterial material : this.mine.getBlockPalette().getMaterials()) {
 			double chance = this.mine.getBlockPalette().getPercentage(material);
 			this.addItem(ItemStackBuilder.of(material.toItem()).name(material.name()).lore(" ", "&7Chance of spawning this blocks", String.format("&7is &b%,.2f%%", chance), " ", "&aLeft-Click &7to edit the chance", "&aRight-Click &7to remove.").build(() -> {
@@ -28,7 +29,7 @@ public class MineBlocksGUI extends Gui {
 			}));
 		}
 
-		this.setItem(35, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to panel").build(() -> {
+		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to panel").build(() -> {
 			this.close();
 			new MinePanelGUI(this.mine, this.getPlayer()).open();
 		}));

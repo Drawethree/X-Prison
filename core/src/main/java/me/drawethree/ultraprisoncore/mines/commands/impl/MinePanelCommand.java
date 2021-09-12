@@ -29,7 +29,7 @@ public class MinePanelCommand extends MineCommand {
 
 		if (mine == null) {
 			sender.sendMessage(this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
-			return false;
+			return true;
 		}
 
 		new MinePanelGUI(mine, (Player) sender).open();
@@ -38,7 +38,7 @@ public class MinePanelCommand extends MineCommand {
 
 	@Override
 	public String getUsage() {
-		return "/mines panel <mine> - Opens a editor for a specified mine";
+		return "&cUsage: /mines panel <mine> - Opens a editor for a specified mine";
 	}
 
 	@Override

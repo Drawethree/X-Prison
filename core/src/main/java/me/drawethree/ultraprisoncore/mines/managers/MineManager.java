@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.mines.managers;
 
+import lombok.Getter;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.gui.MinePanelGUI;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
@@ -26,17 +27,41 @@ public class MineManager {
 
 	public static final ItemStack SELECTION_TOOL = ItemStackBuilder.of(Material.STICK).enchant(Enchantment.DURABILITY).name("&eMine Selection Tool").lore("&aRight-Click &fto set &aPosition 1 &7(MIN)", "&aLeft-Click &fto set &aPosition 2 &7(MAX)").build();
 
+	@Getter
 	private final UltraPrisonMines plugin;
 
 	private Map<UUID, MineSelection> mineSelections;
 	private Map<String, Mine> mines;
+
+	private List<String> hologramBlocksLeftLines;
+	private List<String> hologramBlocksMinedLines;
+
 	private File minesDirectory;
 
 	public MineManager(UltraPrisonMines plugin) {
 		this.plugin = plugin;
 		this.mineSelections = new HashMap<>();
+		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
+		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
 		this.setupMinesDirectory();
 		this.loadMines();
+	}
+
+	public List<String> getHologramBlocksLeftLines(Mine mine) {
+		List<String> copy = new ArrayList<>();
+		for (String s : this.hologramBlocksLeftLines) {
+			copy.add(s.replace("%mine%", mine.getName()).replace("%blocks%", String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D)));
+		}
+		return copy;
+	}
+
+
+	public List<String> getHologramBlocksMinedLines(Mine mine) {
+		List<String> copy = new ArrayList<>();
+		for (String s : this.hologramBlocksMinedLines) {
+			copy.add(s.replace("%mine%", mine.getName()).replace("%blocks%", String.format("%,d", mine.getTotalBlocks() - mine.getCurrentBlocks())));
+		}
+		return copy;
 	}
 
 	private void setupMinesDirectory() {
@@ -62,7 +87,7 @@ public class MineManager {
 				continue;
 			}
 			try (FileReader reader = new FileReader(file)) {
-				Mine mine = MineLoader.load(reader);
+				Mine mine = MineLoader.load(this, reader);
 				this.mines.put(mine.getName(), mine);
 				this.plugin.getCore().getLogger().info("Loaded Mine " + mine.getName());
 			} catch (IOException e) {
@@ -120,7 +145,7 @@ public class MineManager {
 			return false;
 		}
 
-		Mine mine = new Mine(name, selection.toRegion());
+		Mine mine = new Mine(this, name, selection.toRegion());
 
 		this.mines.put(mine.getName(), mine);
 
@@ -173,6 +198,14 @@ public class MineManager {
 
 	public void disable() {
 		this.saveMines();
+		this.despawnHolograms();
+
+	}
+
+	private void despawnHolograms() {
+		for (Mine mine : this.mines.values()) {
+			mine.despawnHolograms();
+		}
 	}
 
 	public Collection<Mine> getMines() {

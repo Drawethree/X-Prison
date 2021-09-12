@@ -20,7 +20,7 @@ public class MineResetOptionsGUI extends Gui {
 	public void redraw() {
 
 		for (int i = 0; i < 5 * 9; i++) {
-			this.setItem(i, ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("").buildItem().build());
+			this.setItem(i, ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("&a").buildItem().build());
 		}
 
 		this.setItem(11, ItemStackBuilder.of(CompMaterial.STONE_BUTTON.toItem()).name("&eReset NOW").lore(" ", "&7Resets the mine now.").build(() -> {
@@ -40,6 +40,11 @@ public class MineResetOptionsGUI extends Gui {
 		this.setItem(15, ItemStackBuilder.of(CompMaterial.CLOCK.toItem()).name("&eEdit Reset Percentage").lore(" ", "&7Click to edit mine's reset percentage").build(() -> {
 			this.close();
 			new MineEditResetPercentageGUI(this.mine, this.getPlayer()).open();
+		}));
+
+		this.setItem(31, ItemStackBuilder.of(CompMaterial.PAPER.toItem()).name("&eBroadcast Reset: " + this.mine.isBroadcastReset()).lore(" ", "&aTrue &7- All players will get message", "&7on mine's reset.", "&cFalse &7- No broadcast message.").build(() -> {
+			this.mine.setBroadcastReset(!this.mine.isBroadcastReset());
+			this.redraw();
 		}));
 
 

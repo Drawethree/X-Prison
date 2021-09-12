@@ -31,13 +31,13 @@ public class MineAddBlockCommand extends MineCommand {
 
 		if (mine == null) {
 			sender.sendMessage(this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
-			return false;
+			return true;
 		}
 
 		ItemStack inHand = ((Player) sender).getItemInHand();
 		if (inHand == null || inHand.getType() == Material.AIR) {
 			sender.sendMessage(this.plugin.getMessage("mine_no_item_in_hand"));
-			return false;
+			return true;
 		}
 
 		CompMaterial material = CompMaterial.fromItem(inHand);
@@ -48,7 +48,7 @@ public class MineAddBlockCommand extends MineCommand {
 
 	@Override
 	public String getUsage() {
-		return "/mines addblock <mine> - Adds a block in your hand to the specified mine";
+		return "&cUsage: /mines addblock <mine> - Adds a block in your hand to the specified mine";
 	}
 
 	@Override

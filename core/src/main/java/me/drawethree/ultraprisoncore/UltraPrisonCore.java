@@ -150,15 +150,19 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		if (this.getConfig().getBoolean("modules.tokens")) {
 			this.loadModule(tokens);
 		}
+
 		if (this.getConfig().getBoolean("modules.gems")) {
 			this.loadModule(gems);
 		}
+
 		if (this.getConfig().getBoolean("modules.ranks")) {
 			this.loadModule(ranks);
 		}
+
 		if (this.getConfig().getBoolean("modules.multipliers")) {
 			this.loadModule(multipliers);
 		}
+
 		if (this.getConfig().getBoolean("modules.autosell")) {
 			if (this.ultraBackpacksEnabled) {
 				this.getLogger().info("Module AutoSell will not be loaded because selling system is handled by UltraBackpacks.");
@@ -166,6 +170,11 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 				this.loadModule(autoSell);
 			}
 		}
+
+		if (this.getConfig().getBoolean("modules.mines")) {
+			this.loadModule(mines);
+		}
+
 		if (this.getConfig().getBoolean("modules.enchants")) {
 			this.loadModule(enchants);
 		}
@@ -174,9 +183,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 		if (this.getConfig().getBoolean("modules.gangs")) {
 			this.loadModule(gangs);
-		}
-		if (this.getConfig().getBoolean("modules.mines")) {
-			this.loadModule(mines);
 		}
 		if (this.getConfig().getBoolean("modules.pickaxe_levels")) {
 			if (!this.isModuleEnabled("Enchants")) {

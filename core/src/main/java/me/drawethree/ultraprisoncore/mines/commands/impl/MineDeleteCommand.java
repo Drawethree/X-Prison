@@ -13,16 +13,18 @@ public class MineDeleteCommand extends MineCommand {
 
 	@Override
 	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+
 		if (args.size() != 1) {
 			return false;
 		}
 
-		return this.plugin.getManager().deleteMine(sender, args.get(0));
+		this.plugin.getManager().deleteMine(sender, args.get(0));
+		return true;
 	}
 
 	@Override
 	public String getUsage() {
-		return "/mines delete <name> - Delete a mine";
+		return "&cUsage: /mines delete <name> - Delete a mine";
 	}
 
 	@Override

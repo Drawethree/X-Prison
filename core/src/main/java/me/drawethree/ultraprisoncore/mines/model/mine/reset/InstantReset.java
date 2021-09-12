@@ -22,9 +22,17 @@ public class InstantReset extends ResetType {
 		Position min = mine.getMineRegion().getMin();
 		Position max = mine.getMineRegion().getMax();
 
-		for (int x = (int) min.getX(); x < max.getX(); x++) {
-			for (int y = (int) min.getY(); y < max.getY(); y++) {
-				for (int z = (int) min.getZ(); z < max.getZ(); z++) {
+		int minX = (int) Math.min(min.getX(), max.getX());
+		int minY = (int) Math.min(min.getY(), max.getY());
+		int minZ = (int) Math.min(min.getZ(), max.getZ());
+
+		int maxX = (int) Math.max(min.getX(), max.getX());
+		int maxY = (int) Math.max(min.getY(), max.getY());
+		int maxZ = (int) Math.max(min.getZ(), max.getZ());
+
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
 					Block b = min.toLocation().getWorld().getBlockAt(x, y, z);
 					CompMaterial pick = selector.pick();
 					//b.setType(pick.toMaterial());
@@ -32,5 +40,8 @@ public class InstantReset extends ResetType {
 				}
 			}
 		}
+		mine.setResetting(false);
+		mine.updateCurrentBlocks();
+		mine.updateHolograms();
 	}
 }

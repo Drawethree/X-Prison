@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.gangs.commands.impl;
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
-import me.drawethree.ultraprisoncore.gangs.models.Gang;
+import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

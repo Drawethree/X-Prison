@@ -21,12 +21,13 @@ public class MineCreateCommand extends MineCommand {
 			return false;
 		}
 
-		return this.plugin.getManager().createMine((Player) sender, args.get(0));
+		this.plugin.getManager().createMine((Player) sender, args.get(0));
+		return true;
 	}
 
 	@Override
 	public String getUsage() {
-		return "/mines create <name> - Creates a new mine";
+		return "&cUsage: /mines create <name> - Creates a new mine";
 	}
 
 	@Override

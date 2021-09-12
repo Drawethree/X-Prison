@@ -28,7 +28,7 @@ public class MineListCommand extends MineCommand {
 
 	@Override
 	public String getUsage() {
-		return "/mines list - Display all mines";
+		return "&cUsage: /mines list - Display all mines";
 	}
 
 	@Override

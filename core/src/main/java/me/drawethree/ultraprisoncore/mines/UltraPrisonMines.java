@@ -23,7 +23,7 @@ import java.util.Objects;
 
 public class UltraPrisonMines implements UltraPrisonModule {
 
-	private static final String MODULE_NAME = "Mines";
+	public static final String MODULE_NAME = "Mines";
 
 	public static final String MINES_ADMIN_PERM = "ultraprison.mines.admin";
 
@@ -105,6 +105,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		registerCommand(new MineListCommand(this));
 		registerCommand(new MineAddBlockCommand(this));
 		registerCommand(new MineSetTpCommand(this));
+		registerCommand(new MineSaveCommand(this));
 
 		Commands.create()
 				.handler(c -> {
@@ -121,7 +122,11 @@ public class UltraPrisonMines implements UltraPrisonModule {
 							c.sender().sendMessage(this.getMessage("no_permission"));
 							return;
 						}
-						subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+
+						if (!subCommand.execute(c.sender(), c.args().subList(1, c.args().size()))) {
+							c.sender().sendMessage(Text.colorize(subCommand.getUsage()));
+						}
+
 					} else {
 						this.getCommand("help").execute(c.sender(), c.args());
 					}
@@ -157,6 +162,5 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 					this.manager.selectPosition(e.getPlayer(), pos, Position.of(e.getClickedBlock()));
 				}).bindWith(this.core);
-
 	}
 }

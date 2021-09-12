@@ -26,13 +26,13 @@ public class MineEditBlockChanceGUI extends Gui {
 		this.setItem(4, ItemStackBuilder.of(this.material.toItem()).name("&eBlock Chance").lore(" ", "&7The chance of spawning this", String.format("&7block is &b%,.2f%%", this.currentChance)).buildItem().build());
 
 		// +
-		this.setItem(11, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+0.1").build(() -> {
+		this.setItem(10, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+0.1").build(() -> {
 			handleChanceAddition(0.1);
 		}));
-		this.setItem(12, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+0.2").build(() -> {
+		this.setItem(11, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+0.2").build(() -> {
 			handleChanceAddition(0.2);
 		}));
-		this.setItem(13, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+0.5").build(() -> {
+		this.setItem(12, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+0.5").build(() -> {
 			handleChanceAddition(0.5);
 		}));
 
@@ -93,8 +93,11 @@ public class MineEditBlockChanceGUI extends Gui {
 			new MineBlocksGUI(this.mine, this.getPlayer()).open();
 		}));
 
-		this.setItem(38, ItemStackBuilder.of(CompMaterial.GREEN_WOOL.toItem()).name("&aSave").lore("&7Click to save the current chance.").build(() -> {
+		this.setItem(40, ItemStackBuilder.of(CompMaterial.GREEN_WOOL.toItem()).name("&aSave").lore("&7Click to save the current chance.").build(() -> {
 			this.close();
+			if (this.mine.getBlockPalette().getTotalPercentage() - this.mine.getBlockPalette().getPercentage(this.material) + this.currentChance > 100.0) {
+				this.currentChance = 100 - (this.mine.getBlockPalette().getTotalPercentage() - this.mine.getBlockPalette().getPercentage(this.material));
+			}
 			this.mine.getBlockPalette().setPercentage(this.material, this.currentChance);
 			new MineBlocksGUI(this.mine, this.getPlayer()).open();
 		}));
@@ -106,5 +109,6 @@ public class MineEditBlockChanceGUI extends Gui {
 			return;
 		}
 		this.currentChance += addition;
+		this.redraw();
 	}
 }

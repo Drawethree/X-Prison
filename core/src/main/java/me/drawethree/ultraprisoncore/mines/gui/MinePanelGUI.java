@@ -20,7 +20,7 @@ public class MinePanelGUI extends Gui {
 	@Override
 	public void redraw() {
 		for (int i = 0; i < 5 * 9; i++) {
-			this.setItem(i, ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("").buildItem().build());
+			this.setItem(i, ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("&a").buildItem().build());
 		}
 
 		this.setItem(11, ItemStackBuilder.of(CompMaterial.DIAMOND_ORE.toItem()).name("&eBlock Percentages").lore(" ", "&7Click to modify blocks in this mine.").build(() -> {
@@ -37,12 +37,17 @@ public class MinePanelGUI extends Gui {
 			UltraPrisonMines.getInstance().getManager().teleportToMine(this.getPlayer(), this.mine);
 		}));
 
-		this.setItem(15, ItemStackBuilder.of(CompMaterial.DIAMOND_ORE.toItem()).name("&eMine Reset Options").lore(" ", "&7Click to modify the reset options.").build(() -> {
+		this.setItem(15, ItemStackBuilder.of(CompMaterial.COMPARATOR.toItem()).name("&eMine Reset Options").lore(" ", "&7Click to modify the reset options.").build(() -> {
 			this.close();
 			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
 		}));
 
-		this.setItem(35, ItemStackBuilder.of(CompMaterial.ARROW.toItem()).name("&cBack").lore("&7Click to show all mines").build(() -> {
+		this.setItem(29, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eMine Holograms").lore(" ", "&7Click to modify mine's holograms").build(() -> {
+			this.close();
+			new MineHologramsGUI(this.mine, this.getPlayer()).open();
+		}));
+
+		this.setItem(36, ItemStackBuilder.of(CompMaterial.ARROW.toItem()).name("&cBack").lore("&7Click to show all mines").build(() -> {
 			this.close();
 			UltraPrisonMines.getInstance().getManager().openMinesListGUI(this.getPlayer());
 		}));

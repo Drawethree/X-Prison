@@ -4,21 +4,18 @@ import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
+import me.drawethree.ultraprisoncore.mines.utils.MineLoader;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
-public class MineSetTpCommand extends MineCommand {
+public class MineSaveCommand extends MineCommand {
 
-	public MineSetTpCommand(UltraPrisonMines plugin) {
-		super(plugin, "settp", "tpset");
+
+	public MineSaveCommand(UltraPrisonMines plugin) {
+		super(plugin, "save");
 	}
 
 	@Override
 	public boolean execute(CommandSender sender, ImmutableList<String> args) {
-
-		if (!(sender instanceof Player)) {
-			return false;
-		}
 
 		if (args.size() != 1) {
 			return false;
@@ -31,12 +28,15 @@ public class MineSetTpCommand extends MineCommand {
 			return true;
 		}
 
-		return this.plugin.getManager().setTeleportLocation((Player) sender, mine);
+		MineLoader.save(mine);
+
+		sender.sendMessage(this.plugin.getMessage("mine_saved").replace("%mine%", mine.getName()));
+		return true;
 	}
 
 	@Override
 	public String getUsage() {
-		return "&cUsage: /mines settp <mine> - Sets the teleport location of specified mine";
+		return "&cUsage: /mines save <mine> - Saves a mine";
 	}
 
 	@Override

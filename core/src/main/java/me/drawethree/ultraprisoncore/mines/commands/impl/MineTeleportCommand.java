@@ -36,7 +36,7 @@ public class MineTeleportCommand extends MineCommand {
 
 	@Override
 	public String getUsage() {
-		return "/mines teleport <mine> - Teleports you to a specified mine";
+		return "&cUsage: /mines teleport <mine> - Teleports you to a specified mine";
 	}
 
 	@Override

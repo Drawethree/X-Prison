@@ -89,13 +89,13 @@ public class MineEditResetPercentageGUI extends Gui {
 
 		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to reset settings.").build(() -> {
 			this.close();
-			new MineBlocksGUI(this.mine, this.getPlayer()).open();
+			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
 		}));
 
-		this.setItem(38, ItemStackBuilder.of(CompMaterial.GREEN_WOOL.toItem()).name("&aSave").lore("&7Click to save the current reset percentage.").build(() -> {
+		this.setItem(40, ItemStackBuilder.of(CompMaterial.GREEN_WOOL.toItem()).name("&aSave").lore("&7Click to save the current reset percentage.").build(() -> {
 			this.close();
 			this.mine.setResetPercentage(this.currentChance);
-			new MineBlocksGUI(this.mine, this.getPlayer()).open();
+			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
 		}));
 
 	}
@@ -105,5 +105,6 @@ public class MineEditResetPercentageGUI extends Gui {
 			return;
 		}
 		this.currentChance += addition;
+		this.redraw();
 	}
 }

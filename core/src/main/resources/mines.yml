@@ -15,3 +15,16 @@ messages:
   mine_teleport_set: "&aYou have set the teleport location for Mine %mine%!"
   mine_resetting: "&c&l(!) &aMine %mine% will be reset in &e5 seconds&a!"
   mine_reset: "&aMine %mine% was reset."
+  mine_saved: "&aMine %mine% saved."
+  mine_already_reset: "&cMine %mine% is already resetting!"
+  mine_hologram_create: "&aHologram %type% for mine %mine% created at your location."
+  mine_hologram_delete: "&aHologram %type% for mine %mine% was removed"
+holograms:
+  blocks_left:
+    - " "
+    - "&7-- &aThere are &b%blocks%% &ablocks left in mine &b%mine% &7--"
+    - " "
+  blocks_mined:
+    - " "
+    - "&7-- &b%blocks% blocks &ahave been mined &7--"
+    - " "
