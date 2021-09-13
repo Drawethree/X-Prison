@@ -73,7 +73,11 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 	@Override
 	public void reload() {
+		this.config.reload();
 
+		this.loadMessages();
+
+		this.manager.reload();
 	}
 
 	@Override
@@ -106,6 +110,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		registerCommand(new MineAddBlockCommand(this));
 		registerCommand(new MineSetTpCommand(this));
 		registerCommand(new MineSaveCommand(this));
+		registerCommand(new MineMigrateCommand(this));
 
 		Commands.create()
 				.handler(c -> {

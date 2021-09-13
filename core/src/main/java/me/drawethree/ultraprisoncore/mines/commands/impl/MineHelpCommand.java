@@ -28,6 +28,7 @@ public class MineHelpCommand extends MineCommand {
 			sender.sendMessage(Text.colorize("&e/mines tp [mine] - Teleports to a mine"));
 			sender.sendMessage(Text.colorize("&e/mines list - Shows all Mines"));
 			sender.sendMessage(Text.colorize("&e/mines tool - Gives you a selection tool"));
+			sender.sendMessage(Text.colorize("&e/mines migrate <plugin> - Migrate mines from other plugins. [JetsPrisonMines]"));
 			sender.sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
 		}
 		return true;

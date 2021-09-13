@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.mines.model.mine;
 import com.google.gson.JsonElement;
 import lombok.Getter;
 import lombok.Setter;
+import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.managers.MineManager;
 import me.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
 import me.lucko.helper.Events;
@@ -10,6 +11,7 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.gson.GsonSerializable;
 import me.lucko.helper.gson.JsonBuilder;
 import me.lucko.helper.hologram.Hologram;
+import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
 import me.lucko.helper.utils.Players;
@@ -40,7 +42,7 @@ public class Mine implements GsonSerializable {
 
 	@Getter
 	@Setter
-	private Position teleportLocation;
+	private Point teleportLocation;
 
 	@Getter
 	private BlockPalette blockPalette;
@@ -85,7 +87,7 @@ public class Mine implements GsonSerializable {
 		this.subscribeEvents();
 	}
 
-	public Mine(MineManager manager, String name, Region region, Position teleportLocation, BlockPalette palette, ResetType resetType, double resetPercentage, boolean broadcastReset, Hologram blocksLeftHologram, Hologram blocksMinedHologram) {
+	public Mine(MineManager manager, String name, Region region, Point teleportLocation, BlockPalette palette, ResetType resetType, double resetPercentage, boolean broadcastReset, Hologram blocksLeftHologram, Hologram blocksMinedHologram) {
 		this.manager = manager;
 		this.name = name;
 		this.mineRegion = region;
@@ -223,7 +225,10 @@ public class Mine implements GsonSerializable {
 
 		Schedulers.sync().runLater(() -> {
 
-			this.getPlayersInMine().forEach(player -> player.teleport(this.teleportLocation.toLocation()));
+			if (this.teleportLocation != null) {
+				this.getPlayersInMine().forEach(player -> player.teleport(this.teleportLocation.toLocation()));
+			}
+
 			this.resetType.reset(this, this.blockPalette);
 
 			if (broadcastReset) {
@@ -319,5 +324,73 @@ public class Mine implements GsonSerializable {
 
 	public void updateCurrentBlocks() {
 		this.currentBlocks = this.calculateCurrentBlocks();
+	}
+
+	public static final class Builder {
+
+		private String name;
+		private Region mineRegion;
+		private Point teleportLocation;
+		private BlockPalette blockPalette;
+		private double resetPercentage;
+		private ResetType resetType;
+		private boolean broadcastReset;
+		private Hologram blocksMinedHologram;
+		private Hologram blocksLeftHologram;
+
+		public Builder() {
+
+		}
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder region(Region region) {
+			this.mineRegion = region;
+			return this;
+		}
+
+		public Builder teleportLocation(Point point) {
+			this.teleportLocation = point;
+			return this;
+		}
+
+		public Builder blockPalette(BlockPalette palette) {
+			this.blockPalette = palette;
+			return this;
+		}
+
+		public Builder resetPercentage(double resetPercentage) {
+			this.resetPercentage = resetPercentage;
+			return this;
+		}
+
+		public Builder resetType(ResetType resetType) {
+			this.resetType = resetType;
+			return this;
+		}
+
+		public Builder broadcastReset(boolean broadcastReset) {
+			this.broadcastReset = broadcastReset;
+			return this;
+		}
+
+		public Builder blocksLeftHologram(Hologram blocksLeftHologram) {
+			this.blocksLeftHologram = blocksLeftHologram;
+			return this;
+		}
+
+		public Builder blocksMinedHologram(Hologram blocksMinedHologram) {
+			this.blocksMinedHologram = blocksMinedHologram;
+			return this;
+		}
+
+		public Mine build() {
+			return new Mine(UltraPrisonMines.getInstance().getManager(), this.name, this.mineRegion, this.teleportLocation, this.blockPalette, this.resetType, this.resetPercentage, this.broadcastReset, this.blocksLeftHologram, this.blocksMinedHologram);
+		}
+
+
 	}
 }

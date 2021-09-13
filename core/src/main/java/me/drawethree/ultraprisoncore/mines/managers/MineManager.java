@@ -10,6 +10,7 @@ import me.drawethree.ultraprisoncore.utils.LocationUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
+import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -248,7 +249,7 @@ public class MineManager {
 	}
 
 	public boolean setTeleportLocation(Player player, Mine mine) {
-		mine.setTeleportLocation(Position.of(player.getLocation()));
+		mine.setTeleportLocation(Point.of(player.getLocation()));
 		player.sendMessage(this.plugin.getMessage("mine_teleport_set").replace("%mine%", mine.getName()));
 		return true;
 	}
@@ -257,5 +258,18 @@ public class MineManager {
 		sender.getInventory().addItem(SELECTION_TOOL);
 		sender.sendMessage(this.plugin.getMessage("selection_tool_given"));
 		return true;
+	}
+
+	public void reload() {
+		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
+		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
+	}
+
+	public boolean addMineFromMigration(CommandSender sender, Mine migrated) {
+		if (!this.mines.containsKey(migrated.getName())) {
+			this.mines.put(migrated.getName(), migrated);
+			return true;
+		}
+		return false;
 	}
 }

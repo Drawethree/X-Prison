@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class MineResetOptionsGUI extends Gui {
@@ -45,6 +46,11 @@ public class MineResetOptionsGUI extends Gui {
 		this.setItem(31, ItemStackBuilder.of(CompMaterial.PAPER.toItem()).name("&eBroadcast Reset: " + this.mine.isBroadcastReset()).lore(" ", "&aTrue &7- All players will get message", "&7on mine's reset.", "&cFalse &7- No broadcast message.").build(() -> {
 			this.mine.setBroadcastReset(!this.mine.isBroadcastReset());
 			this.redraw();
+		}));
+
+		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to panel").build(() -> {
+			this.close();
+			new MinePanelGUI(this.mine, this.getPlayer()).open();
 		}));
 
 

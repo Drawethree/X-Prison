@@ -19,6 +19,16 @@ messages:
   mine_already_reset: "&cMine %mine% is already resetting!"
   mine_hologram_create: "&aHologram %type% for mine %mine% created at your location."
   mine_hologram_delete: "&aHologram %type% for mine %mine% was removed"
+  mine_migration_invalid_plugin: "&cYou have specified plugin we do not currently allow migration from."
+  mine_migration_plugin_not_present: "&cCannot contact %plugin%'s API. Migration aborted."
+  mine_migration_started: "&7Started migrating all mines from %plugin%...."
+  mine_migration_completed: "&7Migration of all mines from plugin %plugin% was completed."
+  mine_migration_result: "&7Result: &a%completed% Completed, &e%skipped% Skipped, &c%failed% Failed."
+  mine_migration_mine_started: "&7Started migrating Mine %mine% from %plugin%."
+  mine_migration_mine_skipped: "&eMigration of Mine %mine% from %plugin% was skipped. There is already mine with such name."
+  mine_migration_mine_failed: "&cMigration of Mine %mine% from %plugin% failed."
+  mine_migration_mine_completed: "&aMigration of Mine %mine% from %plugin% was completed."
+
 holograms:
   blocks_left:
     - " "
