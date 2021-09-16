@@ -1,13 +1,14 @@
 package me.drawethree.ultraprisoncore.mines.model.mine.reset;
 
-import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.mines.model.mine.BlockPalette;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.random.RandomSelector;
 import org.bukkit.block.Block;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 public class GradualReset extends ResetType {
@@ -31,7 +32,14 @@ public class GradualReset extends ResetType {
 			while (blocksIterator.hasNext() && changes <= CHANGES_PER_TICK) {
 				CompMaterial pick = selector.pick();
 				Block b = blocksIterator.next();
-				UltraPrisonCore.getInstance().getNmsProvider().setBlockInNativeDataPalette(b.getWorld(), b.getX(), b.getY(), b.getZ(), pick.getMaterial().getId(), pick.getData(), true);
+				b.setType(pick.toMaterial());
+				if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+					try {
+						Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
+					} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+						e.printStackTrace();
+					}
+				}
 				changes++;
 			}
 			if (blocksIterator.hasNext()) {

@@ -1,12 +1,14 @@
 package me.drawethree.ultraprisoncore.mines.model.mine.reset;
 
-import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.mines.model.mine.BlockPalette;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
 import me.lucko.helper.random.RandomSelector;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.block.Block;
+
+import java.lang.reflect.InvocationTargetException;
 
 
 public class InstantReset extends ResetType {
@@ -35,8 +37,14 @@ public class InstantReset extends ResetType {
 				for (int z = minZ; z <= maxZ; z++) {
 					Block b = min.toLocation().getWorld().getBlockAt(x, y, z);
 					CompMaterial pick = selector.pick();
-					//b.setType(pick.toMaterial());
-					UltraPrisonCore.getInstance().getNmsProvider().setBlockInNativeDataPalette(b.getWorld(), x, y, z, pick.getMaterial().getId(), (byte) pick.getData(), true);
+					b.setType(pick.toMaterial());
+					if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+						try {
+							Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
+						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 			}
 		}

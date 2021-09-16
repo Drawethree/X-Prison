@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.database.SQLDatabase;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.utils.Log;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -16,6 +17,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class SQLiteDatabase extends SQLDatabase {
 
@@ -47,9 +52,9 @@ public class SQLiteDatabase extends SQLDatabase {
 
 		hikari.setMinimumIdle(MINIMUM_IDLE);
 		hikari.setMaxLifetime(MAX_LIFETIME);
-		hikari.setConnectionTimeout(CONNECTION_TIMEOUT);
+		hikari.setConnectionTimeout(0);
 		hikari.setMaximumPoolSize(1);
-		hikari.setLeakDetectionThreshold(LEAK_DETECTION_THRESHOLD);
+		hikari.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(10));
 
 		this.hikari = new HikariDataSource(hikari);
 
@@ -66,7 +71,6 @@ public class SQLiteDatabase extends SQLDatabase {
 			e.printStackTrace();
 		}
 	}
-
 
 	@Override
 	public void createTables() {
@@ -191,6 +195,54 @@ public class SQLiteDatabase extends SQLDatabase {
 	@Override
 	public void updatePlayerNickname(OfflinePlayer player) {
 		this.executeAsync("INSERT OR REPLACE INTO " + MySQLDatabase.UUID_PLAYERNAME_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), player.getName());
+	}
+
+	@Override
+	public List<Gang> getAllGangs() {
+		List<Gang> returnList = new ArrayList<>();
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GANGS_TABLE_NAME)) {
+			try (ResultSet set = statement.executeQuery()) {
+				while (set.next()) {
+
+					String gangName = set.getString(GANGS_NAME_COLNAME);
+					UUID gangUUID;
+
+					try {
+						gangUUID = UUID.fromString(set.getString(GANGS_UUID_COLNAME));
+					} catch (Exception e) {
+						gangUUID = UUID.randomUUID();
+						try (PreparedStatement statement1 = con.prepareStatement("UPDATE " + GANGS_TABLE_NAME + " SET " + GANGS_UUID_COLNAME + "=? WHERE " + GANGS_NAME_COLNAME + "=?")) {
+							statement1.setString(1, gangUUID.toString());
+							statement1.setString(2, gangName);
+							statement1.execute();
+						}
+					}
+
+					UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
+
+					List<UUID> members = new ArrayList<>();
+
+					for (String s : set.getString(GANGS_MEMBERS_COLNAME).split(",")) {
+						if (s.isEmpty()) {
+							continue;
+						}
+						try {
+							UUID uuid = UUID.fromString(s);
+							members.add(uuid);
+						} catch (Exception e) {
+							Log.warn("Unable to fetch UUID: " + s);
+							e.printStackTrace();
+						}
+					}
+
+					int value = set.getInt(GANGS_VALUE_COLNAME);
+					returnList.add(new Gang(gangUUID, gangName, owner, members, value));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return returnList;
 	}
 
 }
