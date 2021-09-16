@@ -8,6 +8,11 @@ import me.jet315.prisonmines.mine.blocks.MineBlock;
 import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MigrationUtils {
 
@@ -66,6 +71,14 @@ public class MigrationUtils {
 				break;
 		}
 		builder.resetType(resetType);
+
+		//Mine effects
+		Map<PotionEffectType, Integer> mineEffects = new HashMap<>();
+
+		for (PotionEffect effect : mine.getEffectsManager().getPotionEffects()) {
+			mineEffects.put(effect.getType(), effect.getAmplifier());
+		}
+		builder.mineEffects(mineEffects);
 
 		return builder.build();
 	}

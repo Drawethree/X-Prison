@@ -47,6 +47,11 @@ public class MinePanelGUI extends Gui {
 			new MineHologramsGUI(this.mine, this.getPlayer()).open();
 		}));
 
+		this.setItem(31, ItemStackBuilder.of(CompMaterial.NETHER_STAR.toItem()).name("&eMine Player Effects").lore(" ", "&7Click to modify mine player effects").build(() -> {
+			this.close();
+			new MineEffectsGUI(this.mine, this.getPlayer()).open();
+		}));
+
 		this.setItem(36, ItemStackBuilder.of(CompMaterial.ARROW.toItem()).name("&cBack").lore("&7Click to show all mines").build(() -> {
 			this.close();
 			UltraPrisonMines.getInstance().getManager().openMinesListGUI(this.getPlayer());
