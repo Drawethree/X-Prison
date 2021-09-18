@@ -94,7 +94,7 @@ public class MinesHelpGui extends Gui {
 					" ",
 					"&f/mines migrate <plugin>",
 					"&7Migrates mines from other plugins.",
-					"&7Currently supported: &fJetsPrisonMines&7."
+					"&7Currently supported: &fJetsPrisonMines, MineResetLite&7."
 			).buildItem().build());
 
 			//Back

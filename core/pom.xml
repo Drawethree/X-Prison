@@ -5,7 +5,7 @@
     <parent>
         <artifactId>UltraPrisonCore</artifactId>
         <groupId>me.drawethree</groupId>
-        <version>1.6.4</version>
+        <version>1.6.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -76,6 +76,13 @@
             <version>LATEST</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../libs/JetsPrisonMines-3.3.1_1.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>mrl</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../libs/MineResetLite.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>internal</groupId>

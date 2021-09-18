@@ -1,26 +1,24 @@
 package me.drawethree.ultraprisoncore.mines.migration;
 
+import com.koletar.jj.mineresetlite.Mine;
+import com.koletar.jj.mineresetlite.MineResetLite;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.utils.MigrationUtils;
-import me.jet315.prisonmines.JetsPrisonMines;
-import me.jet315.prisonmines.JetsPrisonMinesAPI;
-import me.jet315.prisonmines.mine.Mine;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
-public class JetsPrisonMinesMigration extends MinesMigration {
+public class MineResetLiteMigration extends MinesMigration {
 
-	private JetsPrisonMinesAPI api;
+	private final MineResetLite plugin;
 
-	JetsPrisonMinesMigration() {
-		super(UltraPrisonMines.getInstance(), "JetsPrisonMines");
-		this.api = ((JetsPrisonMines) Bukkit.getPluginManager().getPlugin(this.fromPlugin)).getAPI();
+	MineResetLiteMigration() {
+		super(UltraPrisonMines.getInstance(), "MineResetLite");
+		this.plugin = ((MineResetLite) Bukkit.getPluginManager().getPlugin(this.fromPlugin));
 	}
 
 	@Override
 	public boolean migrate(CommandSender sender) {
-
-		if (this.api == null) {
+		if (this.plugin == null) {
 			sender.sendMessage(this.mines.getMessage("mine_migration_plugin_not_present").replace("%plugin%", this.fromPlugin));
 			return false;
 		}
@@ -29,8 +27,8 @@ public class JetsPrisonMinesMigration extends MinesMigration {
 
 		sender.sendMessage(this.mines.getMessage("mine_migration_started").replace("%plugin%", this.fromPlugin));
 
-		for (Mine mine : this.api.getMines()) {
-			String name = mine.getCustomName();
+		for (Mine mine : this.plugin.mines) {
+			String name = mine.getName();
 
 			sender.sendMessage(this.mines.getMessage("mine_migration_mine_started").replace("%plugin%", this.fromPlugin).replace("%mine%", name));
 
@@ -55,5 +53,4 @@ public class JetsPrisonMinesMigration extends MinesMigration {
 
 		return true;
 	}
-
 }

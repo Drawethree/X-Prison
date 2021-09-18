@@ -28,7 +28,6 @@ messages:
   mine_migration_mine_skipped: "&eMigration of Mine %mine% from %plugin% was skipped. There is already mine with such name."
   mine_migration_mine_failed: "&cMigration of Mine %mine% from %plugin% failed."
   mine_migration_mine_completed: "&aMigration of Mine %mine% from %plugin% was completed."
-
 holograms:
   blocks_left:
     - " "

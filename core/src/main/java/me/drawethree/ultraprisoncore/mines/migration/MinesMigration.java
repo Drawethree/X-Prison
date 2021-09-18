@@ -16,8 +16,10 @@ public abstract class MinesMigration {
 	public abstract boolean migrate(CommandSender sender);
 
 	public static MinesMigration fromPlugin(String pluginName) {
-		if ("jetsprisonmines".equals(pluginName.toLowerCase())) {
+		if ("jetsprisonmines".equalsIgnoreCase(pluginName)) {
 			return new JetsPrisonMinesMigration();
+		} else if ("mineresetlite".equalsIgnoreCase(pluginName)) {
+			return new MineResetLiteMigration();
 		}
 		return null;
 	}
