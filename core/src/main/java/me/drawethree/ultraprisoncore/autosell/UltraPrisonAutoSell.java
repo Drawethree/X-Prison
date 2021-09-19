@@ -379,7 +379,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				.handler(c -> {
 					if (c.args().size() == 0 || c.args().size() == 1) {
 
-						Set<IWrappedRegion> regions;
+						IWrappedRegion region;
 
 						if (c.args().size() == 1) {
 
@@ -392,29 +392,29 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 								return;
 							}
 
-							regions = new HashSet<>();
-							regions.add(optRegion.get());
+							region = optRegion.get();
 						} else {
-							regions = WorldGuardWrapper.getInstance().getRegions(c.sender().getLocation());
+							region = RegionUtils.getRegionWithHighestPriority(c.sender().getLocation());
 						}
 
-						sellAll(c.sender(), regions, true);
+						sellAll(c.sender(), region, true);
 					}
 				}).registerAndBind(core, "sellall");
 
 	}
 
-	public void sellAll(Player sender, Set<IWrappedRegion> regions, boolean sendMessage) {
+	public void sellAll(Player sender, IWrappedRegion region, boolean sendMessage) {
 
-		if (regions == null || regions.isEmpty()) {
+		if (region == null) {
 			if (sendMessage) {
 				sender.sendMessage(this.getMessage("not_in_region"));
 			}
 			return;
 		}
 
-		for (IWrappedRegion region : regions) {
-			if (regionsAutoSell.containsKey(region.getId())) {
+		this.core.debug("User " + sender.getName() + " ran /sellall in region " + region.getId());
+
+		if (regionsAutoSell.containsKey(region.getId())) {
 
 				SellRegion sellRegion = regionsAutoSell.get(region.getId());
 
@@ -454,8 +454,6 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				if (event.getSellPrice() > 0.0 && sendMessage) {
 					sender.sendMessage(getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", event.getSellPrice())));
 				}
-				break;
-			}
 		}
 	}
 

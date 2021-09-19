@@ -11,13 +11,24 @@ public class RegionUtils {
 
 	public static IWrappedRegion getMineRegionWithHighestPriority(Location loc) {
 		Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc).stream().filter(region -> region.getId().startsWith("mine")).collect(Collectors.toSet());
-		IWrappedRegion lowestPrioRegion = null;
+		IWrappedRegion highestPrioRegion = null;
 		for (IWrappedRegion region : regions) {
-			if (lowestPrioRegion == null || region.getPriority() > lowestPrioRegion.getPriority()) {
-				lowestPrioRegion = region;
+			if (highestPrioRegion == null || region.getPriority() > highestPrioRegion.getPriority()) {
+				highestPrioRegion = region;
 			}
 		}
-		return lowestPrioRegion;
+		return highestPrioRegion;
+	}
+
+	public static IWrappedRegion getRegionWithHighestPriority(Location loc) {
+		Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc);
+		IWrappedRegion highestPrioRegion = null;
+		for (IWrappedRegion region : regions) {
+			if (highestPrioRegion == null || region.getPriority() > highestPrioRegion.getPriority()) {
+				highestPrioRegion = region;
+			}
+		}
+		return highestPrioRegion;
 	}
 
 	public static IWrappedRegion getFirstRegionAtLocation(Location loc) {

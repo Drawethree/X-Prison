@@ -453,13 +453,12 @@ public class EnchantsManager {
 
 		this.lockedPlayers.add(gui.getPlayer().getUniqueId());
 
+
 		Schedulers.async().run(() -> {
 			int current = currentLevel;
 			int levelsToRefund = current;
 
 			long totalRefunded = 0;
-
-			enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), current);
 
 			while (current > 0) {
 				long cost = enchantment.getCostOfLevel(current);
@@ -472,6 +471,7 @@ public class EnchantsManager {
 			this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 
 			Schedulers.sync().run(() -> {
+				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
 				this.setEnchant(gui.getPickAxe(), gui.getPlayer(), enchantment.getId(), finalCurrent);
 				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), finalCurrent);

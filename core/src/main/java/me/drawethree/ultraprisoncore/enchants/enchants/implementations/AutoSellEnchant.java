@@ -2,10 +2,10 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.utils.RegionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -37,7 +37,7 @@ public class AutoSellEnchant extends UltraPrisonEnchantment {
 
 		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 			this.plugin.getCore().debug("AutoSellEnchant::isMessagesEnabled >> " + this.isMessagesEnabled());
-			this.plugin.getCore().getAutoSell().sellAll(e.getPlayer(), WorldGuardWrapper.getInstance().getRegions(e.getPlayer().getLocation()), this.isMessagesEnabled());
+			this.plugin.getCore().getAutoSell().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()), this.isMessagesEnabled());
 		}
 
 	}
