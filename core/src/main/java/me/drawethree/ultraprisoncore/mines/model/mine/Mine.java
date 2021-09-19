@@ -389,6 +389,10 @@ public class Mine implements GsonSerializable {
 		return this.mineEffects.getOrDefault(type, 0);
 	}
 
+	public boolean canTeleport(Player player) {
+		return player.hasPermission("ultraprison.mines.tp." + this.name);
+	}
+
 	public static final class Builder {
 
 		private String name;

@@ -28,10 +28,16 @@ public class MineTeleportCommand extends MineCommand {
 
 		if (mine == null) {
 			sender.sendMessage(this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
-			return false;
+			return true;
 		}
 
-		return this.plugin.getManager().teleportToMine((Player) sender, mine);
+		if (!mine.canTeleport((Player) sender)) {
+			sender.sendMessage(this.plugin.getMessage("no_permission"));
+			return true;
+		}
+
+		this.plugin.getManager().teleportToMine((Player) sender, mine);
+		return true;
 	}
 
 	@Override

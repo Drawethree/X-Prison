@@ -214,6 +214,7 @@ public class MineManager {
 	}
 
 	public boolean teleportToMine(Player player, Mine mine) {
+
 		if (mine.getTeleportLocation() == null) {
 			player.sendMessage(this.plugin.getMessage("mine_no_teleport_location").replace("%mine%", mine.getName()));
 			return false;
