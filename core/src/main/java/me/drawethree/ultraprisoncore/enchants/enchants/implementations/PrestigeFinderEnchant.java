@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -13,6 +14,8 @@ public class PrestigeFinderEnchant extends UltraPrisonEnchantment {
     private double chance;
     private int minLevels;
     private int maxLevels;
+
+    private String commandToExecute;
 
     public PrestigeFinderEnchant(UltraPrisonEnchants instance) {
         super(instance, 16);
@@ -32,7 +35,8 @@ public class PrestigeFinderEnchant extends UltraPrisonEnchantment {
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             int levels = ThreadLocalRandom.current().nextInt(this.minLevels, this.maxLevels);
-            this.plugin.getCore().getRanks().getRankManager().givePrestige(e.getPlayer(), levels);
+            //this.plugin.getCore().getRanks().getRankManager().givePrestige(e.getPlayer(), levels);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandToExecute.replace("%player%", e.getPlayer().getName()).replace("%amount%", String.valueOf(levels)));
         }
     }
 
@@ -41,6 +45,8 @@ public class PrestigeFinderEnchant extends UltraPrisonEnchantment {
         this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
         this.minLevels = plugin.getConfig().get().getInt("enchants." + id + ".Min-Levels");
         this.maxLevels = plugin.getConfig().get().getInt("enchants." + id + ".Max-Levels");
+        this.commandToExecute = plugin.getConfig().get().getString("enchants." + id + ".Command");
+
     }
 
     @Override

@@ -565,7 +565,6 @@ public class RankManager {
 			this.onlinePlayersPrestige.put(player.getUniqueId(), this.onlinePlayersPrestige.get(player.getUniqueId()) + levels);
 		}
 
-
 		player.sendMessage(this.plugin.getCore().getEnchants().getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
 	}
 

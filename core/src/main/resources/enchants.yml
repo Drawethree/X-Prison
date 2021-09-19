@@ -365,6 +365,7 @@ enchants:
     Increase-Cost-by: 175
     Max: 500
     Cost: 175
+    Command: "prestigeadmin add %player% %amount%"
     Description:
       - '&7&o(( Ability to find prestige levels while mining. ))'
     Refund:
