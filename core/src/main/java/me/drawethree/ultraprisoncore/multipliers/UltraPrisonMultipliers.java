@@ -106,7 +106,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		this.loadMessages();
 		this.loadRankMultipliers();
 
-		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time");
+		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time", 5);
+		this.globalSellMultiMax = this.getConfig().get().getDouble("global-multiplier.sell.max", 10.0);
+		this.globalTokenMultiMax = this.getConfig().get().getDouble("global-multiplier.tokens.max", 10.0);
+		this.playerSellMultiMax = this.getConfig().get().getDouble("sell-multiplier.max", 10.0);
+		this.playerTokenMultiMax = this.getConfig().get().getDouble("token-multiplier.max", 10.0);
 	}
 
 	@Override
@@ -541,7 +545,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 		for (String perm : this.permissionToMultiplier.keySet()) {
 			if (p.hasPermission(perm)) {
-				toReturn.addMultiplier(this.permissionToMultiplier.get(perm), 100.0);
+				toReturn.addMultiplier(this.permissionToMultiplier.get(perm), Integer.MAX_VALUE);
 				break;
 			}
 		}
