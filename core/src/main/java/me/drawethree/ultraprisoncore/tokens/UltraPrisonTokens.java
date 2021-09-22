@@ -191,7 +191,6 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 			double random = ThreadLocalRandom.current().nextDouble(100);
 
 			if (this.chance >= random) {
-
 				long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
 				randAmount = luckyBooster ? randAmount * 2 : randAmount;
 				totalAmount += randAmount;

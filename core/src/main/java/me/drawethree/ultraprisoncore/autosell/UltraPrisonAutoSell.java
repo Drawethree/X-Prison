@@ -23,7 +23,11 @@ import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -116,10 +120,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				continue;
 			}
 
-			Map<Material, Double> sellPrices = new HashMap<>();
+			Map<CompMaterial, Double> sellPrices = new HashMap<>();
 
 			for (String item : this.getConfig().get().getConfigurationSection("regions." + regName + ".items").getKeys(false)) {
-				Material type = Material.valueOf(item);
+				CompMaterial type = CompMaterial.valueOf(item);
 				double sellPrice = this.getConfig().get().getDouble("regions." + regName + ".items." + item);
 				sellPrices.put(type, sellPrice);
 			}
@@ -238,12 +242,12 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						}
 
 						for (IWrappedRegion reg : regions) {
-							if (regionsAutoSell.containsKey(reg.getId()) && regionsAutoSell.get(reg.getId()).sellsMaterial(e.getBlock().getType())) {
+							if (regionsAutoSell.containsKey(reg.getId()) && regionsAutoSell.get(reg.getId()).sellsMaterial(CompMaterial.fromBlock(e.getBlock()))) {
 
 								SellRegion region = regionsAutoSell.get(reg.getId());
 
 								int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-								double amount = core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME) ? core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier, MultiplierType.SELL) : (regionsAutoSell.get(reg.getId()).getSellPriceFor(e.getBlock().getType()) + 0.0) * amplifier;
+								double amount = core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME) ? core.getMultipliers().getApi().getTotalToDeposit(e.getPlayer(), (regionsAutoSell.get(reg.getId()).getSellPriceFor(CompMaterial.fromBlock(e.getBlock())) + 0.0) * amplifier, MultiplierType.SELL) : (regionsAutoSell.get(reg.getId()).getSellPriceFor(CompMaterial.fromBlock(e.getBlock())) + 0.0) * amplifier;
 
 								UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(e.getPlayer(), region, e.getBlock(), amount);
 
@@ -301,7 +305,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				.assertPlayer()
 				.assertPermission(ADMIN_PERMISSION)
 				.handler(c -> {
-					Material type;
+					CompMaterial type;
 					double price;
 					if (c.args().size() == 1) {
 
@@ -311,10 +315,10 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						}
 
 						price = c.arg(0).parseOrFail(Double.class);
-						type = c.sender().getItemInHand().getType();
+						type = CompMaterial.fromItem(c.sender().getItemInHand());
 					} else if (c.args().size() == 2) {
 						try {
-							type = Material.valueOf(c.rawArg(0));
+							type = CompMaterial.fromString(c.rawArg(0));
 						} catch (Exception e) {
 							c.sender().sendMessage(Text.colorize("&cInvalid material name!"));
 							return;
@@ -329,6 +333,11 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
 					if (type == null) {
 						c.sender().sendMessage(Text.colorize("&cUnable to parse material!"));
+						return;
+					}
+
+					if (type.name().endsWith("PICKAXE")) {
+						c.sender().sendMessage(Text.colorize("&cI think you do not want to let your players sell pickaxes."));
 						return;
 					}
 
@@ -348,12 +357,6 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 					getConfig().set("regions." + region.getId() + ".items." + type.name(), price);
 					getConfig().save();
 
-					if (type == Material.REDSTONE_ORE) {
-						getConfig().set("regions." + region.getId() + ".world", c.sender().getWorld().getName());
-						getConfig().set("regions." + region.getId() + ".items." + CompMaterial.REDSTONE_ORE.toMaterial().name(), price);
-						getConfig().save();
-					}
-
 					SellRegion sellRegion;
 
 					if (regionsAutoSell.containsKey(region.getId())) {
@@ -362,18 +365,12 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						sellRegion = new SellRegion(region, null, new HashMap<>());
 					}
 
-					if (type == Material.REDSTONE_ORE) {
-						sellRegion.addSellPrice(CompMaterial.REDSTONE_ORE.toMaterial(), price);
-					}
-
 					sellRegion.addSellPrice(type, price);
 					regionsAutoSell.put(region.getId(), sellRegion);
 
 					c.sender().sendMessage(Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId())));
 
-				}).
-
-				registerAndBind(core, "sellprice");
+				}).registerAndBind(core, "sellprice");
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
@@ -427,8 +424,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
 				List<ItemStack> toRemove = new ArrayList<>();
 
-				for (Material m : sellRegion.getSellingMaterials()) {
-					for (ItemStack item : Arrays.stream(sender.getInventory().getContents()).filter(i -> i != null && i.getType() == m).collect(Collectors.toList())) {
+			for (CompMaterial m : sellRegion.getSellingMaterials()) {
+				for (ItemStack item : Arrays.stream(sender.getInventory().getContents()).filter(i -> i != null && CompMaterial.fromItem(i) == m).collect(Collectors.toList())) {
 						totalPrice += item.getAmount() * sellRegion.getSellPriceFor(m);
 						toRemove.add(item);
 					}
@@ -475,8 +472,8 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 		return lastEarnings.getOrDefault(player.getUniqueId(), 0.0);
 	}
 
-	public double getPriceForBrokenBlock(String regionName, Material material) {
-		return regionsAutoSell.containsKey(regionName) ? regionsAutoSell.get(regionName).getSellPriceFor(material) : 0.0;
+	public double getPriceForBrokenBlock(String regionName, Block block) {
+		return regionsAutoSell.containsKey(regionName) ? regionsAutoSell.get(regionName).getSellPriceFor(CompMaterial.fromBlock(block)) : 0.0;
 	}
 
 	public boolean hasAutoSellEnabled(Player p) {

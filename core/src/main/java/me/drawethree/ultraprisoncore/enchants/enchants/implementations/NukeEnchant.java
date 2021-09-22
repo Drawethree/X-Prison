@@ -66,7 +66,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 							blockCount++;
 							blocksAffected.add(b1);
 							if (autoSellEnabledPlayer) {
-								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1.getType()) + 0.0) * amplifier);
+								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1) + 0.0) * amplifier);
 							} else {
 								if (plugin.getCore().isUltraBackpacksEnabled()) {
 									continue;

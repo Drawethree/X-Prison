@@ -2,8 +2,8 @@ package me.drawethree.ultraprisoncore.autosell;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.Map;
@@ -16,21 +16,21 @@ public class SellRegion {
 	private IWrappedRegion region;
     @Getter
     private String permissionRequired;
-    private Map<Material, Double> sellPrices;
+    private Map<CompMaterial, Double> sellPrices;
 
-    public double getSellPriceFor(Material m) {
+    public double getSellPriceFor(CompMaterial m) {
         return this.sellPrices.getOrDefault(m, 0.0);
     }
 
-    public boolean sellsMaterial(Material m) {
+    public boolean sellsMaterial(CompMaterial m) {
         return this.sellPrices.containsKey(m);
     }
 
-    public void addSellPrice(Material material, double price) {
+    public void addSellPrice(CompMaterial material, double price) {
         this.sellPrices.put(material, price);
     }
 
-    public Set<Material> getSellingMaterials() {
+    public Set<CompMaterial> getSellingMaterials() {
         return this.sellPrices.keySet();
     }
 

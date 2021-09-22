@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.autosell.api;
 
 import me.drawethree.ultraprisoncore.autosell.SellRegion;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -20,10 +20,10 @@ public interface UltraPrisonAutoSellAPI {
     /**
      * Method to get price for broken block in specified mine region
      * @param regionName Name of region
-     * @param material Type of block
+     * @param block Block
      * @return Price for broken block
      */
-    double getPriceForBlock(String regionName, Material material);
+    double getPriceForBlock(String regionName, Block block);
 
     /**
      * Method to get if player has autosell enabled

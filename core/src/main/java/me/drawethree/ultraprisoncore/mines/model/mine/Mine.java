@@ -322,13 +322,17 @@ public class Mine implements GsonSerializable {
 	public void deleteHologram(HologramType type, Player player) {
 		switch (type) {
 			case BLOCKS_LEFT: {
-				this.blocksLeftHologram.despawn();
-				this.blocksLeftHologram = null;
+				if (this.blocksLeftHologram != null) {
+					this.blocksLeftHologram.despawn();
+					this.blocksLeftHologram = null;
+				}
 				break;
 			}
 			case BLOCKS_MINED: {
-				this.blocksMinedHologram.despawn();
-				this.blocksMinedHologram = null;
+				if (this.blocksMinedHologram != null) {
+					this.blocksMinedHologram.despawn();
+					this.blocksMinedHologram = null;
+				}
 				break;
 			}
 		}

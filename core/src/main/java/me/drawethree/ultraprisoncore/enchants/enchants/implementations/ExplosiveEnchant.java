@@ -89,7 +89,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 							blockCount++;
 							blocksAffected.add(b1);
 							if (autoSellPlayerEnabled) {
-								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1.getType()) + 0.0) * amplifier);
+								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1) + 0.0) * amplifier);
 							} else {
 								if (this.plugin.getCore().isUltraBackpacksEnabled()) {
 									continue;
