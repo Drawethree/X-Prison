@@ -11,6 +11,7 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public class AutoMinerRegion {
@@ -19,17 +20,20 @@ public class AutoMinerRegion {
 	private World world;
 	private IWrappedRegion region;
 	private List<String> commands;
-
 	private Task autoMinerTask;
 
-
-	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, List<String> rewards, int seconds) {
+	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, List<String> rewards, int rewardPeriod) {
 		this.parent = parent;
 		this.world = world;
 		this.region = region;
 		this.commands = rewards;
 
+		AtomicInteger counter = new AtomicInteger();
+
 		this.autoMinerTask = Schedulers.async().runRepeating(() -> {
+
+			int current = counter.getAndIncrement();
+
 			for (Player p : Players.all()) {
 
 				if (!p.getWorld().equals(this.world)) {
@@ -41,12 +45,18 @@ public class AutoMinerRegion {
 						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_disabled"));
 					} else {
 						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_enabled"));
-						this.executeCommands(p);
+						if (current >= rewardPeriod) {
+							this.executeCommands(p);
+						}
 						this.parent.decrementTime(p);
 					}
 				}
 			}
-		}, seconds, TimeUnit.SECONDS, seconds, TimeUnit.SECONDS);
+
+			if (current >= rewardPeriod) {
+				counter.set(0);
+			}
+		}, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS);
 	}
 
 	private void executeCommands(Player p) {

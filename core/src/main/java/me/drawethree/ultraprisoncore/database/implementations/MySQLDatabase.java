@@ -46,40 +46,11 @@ public class MySQLDatabase extends SQLDatabase {
 
 		this.hikari = new HikariDataSource(hikari);
 		this.createTables();
-		this.runSQLUpdates();
 	}
 
 
 	@Override
 	public void runSQLUpdates() {
-		// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table as primary key
-		Schedulers.async().run(() -> {
-			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='UltraPrison_Gangs' AND column_name ='uuid'")) {
-				try (ResultSet set = statement.executeQuery()) {
-					if (!set.next()) {
-						execute("alter table UltraPrison_Gangs drop primary key", null);
-						execute("alter table UltraPrison_Gangs add column uuid varchar(36) not null first", null);
-						execute("alter table UltraPrison_Gangs add primary key(uuid,name)", null);
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-
-		// v1.5.0 - Renamed multipliers table columns
-		Schedulers.async().run(() -> {
-			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='UltraPrison_Multipliers' AND column_name ='vote_multiplier'")) {
-				try (ResultSet set = statement.executeQuery()) {
-					if (set.next()) {
-						execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
-						execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
 	}
 
 	@Override
@@ -95,6 +66,35 @@ public class MySQLDatabase extends SQLDatabase {
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))");
 			execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
+
+			// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table as primary key
+			Schedulers.async().run(() -> {
+				try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='UltraPrison_Gangs' AND column_name ='uuid'")) {
+					try (ResultSet set = statement.executeQuery()) {
+						if (!set.next()) {
+							execute("alter table UltraPrison_Gangs drop primary key", null);
+							execute("alter table UltraPrison_Gangs add column uuid varchar(36) not null first", null);
+							execute("alter table UltraPrison_Gangs add primary key(uuid,name)", null);
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			});
+
+			// v1.5.0 - Renamed multipliers table columns
+			Schedulers.async().run(() -> {
+				try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='UltraPrison_Multipliers' AND column_name ='vote_multiplier'")) {
+					try (ResultSet set = statement.executeQuery()) {
+						if (set.next()) {
+							execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
+							execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			});
 		});
 	}
 }

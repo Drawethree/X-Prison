@@ -59,7 +59,6 @@ public class SQLiteDatabase extends SQLDatabase {
 		this.hikari = new HikariDataSource(hikari);
 
 		this.createTables();
-		this.runSQLUpdates();
 	}
 
 	private void createDBFile() {
@@ -75,6 +74,7 @@ public class SQLiteDatabase extends SQLDatabase {
 	@Override
 	public void createTables() {
 		Schedulers.async().run(() -> {
+
 			execute("CREATE TABLE IF NOT EXISTS " + RANKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
@@ -85,15 +85,8 @@ public class SQLiteDatabase extends SQLDatabase {
 			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 			execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (name))");
 			execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
-		});
-	}
 
-
-	@Override
-	public void runSQLUpdates() {
-
-		// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table
-		Schedulers.async().run(() -> {
+			// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table
 			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Gangs"); ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
 					try {
@@ -105,24 +98,29 @@ public class SQLiteDatabase extends SQLDatabase {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		});
 
-		// v1.5.0 - Renamed multipliers table columns
-		Schedulers.async().run(() -> {
-			try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Multipliers"); ResultSet set = statement.executeQuery()) {
-				if (set.next()) {
-					try {
-						set.findColumn("sell_multiplier");
-					} catch (Exception e) {
-						execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
-						execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
+			// v1.5.0 - Renamed multipliers table columns
+			Schedulers.async().run(() -> {
+				try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Multipliers"); ResultSet set = statement.executeQuery()) {
+					if (set.next()) {
+						try {
+							set.findColumn("sell_multiplier");
+						} catch (Exception e) {
+							execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
+							execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
+						}
+
 					}
-
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			});
 		});
+	}
+
+
+	@Override
+	public void runSQLUpdates() {
 	}
 
 	@Override

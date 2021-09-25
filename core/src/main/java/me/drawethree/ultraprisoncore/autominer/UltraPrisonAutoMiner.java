@@ -3,12 +3,15 @@ package me.drawethree.ultraprisoncore.autominer;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
+import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPI;
+import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -19,6 +22,7 @@ import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
@@ -38,6 +42,10 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     private AutoMinerRegion region;
     @Getter
     private UltraPrisonCore core;
+
+    @Getter
+    private UltraPrisonAutoMinerAPI api;
+
     private List<UUID> disabledAutoMiner;
     private boolean enabled;
 
@@ -72,6 +80,8 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         this.removeExpiredAutoMiners();
         this.loadAutoMinerRegion();
         this.loadPlayersAutoMiner();
+
+        this.api = new UltraPrisonAutoMinerAPIImpl(this);
     }
 
     private void registerEvents() {
@@ -82,7 +92,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     }
 
     private void loadPlayersAutoMiner() {
-        Players.all().forEach(p -> loadAutoMiner(p));
+        Players.all().forEach(this::loadAutoMiner);
     }
 
     private void removeExpiredAutoMiners() {
@@ -178,16 +188,25 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         Commands.create()
 				.assertPermission("ultraprison.autominer.admin")
 				.handler(c -> {
-                    if (c.args().size() == 3 && c.rawArg(0).equalsIgnoreCase("give")) {
-                        Player target = Players.getNullable(c.rawArg(1));
-                        int time = c.arg(2).parseOrFail(Integer.class).intValue();
-                        givePlayerAutoMinerTime(c.sender(), target, time);
+                    if (c.args().size() == 4 && c.rawArg(0).equalsIgnoreCase("give")) {
+                        Player target = c.arg(1).parseOrFail(Player.class);
+                        long time = c.arg(2).parseOrFail(Long.class);
+
+                        TimeUnit timeUnit;
+                        try {
+                            timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            c.sender().sendMessage(Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
+                            return;
+                        }
+
+                        this.givePlayerAutoMinerTime(c.sender(), target, time, timeUnit);
                     }
 
                 }).registerAndBind(core, "adminautominer", "aam");
     }
 
-    private void givePlayerAutoMinerTime(CommandSender sender, Player p, long time) {
+    private void givePlayerAutoMinerTime(CommandSender sender, Player p, long time, TimeUnit unit) {
 
         if (p == null || !p.isOnline()) {
             sender.sendMessage(Text.colorize("&cPlayer is not online!"));
@@ -195,10 +214,10 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         }
 
         int currentTime = autoMinerTimes.getOrDefault(p.getUniqueId(), 0);
-        currentTime += time;
+        currentTime += unit.toSeconds(time);
 
         autoMinerTimes.put(p.getUniqueId(), currentTime);
-        sender.sendMessage(messages.get("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%player%", p.getName()));
+        sender.sendMessage(messages.get("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
     }
 
     public boolean hasAutoMinerTime(Player p) {

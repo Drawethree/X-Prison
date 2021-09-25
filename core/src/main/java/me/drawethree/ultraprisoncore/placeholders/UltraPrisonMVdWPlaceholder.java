@@ -6,6 +6,8 @@ import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
+import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
@@ -38,6 +40,7 @@ public class UltraPrisonMVdWPlaceholder {
 		this.registerRanksPlaceholders();
 		this.registerPickaxeLevelsPlaceholders();
 		this.registerAutoSellPlaceholders();
+		//this.registerMinesPlaceholders();
 	}
 
 	private void registerAutoSellPlaceholders() {
@@ -204,6 +207,17 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_3", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_formatted", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 
+	}
+
+	private void registerMinesPlaceholders() {
+
+		if (!this.plugin.isModuleEnabled(UltraPrisonMines.MODULE_NAME)) {
+			return;
+		}
+
+		for (Mine mine : this.plugin.getMines().getManager().getMines()) {
+			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_blocks_left", event -> String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D));
+		}
 	}
 
 }
