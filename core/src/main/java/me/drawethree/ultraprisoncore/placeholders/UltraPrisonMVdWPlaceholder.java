@@ -16,7 +16,6 @@ import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
-import org.bukkit.ChatColor;
 
 import java.util.Optional;
 
@@ -78,12 +77,13 @@ public class UltraPrisonMVdWPlaceholder {
 		}
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_name", event -> {
-			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
-			if (optionalGang.isPresent()) {
-				return optionalGang.get().getName();
-			} else {
-				return ChatColor.RED + "✗";
-			}
+			Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			return optionalGang.map(gang -> this.plugin.getGangs().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getPlaceholder("gang-without"));
+		});
+
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang", event -> {
+			Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			return optionalGang.map(gang -> this.plugin.getGangs().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getPlaceholder("gang-without"));
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_value", event -> {
