@@ -209,10 +209,7 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return this.plugin.getGangs().getGangsManager().getPlayerGang(player).isPresent() ? "Yes" : "No";
 			case "gang_is_leader": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
-				if (optionalGang.isPresent()) {
-					return optionalGang.get().isOwner(player) ? "Yes" : "No";
-				}
-				return "";
+				return optionalGang.map(gang -> gang.isOwner(player) ? "Yes" : "No").orElse("");
 			}
 			case "gang_leader_name": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
@@ -223,18 +220,12 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			}
 			case "gang_members_amount": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
-				if (optionalGang.isPresent()) {
-					// +1 because of leader
-					return String.valueOf(optionalGang.get().getMembersOffline().size() + 1);
-				}
-				return "";
+				// +1 because of leader
+				return optionalGang.map(gang -> String.valueOf(gang.getMembersOffline().size() + 1)).orElse("");
 			}
 			case "gang_members_online": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
-				if (optionalGang.isPresent()) {
-					return String.valueOf(optionalGang.get().getOnlinePlayers().size());
-				}
-				return "";
+				return optionalGang.map(gang -> String.valueOf(gang.getOnlinePlayers().size())).orElse("");
 			}
 			default:
 				return null;

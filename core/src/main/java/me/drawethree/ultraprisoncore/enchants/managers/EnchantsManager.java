@@ -460,10 +460,15 @@ public class EnchantsManager {
 
 			long totalRefunded = 0;
 
-			while (current > 0) {
+			while (gui.getPlayer().isOnline() && current > 0) {
 				long cost = enchantment.getCostOfLevel(current);
 				totalRefunded += (cost * (this.refundPercentage / 100.0));
 				current--;
+			}
+
+			if (!gui.getPlayer().isOnline()) {
+				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
+				return;
 			}
 
 			int finalCurrent = current;
@@ -560,9 +565,14 @@ public class EnchantsManager {
 			int levelsToBuy = 0;
 			long totalCost = 0;
 
-			while ((currentLevel + levelsToBuy + 1) <= enchantment.getMaxLevel() && this.plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost + enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1))) {
+			while (gui.getPlayer().isOnline() && (currentLevel + levelsToBuy + 1) <= enchantment.getMaxLevel() && this.plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost + enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1))) {
 				levelsToBuy += 1;
 				totalCost += enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1);
+			}
+
+			if (!gui.getPlayer().isOnline()) {
+				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
+				return;
 			}
 
 			if (levelsToBuy == 0) {

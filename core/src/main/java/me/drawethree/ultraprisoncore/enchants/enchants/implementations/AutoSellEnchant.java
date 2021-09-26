@@ -1,5 +1,8 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
+import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
+import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.utils.RegionUtils;
@@ -36,8 +39,11 @@ public class AutoSellEnchant extends UltraPrisonEnchantment {
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
 		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-			this.plugin.getCore().debug("AutoSellEnchant::isMessagesEnabled >> " + this.isMessagesEnabled());
-			this.plugin.getCore().getAutoSell().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()), this.isMessagesEnabled());
+			if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
+				UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
+			} else if (this.plugin.getCore().isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME)) {
+				this.plugin.getCore().getAutoSell().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()), this.isMessagesEnabled());
+			}
 		}
 
 	}

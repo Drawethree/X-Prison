@@ -503,7 +503,7 @@ public class RankManager {
 
 		p.sendMessage(this.plugin.getMessage("max_prestige_started"));
 
-		while (!isMaxPrestige(p) && isMaxRank(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
+		while (p.isOnline() && !isMaxPrestige(p) && isMaxRank(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
 
 			UltraPrisonPlayerPrestigeEvent event = new UltraPrisonPlayerPrestigeEvent(p, currentPrestige, nextPrestige);
 
