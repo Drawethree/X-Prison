@@ -3,6 +3,9 @@ gang-top-update: 1
 max-gang-name-length: 10
 color-codes-in-gang-name: true
 gang-chat-priority: LOW
+placeholders:
+  gang-without: '&c✗'
+  gang-in-gang: '&9%gang%'
 messages:
   no-permission: "&e&lGANGS &8» &cYou do not have permission!"
   gang-already-exists: "&e&lGANGS &8» &cGang with that name or similar name already exists!"

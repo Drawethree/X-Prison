@@ -7,7 +7,6 @@ import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -191,11 +190,7 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "gang_name":
 			case "gang": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
-				if (optionalGang.isPresent()) {
-					return optionalGang.get().getName();
-				} else {
-					return ChatColor.RED + "✗";
-				}
+				return optionalGang.map(gang -> this.plugin.getGangs().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getPlaceholder("gang-without"));
 			}
 			case "gang_value": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);

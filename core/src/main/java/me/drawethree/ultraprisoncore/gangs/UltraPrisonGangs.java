@@ -30,7 +30,6 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     @Getter
     private UltraPrisonGangsAPI api;
 
-
     @Getter
     private FileManager.Config config;
 
@@ -42,6 +41,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
     private Map<String, String> messages;
     private Map<String, GangCommand> commands;
+    private Map<String, String> placeholders;
 
     private boolean enabled;
 
@@ -63,7 +63,18 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
         this.loadMessages();
 
+        this.loadPlaceholders();
+
         this.gangsManager.reloadConfig();
+    }
+
+    private void loadPlaceholders() {
+        this.placeholders = new HashMap<>();
+
+        for (String key : this.config.get().getConfigurationSection("placeholders").getKeys(false)) {
+            this.placeholders.put(key.toLowerCase(), Text.colorize(this.config.get().getString("placeholders." + key)));
+        }
+
     }
 
 
@@ -74,6 +85,8 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
         this.config = this.core.getFileManager().getConfig("gangs.yml").copyDefaults(true).save();
 
         this.loadMessages();
+
+        this.loadPlaceholders();
 
         this.gangsManager = new GangsManager(this);
 
@@ -161,5 +174,9 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
     private GangCommand getCommand(String arg) {
         return commands.get(arg.toLowerCase());
+    }
+
+    public String getPlaceholder(String name) {
+        return this.placeholders.get(name.toLowerCase());
     }
 }
