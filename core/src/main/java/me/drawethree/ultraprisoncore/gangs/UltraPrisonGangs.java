@@ -127,7 +127,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
         registerCommand(new GangAdminCommand(this));
         registerCommand(new GangValueCommand(this));
         registerCommand(new GangRenameCommand(this));
-        //registerCommand(new GangChatCommand(this));
+		registerCommand(new GangChatCommand(this));
 
         Commands.create()
                 .handler(c -> {

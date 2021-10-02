@@ -71,6 +71,7 @@ public class GangsManager {
 					Optional<Gang> gangOptional = this.getPlayerGang(e.getPlayer());
 
 					if (!gangOptional.isPresent()) {
+						this.gangChatEnabledPlayers.remove(e.getPlayer().getUniqueId());
 						return;
 					}
 

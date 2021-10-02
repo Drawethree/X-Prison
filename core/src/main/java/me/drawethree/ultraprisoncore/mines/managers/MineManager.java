@@ -88,7 +88,10 @@ public class MineManager {
 				continue;
 			}
 			try (FileReader reader = new FileReader(file)) {
-				Mine mine = MineLoader.load(this, reader);
+				Mine mine = MineLoader.load(this, reader, file.getName());
+				if (mine == null) {
+					continue;
+				}
 				this.mines.put(mine.getName(), mine);
 				this.plugin.getCore().getLogger().info("Loaded Mine " + mine.getName());
 			} catch (IOException e) {

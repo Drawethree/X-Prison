@@ -539,11 +539,11 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void createGang(Gang g) {
-		this.execute("INSERT IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)", g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
+		this.executeAsync("INSERT IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)", g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
 	}
 
 	@Override
 	public void deleteGang(Gang g) {
-		this.execute("DELETE FROM " + MySQLDatabase.GANGS_TABLE_NAME + " WHERE UUID=?", g.getUuid().toString());
+		this.executeAsync("DELETE FROM " + MySQLDatabase.GANGS_TABLE_NAME + " WHERE UUID=?", g.getUuid().toString());
 	}
 }

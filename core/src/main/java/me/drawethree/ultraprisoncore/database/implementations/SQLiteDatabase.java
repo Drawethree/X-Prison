@@ -150,7 +150,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	@Override
 	public void createGang(Gang g) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + "(name,owner,members) VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
+		this.executeAsync("INSERT OR IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + "(name,owner,members) VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
 	}
 
 	@Override

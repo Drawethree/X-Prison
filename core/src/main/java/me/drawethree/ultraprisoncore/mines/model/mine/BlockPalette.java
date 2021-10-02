@@ -78,4 +78,7 @@ public class BlockPalette implements GsonSerializable {
 		return new BlockPalette(blocks);
 	}
 
+	public boolean isEmpty() {
+		return this.blockPercentages.isEmpty();
+	}
 }

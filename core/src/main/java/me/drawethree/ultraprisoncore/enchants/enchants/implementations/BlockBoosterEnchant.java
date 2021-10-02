@@ -12,9 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -30,9 +28,12 @@ public class BlockBoosterEnchant extends UltraPrisonEnchantment {
 		Events.subscribe(UltraPrisonBlockBreakEvent.class)
 				.handler(e -> {
 					if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
+						List<Block> blocks = new ArrayList<>();
 						for (Block b : e.getBlocks()) {
-							e.getBlocks().add(b);
+							blocks.add(b);
+							blocks.add(b);
 						}
+						e.setBlocks(blocks);
 					}
 				}).bindWith(instance.getCore());
 	}
