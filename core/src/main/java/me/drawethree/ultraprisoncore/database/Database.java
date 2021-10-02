@@ -15,7 +15,7 @@ public abstract class Database {
 
 	protected final UltraPrisonCore plugin;
 
-	public Database(UltraPrisonCore plugin) {
+	Database(UltraPrisonCore plugin) {
 		this.plugin = plugin;
 	}
 

@@ -10,8 +10,6 @@ import org.bukkit.potion.PotionEffectType;
 
 public class HasteEnchant extends UltraPrisonEnchantment {
 
-	private double chance;
-
 	public HasteEnchant(UltraPrisonEnchants instance) {
 		super(instance, 4);
 	}
@@ -37,7 +35,6 @@ public class HasteEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override

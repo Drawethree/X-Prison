@@ -32,52 +32,52 @@ public abstract class SQLDatabase extends Database {
 	protected static final long CONNECTION_TIMEOUT = TimeUnit.SECONDS.toMillis(60); // 60 seconds
 	protected static final long LEAK_DETECTION_THRESHOLD = TimeUnit.SECONDS.toMillis(5); // 5 seconds
 
-	public static final String RANKS_TABLE_NAME = "UltraPrison_Ranks";
-	public static final String TOKENS_TABLE_NAME = "UltraPrison_Tokens";
-	public static final String GEMS_TABLE_NAME = "UltraPrison_Gems";
-	public static final String BLOCKS_TABLE_NAME = "UltraPrison_BlocksBroken";
-	public static final String BLOCKS_WEEKLY_TABLE_NAME = "UltraPrison_BlocksBrokenWeekly";
-	public static final String MULTIPLIERS_TABLE_NAME = "UltraPrison_Multipliers";
-	public static final String MULTIPLIERS_TOKEN_TABLE_NAME = "UltraPrison_Token_Multipliers";
+	protected static final String RANKS_TABLE_NAME = "UltraPrison_Ranks";
+	protected static final String TOKENS_TABLE_NAME = "UltraPrison_Tokens";
+	protected static final String GEMS_TABLE_NAME = "UltraPrison_Gems";
+	protected static final String BLOCKS_TABLE_NAME = "UltraPrison_BlocksBroken";
+	protected static final String BLOCKS_WEEKLY_TABLE_NAME = "UltraPrison_BlocksBrokenWeekly";
+	protected static final String MULTIPLIERS_TABLE_NAME = "UltraPrison_Multipliers";
+	protected static final String MULTIPLIERS_TOKEN_TABLE_NAME = "UltraPrison_Token_Multipliers";
 
-	public static final String AUTOMINER_TABLE_NAME = "UltraPrison_AutoMiner";
-	public static final String GANGS_TABLE_NAME = "UltraPrison_Gangs";
-	public static final String UUID_PLAYERNAME_TABLE_NAME = "UltraPrison_Nicknames";
+	protected static final String AUTOMINER_TABLE_NAME = "UltraPrison_AutoMiner";
+	protected static final String GANGS_TABLE_NAME = "UltraPrison_Gangs";
+	protected static final String UUID_PLAYERNAME_TABLE_NAME = "UltraPrison_Nicknames";
 
-	public static final String RANKS_UUID_COLNAME = "UUID";
-	public static final String RANKS_RANK_COLNAME = "id_rank";
-	public static final String RANKS_PRESTIGE_COLNAME = "id_prestige";
+	protected static final String RANKS_UUID_COLNAME = "UUID";
+	protected static final String RANKS_RANK_COLNAME = "id_rank";
+	protected static final String RANKS_PRESTIGE_COLNAME = "id_prestige";
 
-	public static final String TOKENS_UUID_COLNAME = "UUID";
-	public static final String TOKENS_TOKENS_COLNAME = "Tokens";
+	protected static final String TOKENS_UUID_COLNAME = "UUID";
+	protected static final String TOKENS_TOKENS_COLNAME = "Tokens";
 
-	public static final String GEMS_UUID_COLNAME = "UUID";
-	public static final String GEMS_GEMS_COLNAME = "Gems";
+	protected static final String GEMS_UUID_COLNAME = "UUID";
+	protected static final String GEMS_GEMS_COLNAME = "Gems";
 
-	public static final String BLOCKS_UUID_COLNAME = "UUID";
-	public static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
+	protected static final String BLOCKS_UUID_COLNAME = "UUID";
+	protected static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
 
-	public static final String MULTIPLIERS_UUID_COLNAME = "UUID";
-	public static final String MULTIPLIERS_MULTIPLIER_COLNAME = "sell_multiplier";
-	public static final String MULTIPLIERS_TIMELEFT_COLNAME = "sell_multiplier_timeleft";
+	protected static final String MULTIPLIERS_UUID_COLNAME = "UUID";
+	protected static final String MULTIPLIERS_MULTIPLIER_COLNAME = "sell_multiplier";
+	protected static final String MULTIPLIERS_TIMELEFT_COLNAME = "sell_multiplier_timeleft";
 
-	public static final String MULTIPLIERS_TOKEN_UUID_COLNAME = "UUID";
-	public static final String MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME = "token_multiplier";
-	public static final String MULTIPLIERS_TOKEN_TIMELEFT_COLNAME = "token_multiplier_timeleft";
+	protected static final String MULTIPLIERS_TOKEN_UUID_COLNAME = "UUID";
+	protected static final String MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME = "token_multiplier";
+	protected static final String MULTIPLIERS_TOKEN_TIMELEFT_COLNAME = "token_multiplier_timeleft";
 
-	public static final String UUID_PLAYERNAME_UUID_COLNAME = "UUID";
-	public static final String UUID_PLAYERNAME_NICK_COLNAME = "nickname";
+	protected static final String UUID_PLAYERNAME_UUID_COLNAME = "UUID";
+	protected static final String UUID_PLAYERNAME_NICK_COLNAME = "nickname";
 
-	public static final String AUTOMINER_UUID_COLNAME = "UUID";
-	public static final String AUTOMINER_TIME_COLNAME = "time";
+	protected static final String AUTOMINER_UUID_COLNAME = "UUID";
+	protected static final String AUTOMINER_TIME_COLNAME = "time";
 
-	public static final String GANGS_UUID_COLNAME = "UUID";
-	public static final String GANGS_NAME_COLNAME = "name";
-	public static final String GANGS_OWNER_COLNAME = "owner";
-	public static final String GANGS_MEMBERS_COLNAME = "members";
-	public static final String GANGS_VALUE_COLNAME = "value";
+	protected static final String GANGS_UUID_COLNAME = "UUID";
+	protected static final String GANGS_NAME_COLNAME = "name";
+	protected static final String GANGS_OWNER_COLNAME = "owner";
+	protected static final String GANGS_MEMBERS_COLNAME = "members";
+	protected static final String GANGS_VALUE_COLNAME = "value";
 
-	public static final String[] ALL_TABLES = new String[]{
+	protected static final String[] ALL_TABLES = new String[]{
 			RANKS_TABLE_NAME,
 			TOKENS_TABLE_NAME,
 			GEMS_TABLE_NAME,

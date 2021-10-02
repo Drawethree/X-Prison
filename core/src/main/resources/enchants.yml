@@ -166,7 +166,6 @@ enchants:
     InGuiSlot: 30
     Increase-Cost-by: 2500
     Max: 5
-    Chance: 5
     Cost: 2500
     Description:
       - '&7&o(( Ability to swing your pickaxe faster while mining ))'
