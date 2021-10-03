@@ -340,9 +340,11 @@ public class Mine implements GsonSerializable {
 	}
 
 	public void despawnHolograms() {
+
 		if (this.blocksMinedHologram != null) {
 			this.blocksMinedHologram.despawn();
 		}
+
 		if (this.blocksLeftHologram != null) {
 			this.blocksLeftHologram.despawn();
 		}

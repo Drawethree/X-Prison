@@ -165,10 +165,11 @@ public class MineManager {
 			return false;
 		}
 
-
 		if (mine.getFile() != null) {
 			mine.getFile().delete();
 		}
+
+		mine.despawnHolograms();
 
 		this.mines.remove(mine.getName());
 
