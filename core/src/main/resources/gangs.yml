@@ -45,6 +45,7 @@ messages:
   gang-name-colors: "&e&lGANGS &8» &cGang name must not contain colors."
   gang-rename: "&e&lGANGS &8» &aYour Gang was renamed to %gang%."
   gang-force-rename: "&e&lGANGS &8» &aYou have renamed %player%'s gang to %gang%"
+  gang-name-restricted: "&e&lGANGS &8» &cThat name contains restricted words!"
 gang-help-menu:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lGANG HELP MENU "
@@ -85,3 +86,5 @@ gang-top-format:
   - "{FOR_EACH_GANG} &f&l#%position%. &e%gang% &8» &7%value% Points"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 gang-disband-gui-title: "Disband your gang?"
+restricted-names:
+  - shit

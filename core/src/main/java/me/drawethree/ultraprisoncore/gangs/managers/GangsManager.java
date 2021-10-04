@@ -45,6 +45,7 @@ public class GangsManager {
 	private List<String> gangTopFormat;
 	private List<String> gangAdminHelpMenu;
 	private List<String> gangHelpMenu;
+	private List<String> restrictedNames;
 
 	private EventPriority gangChatPriority;
 
@@ -106,6 +107,7 @@ public class GangsManager {
 		this.maxGangNameLength = this.plugin.getConfig().get().getInt("max-gang-name-length");
 		this.enableColorCodes = this.plugin.getConfig().get().getBoolean("color-codes-in-gang-name");
 		this.gangChatPriority = EventPriority.valueOf(this.plugin.getConfig().get().getString("gang-chat-priority"));
+		this.restrictedNames = this.plugin.getConfig().get().getStringList("restricted-names");
 	}
 
 	public void saveDataOnDisable() {
@@ -181,6 +183,8 @@ public class GangsManager {
 			sender.sendMessage(this.plugin.getMessage("gang-already-exists").replace("%name%", Text.colorize(name)));
 		} else if (nameCheck == GangNameCheckResult.NAME_EMPTY) {
 			sender.sendMessage(this.plugin.getMessage("gang-invalid-name"));
+		} else if (nameCheck == GangNameCheckResult.NAME_RESTRICTED) {
+			sender.sendMessage(this.plugin.getMessage("gang-name-restricted"));
 		}
 
 		return nameCheck;
@@ -190,6 +194,12 @@ public class GangsManager {
 
 		if (name.isEmpty()) {
 			return GangNameCheckResult.NAME_EMPTY;
+		}
+
+		for (String s : this.restrictedNames) {
+			if (name.contains(s)) {
+				return GangNameCheckResult.NAME_RESTRICTED;
+			}
 		}
 
 		if (this.enableColorCodes) {
