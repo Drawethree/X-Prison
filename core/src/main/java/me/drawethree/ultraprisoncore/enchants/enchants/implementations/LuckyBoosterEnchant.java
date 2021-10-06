@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import org.bukkit.ChatColor;
@@ -44,12 +45,12 @@ public class LuckyBoosterEnchant extends UltraPrisonEnchantment {
                 return;
             }
 
-            e.getPlayer().sendMessage(this.plugin.getMessage("lucky_booster_on"));
+			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getMessage("lucky_booster_on"));
 
             boostedPlayers.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(5));
             Schedulers.async().runLater(() -> {
                 if (e.getPlayer().isOnline()) {
-                    e.getPlayer().sendMessage(this.plugin.getMessage("lucky_booster_off"));
+					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getMessage("lucky_booster_off"));
                 }
                 boostedPlayers.remove(e.getPlayer().getUniqueId());
             }, 5, TimeUnit.MINUTES);

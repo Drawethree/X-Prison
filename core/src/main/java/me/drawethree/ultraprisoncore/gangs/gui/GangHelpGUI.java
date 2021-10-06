@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.gangs.gui;
 
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Services;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -43,7 +44,7 @@ public class GangHelpGUI extends Gui {
 				SignPromptFactory factory = Services.load(SignPromptFactory.class);
 				factory.openPrompt(this.getPlayer(), Arrays.asList("", "§e^ ^ ^", "§7Input gang name", ""), responseHandler -> {
 					if (responseHandler.get(0).isEmpty()) {
-						this.getPlayer().sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-invalid-name"));
+						PlayerUtils.sendMessage(this.getPlayer(), UltraPrisonGangs.getInstance().getMessage("gang-invalid-name"));
 						return SignPromptFactory.Response.ACCEPTED;
 					}
 					UltraPrisonGangs.getInstance().getGangsManager().createGang(responseHandler.get(0), this.getPlayer());

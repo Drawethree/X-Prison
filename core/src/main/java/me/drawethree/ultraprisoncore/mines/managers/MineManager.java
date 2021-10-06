@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.mines.model.mine.MineSelection;
 import me.drawethree.ultraprisoncore.mines.utils.MineLoader;
 import me.drawethree.ultraprisoncore.utils.LocationUtils;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
@@ -126,10 +127,10 @@ public class MineManager {
 		}
 
 		if (selection.isValid()) {
-			player.sendMessage(this.plugin.getMessage("selection_valid"));
+			PlayerUtils.sendMessage(player, this.plugin.getMessage("selection_valid"));
 		}
 
-		player.sendMessage(this.plugin.getMessage("selection_point_set").replace("%position%", String.valueOf(position)).replace("%location%", LocationUtils.toXYZW(pos.toLocation())));
+		PlayerUtils.sendMessage(player, this.plugin.getMessage("selection_point_set").replace("%position%", String.valueOf(position)).replace("%location%", LocationUtils.toXYZW(pos.toLocation())));
 	}
 
 	public MineSelection getMineSelection(Player player) {
@@ -140,12 +141,12 @@ public class MineManager {
 		MineSelection selection = this.getMineSelection(creator);
 
 		if (selection == null || !selection.isValid()) {
-			creator.sendMessage(this.plugin.getMessage("selection_invalid"));
+			PlayerUtils.sendMessage(creator, this.plugin.getMessage("selection_invalid"));
 			return false;
 		}
 
 		if (this.getMineByName(name) != null) {
-			creator.sendMessage(this.plugin.getMessage("mine_exists"));
+			PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_exists"));
 			return false;
 		}
 
@@ -153,7 +154,7 @@ public class MineManager {
 
 		this.mines.put(mine.getName(), mine);
 
-		creator.sendMessage(this.plugin.getMessage("mine_created").replace("%mine%", name));
+		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_created").replace("%mine%", name));
 		return true;
 	}
 
@@ -161,7 +162,7 @@ public class MineManager {
 		Mine mine = this.getMineByName(name);
 
 		if (mine == null) {
-			sender.sendMessage(this.plugin.getMessage("mine_not_exists").replace("%mine%", name));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", name));
 			return false;
 		}
 
@@ -173,7 +174,7 @@ public class MineManager {
 
 		this.mines.remove(mine.getName());
 
-		sender.sendMessage(this.plugin.getMessage("mine_deleted").replace("%mine%", name));
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_deleted").replace("%mine%", name));
 		return true;
 	}
 
@@ -184,7 +185,7 @@ public class MineManager {
 
 		this.mines.remove(mine.getName());
 
-		sender.sendMessage(this.plugin.getMessage("mine_deleted").replace("%mine%", mine.getName()));
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_deleted").replace("%mine%", mine.getName()));
 		return true;
 	}
 
@@ -220,12 +221,12 @@ public class MineManager {
 	public boolean teleportToMine(Player player, Mine mine) {
 
 		if (mine.getTeleportLocation() == null) {
-			player.sendMessage(this.plugin.getMessage("mine_no_teleport_location").replace("%mine%", mine.getName()));
+			PlayerUtils.sendMessage(player, this.plugin.getMessage("mine_no_teleport_location").replace("%mine%", mine.getName()));
 			return false;
 		}
 
 		player.teleport(mine.getTeleportLocation().toLocation());
-		player.sendMessage(this.plugin.getMessage("mine_teleport").replace("%mine%", mine.getName()));
+		PlayerUtils.sendMessage(player, this.plugin.getMessage("mine_teleport").replace("%mine%", mine.getName()));
 		return true;
 	}
 
@@ -255,13 +256,13 @@ public class MineManager {
 
 	public boolean setTeleportLocation(Player player, Mine mine) {
 		mine.setTeleportLocation(Point.of(player.getLocation()));
-		player.sendMessage(this.plugin.getMessage("mine_teleport_set").replace("%mine%", mine.getName()));
+		PlayerUtils.sendMessage(player, this.plugin.getMessage("mine_teleport_set").replace("%mine%", mine.getName()));
 		return true;
 	}
 
 	public boolean giveTool(Player sender) {
 		sender.getInventory().addItem(SELECTION_TOOL);
-		sender.sendMessage(this.plugin.getMessage("selection_tool_given"));
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("selection_tool_given"));
 		return true;
 	}
 

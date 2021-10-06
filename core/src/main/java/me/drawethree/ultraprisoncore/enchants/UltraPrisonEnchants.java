@@ -14,6 +14,7 @@ import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.cooldown.Cooldown;
@@ -146,7 +147,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.handler(c -> {
 
 					if (c.args().size() == 0) {
-						c.sender().sendMessage(Text.colorize("&c/givepickaxe <player> <[enchant1]=[level1],[enchant2]=[level2],...[enchantX]=[levelX]> <pickaxe_name>"));
+						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/givepickaxe <player> <[enchant1]=[level1],[enchant2]=[level2],...[enchantX]=[levelX]> <pickaxe_name>"));
 						return;
 					}
 
@@ -172,23 +173,23 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.handler(c -> {
 
 					if (c.args().size() == 0) {
-						c.sender().sendMessage(Text.colorize("&c/givefirstjoinpickaxe <player>"));
+						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/givefirstjoinpickaxe <player>"));
 						return;
 					}
 
 					Player target = c.arg(0).parseOrFail(Player.class);
 
 					target.getInventory().addItem(this.enchantsManager.createFirstJoinPickaxe(target));
-					c.sender().sendMessage(Text.colorize("&aYou have given first join pickaxe to &e" + target.getName()));
+					PlayerUtils.sendMessage(c.sender(), Text.colorize("&aYou have given first join pickaxe to &e" + target.getName()));
 				}).registerAndBind(core, "givefirstjoinpickaxe");
 
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
 					if (LuckyBoosterEnchant.hasLuckyBoosterRunning(c.sender())) {
-						c.sender().sendMessage(getMessage("lucky_mode_timeleft").replace("%timeleft%", LuckyBoosterEnchant.getTimeLeft(c.sender())));
+						PlayerUtils.sendMessage(c.sender(), getMessage("lucky_mode_timeleft").replace("%timeleft%", LuckyBoosterEnchant.getTimeLeft(c.sender())));
 					} else {
-						c.sender().sendMessage(getMessage("lucky_mode_disabled"));
+						PlayerUtils.sendMessage(c.sender(), getMessage("lucky_mode_disabled"));
 					}
 				}).registerAndBind(core, "luckybooster");
 
@@ -198,7 +199,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					ItemStack pickAxe = c.sender().getItemInHand();
 
 					if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
-						c.sender().sendMessage(getMessage("no_pickaxe_found"));
+						PlayerUtils.sendMessage(c.sender(), getMessage("no_pickaxe_found"));
 						return;
 					}
 
@@ -213,7 +214,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					ItemStack pickAxe = c.sender().getItemInHand();
 
 					if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
-						c.sender().sendMessage(getMessage("no_pickaxe_found"));
+						PlayerUtils.sendMessage(c.sender(), getMessage("no_pickaxe_found"));
 						return;
 					}
 
@@ -241,38 +242,36 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.assertPermission("ultraprison.value", this.getMessage("value_no_permission"))
 				.handler(c -> {
 					if (!valueCooldown.test(c.sender())) {
-						c.sender().sendMessage(this.getMessage("value_cooldown").replace("%time%", String.valueOf(valueCooldown.remainingTime(c.sender(), TimeUnit.SECONDS))));
+						PlayerUtils.sendMessage(c.sender(), this.getMessage("value_cooldown").replace("%time%", String.valueOf(valueCooldown.remainingTime(c.sender(), TimeUnit.SECONDS))));
 						return;
 					}
 					ItemStack pickAxe = c.sender().getItemInHand();
 
 					if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
-						c.sender().sendMessage(getMessage("value_no_pickaxe"));
+						PlayerUtils.sendMessage(c.sender(), getMessage("value_no_pickaxe"));
 						return;
 					}
 
-					c.sender().sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe))));
-					//Players.all().forEach(p -> p.sendMessage(this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe)))));
-
+					PlayerUtils.sendMessage(c.sender(), this.getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.enchantsManager.getPickaxeValue(pickAxe))));
 				}).registerAndBind(core, "value");
 	}
 
 	private void toggleLayer(Player sender) {
 		if (disabledLayer.contains(sender.getUniqueId())) {
-			sender.sendMessage(getMessage("layer_enabled"));
+			PlayerUtils.sendMessage(sender, getMessage("layer_enabled"));
 			disabledLayer.remove(sender.getUniqueId());
 		} else {
-			sender.sendMessage(getMessage("layer_disabled"));
+			PlayerUtils.sendMessage(sender, getMessage("layer_disabled"));
 			disabledLayer.add(sender.getUniqueId());
 		}
 	}
 
 	private void toggleExplosive(Player sender) {
 		if (disabledExplosive.contains(sender.getUniqueId())) {
-			sender.sendMessage(getMessage("explosive_enabled"));
+			PlayerUtils.sendMessage(sender, getMessage("explosive_enabled"));
 			disabledExplosive.remove(sender.getUniqueId());
 		} else {
-			sender.sendMessage(getMessage("explosive_disabled"));
+			PlayerUtils.sendMessage(sender, getMessage("explosive_disabled"));
 			disabledExplosive.add(sender.getUniqueId());
 		}
 	}

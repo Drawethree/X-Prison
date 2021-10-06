@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -129,7 +130,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 					if (nextLevel != null && this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand()) >= nextLevel.getBlocksRequired()) {
 						nextLevel.giveRewards(e.getPlayer());
 						e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), nextLevel, e.getPlayer()));
-						e.getPlayer().sendMessage(this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(nextLevel.getLevel())));
+						PlayerUtils.sendMessage(e.getPlayer(), this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(nextLevel.getLevel())));
 					}
 				}).bindWith(core);
 		Events.subscribe(PlayerItemHeldEvent.class)

@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.gems.managers;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerGemsReceiveEvent;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -133,7 +134,7 @@ public class GemsManager {
             } else {
                 gemsCache.put(p.getUniqueId(), newAmount);
             }
-            executor.sendMessage(plugin.getMessage("admin_set_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", newAmount)));
+			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_set_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", newAmount)));
         });
     }
 
@@ -157,7 +158,7 @@ public class GemsManager {
             gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
         }
         if (executor != null && !(executor instanceof ConsoleCommandSender)) {
-            executor.sendMessage(plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", finalAmount)));
+			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", finalAmount)));
         }
 
     }
@@ -171,7 +172,7 @@ public class GemsManager {
             if (shiftClick) {
                 p.setItemInHand(null);
                 this.giveGems(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
-                p.sendMessage(plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount * itemAmount)));
+				PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount * itemAmount)));
             } else {
                 this.giveGems(p, tokenAmount, null, ReceiveCause.REDEEM);
                 if (item.getAmount() == 1) {
@@ -179,11 +180,11 @@ public class GemsManager {
                 } else {
                     item.setAmount(item.getAmount() - 1);
                 }
-                p.sendMessage(plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount)));
+				PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount)));
             }
         } catch (Exception e) {
             //Not a token item
-            p.sendMessage(plugin.getMessage("not_gems_item"));
+			PlayerUtils.sendMessage(p, plugin.getMessage("not_gems_item"));
         }
     }
 
@@ -192,12 +193,12 @@ public class GemsManager {
             if (getPlayerGems(executor) >= amount) {
                 this.removeGems(executor, amount, null);
                 this.giveGems(target, amount, null, ReceiveCause.PAY);
-                executor.sendMessage(plugin.getMessage("gems_send").replace("%player%", target.getName()).replace("%gems%", String.format("%,d", amount)));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("gems_send").replace("%player%", target.getName()).replace("%gems%", String.format("%,d", amount)));
                 if (target.isOnline()) {
-                    ((Player) target).sendMessage(plugin.getMessage("gems_received").replace("%player%", executor.getName()).replace("%gems%", String.format("%,d", amount)));
+					PlayerUtils.sendMessage((CommandSender) target, plugin.getMessage("gems_received").replace("%player%", executor.getName()).replace("%gems%", String.format("%,d", amount)));
                 }
             } else {
-                executor.sendMessage(plugin.getMessage("not_enough_gems"));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_gems"));
             }
         });
     }
@@ -207,7 +208,7 @@ public class GemsManager {
             long totalAmount = amount * value;
 
             if (this.getPlayerGems(executor) < totalAmount) {
-                executor.sendMessage(plugin.getMessage("not_enough_gems"));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_gems"));
                 return;
             }
 
@@ -222,7 +223,7 @@ public class GemsManager {
                 });
             }
 
-            executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
+			PlayerUtils.sendMessage(executor, plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
         });
     }
 
@@ -249,7 +250,7 @@ public class GemsManager {
                 gemsCache.put(p.getUniqueId(), finalgems);
             }
             if (executor != null) {
-                executor.sendMessage(plugin.getMessage("admin_remove_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", amount)));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_remove_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", amount)));
             }
         });
     }
@@ -261,9 +262,9 @@ public class GemsManager {
     public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {
         Schedulers.async().run(() -> {
             if (sender == target) {
-                sender.sendMessage(plugin.getMessage("your_gems").replace("%gems%", String.format("%,d", this.getPlayerGems(target))));
+				PlayerUtils.sendMessage(sender, plugin.getMessage("your_gems").replace("%gems%", String.format("%,d", this.getPlayerGems(target))));
             } else {
-                sender.sendMessage(plugin.getMessage("other_gems").replace("%gems%", String.format("%,d", this.getPlayerGems(target))).replace("%player%", target.getName()));
+				PlayerUtils.sendMessage(sender, plugin.getMessage("other_gems").replace("%gems%", String.format("%,d", this.getPlayerGems(target))).replace("%player%", target.getName()));
             }
         });
     }
@@ -279,10 +280,10 @@ public class GemsManager {
 
     public void sendGemsTop(CommandSender sender) {
         Schedulers.async().run(() -> {
-            sender.sendMessage(Text.colorize(SPACER_LINE));
+			PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE));
             if (this.updating) {
-                sender.sendMessage(this.plugin.getMessage("top_updating"));
-                sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
+				PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
+				PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE_BOTTOM));
                 return;
             }
             for (int i = 0; i < 10; i++) {
@@ -296,12 +297,12 @@ public class GemsManager {
                         name = player.getName();
                     }
                     long gems = top10Gems.get(uuid);
-                    sender.sendMessage(TOP_FORMAT_GEMS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", gems)));
+					PlayerUtils.sendMessage(sender, TOP_FORMAT_GEMS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", gems)));
                 } catch (ArrayIndexOutOfBoundsException e) {
                     break;
                 }
             }
-            sender.sendMessage(Text.colorize(SPACER_LINE_BOTTOM));
+			PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE_BOTTOM));
         });
     }
 }

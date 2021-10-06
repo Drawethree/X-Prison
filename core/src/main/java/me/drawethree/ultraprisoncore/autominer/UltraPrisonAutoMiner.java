@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPI;
 import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -182,7 +183,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
                 .assertPlayer()
                 .handler(c -> {
                     if (c.args().size() == 0) {
-                        c.sender().sendMessage(messages.get("auto_miner_time").replace("%time%", this.getTimeLeft(c.sender())));
+						PlayerUtils.sendMessage(c.sender(), messages.get("auto_miner_time").replace("%time%", this.getTimeLeft(c.sender())));
                     }
                 }).registerAndBind(core, "miner", "autominer");
         Commands.create()
@@ -196,7 +197,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
                         try {
                             timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
                         } catch (IllegalArgumentException e) {
-                            c.sender().sendMessage(Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
+							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
                             return;
                         }
 
@@ -209,7 +210,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     private void givePlayerAutoMinerTime(CommandSender sender, Player p, long time, TimeUnit unit) {
 
         if (p == null || !p.isOnline()) {
-            sender.sendMessage(Text.colorize("&cPlayer is not online!"));
+			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer is not online!"));
             return;
         }
 
@@ -217,7 +218,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         currentTime += unit.toSeconds(time);
 
         autoMinerTimes.put(p.getUniqueId(), currentTime);
-        sender.sendMessage(messages.get("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
+		PlayerUtils.sendMessage(sender, messages.get("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
     }
 
     public boolean hasAutoMinerTime(Player p) {
@@ -258,10 +259,10 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     private void toggleAutoMiner(Player sender) {
         if (disabledAutoMiner.contains(sender.getUniqueId())) {
-            sender.sendMessage(getMessage("autominer_enabled"));
+			PlayerUtils.sendMessage(sender, getMessage("autominer_enabled"));
             disabledAutoMiner.remove(sender.getUniqueId());
         } else {
-            sender.sendMessage(getMessage("autominer_disabled"));
+			PlayerUtils.sendMessage(sender, getMessage("autominer_disabled"));
             disabledAutoMiner.add(sender.getUniqueId());
         }
     }

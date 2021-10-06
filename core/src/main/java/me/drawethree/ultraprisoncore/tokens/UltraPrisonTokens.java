@@ -11,6 +11,7 @@ import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
 import me.drawethree.ultraprisoncore.tokens.commands.*;
 import me.drawethree.ultraprisoncore.tokens.managers.TokensManager;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -224,7 +225,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 						if (subCommand.canExecute(c.sender())) {
 							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
 						} else {
-							c.sender().sendMessage(this.getMessage("no_permission"));
+							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
 						}
 					} else {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
@@ -296,11 +297,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 								this.tokensManager.setBlocksBroken(c.sender(), target, amount);
 								break;
 							default:
-								c.sender().sendMessage(Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
+								PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
 								break;
 						}
 					} else {
-						c.sender().sendMessage(Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
+						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
 					}
 				})
 				.registerAndBind(core, "blocksadmin", "blocksa");

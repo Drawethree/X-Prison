@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.help;
 
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -81,16 +82,16 @@ public class GemsHelpGui extends Gui {
 			this.setItem(44, ItemStackBuilder.of(SkullUtils.HELP_SKULL.clone()).name("&e&lNeed more help?").lore("&7Right-Click to see plugin's Wiki", "&7Left-Click to join Discord Support.")
 					.build(() -> {
 						this.close();
-						this.getPlayer().sendMessage(" ");
-						this.getPlayer().sendMessage(Text.colorize("&eUltraPrisonCore - Wiki"));
-						this.getPlayer().sendMessage(Text.colorize("&7https://github.com/Drawethree/UltraPrisonCore/wiki"));
-						this.getPlayer().sendMessage(" ");
+						PlayerUtils.sendMessage(this.getPlayer(), " ");
+						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&eUltraPrisonCore - Wiki"));
+						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://github.com/Drawethree/UltraPrisonCore/wiki"));
+						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}, () -> {
 						this.close();
-						this.getPlayer().sendMessage(" ");
-						this.getPlayer().sendMessage(Text.colorize("&eUltraPrisonCore - Discord"));
-						this.getPlayer().sendMessage(Text.colorize("&7https://discord.com/invite/cssWTNK"));
-						this.getPlayer().sendMessage(" ");
+						PlayerUtils.sendMessage(this.getPlayer(), " ");
+						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&eUltraPrisonCore - Discord"));
+						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
+						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 		}
 

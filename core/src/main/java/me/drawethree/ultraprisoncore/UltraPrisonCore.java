@@ -21,6 +21,7 @@ import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.drawethree.ultraprisoncore.utils.gui.ClearDBGui;
@@ -254,18 +255,18 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 							this.pluginDatabase.resetAllData(c.sender());
 						}
 					} else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v")) && c.sender().hasPermission("ultraprisoncore.admin")) {
-						c.sender().sendMessage(Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
+						PlayerUtils.sendMessage(c.sender(), Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
 					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						DEBUG_MODE = !DEBUG_MODE;
-						c.sender().sendMessage(Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
+						PlayerUtils.sendMessage(c.sender(), Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
 					} else if (c.args().size() == 2 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						UltraPrisonModule module = this.getModuleByName(c.rawArg(1));
 						if (module == null) {
-							c.sender().sendMessage(Text.colorize("&cModule " + c.rawArg(1) + " is not loaded."));
+							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cModule " + c.rawArg(1) + " is not loaded."));
 							return;
 						}
 						this.reloadModule(module);
-						c.sender().sendMessage(Text.colorize("&aModule " + c.rawArg(1) + " reloaded."));
+						PlayerUtils.sendMessage(c.sender(), Text.colorize("&aModule " + c.rawArg(1) + " reloaded."));
 
 					}
 				}).registerAndBind(this, commandAliasesArray);
@@ -275,7 +276,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		for (UltraPrisonModule module : this.loadedModules.values()) {
 			this.reloadModule(module);
 		}
-		sender.sendMessage(Text.colorize("&aUltraPrisonCore - Reloaded."));
+		PlayerUtils.sendMessage(sender, Text.colorize("&aUltraPrisonCore - Reloaded."));
 	}
 
 

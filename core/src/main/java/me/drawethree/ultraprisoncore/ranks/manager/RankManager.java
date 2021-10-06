@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerRankUpEv
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
@@ -267,7 +268,7 @@ public class RankManager {
 	public boolean buyMaxRank(Player p) {
 
 		if (isMaxRank(p)) {
-			p.sendMessage(this.plugin.getMessage("prestige_needed"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_needed"));
 			return false;
 		}
 
@@ -287,7 +288,7 @@ public class RankManager {
 		}
 
 		if (finalRankId == currentRank.getId()) {
-			p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", this.getNextRank(currentRank.getId()).getCost())));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", this.getNextRank(currentRank.getId()).getCost())));
 			return false;
 		}
 
@@ -307,14 +308,14 @@ public class RankManager {
 		}
 
 		this.onlinePlayersRanks.put(p.getUniqueId(), finalRank.getId());
-		p.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", finalRank.getPrefix()));
+		PlayerUtils.sendMessage(p, this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", finalRank.getPrefix()));
 		return true;
 	}
 
 	public boolean buyNextRank(Player p) {
 
 		if (isMaxRank(p)) {
-			p.sendMessage(this.plugin.getMessage("prestige_needed"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_needed"));
 			return false;
 		}
 
@@ -322,15 +323,15 @@ public class RankManager {
 		Rank toBuy = getNextRank(currentRank.getId());
 
 		if (toBuy == null) {
-			p.sendMessage(this.plugin.getMessage("prestige_needed"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_needed"));
 			return false;
 		}
 
 		if (!this.isTransactionAllowed(p, toBuy.getCost())) {
 			if (this.useTokensCurrency) {
-				p.sendMessage(this.plugin.getMessage("not_enough_tokens").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_tokens").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
 			} else {
-				p.sendMessage(this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
 			}
 			return false;
 		}
@@ -352,7 +353,7 @@ public class RankManager {
 
 		this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
 
-		p.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
+		PlayerUtils.sendMessage(p, this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
 		return true;
 	}
 
@@ -383,12 +384,12 @@ public class RankManager {
 	public boolean buyNextPrestige(Player p) {
 
 		if (!isMaxRank(p)) {
-			p.sendMessage(this.plugin.getMessage("not_last_rank"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("not_last_rank"));
 			return false;
 		}
 
 		if (isMaxPrestige(p)) {
-			p.sendMessage(this.plugin.getMessage("last_prestige"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("last_prestige"));
 			return false;
 		}
 
@@ -397,9 +398,9 @@ public class RankManager {
 
 		if (!this.isTransactionAllowed(p, toBuy.getCost())) {
 			if (this.useTokensCurrency) {
-				p.sendMessage(this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
 			} else {
-				p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
 			}
 			return false;
 		}
@@ -415,14 +416,14 @@ public class RankManager {
 
 		doPrestige(p, toBuy);
 
-		p.sendMessage(this.plugin.getMessage("prestige_up").replace("%Prestige%", toBuy.getPrefix()));
+		PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_up").replace("%Prestige%", toBuy.getPrefix()));
 
 		return true;
 	}
 
 	public void sendPrestigeTop(CommandSender sender) {
 		if (this.updating) {
-			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
 			return;
 		}
 
@@ -440,13 +441,13 @@ public class RankManager {
 							name = player.getName();
 						}
 						long prestige = top10Prestige.get(uuid);
-						sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige))));
+						PlayerUtils.sendMessage(sender, Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige))));
 					} catch (Exception e) {
 						break;
 					}
 				}
 			} else {
-				sender.sendMessage(me.lucko.helper.text3.Text.colorize(s));
+				PlayerUtils.sendMessage(sender, me.lucko.helper.text3.Text.colorize(s));
 			}
 		}
 	}
@@ -477,12 +478,12 @@ public class RankManager {
 	public boolean buyMaxPrestige(Player p) {
 
 		if (!isMaxRank(p)) {
-			p.sendMessage(this.plugin.getMessage("not_last_rank"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("not_last_rank"));
 			return false;
 		}
 
 		if (isMaxPrestige(p)) {
-			p.sendMessage(this.plugin.getMessage("last_prestige"));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("last_prestige"));
 			return false;
 		}
 
@@ -494,14 +495,14 @@ public class RankManager {
 
 		if (!this.isTransactionAllowed(p, nextPrestige.getCost())) {
 			if (this.useTokensCurrency) {
-				p.sendMessage(this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
 			} else {
-				p.sendMessage(this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
 			}
 			return false;
 		}
 
-		p.sendMessage(this.plugin.getMessage("max_prestige_started"));
+		PlayerUtils.sendMessage(p, this.plugin.getMessage("max_prestige_started"));
 
 		while (p.isOnline() && !isMaxPrestige(p) && isMaxRank(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
 
@@ -520,7 +521,7 @@ public class RankManager {
 		}
 
 		if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
-			p.sendMessage(this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
 		}
 
 		return true;
@@ -565,7 +566,7 @@ public class RankManager {
 			this.onlinePlayersPrestige.put(player.getUniqueId(), this.onlinePlayersPrestige.get(player.getUniqueId()) + levels);
 		}
 
-		player.sendMessage(this.plugin.getCore().getEnchants().getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
+		PlayerUtils.sendMessage(player, this.plugin.getCore().getEnchants().getMessage("prestige_finder").replace("%prestige%", String.format("%,d", levels)));
 	}
 
 
@@ -588,7 +589,7 @@ public class RankManager {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) + amount);
 		}
 
-		sender.sendMessage(this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
 	}
 
 	public void setPlayerPrestige(CommandSender sender, Player target, long amount) {
@@ -606,7 +607,7 @@ public class RankManager {
 		}
 
 		if (sender != null) {
-			sender.sendMessage(this.plugin.getMessage("prestige_set").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("prestige_set").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
 		}
 	}
 
@@ -624,7 +625,7 @@ public class RankManager {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) - amount);
 		}
 
-		sender.sendMessage(this.plugin.getMessage("prestige_remove").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("prestige_remove").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
 	}
 
 	public Rank getRankById(int id) {
@@ -649,8 +650,8 @@ public class RankManager {
 		this.onlinePlayersRanks.put(target.getUniqueId(), rank.getId());
 
 		if (sender != null) {
-			sender.sendMessage(this.plugin.getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
-			target.sendMessage(this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
+			PlayerUtils.sendMessage(target, this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
 		}
 
 		return true;

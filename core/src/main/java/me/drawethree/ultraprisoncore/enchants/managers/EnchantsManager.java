@@ -9,6 +9,7 @@ import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
@@ -353,12 +354,12 @@ public class EnchantsManager {
 	public boolean buyEnchnant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
 
 		if (currentLevel >= enchantment.getMaxLevel()) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_max_level"));
 			return false;
 		}
 
 		if (currentLevel + addition > enchantment.getMaxLevel()) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level_exceed"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_max_level_exceed"));
 			return false;
 		}
 
@@ -373,7 +374,7 @@ public class EnchantsManager {
 		this.plugin.getCore().debug(String.format("Enchants | Calculation of levels %,d - %,d of %s enchant took %dms", currentLevel + 1, currentLevel + addition + 1, enchantment.getRawName(), Time.nowMillis() - startTime));
 
 		if (!plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost)) {
-			gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("not_enough_tokens"));
 			return false;
 		}
 
@@ -395,9 +396,9 @@ public class EnchantsManager {
 		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
 		if (addition == 1) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
 		} else {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought_multiple")
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_bought_multiple")
 					.replace("%amount%", String.valueOf(addition))
 					.replace("%enchant%", enchantment.getName())
 					.replace("%tokens%", String.format("%,d", totalCost)));
@@ -408,7 +409,7 @@ public class EnchantsManager {
 	public boolean disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
 		if (currentLevel <= 0) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_no_level"));
 			return false;
 		}
 
@@ -434,20 +435,20 @@ public class EnchantsManager {
 
 		plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
 
-		gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(substraction)).replace("%enchant%", enchantment.getName()));
-		gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
+		PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(substraction)).replace("%enchant%", enchantment.getName()));
+		PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
 		return true;
 	}
 
 	public void disenchantMax(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel) {
 
 		if (currentLevel <= 0) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_no_level"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_no_level"));
 			return;
 		}
 
 		if (this.lockedPlayers.contains(gui.getPlayer().getUniqueId())) {
-			gui.getPlayer().sendMessage(plugin.getMessage("transaction_in_progress"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("transaction_in_progress"));
 			return;
 		}
 
@@ -485,8 +486,8 @@ public class EnchantsManager {
 
 			plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
 
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(levelsToRefund)).replace("%enchant%", enchantment.getName()));
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_refunded").replace("%amount%", String.valueOf(levelsToRefund)).replace("%enchant%", enchantment.getName()));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.valueOf(totalRefunded)));
 		});
 	}
 
@@ -550,12 +551,12 @@ public class EnchantsManager {
 	private void buyMaxEnchant(UltraPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
 		if (currentLevel >= enchantment.getMaxLevel()) {
-			gui.getPlayer().sendMessage(plugin.getMessage("enchant_max_level"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_max_level"));
 			return;
 		}
 
 		if (this.lockedPlayers.contains(gui.getPlayer().getUniqueId())) {
-			gui.getPlayer().sendMessage(plugin.getMessage("transaction_in_progress"));
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("transaction_in_progress"));
 			return;
 		}
 
@@ -577,7 +578,7 @@ public class EnchantsManager {
 
 			if (levelsToBuy == 0) {
 				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
-				gui.getPlayer().sendMessage(plugin.getMessage("not_enough_tokens"));
+				PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("not_enough_tokens"));
 				return;
 			}
 
@@ -604,9 +605,9 @@ public class EnchantsManager {
 			});
 
 			if (levelsToBuy == 1) {
-				gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
+				PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_bought").replace("%tokens%", String.valueOf(totalCost)));
 			} else {
-				gui.getPlayer().sendMessage(plugin.getMessage("enchant_bought_multiple")
+				PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_bought_multiple")
 						.replace("%amount%", String.valueOf(levelsToBuy))
 						.replace("%enchant%", enchantment.getName())
 						.replace("%tokens%", String.format("%,d", totalCost)));
@@ -699,13 +700,13 @@ public class EnchantsManager {
 
 		if (target != null) {
 			if (target.getInventory().firstEmpty() == -1) {
-				sender.sendMessage(this.plugin.getMessage("pickaxe_inventory_full").replace("%player%", target.getName()));
+				PlayerUtils.sendMessage(sender, this.plugin.getMessage("pickaxe_inventory_full").replace("%player%", target.getName()));
 				return;
 			}
 
 			target.getInventory().addItem(pickaxe);
-			sender.sendMessage(this.plugin.getMessage("pickaxe_given").replace("%player%", target.getName()));
-			target.sendMessage(this.plugin.getMessage("pickaxe_received").replace("%sender%", sender.getName()));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("pickaxe_given").replace("%player%", target.getName()));
+			PlayerUtils.sendMessage(target, this.plugin.getMessage("pickaxe_received").replace("%sender%", sender.getName()));
 		}
 	}
 

@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.gems.commands;
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,7 @@ public class GemsGiveCommand extends GemsCommand {
                 plugin.getGemsManager().giveGems(target, amount, sender, ReceiveCause.GIVE);
                 return true;
             } catch (NumberFormatException e) {
-                sender.sendMessage(plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
             }
         }
         return false;

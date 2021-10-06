@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPI;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPIImpl;
 import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
@@ -109,7 +110,7 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
                         Rank rank = this.getRankManager().getRankById(c.arg(1).parseOrFail(Integer.class));
 
                         if (rank == null) {
-                            c.sender().sendMessage(Text.colorize("&cInvalid rank id provided."));
+                            PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid rank id provided."));
                             return;
                         }
 
@@ -175,13 +176,13 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
                                 this.rankManager.removePlayerPrestige(c.sender(), target, amount);
                                 break;
                             default:
-                                c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-                                c.sender().sendMessage(Text.colorize("&e&lPRESTIGE ADMIN HELP MENU "));
-                                c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
-                                c.sender().sendMessage(Text.colorize("&e/prestigeadmin add [player] [amount]"));
-                                c.sender().sendMessage(Text.colorize("&e/prestigeadmin remove [player] [amount]"));
-                                c.sender().sendMessage(Text.colorize("&e/prestigeadmin set [player] [amount]"));
-                                c.sender().sendMessage(Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e&lPRESTIGE ADMIN HELP MENU "));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e/prestigeadmin add [player] [amount]"));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e/prestigeadmin remove [player] [amount]"));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e/prestigeadmin set [player] [amount]"));
+                                PlayerUtils.sendMessage(c.sender(), Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
                                 break;
                         }
                     }

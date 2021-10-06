@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.mines.utils.MineLoader;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
 public class MineSaveCommand extends MineCommand {
@@ -24,13 +25,13 @@ public class MineSaveCommand extends MineCommand {
 		Mine mine = this.plugin.getManager().getMineByName(args.get(0));
 
 		if (mine == null) {
-			sender.sendMessage(this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
 			return true;
 		}
 
 		MineLoader.save(mine);
 
-		sender.sendMessage(this.plugin.getMessage("mine_saved").replace("%mine%", mine.getName()));
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_saved").replace("%mine%", mine.getName()));
 		return true;
 	}
 

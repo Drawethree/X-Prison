@@ -9,6 +9,7 @@ import me.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPIImpl;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.commands.impl.*;
 import me.drawethree.ultraprisoncore.mines.managers.MineManager;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.serialize.Position;
@@ -124,12 +125,12 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 					if (subCommand != null) {
 						if (!subCommand.canExecute(c.sender())) {
-							c.sender().sendMessage(this.getMessage("no_permission"));
+							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
 							return;
 						}
 
 						if (!subCommand.execute(c.sender(), c.args().subList(1, c.args().size()))) {
-							c.sender().sendMessage(Text.colorize(subCommand.getUsage()));
+							PlayerUtils.sendMessage(c.sender(), Text.colorize(subCommand.getUsage()));
 						}
 
 					} else {

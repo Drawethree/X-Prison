@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
 public class MineResetCommand extends MineCommand {
@@ -22,12 +23,12 @@ public class MineResetCommand extends MineCommand {
 		Mine mine = this.plugin.getManager().getMineByName(args.get(0));
 
 		if (mine == null) {
-			sender.sendMessage(this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
 			return true;
 		}
 
 		if (mine.isResetting()) {
-			sender.sendMessage(this.plugin.getMessage("mine_already_reset").replace("%mine%", args.get(0)));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_already_reset").replace("%mine%", args.get(0)));
 			return true;
 		}
 

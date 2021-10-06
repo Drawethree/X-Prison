@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.tokens.commands;
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,7 @@ public class TokensGiveCommand extends TokensCommand {
 				plugin.getTokensManager().giveTokens(target, amount, sender, ReceiveCause.GIVE);
                 return true;
             } catch (NumberFormatException e) {
-                sender.sendMessage(plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+                PlayerUtils.sendMessage(sender, plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
             }
         }
         return false;

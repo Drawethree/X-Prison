@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -48,9 +49,9 @@ public class BlessingEnchant extends UltraPrisonEnchantment {
 				}
 
 				if (p.equals(e.getPlayer())) {
-					p.sendMessage(plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d", randAmount)));
+					PlayerUtils.sendMessage(e.getPlayer(), plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d", randAmount)));
 				} else {
-					p.sendMessage(plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
+					PlayerUtils.sendMessage(e.getPlayer(), plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
 				}
 			}
 		}

@@ -9,6 +9,7 @@ import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerTokensRe
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -206,7 +207,7 @@ public class TokensManager {
 			} else {
 				tokensCache.put(p.getUniqueId(), newAmount);
 			}
-			executor.sendMessage(plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", newAmount)));
+			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", newAmount)));
 		});
 	}
 
@@ -241,18 +242,18 @@ public class TokensManager {
 			} else {
 				tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
 				if (executor != null && executor instanceof ConsoleCommandSender) {
-					p.getPlayer().sendMessage(plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
+					PlayerUtils.sendMessage(p.getPlayer(), plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 				} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
-					p.getPlayer().sendMessage(this.plugin.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+					PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
 				} else if (cause == ReceiveCause.LUCKY_BLOCK && !this.hasOffTokenMessages(p.getPlayer())) {
-					p.getPlayer().sendMessage(this.plugin.getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
+					PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
 				}
 			}
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L));
 
 			if (executor != null && !(executor instanceof ConsoleCommandSender)) {
-				executor.sendMessage(plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
 			}
 		});
 	}
@@ -269,7 +270,7 @@ public class TokensManager {
 					p.setItemInHand(null);
 				}
 				this.giveTokens(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
-				p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
+				PlayerUtils.sendMessage(p, plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
 			} else {
 				this.giveTokens(p, tokenAmount, null, ReceiveCause.REDEEM);
 				if (item.getAmount() == 1) {
@@ -281,10 +282,10 @@ public class TokensManager {
 				} else {
 					item.setAmount(item.getAmount() - 1);
 				}
-				p.sendMessage(plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
+				PlayerUtils.sendMessage(p, plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
 			}
 		} else {
-			p.sendMessage(plugin.getMessage("not_token_item"));
+			PlayerUtils.sendMessage(p, plugin.getMessage("not_token_item"));
 		}
 	}
 
@@ -293,12 +294,12 @@ public class TokensManager {
 			if (getPlayerTokens(executor) >= amount) {
 				this.removeTokens(executor, amount, null);
 				this.giveTokens(target, amount, null, ReceiveCause.PAY);
-				executor.sendMessage(plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
 				if (target.isOnline()) {
-					((Player) target).sendMessage(plugin.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.format("%,d", amount)));
+					PlayerUtils.sendMessage((CommandSender) target, plugin.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.format("%,d", amount)));
 				}
 			} else {
-				executor.sendMessage(plugin.getMessage("not_enough_tokens"));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_tokens"));
 			}
 		});
 	}
@@ -308,7 +309,7 @@ public class TokensManager {
 			long totalAmount = amount * value;
 
 			if (this.getPlayerTokens(executor) < totalAmount) {
-				executor.sendMessage(plugin.getMessage("not_enough_tokens"));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_tokens"));
 				return;
 			}
 
@@ -323,7 +324,7 @@ public class TokensManager {
 				});
 			}
 
-			executor.sendMessage(plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
+			PlayerUtils.sendMessage(executor, plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
 		});
 	}
 
@@ -366,7 +367,7 @@ public class TokensManager {
 				tokensCache.put(p.getUniqueId(), finalTokens);
 			}
 			if (executor != null) {
-				executor.sendMessage(plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
+				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
 			}
 		});
 	}
@@ -382,15 +383,15 @@ public class TokensManager {
 		Schedulers.async().run(() -> {
 			if (sender == target) {
 				if (tokens) {
-					sender.sendMessage(plugin.getMessage("your_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))));
+					PlayerUtils.sendMessage(sender, plugin.getMessage("your_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))));
 				} else {
-					sender.sendMessage(plugin.getMessage("your_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))));
+					PlayerUtils.sendMessage(sender, plugin.getMessage("your_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))));
 				}
 			} else {
 				if (tokens) {
-					sender.sendMessage(plugin.getMessage("other_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))).replace("%player%", target.getName()));
+					PlayerUtils.sendMessage(sender, plugin.getMessage("other_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))).replace("%player%", target.getName()));
 				} else {
-					sender.sendMessage(plugin.getMessage("other_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
+					PlayerUtils.sendMessage(sender, plugin.getMessage("other_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
 				}
 			}
 		});
@@ -401,7 +402,7 @@ public class TokensManager {
 
 		if (amount <= 0) {
 			if (sender != null) {
-				sender.sendMessage(Text.colorize("&cPlease specify amount greater than 0!"));
+				PlayerUtils.sendMessage(sender, Text.colorize("&cPlease specify amount greater than 0!"));
 			}
 			return;
 		}
@@ -429,7 +430,7 @@ public class TokensManager {
 			}
 
 			if (sender != null && !(sender instanceof ConsoleCommandSender)) {
-				sender.sendMessage(plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(sender, plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
 			}
 		});
 	}
@@ -489,7 +490,7 @@ public class TokensManager {
 	public void removeBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
 		if (amount <= 0) {
-			sender.sendMessage(Text.colorize("&cPlease specify amount greater than 0!"));
+			PlayerUtils.sendMessage(sender, Text.colorize("&cPlease specify amount greater than 0!"));
 			return;
 		}
 
@@ -506,7 +507,7 @@ public class TokensManager {
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly - amount);
 			}
 
-			sender.sendMessage(plugin.getMessage("admin_remove_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+			PlayerUtils.sendMessage(sender, plugin.getMessage("admin_remove_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
 
 		});
 	}
@@ -514,7 +515,7 @@ public class TokensManager {
 	public void setBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
 		if (amount < 0) {
-			sender.sendMessage(Text.colorize("&cPlease specify positive amount!"));
+			PlayerUtils.sendMessage(sender, Text.colorize("&cPlease specify positive amount!"));
 			return;
 		}
 
@@ -535,7 +536,7 @@ public class TokensManager {
 				}
 			}
 
-			sender.sendMessage(plugin.getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+			PlayerUtils.sendMessage(sender, plugin.getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
 
 		});
 	}
@@ -563,7 +564,7 @@ public class TokensManager {
 
 	public void sendTokensTop(CommandSender sender) {
 		if (this.updating) {
-			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
 			return;
 		}
 
@@ -581,20 +582,20 @@ public class TokensManager {
 							name = player.getName();
 						}
 						long tokens = top10Tokens.get(uuid);
-						sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens))));
+						PlayerUtils.sendMessage(sender, Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens))));
 					} catch (Exception e) {
 						break;
 					}
 				}
 			} else {
-				sender.sendMessage(me.lucko.helper.text3.Text.colorize(s));
+				PlayerUtils.sendMessage(sender, me.lucko.helper.text3.Text.colorize(s));
 			}
 		}
 	}
 
 	public void sendBlocksTop(CommandSender sender) {
 		if (this.updating) {
-			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
 			return;
 		}
 
@@ -602,7 +603,7 @@ public class TokensManager {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
 				sendBlocksTop(sender, s, top10Blocks);
 			} else {
-				sender.sendMessage(Text.colorize(s));
+				PlayerUtils.sendMessage(sender, Text.colorize(s));
 			}
 		}
 	}
@@ -620,7 +621,7 @@ public class TokensManager {
 					name = player.getName();
 				}
 				long blocks = top.get(uuid);
-				sender.sendMessage(Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%blocks%", String.format("%,d", blocks))));
+				PlayerUtils.sendMessage(sender, Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%blocks%", String.format("%,d", blocks))));
 			} catch (Exception e) {
 				break;
 			}
@@ -629,7 +630,7 @@ public class TokensManager {
 
 	public void sendBlocksTopWeekly(CommandSender sender) {
 		if (this.updating) {
-			sender.sendMessage(this.plugin.getMessage("top_updating"));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
 			return;
 		}
 
@@ -637,7 +638,7 @@ public class TokensManager {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
 				sendBlocksTop(sender, s, top10BlocksWeekly);
 			} else {
-				sender.sendMessage(Text.colorize(s));
+				PlayerUtils.sendMessage(sender, Text.colorize(s));
 			}
 		}
 	}
@@ -666,11 +667,11 @@ public class TokensManager {
 
 	public void resetBlocksTopWeekly(CommandSender sender) {
 		Schedulers.async().run(() -> {
-			sender.sendMessage(Text.colorize("&7&oStarting to reset BlocksTop - Weekly. This may take a while..."));
+			PlayerUtils.sendMessage(sender, Text.colorize("&7&oStarting to reset BlocksTop - Weekly. This may take a while..."));
 			this.top10BlocksWeekly.clear();
 			this.nextResetWeekly = Time.nowMillis() + TimeUnit.DAYS.toMillis(7);
 			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
-			sender.sendMessage(Text.colorize("&aBlocksTop - Weekly - Resetted!"));
+			PlayerUtils.sendMessage(sender, Text.colorize("&aBlocksTop - Weekly - Resetted!"));
 		});
 	}
 
@@ -720,10 +721,10 @@ public class TokensManager {
 
 	public void toggleTokenMessage(Player p) {
 		if (this.tokenMessageOnPlayers.contains(p.getUniqueId())) {
-			p.sendMessage(plugin.getMessage("token_message_disabled"));
+			PlayerUtils.sendMessage(p, plugin.getMessage("token_message_disabled"));
 			this.tokenMessageOnPlayers.remove(p.getUniqueId());
 		} else {
-			p.sendMessage(plugin.getMessage("token_message_enabled"));
+			PlayerUtils.sendMessage(p, plugin.getMessage("token_message_enabled"));
 			this.tokenMessageOnPlayers.add(p.getUniqueId());
 		}
 	}
@@ -753,7 +754,7 @@ public class TokensManager {
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
 				}
 			}
-			p.sendMessage(this.message);
+			PlayerUtils.sendMessage(p, this.message);
 		}
 
 

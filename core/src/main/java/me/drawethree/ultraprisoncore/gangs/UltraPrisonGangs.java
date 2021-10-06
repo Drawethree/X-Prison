@@ -10,6 +10,7 @@ import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.commands.impl.*;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.text.Text;
 import org.bukkit.entity.Player;
@@ -139,7 +140,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
                     GangCommand subCommand = this.getCommand(Objects.requireNonNull(c.rawArg(0)));
                     if (subCommand != null) {
 						if (!subCommand.canExecute(c.sender())) {
-							c.sender().sendMessage(this.getMessage("no-permission"));
+							PlayerUtils.sendMessage(c.sender(), this.getMessage("no-permission"));
 							return;
 						}
                         subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));

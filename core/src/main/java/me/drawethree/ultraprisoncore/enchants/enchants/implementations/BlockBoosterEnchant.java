@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonBlockBreakEvent;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
@@ -56,13 +57,13 @@ public class BlockBoosterEnchant extends UltraPrisonEnchantment {
 				return;
 			}
 
-			e.getPlayer().sendMessage(this.plugin.getMessage("block_booster_on"));
+			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getMessage("block_booster_on"));
 
 			boostedPlayers.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(1));
 
 			Schedulers.async().runLater(() -> {
 				if (e.getPlayer().isOnline()) {
-					e.getPlayer().sendMessage(this.plugin.getMessage("block_booster_off"));
+					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getMessage("block_booster_off"));
 				}
 				boostedPlayers.remove(e.getPlayer().getUniqueId());
 			}, 5, TimeUnit.MINUTES);

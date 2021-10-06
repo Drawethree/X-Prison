@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.migration.MinesMigration;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
 public class MineMigrateCommand extends MineCommand {
@@ -24,7 +25,7 @@ public class MineMigrateCommand extends MineCommand {
 		MinesMigration migration = MinesMigration.fromPlugin(pluginName);
 
 		if (migration == null) {
-			sender.sendMessage(this.plugin.getMessage("mine_migration_invalid_plugin"));
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_migration_invalid_plugin"));
 			return true;
 		}
 

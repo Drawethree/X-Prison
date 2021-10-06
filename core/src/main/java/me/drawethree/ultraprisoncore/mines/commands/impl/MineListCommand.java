@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -18,9 +19,9 @@ public class MineListCommand extends MineCommand {
 		if (sender instanceof Player) {
 			this.plugin.getManager().openMinesListGUI((Player) sender);
 		} else {
-			sender.sendMessage("All mines:");
+			PlayerUtils.sendMessage(sender, "All mines:");
 			for (Mine mine : this.plugin.getManager().getMines()) {
-				sender.sendMessage(mine.getName());
+				PlayerUtils.sendMessage(sender, mine.getName());
 			}
 		}
 		return true;

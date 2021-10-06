@@ -6,6 +6,7 @@ import lombok.Setter;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.managers.MineManager;
 import me.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.gson.GsonSerializable;
@@ -239,7 +240,7 @@ public class Mine implements GsonSerializable {
 		this.resetting = true;
 
 		if (broadcastReset) {
-			Players.all().forEach(player -> player.sendMessage(this.manager.getPlugin().getMessage("mine_resetting").replace("%mine%", this.name)));
+			Players.all().forEach(player -> PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_resetting").replace("%mine%", this.name)));
 		}
 
 		Schedulers.sync().runLater(() -> {
@@ -251,7 +252,7 @@ public class Mine implements GsonSerializable {
 			this.resetType.reset(this, this.blockPalette);
 
 			if (broadcastReset) {
-				Players.all().forEach(player -> player.sendMessage(this.manager.getPlugin().getMessage("mine_reset").replace("%mine%", this.name)));
+				Players.all().forEach(player -> PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_reset").replace("%mine%", this.name)));
 			}
 
 			this.resetting = false;
@@ -316,7 +317,7 @@ public class Mine implements GsonSerializable {
 				break;
 			}
 		}
-		player.sendMessage(this.manager.getPlugin().getMessage("mine_hologram_create").replace("%type%", type.name()).replace("%mine%", this.name));
+		PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_hologram_create").replace("%type%", type.name()).replace("%mine%", this.name));
 	}
 
 	public void deleteHologram(HologramType type, Player player) {
@@ -336,7 +337,7 @@ public class Mine implements GsonSerializable {
 				break;
 			}
 		}
-		player.sendMessage(this.manager.getPlugin().getMessage("mine_hologram_delete").replace("%type%", type.name()).replace("%mine%", this.name));
+		PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_hologram_delete").replace("%type%", type.name()).replace("%mine%", this.name));
 	}
 
 	public void despawnHolograms() {

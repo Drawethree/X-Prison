@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangLeaveEvent;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
@@ -72,8 +73,8 @@ public class Gang {
 		}
 
 		this.gangMembers.remove(p.getUniqueId());
-		this.getOnlinePlayers().forEach(player -> player.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-player-left").replace("%player%", p.getName())));
-		p.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-left").replace("%gang%", this.name));
+		this.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, UltraPrisonGangs.getInstance().getMessage("gang-player-left").replace("%player%", p.getName())));
+		PlayerUtils.sendMessage(p, UltraPrisonGangs.getInstance().getMessage("gang-left").replace("%gang%", this.name));
 		return true;
 	}
 
@@ -91,9 +92,9 @@ public class Gang {
 			return false;
 		}
 
-		this.getOnlinePlayers().forEach(player -> player.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-player-joined").replace("%player%", p.getName())));
+		this.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, UltraPrisonGangs.getInstance().getMessage("gang-player-joined").replace("%player%", p.getName())));
 		this.gangMembers.add(p.getUniqueId());
-		p.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-joined").replace("%gang%", this.name));
+		PlayerUtils.sendMessage(p, UltraPrisonGangs.getInstance().getMessage("gang-joined").replace("%gang%", this.name));
 		return true;
 	}
 
@@ -126,9 +127,9 @@ public class Gang {
 		}
 
 		this.gangMembers.remove(target.getUniqueId());
-		this.getOnlinePlayers().forEach(player -> player.sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-player-kicked").replace("%player%", target.getName())));
+		this.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, UltraPrisonGangs.getInstance().getMessage("gang-player-kicked").replace("%player%", target.getName())));
 		if (target.isOnline()) {
-			target.getPlayer().sendMessage(UltraPrisonGangs.getInstance().getMessage("gang-kicked").replace("%gang%", this.name));
+			PlayerUtils.sendMessage(target.getPlayer(), UltraPrisonGangs.getInstance().getMessage("gang-kicked").replace("%gang%", this.name));
 		}
 		return true;
 	}

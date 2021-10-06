@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
 import me.drawethree.ultraprisoncore.gems.commands.*;
 import me.drawethree.ultraprisoncore.gems.managers.GemsManager;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
@@ -117,7 +118,7 @@ public final class UltraPrisonGems implements UltraPrisonModule {
                         if (subCommand.canExecute(c.sender())) {
                             subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
                         } else {
-                            c.sender().sendMessage(this.getMessage("no_permission"));
+							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
                         }
                     } else {
                         OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));

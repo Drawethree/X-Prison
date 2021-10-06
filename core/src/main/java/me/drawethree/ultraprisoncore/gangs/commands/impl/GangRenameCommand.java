@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.enums.GangRenameResult;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
+import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,14 +32,14 @@ public class GangRenameCommand extends GangCommand {
 			Optional<Gang> gangOptional = this.plugin.getGangsManager().getPlayerGang(p);
 
 			if (!gangOptional.isPresent()) {
-				p.sendMessage(this.plugin.getMessage("not-in-gang"));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not-in-gang"));
 				return false;
 			}
 
 			Gang gang = gangOptional.get();
 
 			if (!gang.isOwner(p)) {
-				p.sendMessage(this.plugin.getMessage("gang-not-owner"));
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-not-owner"));
 				return false;
 			}
 
