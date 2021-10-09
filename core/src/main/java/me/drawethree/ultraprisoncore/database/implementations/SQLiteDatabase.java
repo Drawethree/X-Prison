@@ -20,7 +20,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class SQLiteDatabase extends SQLDatabase {
 
@@ -54,7 +53,7 @@ public class SQLiteDatabase extends SQLDatabase {
 		hikari.setMaxLifetime(MAX_LIFETIME);
 		hikari.setConnectionTimeout(0);
 		hikari.setMaximumPoolSize(1);
-		hikari.setLeakDetectionThreshold(TimeUnit.SECONDS.toMillis(10));
+		hikari.setLeakDetectionThreshold(0);
 
 		this.hikari = new HikariDataSource(hikari);
 

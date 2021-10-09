@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.utils.RegionUtils;
 import me.lucko.helper.time.Time;
@@ -60,7 +61,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 					for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
 						for (int y = selection.getMinimumPoint().getBlockY(); y <= selection.getMaximumPoint().getBlockY(); y++) {
 							Block b1 = b.getWorld().getBlockAt(x, y, z);
-							if (b1 == null || b1.getType() == Material.AIR) {
+							if (b1.getType() == Material.AIR) {
 								continue;
 							}
 							blockCount++;
@@ -84,7 +85,10 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 				}
 
 				if (this.plugin.isMinesModule()) {
-					plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation()).handleBlockBreak(blocksAffected);
+					Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
+					if (mine != null) {
+						mine.handleBlockBreak(blocksAffected);
+					}
 				}
 
 				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
@@ -123,6 +127,4 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 	public String getAuthor() {
 		return "Drawethree";
 	}
-
-
 }

@@ -278,4 +278,10 @@ public class MineManager {
 		}
 		return false;
 	}
+
+	public void resetAllMines() {
+		for (Mine mine : this.getMines()) {
+			mine.resetMine();
+		}
+	}
 }

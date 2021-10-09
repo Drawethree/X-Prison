@@ -143,6 +143,7 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige", event -> plugin.getRanks().getApi().getPlayerPrestige(event.getPlayer()).getPrefix());
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige_id", event -> String.valueOf(plugin.getRanks().getApi().getPlayerPrestige(event.getPlayer()).getId()));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress", event -> String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_raw", event -> String.valueOf(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost", event -> String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_formatted", event -> formatNumber(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
 	}

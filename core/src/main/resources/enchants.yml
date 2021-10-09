@@ -382,18 +382,7 @@ enchants:
     Chance: 5.0E-6
     Cost: 225
     Description:
-      - '&7&o(( Ability to give everyone global boosters while mining ))'
-    Commands:
-      - tempGlobalMultiplier 0.1 5 minutes
-      - tempGlobalMultiplier 0.09 5 minutes
-      - tempGlobalMultiplier 0.08 5 minutes
-      - tempGlobalMultiplier 0.07 5 minutes
-      - tempGlobalMultiplier 0.06 5 minutes
-      - tempGlobalMultiplier 0.05 5 minutes
-      - tempGlobalMultiplier 0.04 5 minutes
-      - tempGlobalMultiplier 0.03 5 minutes
-      - tempGlobalMultiplier 0.02 5 minutes
-      - tempGlobalMultiplier 0.01 5 minutes
+      - '&7&o(( Ability to receive x2 Blocks for 1 Minute while mining))'
     Refund:
       Enabled: true
       InGuiSlot: 43

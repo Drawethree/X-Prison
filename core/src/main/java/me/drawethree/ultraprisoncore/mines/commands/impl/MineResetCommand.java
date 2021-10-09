@@ -20,6 +20,13 @@ public class MineResetCommand extends MineCommand {
 			return false;
 		}
 
+		if ("all".equalsIgnoreCase(args.get(0))) {
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_all_reset_started"));
+			this.plugin.getManager().resetAllMines();
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_all_reset_success"));
+			return true;
+		}
+
 		Mine mine = this.plugin.getManager().getMineByName(args.get(0));
 
 		if (mine == null) {

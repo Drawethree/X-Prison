@@ -42,10 +42,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -55,7 +54,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	private static boolean DEBUG_MODE = false;
 
-	private Map<String, UltraPrisonModule> loadedModules;
+	private LinkedHashMap<String, UltraPrisonModule> loadedModules;
 
 	@Getter
 	private static UltraPrisonCore instance;
@@ -93,7 +92,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			return;
 		}
 
-		this.loadedModules = new HashMap<>();
+		this.loadedModules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 

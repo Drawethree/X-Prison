@@ -150,6 +150,8 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				Rank nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
 				return nextRank == null ? "" : nextRank.getPrefix();
 			}
+			case "next_rank_cost_raw":
+				return String.valueOf(plugin.getRanks().getRankManager().getNextRankCost(player));
 			case "next_rank_cost":
 				return String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(player));
 			case "next_rank_cost_formatted":
