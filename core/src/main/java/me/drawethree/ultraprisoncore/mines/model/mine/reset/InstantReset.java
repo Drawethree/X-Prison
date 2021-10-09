@@ -19,9 +19,11 @@ public class InstantReset extends ResetType {
 
 	@Override
 	public void reset(Mine mine, BlockPalette blockPalette) {
+
 		if (blockPalette.isEmpty()) {
 			blockPalette.addToPalette(CompMaterial.STONE, 100.0);
 		}
+
 		RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getMaterials(), blockPalette::getPercentage);
 
 		Position min = mine.getMineRegion().getMin();

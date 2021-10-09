@@ -21,6 +21,9 @@ public class GradualReset extends ResetType {
 
 	@Override
 	public void reset(Mine paramMine, BlockPalette blockPalette) {
+		if (blockPalette.isEmpty()) {
+			blockPalette.addToPalette(CompMaterial.STONE, 100.0);
+		}
 		this.schedule(paramMine, blockPalette, paramMine.getBlocksIterator());
 	}
 
@@ -28,9 +31,6 @@ public class GradualReset extends ResetType {
 	private void schedule(final Mine mine, BlockPalette blockPalette, Iterator<Block> blocksIterator) {
 		Schedulers.sync().runLater(() -> {
 			int changes = 0;
-			if (blockPalette.isEmpty()) {
-				blockPalette.addToPalette(CompMaterial.STONE, 100.0);
-			}
 			RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getMaterials(), blockPalette::getPercentage);
 			while (blocksIterator.hasNext() && changes <= CHANGES_PER_TICK) {
 				CompMaterial pick = selector.pick();

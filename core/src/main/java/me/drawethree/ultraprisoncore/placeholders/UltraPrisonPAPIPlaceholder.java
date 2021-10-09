@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.placeholders;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
+import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
@@ -107,7 +108,27 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 	public String onPlaceholderRequest(Player player, String identifier) {
 
 		if (player == null) {
-			return "";
+			return null;
+		}
+
+		if (identifier.startsWith("mine_")) {
+
+			String mineName = identifier.replace("mine_","").split("_")[0];
+			Mine mine = plugin.getMines().getManager().getMineByName(mineName);
+
+			if (mine == null) {
+				return null;
+			}
+
+			String placeholder = identifier.replace("mine_" + mineName + "_","");
+			switch (placeholder.toLowerCase()) {
+				case "blocks_left": {
+					return String.format("%,d", mine.getCurrentBlocks());
+				}
+				case "blocks_left_percentage": {
+					return String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D);
+				}
+			}
 		}
 
 		switch (identifier.toLowerCase()) {

@@ -39,7 +39,7 @@ public class UltraPrisonMVdWPlaceholder {
 		this.registerRanksPlaceholders();
 		this.registerPickaxeLevelsPlaceholders();
 		this.registerAutoSellPlaceholders();
-		//this.registerMinesPlaceholders();
+		this.registerMinesPlaceholders();
 	}
 
 	private void registerAutoSellPlaceholders() {
@@ -217,7 +217,8 @@ public class UltraPrisonMVdWPlaceholder {
 		}
 
 		for (Mine mine : this.plugin.getMines().getManager().getMines()) {
-			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_blocks_left", event -> String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D));
+			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_blocks_left", event -> String.format("%,d", mine.getCurrentBlocks()));
+			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_blocks_left_percentage", event -> String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D));
 		}
 	}
 
