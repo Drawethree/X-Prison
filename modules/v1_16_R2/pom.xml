@@ -11,7 +11,7 @@
     <parent>
         <groupId>me.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.6.20</version>
+        <version>1.6.21</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <build>
