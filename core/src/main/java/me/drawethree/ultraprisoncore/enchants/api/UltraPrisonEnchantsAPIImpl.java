@@ -18,7 +18,7 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
 
     @Override
     public HashMap<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack pickAxe) {
-        return this.enchantsManager.getPlayerEnchants(pickAxe);
+        return this.enchantsManager.getItemEnchants(pickAxe);
     }
 
     @Override

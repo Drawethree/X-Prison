@@ -66,7 +66,7 @@ public class EnchantsManager {
 	}
 
 
-	public HashMap<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack pickAxe) {
+	public HashMap<UltraPrisonEnchantment, Integer> getItemEnchants(ItemStack pickAxe) {
 		HashMap<UltraPrisonEnchantment, Integer> returnMap = new HashMap<>();
 		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
 			int level = this.getEnchantLevel(pickAxe, enchantment.getId());
@@ -216,14 +216,14 @@ public class EnchantsManager {
 	}
 
 	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
+		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
 		}
 	}
 
 	public void handlePickaxeEquip(Player p, ItemStack newItem) {
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
+		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			enchantment.onEquip(p, newItem, playerEnchants.get(enchantment));
 		}
@@ -231,7 +231,7 @@ public class EnchantsManager {
 
 	public void handlePickaxeUnequip(Player p, ItemStack newItem) {
 		p.getActivePotionEffects().forEach(effect -> p.removePotionEffect(effect.getType()));
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(newItem);
+		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
 		}
@@ -640,7 +640,7 @@ public class EnchantsManager {
 
 	public long getPickaxeValue(ItemStack pickAxe) {
 		long sum = 0;
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getPlayerEnchants(pickAxe);
+		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			for (int i = 1; i <= playerEnchants.get(enchantment); i++) {
 				sum += enchantment.getCostOfLevel(i);
@@ -722,6 +722,10 @@ public class EnchantsManager {
 		return pickaxe;
 	}
 
+	public boolean isEnchanted(ItemStack pickaxe) {
+		return pickaxe != null && !this.getItemEnchants(pickaxe).isEmpty();
+	}
+
 	public ItemStack createFirstJoinPickaxe(Player player) {
 		ItemStack item = ItemStackBuilder.of(this.firstJoinPickaxeMaterial.toItem()).name(this.firstJoinPickaxeName.replace("%player%", player.getName())).build();
 		for (String s : this.firstJoinPickaxeEnchants) {
@@ -739,6 +743,6 @@ public class EnchantsManager {
 	}
 
 	public boolean hasEnchants(ItemStack item) {
-		return !this.getPlayerEnchants(item).isEmpty();
+		return !this.getItemEnchants(item).isEmpty();
 	}
 }

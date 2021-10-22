@@ -15,6 +15,7 @@ import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.cooldown.Cooldown;
@@ -28,10 +29,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
@@ -330,6 +333,18 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					ItemStack firstJoinPickaxe = this.enchantsManager.createFirstJoinPickaxe(e.getPlayer());
 					e.getPlayer().getInventory().addItem(firstJoinPickaxe);
 				}).bindWith(core);
+		//Grindstone disenchanting - disable
+		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_14)) {
+			Events.subscribe(InventoryClickEvent.class)
+					.filter(e -> e.getInventory() instanceof GrindstoneInventory)
+					.handler(e -> {
+						ItemStack item1 = e.getInventory().getItem(0);
+						ItemStack item2 = e.getInventory().getItem(1);
+						if (e.getSlot() == 2 && (this.enchantsManager.isEnchanted(item1) || this.enchantsManager.isEnchanted(item2))) {
+							e.setCancelled(true);
+						}
+					}).bindWith(core);
+		}
 	}
 
 	public String getMessage(String key) {
