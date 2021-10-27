@@ -10,10 +10,18 @@ import me.drawethree.ultraprisoncore.gems.commands.*;
 import me.drawethree.ultraprisoncore.gems.managers.GemsManager;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
+import me.lucko.helper.Events;
+import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
 
@@ -85,14 +93,19 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     }
 
     private void registerEvents() {
-        /*Events.subscribe(PlayerInteractEvent.class)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == Material.DOUBLE_PLANT && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+        Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+                .filter(e -> e.getItem() != null && e.getItem().getType() == this.gemsManager.getGemsItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
                 .handler(e -> {
                     if (e.getItem().hasItemMeta()) {
-                        this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking());
+                        e.setCancelled(true);
+                        e.setUseInteractedBlock(Event.Result.DENY);
+                        boolean offHandClick = false;
+                        if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
+                            offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
+                        }
+                        this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
                     }
-                })
-                .bindWith(core);*/
+                }).bindWith(core);
     }
 
     private void registerCommands() {
@@ -104,6 +117,7 @@ public final class UltraPrisonGems implements UltraPrisonModule {
         this.commands.put("set", new GemsSetCommand(this));
         this.commands.put("help", new GemsHelpCommand(this));
         this.commands.put("pay", new GemsPayCommand(this));
+        this.commands.put("withdraw", new GemsWithdrawCommand(this));
 
         Commands.create()
                 .handler(c -> {

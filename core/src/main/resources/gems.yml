@@ -19,3 +19,9 @@ messages:
   top_spacer_line_bottom: "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   top_updating: "&c&lLeaderboard is currently updating..."
   top_weekly_reset: "&7&oTime Left: %time%"
+gems:
+  item:
+    material: EMERALD
+    name: "&a&l%amount% &2&lGEMS"
+    lore:
+      - "&7Right-Click to Redeem"

@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.gems.managers;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerGemsReceiveEvent;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
@@ -12,6 +13,7 @@ import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -22,10 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class GemsManager {
@@ -39,6 +38,10 @@ public class GemsManager {
     private LinkedHashMap<UUID, Long> top10Gems = new LinkedHashMap<>();
     private Task task;
     private boolean updating;
+
+    private String gemsItemDisplayName;
+    private ItemStack gemsItem;
+    private List<String> gemsItemLore;
 
     public GemsManager(UltraPrisonGems plugin) {
         this.plugin = plugin;
@@ -63,6 +66,10 @@ public class GemsManager {
         this.SPACER_LINE = plugin.getMessage("top_spacer_line");
         this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
         this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
+        this.gemsItemDisplayName = plugin.getConfig().get().getString("gems.item.name");
+        this.gemsItemLore = plugin.getConfig().get().getStringList("gems.item.lore");
+        this.gemsItem = CompMaterial.fromString(plugin.getConfig().get().getString("gems.item.material")).toItem();
+
     }
 
     public void stopUpdating() {
@@ -163,28 +170,34 @@ public class GemsManager {
 
     }
 
-    public void redeemGems(Player p, ItemStack item, boolean shiftClick) {
-        String displayName = ChatColor.stripColor(item.getItemMeta().getDisplayName());
-        displayName = displayName.replace(" gems", "").replace(",", "");
-        try {
-            long tokenAmount = Long.parseLong(displayName);
+    public void redeemGems(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
+        NBTItem nbtItem = new NBTItem(item);
+        if (nbtItem.hasKey("gems-amount")) {
+            long gemsAmount = nbtItem.getLong("gems-amount");
             int itemAmount = item.getAmount();
             if (shiftClick) {
-                p.setItemInHand(null);
-                this.giveGems(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
-				PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount * itemAmount)));
-            } else {
-                this.giveGems(p, tokenAmount, null, ReceiveCause.REDEEM);
-                if (item.getAmount() == 1) {
+                if (offhand) {
+                    p.getInventory().setItemInOffHand(null);
+                } else {
                     p.setItemInHand(null);
+                }
+                this.giveGems(p, gemsAmount * itemAmount, null, ReceiveCause.REDEEM);
+                PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", gemsAmount * itemAmount)));
+            } else {
+                this.giveGems(p, gemsAmount, null, ReceiveCause.REDEEM);
+                if (item.getAmount() == 1) {
+                    if (offhand) {
+                        p.getInventory().setItemInOffHand(null);
+                    } else {
+                        p.setItemInHand(null);
+                    }
                 } else {
                     item.setAmount(item.getAmount() - 1);
                 }
-				PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", tokenAmount)));
+                PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", gemsAmount)));
             }
-        } catch (Exception e) {
-            //Not a token item
-			PlayerUtils.sendMessage(p, plugin.getMessage("not_gems_item"));
+        } else {
+            PlayerUtils.sendMessage(p, plugin.getMessage("not_gems_item"));
         }
     }
 
@@ -208,7 +221,7 @@ public class GemsManager {
             long totalAmount = amount * value;
 
             if (this.getPlayerGems(executor) < totalAmount) {
-				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_gems"));
+                PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_gems"));
                 return;
             }
 
@@ -223,7 +236,7 @@ public class GemsManager {
                 });
             }
 
-			PlayerUtils.sendMessage(executor, plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
+            PlayerUtils.sendMessage(executor, plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
         });
     }
 
@@ -255,8 +268,11 @@ public class GemsManager {
         });
     }
 
-    public static ItemStack createGemsItem(long amount, int value) {
-        return ItemStackBuilder.of(CompMaterial.SUNFLOWER.toItem()).amount(value).name("&e&l" + String.format("%,d", amount) + " GEMS").lore("&7Right-Click to Redeem").enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+    private ItemStack createGemsItem(long amount, int value) {
+        ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+        NBTItem nbt = new NBTItem(item);
+        nbt.setLong("gems-amount", amount);
+        return nbt.getItem();
     }
 
     public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {
@@ -304,5 +320,9 @@ public class GemsManager {
             }
 			PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE_BOTTOM));
         });
+    }
+
+    public Material getGemsItemMaterial() {
+        return this.gemsItem.getType();
     }
 }
