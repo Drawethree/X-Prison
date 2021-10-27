@@ -9,7 +9,7 @@ placeholders:
 messages:
   no-permission: "&e&lGANGS &8» &cYou do not have permission!"
   gang-already-exists: "&e&lGANGS &8» &cGang with that name or similar name already exists!"
-  gang-not-exists: "&e&lGANGS &8» &cGang with that name or does not exist!"
+  gang-not-exists: "&e&lGANGS &8» &cGang with that name does not exist!"
   gang-created: "&e&lGANGS &8» &aYou have created gang &e%name%&a!"
   not-in-gang: "&e&lGANGS &8» &cYou are not in gang!"
   gang-not-owner: "&e&lGANGS &8» &cOnly gang leader is allowed to do that!"

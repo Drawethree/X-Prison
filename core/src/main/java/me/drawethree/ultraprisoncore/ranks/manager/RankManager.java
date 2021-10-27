@@ -299,7 +299,7 @@ public class RankManager {
 		Events.callSync(event);
 
 		if (event.isCancelled()) {
-			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.");
+			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.", this.plugin);
 			return false;
 		}
 
@@ -341,7 +341,7 @@ public class RankManager {
 		Events.callSync(event);
 
 		if (event.isCancelled()) {
-			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.");
+			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.", this.plugin);
 			return false;
 		}
 
@@ -410,7 +410,7 @@ public class RankManager {
 		Events.callSync(event);
 
 		if (event.isCancelled()) {
-			this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.");
+			this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);
 			return false;
 		}
 
@@ -511,7 +511,7 @@ public class RankManager {
 			Events.callSync(event);
 
 			if (event.isCancelled()) {
-				this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.");
+				this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);
 				continue;
 			}
 
@@ -641,7 +641,7 @@ public class RankManager {
 		Events.callSync(event);
 
 		if (event.isCancelled()) {
-			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.");
+			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.", this.plugin);
 			return false;
 		}
 

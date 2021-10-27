@@ -5,6 +5,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPI;
 import me.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPIImpl;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
@@ -142,6 +143,16 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		return MODULE_NAME;
 	}
 
+	@Override
+	public String[] getTables() {
+		return new String[0];
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		return new String[0];
+	}
+
 	private void registerCommands() {
 
 
@@ -207,7 +218,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					}
 
 					int pickaxeSlot = this.enchantsManager.getInventorySlot(c.sender(), pickAxe);
-					this.core.debug("Pickaxe slot is: " + pickaxeSlot);
+					this.core.debug("Pickaxe slot is: " + pickaxeSlot, this);
 					new DisenchantGUI(c.sender(), pickAxe, pickaxeSlot).open();
 				}).registerAndBind(core, "disenchant", "dise", "de", "disenchantmenu", "dismenu");
 
@@ -222,7 +233,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					}
 
 					int pickaxeSlot = this.enchantsManager.getInventorySlot(c.sender(), pickAxe);
-					this.core.debug("Pickaxe slot is: " + pickaxeSlot);
+					this.core.debug("Pickaxe slot is: " + pickaxeSlot, this);
 					new EnchantGUI(c.sender(), pickAxe, pickaxeSlot).open();
 				}).registerAndBind(core, "enchantmenu", "enchmenu");
 
@@ -287,7 +298,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					e.setCancelled(true);
 					ItemStack pickAxe = e.getItem();
 					int pickaxeSlot = this.enchantsManager.getInventorySlot(e.getPlayer(), pickAxe);
-					this.core.debug("Pickaxe slot is: " + pickaxeSlot);
+					this.core.debug("Pickaxe slot is: " + pickaxeSlot, this);
 					new EnchantGUI(e.getPlayer(), pickAxe, pickaxeSlot).open();
 				}).bindWith(core);
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)

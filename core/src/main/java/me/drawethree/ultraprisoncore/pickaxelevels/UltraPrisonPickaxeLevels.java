@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
@@ -157,6 +158,16 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
+	}
+
+	@Override
+	public String[] getTables() {
+		return new String[0];
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		return new String[0];
 	}
 
 	private void registerCommands() {

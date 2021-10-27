@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
@@ -42,6 +43,9 @@ import java.util.stream.Collectors;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
 
+	public static final String TABLE_NAME_TOKENS = "UltraPrison_Tokens";
+	public static final String TABLE_NAME_BLOCKS = "UltraPrison_BlocksBroken";
+	public static final String TABLE_NAME_BLOCKS_WEEKLY = "UltraPrison_BlocksBrokenWeekly";
 	public static final String MODULE_NAME = "Tokens";
 	public static final String TOKENS_ADMIN_PERM = "ultraprison.tokens.admin";
 
@@ -144,6 +148,27 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		return MODULE_NAME;
 	}
 
+	@Override
+	public String[] getTables() {
+		return new String[]{TABLE_NAME_BLOCKS, TABLE_NAME_TOKENS, TABLE_NAME_BLOCKS_WEEKLY};
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		switch (type) {
+			case MYSQL:
+			case SQLITE: {
+				return new String[]{
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKENS + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))",
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_BLOCKS + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))",
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_BLOCKS_WEEKLY + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))"
+				};
+			}
+			default:
+				throw new IllegalStateException("Unsupported Database type: " + type);
+		}
+	}
+
 	private void registerEvents() {
 
 		Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
@@ -200,7 +225,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		if (totalAmount > 0) {
 			tokensManager.giveTokens(p, totalAmount, null, ReceiveCause.MINING);
 		}
-		this.getCore().debug("UltraPrisonTokens::handleBlockBreak >> Took " + (System.currentTimeMillis() - startTime) + " ms.");
+		this.getCore().debug("UltraPrisonTokens::handleBlockBreak >> Took " + (System.currentTimeMillis() - startTime) + " ms.", this);
 	}
 
 	private void registerCommands() {

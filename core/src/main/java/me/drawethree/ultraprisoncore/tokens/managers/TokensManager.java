@@ -138,7 +138,7 @@ public class TokensManager {
 					blocksCache.remove(player.getUniqueId());
 					blocksCacheWeekly.remove(player.getUniqueId());
 				}
-				this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
+				this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
 			});
 		} else {
 			this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
@@ -149,7 +149,7 @@ public class TokensManager {
 				blocksCache.remove(player.getUniqueId());
 				blocksCacheWeekly.remove(player.getUniqueId());
 			}
-			this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
+			this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
 		}
 	}
 
@@ -215,11 +215,11 @@ public class TokensManager {
 		Schedulers.async().run(() -> {
 			long currentTokens = getPlayerTokens(p);
 
-			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens);
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens, this.plugin);
 
 			UltraPrisonPlayerTokensReceiveEvent event = new UltraPrisonPlayerTokensReceiveEvent(cause, p, amount);
 
-			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Original amount :: " + amount);
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Original amount :: " + amount, this.plugin);
 
 			Events.callSync(event);
 
@@ -235,7 +235,7 @@ public class TokensManager {
 				finalAmount = (long) this.plugin.getCore().getMultipliers().getApi().getTotalToDeposit((Player) p, finalAmount, MultiplierType.TOKENS);
 			}
 
-			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount);
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
 
 			if (!p.isOnline()) {
 				this.plugin.getCore().getPluginDatabase().updateTokens(p, finalAmount + currentTokens);
@@ -250,7 +250,7 @@ public class TokensManager {
 				}
 			}
 
-			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L));
+			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L), this.plugin);
 
 			if (executor != null && !(executor instanceof ConsoleCommandSender)) {
 				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
@@ -543,23 +543,23 @@ public class TokensManager {
 
 	private void updateTokensTop() {
 		top10Tokens = new LinkedHashMap<>();
-		this.plugin.getCore().debug("Starting updating TokensTop");
+		this.plugin.getCore().debug("Starting updating TokensTop", this.plugin);
 		this.top10Tokens = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Tokens();
-		this.plugin.getCore().debug("TokensTop updated!");
+		this.plugin.getCore().debug("TokensTop updated!", this.plugin);
 	}
 
 	private void updateBlocksTop() {
 		top10Blocks = new LinkedHashMap<>();
-		this.plugin.getCore().debug("Starting updating BlocksTop");
+		this.plugin.getCore().debug("Starting updating BlocksTop", this.plugin);
 		this.top10Blocks = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Blocks();
-		this.plugin.getCore().debug("BlocksTop updated!");
+		this.plugin.getCore().debug("BlocksTop updated!", this.plugin);
 	}
 
 	private void updateBlocksTopWeekly() {
 		top10BlocksWeekly = new LinkedHashMap<>();
-		this.plugin.getCore().debug("Starting updating BlocksTop - Weekly");
+		this.plugin.getCore().debug("Starting updating BlocksTop - Weekly", this.plugin);
 		this.top10BlocksWeekly = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10BlocksWeekly();
-		this.plugin.getCore().debug("BlocksTop updated!");
+		this.plugin.getCore().debug("BlocksTop updated!", this.plugin);
 	}
 
 	public void sendTokensTop(CommandSender sender) {

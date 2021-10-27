@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
 import me.drawethree.ultraprisoncore.gems.commands.*;
@@ -14,7 +15,6 @@ import me.lucko.helper.Events;
 import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -27,8 +27,8 @@ import java.util.HashMap;
 
 public final class UltraPrisonGems implements UltraPrisonModule {
 
+	public static final String TABLE_NAME = "UltraPrison_Gems";
     public static final String MODULE_NAME = "Gems";
-
     public static final String GEMS_ADMIN_PERM = "ultraprison.gems.admin";
 
     @Getter
@@ -91,6 +91,23 @@ public final class UltraPrisonGems implements UltraPrisonModule {
     public String getName() {
         return MODULE_NAME;
     }
+
+	@Override
+	public String[] getTables() {
+		return new String[]{TABLE_NAME};
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		switch (type) {
+			case SQLITE:
+			case MYSQL: {
+				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))"};
+			}
+			default:
+				throw new IllegalStateException("Unsupported Database type: " + type);
+		}
+	}
 
     private void registerEvents() {
         Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)

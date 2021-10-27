@@ -3,9 +3,16 @@ package me.drawethree.ultraprisoncore.database.implementations;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.database.SQLDatabase;
+import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
+import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
+import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
+import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Log;
 import org.bukkit.OfflinePlayer;
@@ -39,6 +46,11 @@ public class SQLiteDatabase extends SQLDatabase {
 	}
 
 	@Override
+	public DatabaseType getDatabaseType() {
+		return DatabaseType.SQLITE;
+	}
+
+	@Override
 	public void connect() {
 
 		final HikariConfig hikari = new HikariConfig();
@@ -56,8 +68,6 @@ public class SQLiteDatabase extends SQLDatabase {
 		hikari.setLeakDetectionThreshold(0);
 
 		this.hikari = new HikariDataSource(hikari);
-
-		this.createTables();
 	}
 
 	private void createDBFile() {
@@ -74,15 +84,6 @@ public class SQLiteDatabase extends SQLDatabase {
 	public void createTables() {
 		Schedulers.async().run(() -> {
 
-			execute("CREATE TABLE IF NOT EXISTS " + RANKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + TOKENS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + GEMS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + BLOCKS_WEEKLY_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + MULTIPLIERS_TOKEN_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + AUTOMINER_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
-			execute("CREATE TABLE IF NOT EXISTS " + GANGS_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))");
 			execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
 
 			// v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table
@@ -124,37 +125,37 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	@Override
 	public void addIntoTokens(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.TOKENS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_TOKENS + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoRanksAndPrestiges(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.RANKS_TABLE_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
+		this.execute("INSERT OR IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
 	}
 
 	@Override
 	public void addIntoBlocks(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_BLOCKS + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoBlocksWeekly(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.BLOCKS_WEEKLY_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_BLOCKS_WEEKLY + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoGems(OfflinePlayer player) {
-		this.execute("INSERT OR IGNORE INTO " + MySQLDatabase.GEMS_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT OR IGNORE INTO " + UltraPrisonGems.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void createGang(Gang g) {
-		this.executeAsync("INSERT OR IGNORE INTO " + MySQLDatabase.GANGS_TABLE_NAME + "(name,owner,members) VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
+		this.executeAsync("INSERT OR IGNORE INTO " + UltraPrisonGangs.TABLE_NAME + "(name,owner,members) VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
 	}
 
 	@Override
 	public void saveAutoMiner(Player p, int timeLeft) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.AUTOMINER_TABLE_NAME + " VALUES (?,?) ")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + UltraPrisonAutoMiner.TABLE_NAME + " VALUES (?,?) ")) {
 			statement.setString(1, p.getUniqueId().toString());
 			statement.setInt(2, timeLeft);
 			statement.execute();
@@ -165,7 +166,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	@Override
 	public void saveSellMultiplier(Player player, PlayerMultiplier multiplier) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TABLE_NAME + " VALUES(?,?,?)")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + UltraPrisonMultipliers.TABLE_NAME + " VALUES(?,?,?)")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
 			statement.setLong(3, multiplier.getEndTime());
@@ -178,7 +179,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
 	@Override
 	public void saveTokenMultiplier(Player player, PlayerMultiplier multiplier) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + MySQLDatabase.MULTIPLIERS_TOKEN_TABLE_NAME + " VALUES(?,?,?)")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + UltraPrisonMultipliers.TABLE_NAME_TOKEN + " VALUES(?,?,?)")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
 			statement.setLong(3, multiplier.getEndTime());
@@ -197,7 +198,7 @@ public class SQLiteDatabase extends SQLDatabase {
 	@Override
 	public List<Gang> getAllGangs() {
 		List<Gang> returnList = new ArrayList<>();
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + MySQLDatabase.GANGS_TABLE_NAME)) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.TABLE_NAME)) {
 			try (ResultSet set = statement.executeQuery()) {
 				while (set.next()) {
 
@@ -208,7 +209,7 @@ public class SQLiteDatabase extends SQLDatabase {
 						gangUUID = UUID.fromString(set.getString(GANGS_UUID_COLNAME));
 					} catch (Exception e) {
 						gangUUID = UUID.randomUUID();
-						try (PreparedStatement statement1 = con.prepareStatement("UPDATE " + GANGS_TABLE_NAME + " SET " + GANGS_UUID_COLNAME + "=? WHERE " + GANGS_NAME_COLNAME + "=?")) {
+						try (PreparedStatement statement1 = con.prepareStatement("UPDATE " + UltraPrisonGangs.TABLE_NAME + " SET " + GANGS_UUID_COLNAME + "=? WHERE " + GANGS_NAME_COLNAME + "=?")) {
 							statement1.setString(1, gangUUID.toString());
 							statement1.setString(2, gangName);
 							statement1.execute();

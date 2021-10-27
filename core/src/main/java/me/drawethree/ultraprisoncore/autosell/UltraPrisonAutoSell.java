@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPI;
 import me.drawethree.ultraprisoncore.autosell.api.UltraPrisonAutoSellAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
@@ -293,6 +294,16 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 		return MODULE_NAME;
 	}
 
+	@Override
+	public String[] getTables() {
+		return new String[0];
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		return new String[0];
+	}
+
 	private void registerCommands() {
 		Commands.create()
 				.assertPlayer()
@@ -410,7 +421,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 			return;
 		}
 
-		this.core.debug("User " + sender.getName() + " ran /sellall in region " + region.getId());
+		this.core.debug("User " + sender.getName() + " ran /sellall in region " + region.getId(), this);
 
 		if (regionsAutoSell.containsKey(region.getId())) {
 
@@ -443,7 +454,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				Events.callSync(event);
 
 				if (event.isCancelled()) {
-					this.core.debug("UltraPrisonSellAllEvent was cancelled.");
+					this.core.debug("UltraPrisonSellAllEvent was cancelled.", this);
 					return;
 				}
 

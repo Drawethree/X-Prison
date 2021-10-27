@@ -5,6 +5,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
@@ -22,7 +23,7 @@ import java.util.Objects;
 public final class UltraPrisonGangs implements UltraPrisonModule {
 
     public static final String MODULE_NAME = "Gangs";
-
+	public static final String TABLE_NAME = "UltraPrison_Gangs";
     public static final String GANGS_ADMIN_PERM = "ultraprison.gangs.admin";
 
     @Getter
@@ -108,6 +109,23 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     public String getName() {
         return MODULE_NAME;
     }
+
+	@Override
+	public String[] getTables() {
+		return new String[]{TABLE_NAME};
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		switch (type) {
+			case SQLITE:
+			case MYSQL: {
+				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))"};
+			}
+			default:
+				throw new IllegalStateException("Unsupported Database type: " + type);
+		}
+	}
 
     private void registerEvents() {
     }

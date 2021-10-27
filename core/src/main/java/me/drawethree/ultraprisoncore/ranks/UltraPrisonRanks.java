@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPI;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPIImpl;
 import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
@@ -22,6 +23,7 @@ import java.util.UUID;
 @Getter
 public final class UltraPrisonRanks implements UltraPrisonModule {
 
+    public static final String TABLE_NAME = "UltraPrison_Ranks";
     public static final String MODULE_NAME = "Ranks & Prestiges";
 
     @Getter
@@ -92,6 +94,25 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
     @Override
     public String getName() {
         return MODULE_NAME;
+    }
+
+    @Override
+    public String[] getTables() {
+        return new String[]{TABLE_NAME};
+    }
+
+    @Override
+    public String[] getCreateTablesSQL(DatabaseType type) {
+        switch (type) {
+            case MYSQL:
+            case SQLITE: {
+                return new String[]{
+                        "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, id_prestige bigint, primary key (UUID))"
+                };
+            }
+            default:
+                throw new IllegalStateException("Unsupported Database type: " + type);
+        }
     }
 
     private void registerCommands() {

@@ -6,6 +6,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPI;
 import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPIImpl;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 
+	public static final String TABLE_NAME = "UltraPrison_AutoMiner";
     public static final String MODULE_NAME = "Auto Miner";
 
     @Getter
@@ -177,6 +179,23 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     public String getName() {
         return MODULE_NAME;
     }
+
+	@Override
+	public String[] getTables() {
+		return new String[]{TABLE_NAME};
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		switch (type) {
+			case SQLITE:
+			case MYSQL: {
+				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))"};
+			}
+			default:
+				throw new IllegalStateException("Unsupported Database type: " + type);
+		}
+	}
 
     private void registerCommands() {
         Commands.create()

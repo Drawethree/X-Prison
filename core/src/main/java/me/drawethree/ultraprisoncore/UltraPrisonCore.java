@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -52,9 +53,10 @@ import java.util.stream.Collectors;
 public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
-	private static boolean DEBUG_MODE = false;
+	private static final int METRICS_SERVICE_ID = 10520;
+	private static boolean DEBUG_MODE;
 
-	private LinkedHashMap<String, UltraPrisonModule> loadedModules;
+	private LinkedHashMap<String, UltraPrisonModule> modules;
 
 	@Getter
 	private static UltraPrisonCore instance;
@@ -87,55 +89,18 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 		instance = this;
 
+		this.fileManager = new FileManager(this);
+		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
+		DEBUG_MODE = this.getConfig().getBoolean("debug-mode", false);
+
 		if (!loadNMSProvider()) {
 			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
-		this.loadedModules = new LinkedHashMap<>();
-		this.fileManager = new FileManager(this);
-		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
-
-		try {
-			String databaseType = this.getConfig().getString("database_type");
-
-			if (databaseType.equalsIgnoreCase("sqlite")) {
-				this.pluginDatabase = new SQLiteDatabase(this);
-			} else if (databaseType.equalsIgnoreCase("mysql")) {
-				this.pluginDatabase = new MySQLDatabase(this, DatabaseCredentials.fromConfig(this.getConfig()));
-			} else {
-				this.getLogger().warning(String.format("Error! Unknown database type: %s. Disabling plugin.", databaseType));
-				this.getServer().getPluginManager().disablePlugin(this);
-				return;
-			}
-
-		} catch (Exception e) {
-			this.getLogger().warning("Could not maintain Database Connection. Disabling plugin.");
-
-			e.printStackTrace();
-
-			this.getServer().getPluginManager().disablePlugin(this);
+		if (!this.initDatabase()) {
 			return;
 		}
-
-		this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(CompMaterial::fromString).map(CompMaterial::getMaterial).collect(Collectors.toList());
-
-		for (Material m : this.supportedPickaxes) {
-			this.getLogger().info("Added support for " + m);
-		}
-
-		this.tokens = new UltraPrisonTokens(this);
-		this.gems = new UltraPrisonGems(this);
-		this.ranks = new UltraPrisonRanks(this);
-		this.multipliers = new UltraPrisonMultipliers(this);
-		this.enchants = new UltraPrisonEnchants(this);
-		this.autoSell = new UltraPrisonAutoSell(this);
-		this.autoMiner = new UltraPrisonAutoMiner(this);
-		this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
-		this.gangs = new UltraPrisonGangs(this);
-		this.mines = new UltraPrisonMines(this);
-
-		SkullUtils.init();
 
 		if (!this.setupEconomy()) {
 			this.getLogger().warning("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin...");
@@ -145,8 +110,32 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			this.getLogger().info("Economy provider for Vault found - " + this.getEconomy().getName());
 		}
 
-		this.ultraBackpacksEnabled = this.getServer().getPluginManager().isPluginEnabled("UltraBackpacks");
+		this.initModules();
+		this.pluginDatabase.createTables();
+		this.loadModules();
+		this.initVariables();
 
+		this.registerPlaceholders();
+		this.registerJetsPrisonMines();
+
+		this.registerMainEvents();
+		this.registerMainCommand();
+		this.startMetrics();
+
+		SkullUtils.init();
+	}
+
+	private void initVariables() {
+		this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(CompMaterial::fromString).map(CompMaterial::getMaterial).collect(Collectors.toList());
+
+		for (Material m : this.supportedPickaxes) {
+			this.getLogger().info("Added support for " + m);
+		}
+
+		this.ultraBackpacksEnabled = this.getServer().getPluginManager().isPluginEnabled("UltraBackpacks");
+	}
+
+	private void loadModules() {
 		if (this.getConfig().getBoolean("modules.tokens")) {
 			this.loadModule(tokens);
 		}
@@ -191,13 +180,55 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 				this.loadModule(pickaxeLevels);
 			}
 		}
+	}
 
-		this.registerPlaceholders();
-		this.registerJetsPrisonMines();
+	private boolean initDatabase() {
+		try {
+			String databaseType = this.getConfig().getString("database_type");
 
-		this.registerMainEvents();
-		this.registerMainCommand();
-		this.startMetrics();
+			if (databaseType.equalsIgnoreCase("sqlite")) {
+				this.pluginDatabase = new SQLiteDatabase(this);
+			} else if (databaseType.equalsIgnoreCase("mysql")) {
+				this.pluginDatabase = new MySQLDatabase(this, DatabaseCredentials.fromConfig(this.getConfig()));
+			} else {
+				this.getLogger().warning(String.format("Error! Unknown database type: %s. Disabling plugin.", databaseType));
+				this.getServer().getPluginManager().disablePlugin(this);
+				return false;
+			}
+
+		} catch (Exception e) {
+			this.getLogger().warning("Could not maintain Database Connection. Disabling plugin.");
+			e.printStackTrace();
+			this.getServer().getPluginManager().disablePlugin(this);
+			return false;
+		}
+		return true;
+	}
+
+	private void initModules() {
+		this.modules = new LinkedHashMap<>();
+
+		this.tokens = new UltraPrisonTokens(this);
+		this.gems = new UltraPrisonGems(this);
+		this.ranks = new UltraPrisonRanks(this);
+		this.multipliers = new UltraPrisonMultipliers(this);
+		this.enchants = new UltraPrisonEnchants(this);
+		this.autoSell = new UltraPrisonAutoSell(this);
+		this.autoMiner = new UltraPrisonAutoMiner(this);
+		this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
+		this.gangs = new UltraPrisonGangs(this);
+		this.mines = new UltraPrisonMines(this);
+
+		this.modules.put(this.tokens.getName().toLowerCase(), this.tokens);
+		this.modules.put(this.gems.getName().toLowerCase(), this.gems);
+		this.modules.put(this.ranks.getName().toLowerCase(), this.ranks);
+		this.modules.put(this.multipliers.getName().toLowerCase(), this.multipliers);
+		this.modules.put(this.enchants.getName().toLowerCase(), this.enchants);
+		this.modules.put(this.autoSell.getName().toLowerCase(), this.autoSell);
+		this.modules.put(this.autoMiner.getName().toLowerCase(), this.autoMiner);
+		this.modules.put(this.pickaxeLevels.getName().toLowerCase(), this.pickaxeLevels);
+		this.modules.put(this.gangs.getName().toLowerCase(), this.gangs);
+		this.modules.put(this.mines.getName().toLowerCase(), this.mines);
 	}
 
 	private void registerMainEvents() {
@@ -209,11 +240,10 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void startMetrics() {
-		new Metrics(this, 10520);
+		new Metrics(this, METRICS_SERVICE_ID);
 	}
 
 	private void loadModule(UltraPrisonModule module) {
-		this.loadedModules.put(module.getName().toLowerCase(), module);
 		module.enable();
 		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s loaded.", module.getName())));
 	}
@@ -224,11 +254,15 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s unloaded.", module.getName())));
 	}
 
-	public void debug(String msg) {
+	public void debug(String msg, UltraPrisonModule module) {
 		if (!DEBUG_MODE) {
 			return;
 		}
-		this.getLogger().info(Text.colorize(msg));
+		if (module != null) {
+			this.getLogger().info(String.format("[%s] %s", module.getName(), Text.colorize(msg)));
+		} else {
+			this.getLogger().info(Text.colorize(msg));
+		}
 	}
 
 	private void reloadModule(UltraPrisonModule module) {
@@ -247,16 +281,30 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 						this.reload(c.sender());
 					} else if (((c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("help")) || c.args().size() == 0) && c.sender() instanceof Player) {
 						new HelpGui((Player) c.sender()).open();
-					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("cleardb") && c.sender().hasPermission("ultraprisoncore.admin")) {
+					} else if ((c.rawArg(0).equalsIgnoreCase("cleardb") || c.rawArg(0).equalsIgnoreCase("resetdb") || c.rawArg(0).equalsIgnoreCase("cleardata")) && c.sender().hasPermission("ultraprisoncore.admin")) {
+						UltraPrisonModule module = null;
+						if (c.args().size() == 2) {
+							module = this.getModuleByName(c.rawArg(1));
+							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUltraPrisonCore - Unable to get module named " + c.rawArg(0)));
+							if (module == null) {
+								return;
+							}
+						}
 						if (c.sender() instanceof Player) {
-							new ClearDBGui(this.pluginDatabase, (Player) c.sender()).open();
+							new ClearDBGui(this.pluginDatabase, (Player) c.sender(), module).open();
 						} else {
-							this.pluginDatabase.resetAllData(c.sender());
+							if (this.pluginDatabase.resetAllData()) {
+								PlayerUtils.sendMessage(c.sender(), Text.colorize("&aUltraPrisonCore - All Modules Data have been reset."));
+							} else {
+								PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUltraPrisonCore - Something went wrong during reseting data. Please check console."));
+							}
 						}
 					} else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v")) && c.sender().hasPermission("ultraprisoncore.admin")) {
 						PlayerUtils.sendMessage(c.sender(), Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
 					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						DEBUG_MODE = !DEBUG_MODE;
+						this.getConfig().set("debug-mode", DEBUG_MODE);
+						this.saveConfig();
 						PlayerUtils.sendMessage(c.sender(), Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
 					} else if (c.args().size() == 2 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
 						UltraPrisonModule module = this.getModuleByName(c.rawArg(1));
@@ -272,7 +320,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void reload(CommandSender sender) {
-		for (UltraPrisonModule module : this.loadedModules.values()) {
+		for (UltraPrisonModule module : this.modules.values()) {
 			this.reloadModule(module);
 		}
 		PlayerUtils.sendMessage(sender, Text.colorize("&aUltraPrisonCore - Reloaded."));
@@ -282,7 +330,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	@Override
 	protected void disable() {
 
-		Iterator<UltraPrisonModule> it = this.loadedModules.values().iterator();
+		Iterator<UltraPrisonModule> it = this.modules.values().iterator();
 
 		while (it.hasNext()) {
 			this.unloadModule(it.next());
@@ -297,19 +345,16 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 	}
 
-	private void startEvents() {
-
-	}
 
 	public boolean isModuleEnabled(String moduleName) {
-		return this.loadedModules.containsKey(moduleName.toLowerCase());
+		return this.modules.containsKey(moduleName.toLowerCase());
 	}
 
-	public UltraPrisonModule getModuleByName(String name) {
+	private UltraPrisonModule getModuleByName(String name) {
 		if (!this.isModuleEnabled(name)) {
 			return null;
 		}
-		return this.loadedModules.get(name.toLowerCase());
+		return this.modules.get(name.toLowerCase());
 	}
 
 	private void registerPlaceholders() {
@@ -361,5 +406,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			this.getLogger().warning("NMSProvider could not find a valid implementation for this server version.");
 			return false;
 		}
+	}
+
+	public Collection<UltraPrisonModule> getModules() {
+		return this.modules.values();
 	}
 }

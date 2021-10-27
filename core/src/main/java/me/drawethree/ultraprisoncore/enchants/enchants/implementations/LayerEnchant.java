@@ -113,7 +113,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 
 			}
 			long timeEnd = Time.nowMillis();
-			this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.");
+			this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
 		}
 
 	}

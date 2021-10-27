@@ -155,12 +155,12 @@ public class GangsManager {
 
 		GangCreateEvent gangCreateEvent = new GangCreateEvent(creator, g);
 
-		this.plugin.getCore().debug("Calling GangCreateEvent for gang " + g.getName() + ".");
+		this.plugin.getCore().debug("Calling GangCreateEvent for gang " + g.getName() + ".", this.plugin);
 
 		Events.callSync(gangCreateEvent);
 
 		if (gangCreateEvent.isCancelled()) {
-			this.plugin.getCore().debug("GangCreateEvent for gang " + g.getName() + " was cancelled.");
+			this.plugin.getCore().debug("GangCreateEvent for gang " + g.getName() + " was cancelled.", this.plugin);
 			return GangCreateResult.EVENT_CANCELLED;
 		}
 
@@ -386,12 +386,12 @@ public class GangsManager {
 
 		GangDisbandEvent gangDisbandEvent = new GangDisbandEvent(gang);
 
-		this.plugin.getCore().debug("Calling GangDisbandEvent for gang " + gang.getName() + ".");
+		this.plugin.getCore().debug("Calling GangDisbandEvent for gang " + gang.getName() + ".", this.plugin);
 
 		Events.callSync(gangDisbandEvent);
 
 		if (gangDisbandEvent.isCancelled()) {
-			this.plugin.getCore().debug("GangDisbandEvent for gang " + gang.getName() + " was cancelled.");
+			this.plugin.getCore().debug("GangDisbandEvent for gang " + gang.getName() + " was cancelled.", this.plugin);
 			return true;
 		}
 

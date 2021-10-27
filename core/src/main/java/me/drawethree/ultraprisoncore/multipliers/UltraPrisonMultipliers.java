@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
@@ -31,6 +32,9 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
+
+	public static final String TABLE_NAME = "UltraPrison_Multipliers";
+	public static final String TABLE_NAME_TOKEN = "UltraPrison_Token_Multipliers";
 
 	public static final String MODULE_NAME = "Multipliers";
 
@@ -298,6 +302,26 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
+	}
+
+	@Override
+	public String[] getTables() {
+		return new String[]{TABLE_NAME, TABLE_NAME_TOKEN};
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		switch (type) {
+			case MYSQL:
+			case SQLITE: {
+				return new String[]{
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))",
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKEN + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))"
+				};
+			}
+			default:
+				throw new IllegalStateException("Unsupported Database type: " + type);
+		}
 	}
 
 	private void saveAllMultipliers() {

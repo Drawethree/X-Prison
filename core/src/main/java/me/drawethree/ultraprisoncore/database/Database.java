@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.database;
 
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +20,10 @@ public abstract class Database {
 		this.plugin = plugin;
 	}
 
+	public abstract DatabaseType getDatabaseType();
+
+	public abstract void createTables();
+
 	public abstract long getPlayerTokens(OfflinePlayer player);
 
 	public abstract long getPlayerGems(OfflinePlayer player);
@@ -33,7 +38,9 @@ public abstract class Database {
 
 	public abstract void updateTokens(OfflinePlayer player, long newAmount);
 
-	public abstract void resetAllData(CommandSender sender);
+	public abstract boolean resetAllData();
+
+	public abstract boolean resetData(UltraPrisonModule module);
 
 	public abstract void resetBlocksWeekly(CommandSender sender);
 

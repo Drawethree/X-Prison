@@ -135,7 +135,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 			}
 			long timeEnd = Time.nowMillis();
-			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.");
+			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.", this.plugin);
 
 		}
 

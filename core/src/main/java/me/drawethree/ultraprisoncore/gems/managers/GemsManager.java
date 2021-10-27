@@ -12,7 +12,6 @@ import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.utils.Players;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -94,14 +93,14 @@ public class GemsManager {
                 if (removeFromCache) {
                     gemsCache.remove(player.getUniqueId());
                 }
-                this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
+				this.plugin.getCore().getLogger().info(String.format("Saved player %s gems to database.", player.getName()));
             });
         } else {
 			this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
             if (removeFromCache) {
                 gemsCache.remove(player.getUniqueId());
             }
-            this.plugin.getCore().getLogger().info(String.format("Saved data of player %s to database.", player.getName()));
+			this.plugin.getCore().getLogger().info(String.format("Saved player %s gems to database.", player.getName()));
         }
     }
 

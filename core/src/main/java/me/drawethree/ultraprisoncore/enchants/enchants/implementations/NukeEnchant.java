@@ -78,7 +78,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 					}
 				}
 
-				this.plugin.getCore().debug("NukeEnchant::onBlockBreak::LoopingBlocks >> Took " + (System.currentTimeMillis() - startTime) + " ms.");
+				this.plugin.getCore().debug("NukeEnchant::onBlockBreak::LoopingBlocks >> Took " + (System.currentTimeMillis() - startTime) + " ms.", this.plugin);
 
 				if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
 					plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
@@ -113,7 +113,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 
 			}
 			long timeEnd = Time.nowMillis();
-			this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.");
+			this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
 		}
 
 	}

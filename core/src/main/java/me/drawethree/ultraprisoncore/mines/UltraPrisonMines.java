@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.config.FileManager;
+import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPI;
 import me.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPIImpl;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
@@ -84,6 +85,16 @@ public class UltraPrisonMines implements UltraPrisonModule {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
+	}
+
+	@Override
+	public String[] getTables() {
+		return new String[0];
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		return new String[0];
 	}
 
 	private void loadMessages() {

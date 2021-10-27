@@ -371,7 +371,7 @@ public class EnchantsManager {
 			totalCost += enchantment.getCostOfLevel(currentLevel + j + 1);
 		}
 
-		this.plugin.getCore().debug(String.format("Enchants | Calculation of levels %,d - %,d of %s enchant took %dms", currentLevel + 1, currentLevel + addition + 1, enchantment.getRawName(), Time.nowMillis() - startTime));
+		this.plugin.getCore().debug(String.format("Calculation of levels %,d - %,d of %s enchant took %dms", currentLevel + 1, currentLevel + addition + 1, enchantment.getRawName(), Time.nowMillis() - startTime), this.plugin);
 
 		if (!plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost)) {
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("not_enough_tokens"));
