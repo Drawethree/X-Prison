@@ -283,13 +283,15 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 						new HelpGui((Player) c.sender()).open();
 					} else if ((c.rawArg(0).equalsIgnoreCase("cleardb") || c.rawArg(0).equalsIgnoreCase("resetdb") || c.rawArg(0).equalsIgnoreCase("cleardata")) && c.sender().hasPermission("ultraprisoncore.admin")) {
 						UltraPrisonModule module = null;
+
 						if (c.args().size() == 2) {
 							module = this.getModuleByName(c.rawArg(1));
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUltraPrisonCore - Unable to get module named " + c.rawArg(0)));
 							if (module == null) {
+								PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUltraPrisonCore - Unable to get module named " + c.rawArg(0)));
 								return;
 							}
 						}
+
 						if (c.sender() instanceof Player) {
 							new ClearDBGui(this.pluginDatabase, (Player) c.sender(), module).open();
 						} else {
