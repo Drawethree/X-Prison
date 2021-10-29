@@ -173,7 +173,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 					} else if (c.args().size() == 2) {
 						target = c.arg(0).parseOrFail(Player.class);
 						input = c.rawArg(1);
-					} else if (c.args().size() == 3) {
+					} else if (c.args().size() >= 3) {
 						target = c.arg(0).parseOrFail(Player.class);
 						input = c.rawArg(1);
 						name = StringUtils.join(c.args().subList(2, c.args().size()), " ");
