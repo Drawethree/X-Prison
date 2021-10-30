@@ -507,7 +507,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		if (tokenMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			PlayerMultiplier multiplier = tokenMultipliers.get(onlinePlayer.getUniqueId());
 			multiplier.addMultiplier(amount, this.playerTokenMultiMax);
-			multiplier.addDuration(TimeUnit.MINUTES, minutes);
+			multiplier.addDuration(timeUnit, minutes);
 			tokenMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
 		} else {
 			tokenMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, TimeUnit.MINUTES, minutes, this.playerTokenMultiMax));
