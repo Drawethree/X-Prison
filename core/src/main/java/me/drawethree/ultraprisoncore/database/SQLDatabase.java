@@ -88,9 +88,11 @@ public abstract class SQLDatabase extends Database {
 
 	//Always execute async!
 	public synchronized void execute(String sql, Object... replacements) {
+
 		if (sql == null || sql.isEmpty()) {
 			return;
 		}
+
 		try (Connection c = this.hikari.getConnection(); PreparedStatement statement = c.prepareStatement(sql)) {
 			if (replacements != null) {
 				for (int i = 0; i < replacements.length; i++) {
@@ -294,8 +296,8 @@ public abstract class SQLDatabase extends Database {
 		try (Connection con = this.hikari.getConnection();
 			 PreparedStatement statement = con.prepareStatement("DELETE FROM " + UltraPrisonMultipliers.TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_TIMELEFT_COLNAME + " < " + Time.nowMillis());
 			 PreparedStatement statement2 = con.prepareStatement("DELETE FROM " + UltraPrisonMultipliers.TABLE_NAME_TOKEN + " WHERE " + MySQLDatabase.MULTIPLIERS_TOKEN_TIMELEFT_COLNAME + " < " + Time.nowMillis())) {
-			statement.execute();
-			statement2.execute();
+			 statement.execute();
+			 statement2.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -477,8 +479,7 @@ public abstract class SQLDatabase extends Database {
 	@Override
 	public List<Gang> getAllGangs() {
 		List<Gang> returnList = new ArrayList<>();
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.TABLE_NAME, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-			try (ResultSet set = statement.executeQuery()) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.TABLE_NAME, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);ResultSet set = statement.executeQuery()) {
 				while (set.next()) {
 
 					UUID gangUUID;
@@ -511,7 +512,6 @@ public abstract class SQLDatabase extends Database {
 					int value = set.getInt(GANGS_VALUE_COLNAME);
 					returnList.add(new Gang(gangUUID, gangName, owner, members, value));
 				}
-			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
