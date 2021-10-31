@@ -244,12 +244,18 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void loadModule(UltraPrisonModule module) {
+		if (module.isEnabled()) {
+			return;
+		}
 		module.enable();
 		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s loaded.", module.getName())));
 	}
 
 	//Always unload via iterator!
 	private void unloadModule(UltraPrisonModule module) {
+		if (!module.isEnabled()) {
+			return;
+		}
 		module.disable();
 		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s unloaded.", module.getName())));
 	}
@@ -266,6 +272,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void reloadModule(UltraPrisonModule module) {
+		if (!module.isEnabled()) {
+			return;
+		}
 		module.reload();
 		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s reloaded.", module.getName())));
 	}
