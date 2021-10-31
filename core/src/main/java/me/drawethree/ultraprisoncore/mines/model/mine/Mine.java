@@ -72,6 +72,14 @@ public class Mine implements GsonSerializable {
 
 	private Hologram blocksLeftHologram;
 	private Hologram blocksMinedHologram;
+	private Hologram timedResetHologram;
+
+	private Date nextResetDate;
+
+	@Getter
+	@Setter
+	private int resetTime;
+
 	private Map<PotionEffectType, Integer> mineEffects;
 
 	public Mine(MineManager manager, String name, Region region) {
@@ -82,6 +90,7 @@ public class Mine implements GsonSerializable {
 		this.blockPalette = new BlockPalette();
 		this.resetType = ResetType.INSTANT;
 		this.resetPercentage = 50.0;
+		this.resetTime = 10;
 		this.broadcastReset = true;
 		this.totalBlocks = this.calculateTotalBlocks();
 		this.currentBlocks = this.calculateCurrentBlocks();
@@ -90,7 +99,7 @@ public class Mine implements GsonSerializable {
 		this.startTicking();
 	}
 
-	public Mine(MineManager manager, String name, Region region, Point teleportLocation, BlockPalette palette, ResetType resetType, double resetPercentage, boolean broadcastReset, Hologram blocksLeftHologram, Hologram blocksMinedHologram, Map<PotionEffectType, Integer> mineEffects) {
+	public Mine(MineManager manager, String name, Region region, Point teleportLocation, BlockPalette palette, ResetType resetType, double resetPercentage, boolean broadcastReset, Hologram blocksLeftHologram, Hologram blocksMinedHologram, Hologram timedResetHologram, Map<PotionEffectType, Integer> mineEffect, int resetTime) {
 		this.manager = manager;
 		this.name = name;
 		this.mineRegion = region;
@@ -103,7 +112,9 @@ public class Mine implements GsonSerializable {
 		this.currentBlocks = this.calculateCurrentBlocks();
 		this.blocksLeftHologram = blocksLeftHologram;
 		this.blocksMinedHologram = blocksMinedHologram;
-		this.mineEffects = mineEffects;
+		this.timedResetHologram = timedResetHologram;
+		this.mineEffects = mineEffect;
+		this.resetTime = resetTime;
 		this.updateHolograms();
 		this.subscribeEvents();
 		this.startTicking();
@@ -123,6 +134,11 @@ public class Mine implements GsonSerializable {
 		if (this.blocksMinedHologram != null) {
 			this.blocksMinedHologram.updateLines(this.manager.getHologramBlocksMinedLines(this));
 			this.blocksMinedHologram.spawn();
+		}
+
+		if (this.timedResetHologram != null) {
+			this.timedResetHologram.updateLines(this.manager.getHologramTimedResetLines(this));
+			this.timedResetHologram.spawn();
 		}
 	}
 
@@ -222,6 +238,15 @@ public class Mine implements GsonSerializable {
 
 	private void tick() {
 		this.getPlayersInMine().forEach(this::giveMineEffects);
+
+		if (!this.resetting && this.nextResetDate != null && System.currentTimeMillis() >= this.nextResetDate.getTime()) {
+			this.resetMine();
+		}
+
+		if (!this.resetting && this.timedResetHologram != null) {
+			this.timedResetHologram.updateLines(this.manager.getHologramTimedResetLines(this));
+			this.timedResetHologram.spawn();
+		}
 	}
 
 	private void giveMineEffects(Player player) {
@@ -255,6 +280,8 @@ public class Mine implements GsonSerializable {
 				Players.all().forEach(player -> PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_reset").replace("%mine%", this.name)));
 			}
 
+			this.nextResetDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(this.resetTime));
+
 			this.resetting = false;
 		}, 5, TimeUnit.SECONDS);
 	}
@@ -269,9 +296,11 @@ public class Mine implements GsonSerializable {
 		builder.addIfAbsent("blocks", this.blockPalette);
 		builder.addIfAbsent("reset-type", this.resetType.getName());
 		builder.addIfAbsent("reset-percentage", this.resetPercentage);
+		builder.addIfAbsent("reset-time", this.resetTime);
 		builder.addIfAbsent("broadcast-reset", this.broadcastReset);
 		builder.addIfAbsent("hologram-blocks-mined", this.blocksMinedHologram);
 		builder.addIfAbsent("hologram-blocks-left", this.blocksLeftHologram);
+		builder.addIfAbsent("hologram-timed-reset", this.timedResetHologram);
 
 		JsonBuilder.JsonObjectBuilder effectsBuilder = JsonBuilder.object();
 
@@ -316,6 +345,17 @@ public class Mine implements GsonSerializable {
 				}
 				break;
 			}
+			case TIMED_RESET: {
+				if (this.timedResetHologram == null) {
+					this.timedResetHologram = Hologram.create(Position.of(player.getLocation()), this.manager.getHologramTimedResetLines(this));
+					this.timedResetHologram.spawn();
+				} else {
+					this.timedResetHologram.despawn();
+					this.timedResetHologram.updatePosition(Position.of(player.getLocation()));
+					this.timedResetHologram.spawn();
+				}
+				break;
+			}
 		}
 		PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_hologram_create").replace("%type%", type.name()).replace("%mine%", this.name));
 	}
@@ -336,6 +376,13 @@ public class Mine implements GsonSerializable {
 				}
 				break;
 			}
+			case TIMED_RESET: {
+				if (this.timedResetHologram != null) {
+					this.timedResetHologram.despawn();
+					this.timedResetHologram = null;
+				}
+				break;
+			}
 		}
 		PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_hologram_delete").replace("%type%", type.name()).replace("%mine%", this.name));
 	}
@@ -348,6 +395,10 @@ public class Mine implements GsonSerializable {
 
 		if (this.blocksLeftHologram != null) {
 			this.blocksLeftHologram.despawn();
+		}
+
+		if (this.timedResetHologram != null) {
+			this.timedResetHologram.despawn();
 		}
 	}
 
@@ -367,7 +418,7 @@ public class Mine implements GsonSerializable {
 
 	public PotionEffect getEffect(PotionEffectType type) {
 		if (this.mineEffects.containsKey(type)) {
-			return new PotionEffect(type, 100, this.mineEffects.get(type));
+			return new PotionEffect(type, 200, this.mineEffects.get(type));
 		}
 		return null;
 	}
@@ -400,6 +451,13 @@ public class Mine implements GsonSerializable {
 		return player.hasPermission("ultraprison.mines.tp." + this.name);
 	}
 
+	public long getSecondsToNextReset() {
+		if (this.nextResetDate == null) {
+			return 0;
+		}
+		return (int) ((this.nextResetDate.getTime() - System.currentTimeMillis()) / 1000);
+	}
+
 	public static final class Builder {
 
 		private String name;
@@ -411,7 +469,9 @@ public class Mine implements GsonSerializable {
 		private boolean broadcastReset;
 		private Hologram blocksMinedHologram;
 		private Hologram blocksLeftHologram;
+		private Hologram timedResetHologram;
 		private Map<PotionEffectType, Integer> mineEffects;
+		private int timedReset;
 
 		public Builder() {
 
@@ -462,13 +522,23 @@ public class Mine implements GsonSerializable {
 			return this;
 		}
 
+		public Builder timedResetHologram(Hologram timedResetHologram) {
+			this.timedResetHologram = blocksMinedHologram;
+			return this;
+		}
+
 		public Builder mineEffects(Map<PotionEffectType, Integer> mineEffects) {
 			this.mineEffects = mineEffects;
 			return this;
 		}
 
+		public Builder timedReset(int minutes) {
+			this.timedReset = minutes;
+			return this;
+		}
+
 		public Mine build() {
-			return new Mine(UltraPrisonMines.getInstance().getManager(), this.name, this.mineRegion, this.teleportLocation, this.blockPalette, this.resetType, this.resetPercentage, this.broadcastReset, this.blocksLeftHologram, this.blocksMinedHologram, this.mineEffects);
+			return new Mine(UltraPrisonMines.getInstance().getManager(), this.name, this.mineRegion, this.teleportLocation, this.blockPalette, this.resetType, this.resetPercentage, this.broadcastReset, this.blocksLeftHologram, this.blocksMinedHologram, this.timedResetHologram, this.mineEffects, this.timedReset);
 		}
 
 	}

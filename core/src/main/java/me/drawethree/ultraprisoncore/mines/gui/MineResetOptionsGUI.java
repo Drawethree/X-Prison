@@ -43,6 +43,11 @@ public class MineResetOptionsGUI extends Gui {
 			new MineEditResetPercentageGUI(this.mine, this.getPlayer()).open();
 		}));
 
+		this.setItem(29, ItemStackBuilder.of(CompMaterial.CLOCK.toItem()).name("&eEdit Timed Reset").lore(" ", "&7Click to edit timed reset").build(() -> {
+			this.close();
+			new MineEditTimedResetGUI(this.mine, this.getPlayer()).open();
+		}));
+
 		this.setItem(31, ItemStackBuilder.of(CompMaterial.PAPER.toItem()).name("&eBroadcast Reset: " + this.mine.isBroadcastReset()).lore(" ", "&aTrue &7- All players will get message", "&7on mine's reset.", "&cFalse &7- No broadcast message.").build(() -> {
 			this.mine.setBroadcastReset(!this.mine.isBroadcastReset());
 			this.redraw();

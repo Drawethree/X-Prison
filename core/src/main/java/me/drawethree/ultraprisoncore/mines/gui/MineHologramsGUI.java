@@ -33,6 +33,13 @@ public class MineHologramsGUI extends Gui {
 			this.close();
 			this.mine.createHologram(HologramType.BLOCKS_LEFT, this.getPlayer());
 		}));
+		this.setItem(2, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eTimed Reset Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
+			this.close();
+			this.mine.deleteHologram(HologramType.TIMED_RESET, this.getPlayer());
+		}, () -> {
+			this.close();
+			this.mine.createHologram(HologramType.TIMED_RESET, this.getPlayer());
+		}));
 
 		this.setItem(8, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to panel").build(() -> {
 			this.close();

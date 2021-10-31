@@ -39,3 +39,7 @@ holograms:
     - " "
     - "&7-- &b%blocks% blocks &ahave been mined &7--"
     - " "
+  timed_reset:
+    - " "
+    - "&7-- &b%time% &aleft till next reset &7--"
+    - " "

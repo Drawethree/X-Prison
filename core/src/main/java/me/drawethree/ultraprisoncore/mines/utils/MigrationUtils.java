@@ -57,6 +57,10 @@ public class MigrationUtils {
 		int resetPercentage = mine.getResetManager().getPercentageReset();
 		builder.resetPercentage(resetPercentage);
 
+		//Reset time (minutes)
+		int resetTime = mine.getResetManager().getMineResetTime();
+		builder.timedReset(resetTime);
+
 		//Reset messages
 		boolean broadcastReset = mine.getResetManager().isUseMessages();
 		builder.broadcastReset(broadcastReset);
@@ -123,6 +127,10 @@ public class MigrationUtils {
 		//Reset percentage
 		int resetPercentage = 50;
 		builder.resetPercentage(resetPercentage);
+
+		//Reset time (minutes)
+		int resetTime = 10;
+		builder.timedReset(resetTime);
 
 		//Reset messages
 		boolean broadcastReset = true;

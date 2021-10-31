@@ -8,6 +8,7 @@ import me.drawethree.ultraprisoncore.mines.model.mine.MineSelection;
 import me.drawethree.ultraprisoncore.mines.utils.MineLoader;
 import me.drawethree.ultraprisoncore.utils.LocationUtils;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.TimeUtil;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
@@ -37,6 +38,7 @@ public class MineManager {
 
 	private List<String> hologramBlocksLeftLines;
 	private List<String> hologramBlocksMinedLines;
+	private List<String> hologramTimedResetLines;
 
 	private File minesDirectory;
 
@@ -45,6 +47,7 @@ public class MineManager {
 		this.mineSelections = new HashMap<>();
 		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
 		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
+		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
 		this.setupMinesDirectory();
 		this.loadMines();
 	}
@@ -269,6 +272,7 @@ public class MineManager {
 	public void reload() {
 		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
 		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
+		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
 	}
 
 	public boolean addMineFromMigration(CommandSender sender, Mine migrated) {
@@ -283,5 +287,13 @@ public class MineManager {
 		for (Mine mine : this.getMines()) {
 			mine.resetMine();
 		}
+	}
+
+	public List<String> getHologramTimedResetLines(Mine mine) {
+		List<String> copy = new ArrayList<>();
+		for (String s : this.hologramTimedResetLines) {
+			copy.add(s.replace("%mine%", mine.getName()).replace("%time%", TimeUtil.getTime(mine.getSecondsToNextReset())));
+		}
+		return copy;
 	}
 }

@@ -31,10 +31,12 @@ public class MineLoader {
 
 			ResetType resetType = obj.get("reset-type").isJsonNull() ? ResetType.INSTANT : ResetType.of(obj.get("reset-type").getAsString());
 			double resetPercentage = obj.get("reset-percentage").getAsDouble();
+			int resetTime = obj.has("reset-time") ? obj.get("reset-time").getAsInt() : 10;
 			boolean broadcastReset = obj.get("broadcast-reset").isJsonNull() || obj.get("broadcast-reset").getAsBoolean();
 
-			Hologram blocksLeftHologram = obj.get("hologram-blocks-left").isJsonNull() ? null : Hologram.deserialize(obj.get("hologram-blocks-left"));
-			Hologram blocksMinedHologram = obj.get("hologram-blocks-mined").isJsonNull() ? null : Hologram.deserialize(obj.get("hologram-blocks-mined"));
+			Hologram blocksLeftHologram = obj.has("hologram-blocks-left") ? obj.get("hologram-blocks-left").isJsonNull() ? null : Hologram.deserialize(obj.get("hologram-blocks-left")) : null;
+			Hologram blocksMinedHologram = obj.has("hologram-blocks-mined") ? obj.get("hologram-blocks-mined").isJsonNull() ? null : Hologram.deserialize(obj.get("hologram-blocks-mined")) : null;
+			Hologram timedResetHologram = obj.has("hologram-timed-reset") ? obj.get("hologram-timed-reset").isJsonNull() ? null : Hologram.deserialize(obj.get("hologram-timed-reset")) : null;
 
 			Map<PotionEffectType, Integer> mineEffects = new HashMap<>();
 
@@ -48,7 +50,7 @@ public class MineLoader {
 				}
 			}
 
-			return new Mine(manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, mineEffects);
+			return new Mine(manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
 		} catch (Exception e) {
 			manager.getPlugin().getCore().getLogger().warning("Unable to load mine " + fileName + "!");
 			e.printStackTrace();
