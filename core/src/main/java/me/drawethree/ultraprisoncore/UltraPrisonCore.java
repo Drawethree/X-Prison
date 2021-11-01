@@ -89,6 +89,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 		instance = this;
 
+		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 		DEBUG_MODE = this.getConfig().getBoolean("debug-mode", false);
@@ -206,7 +207,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void initModules() {
-		this.modules = new LinkedHashMap<>();
 
 		this.tokens = new UltraPrisonTokens(this);
 		this.gems = new UltraPrisonGems(this);
@@ -358,7 +358,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
 	public boolean isModuleEnabled(String moduleName) {
-		return this.modules.containsKey(moduleName.toLowerCase());
+		UltraPrisonModule module = this.modules.get(moduleName.toLowerCase());
+		return module != null && module.isEnabled();
 	}
 
 	private UltraPrisonModule getModuleByName(String name) {
