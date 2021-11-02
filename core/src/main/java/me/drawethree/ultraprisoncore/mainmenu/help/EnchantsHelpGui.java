@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class PrestigesHelpGui extends Gui {
+public class EnchantsHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class PrestigesHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public PrestigesHelpGui(Player player) {
-		super(player, 5, "Prestiges Help");
+	public EnchantsHelpGui(Player player) {
+		super(player, 5, "Enchants Help");
 	}
 
 	@Override
@@ -49,27 +49,40 @@ public class PrestigesHelpGui extends Gui {
 				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
 			}
 
+
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7Prestiges allow your players",
-					"&7to earn more rewards after they",
-					"&7achieve highest rank!"
+					"&7Enchants are made",
+					"&7to make your prison server",
+					"&7more unique!",
+					"&7You can customize all",
+					"&7enchants in &fenchants.yml",
+					"&7You can also create your own",
+					"&7custom enchants using our API.",
+					"&7Tutorial can be found on Wiki."
 			).buildItem().build());
 
 			//Commands
-			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
-					"&f/prestige",
-					"&7Attempt to buy next prestige.",
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&f/givepickaxe [player] [enchant:rawname=level]",
+					"&7Example: /givepickaxe Drawethree fortune=10,layer=50",
+					"&7Give your players a custom pickaxe to mine with.",
 					" ",
-					"&f/maxprestige",
-					"&7Attempt to buy highest prestige possible",
-					"&7based on your balance.",
+					"&f/enchant",
+					"&7Open up the enchanting GUI.",
 					" ",
-					"&f/prestigetop",
-					"&7Display top prestige users.",
+					"&f/disenchant",
+					"&7Opens up the disenchanting GUI.",
 					" ",
-					"&f/prestigeadmin [add/remove/set] [player] [amount]",
-					"&7Forcibly add, remove or set player's prestige."
+					"&f/value",
+					"&7Display the total value of tokens",
+					"&7of your held pickaxe.",
+					" ",
+					"&f/explosive",
+					"&fToggle the explosive enchant.",
+					" ",
+					"&f/layer",
+					"&7Toggle the layer enchant."
 			).buildItem().build());
 
 			//Back
@@ -93,5 +106,6 @@ public class PrestigesHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 		}
+
 	}
 }

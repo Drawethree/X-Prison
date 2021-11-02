@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class MinesHelpGui extends Gui {
+public class PrestigesHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class MinesHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public MinesHelpGui(Player player) {
-		super(player, 5, "Mines Help");
+	public PrestigesHelpGui(Player player) {
+		super(player, 5, "Prestiges Help");
 	}
 
 	@Override
@@ -51,51 +51,25 @@ public class MinesHelpGui extends Gui {
 
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7With Mines module",
-					"&7you can create unlimited",
-					"&7amount of prison mines",
-					"&7where your players can",
-					"&7mine blocks and progress."
+					"&7Prestiges allow your players",
+					"&7to earn more rewards after they",
+					"&7achieve highest rank!"
 			).buildItem().build());
 
 			//Commands
-			this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eAdmin Commands").lore(
-					"&f/mines create [name]",
-					"&7Create a mine.",
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
+					"&f/prestige",
+					"&7Attempt to buy next prestige.",
 					" ",
-					"&f/mines delete [name]",
-					"&7Deletes a mine.",
+					"&f/maxprestige",
+					"&7Attempt to buy highest prestige possible",
+					"&7based on your balance.",
 					" ",
-					"&f/mines reset [name]",
-					"&7Resets a mine contents.",
+					"&f/prestigetop",
+					"&7Display top prestige users.",
 					" ",
-					"&f/mines panel [name]",
-					"&7Opens admin panel for a mine.",
-					" ",
-					"&f/mines save [name]",
-					"&7Saves a mine."
-			).buildItem().build());
-
-			//Commands
-			this.setItem(23, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eAdmin Commands").lore(
-					"&f/mines addblock [name]",
-					"&7Adds a block to a mine you hold in hand.",
-					" ",
-					"&f/mines settp [name]",
-					"&7Sets teleport location for a mine.",
-					" ",
-					"&f/mines tp [name]",
-					"&7Teleports to a mine.",
-					" ",
-					"&f/mines list",
-					"&7Shows all mines.",
-					" ",
-					"&f/mines tool",
-					"&7Gives you a mine selection tool.",
-					" ",
-					"&f/mines migrate <plugin>",
-					"&7Migrates mines from other plugins.",
-					"&7Currently supported: &fJetsPrisonMines, MineResetLite&7."
+					"&f/prestigeadmin [add/remove/set] [player] [amount]",
+					"&7Forcibly add, remove or set player's prestige."
 			).buildItem().build());
 
 			//Back
@@ -118,8 +92,6 @@ public class MinesHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
-
-
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;

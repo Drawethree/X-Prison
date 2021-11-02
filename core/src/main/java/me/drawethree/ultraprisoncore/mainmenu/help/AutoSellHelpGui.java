@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class EnchantsHelpGui extends Gui {
+public class AutoSellHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class EnchantsHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public EnchantsHelpGui(Player player) {
-		super(player, 5, "Enchants Help");
+	public AutoSellHelpGui(Player player) {
+		super(player, 5, "AutoSell Help");
 	}
 
 	@Override
@@ -49,40 +49,34 @@ public class EnchantsHelpGui extends Gui {
 				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
 			}
 
-
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7Enchants are made",
-					"&7to make your prison server",
-					"&7more unique!",
-					"&7You can customize all",
-					"&7enchants in &fenchants.yml",
-					"&7You can also create your own",
-					"&7custom enchants using our API.",
-					"&7Tutorial can be found on Wiki."
+					"&7AutoSell lets your players",
+					"&7automatically sell any block",
+					"&7they mine in your set",
+					"&7mine regions."
 			).buildItem().build());
 
 			//Commands
 			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
-					"&f/givepickaxe [player] [enchant:rawname=level]",
-					"&7Example: /givepickaxe Drawethree fortune=10,layer=50",
-					"&7Give your players a custom pickaxe to mine with.",
+					"&f/sellprice [price]",
+					"&7Set the price for any item",
+					"&7you are holding. Make sure to",
+					"&7stand in the correct region that",
+					"&7you want autosell and sellall to work in.",
 					" ",
-					"&f/enchant",
-					"&7Open up the enchanting GUI.",
+					"&f/autosell",
+					"&7Toggle your autosell mode.",
+					"&7If enabled, blocks mined will",
+					"&7be sold automatically.",
+					"&7If disabled, blocks mined will",
+					"&7go to your inventory.",
 					" ",
-					"&f/disenchant",
-					"&7Opens up the disenchanting GUI.",
-					" ",
-					"&f/value",
-					"&7Display the total value of tokens",
-					"&7of your held pickaxe.",
-					" ",
-					"&f/explosive",
-					"&fToggle the explosive enchant.",
-					" ",
-					"&f/layer",
-					"&7Toggle the layer enchant."
+					"&f/sellall",
+					"&7Instantly sell every item",
+					"&7that is in your inventory.",
+					"&7You need to be standing in",
+					"&7mine region."
 			).buildItem().build());
 
 			//Back
@@ -105,7 +99,7 @@ public class EnchantsHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
-		}
 
+		}
 	}
 }

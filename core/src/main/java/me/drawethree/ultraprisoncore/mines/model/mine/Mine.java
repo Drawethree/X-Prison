@@ -115,6 +115,7 @@ public class Mine implements GsonSerializable {
 		this.timedResetHologram = timedResetHologram;
 		this.mineEffects = mineEffect;
 		this.resetTime = resetTime;
+		this.nextResetDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(this.resetTime));
 		this.updateHolograms();
 		this.subscribeEvents();
 		this.startTicking();

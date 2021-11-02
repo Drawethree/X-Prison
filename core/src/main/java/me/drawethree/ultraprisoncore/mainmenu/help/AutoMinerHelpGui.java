@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class RanksHelpGui extends Gui {
+public class AutoMinerHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class RanksHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public RanksHelpGui(Player player) {
-		super(player, 5, "Ranks Help");
+	public AutoMinerHelpGui(Player player) {
+		super(player, 5, "AutoMiner Help");
 	}
 
 	@Override
@@ -51,22 +51,20 @@ public class RanksHelpGui extends Gui {
 
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7Ranks allow your players",
-					"&7to advance to different mines",
-					"&7and earn custom rewards!"
+					"&7An autominer lets your",
+					"&7players have an extra",
+					"&7source of income without",
+					"&7having to mine."
 			).buildItem().build());
 
 			//Commands
-			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
-					"&f/rankup",
-					"&7Attempt to buy next rank.",
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&f/autominer",
+					"&7Shows the remaining time",
+					"&7on a player's autominer.",
 					" ",
-					"&f/maxrankup",
-					"&7Attempt to buy highest rank possible",
-					"&7based on your balance.",
-					" ",
-					"&f/setrank [player] [rank_id]",
-					"&7Forcibly set player's rank."
+					"&f/adminautominer give [player] [time in seconds]",
+					"&7Give a player autominer time."
 			).buildItem().build());
 
 			//Back
@@ -89,6 +87,8 @@ public class RanksHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
+
+
 		}
 	}
 }

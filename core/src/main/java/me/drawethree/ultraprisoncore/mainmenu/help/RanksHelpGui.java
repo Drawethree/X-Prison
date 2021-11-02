@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class GemsHelpGui extends Gui {
+public class RanksHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class GemsHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public GemsHelpGui(Player player) {
-		super(player, 5, "Gems Help");
+	public RanksHelpGui(Player player) {
+		super(player, 5, "Ranks Help");
 	}
 
 	@Override
@@ -51,28 +51,24 @@ public class GemsHelpGui extends Gui {
 
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7Gems allows you to create any",
-					"&7shop you want. Gems is a currency",
-					"&7with tons of uses!"
+					"&7Ranks allow your players",
+					"&7to advance to different mines",
+					"&7and earn custom rewards!"
 			).buildItem().build());
 
 			//Commands
 			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
-					"&f/gems [player]",
-					"&7View yours or player's balance.",
+					"&f/rankup",
+					"&7Attempt to buy next rank.",
 					" ",
-					"&f/gemstop",
-					"&7View a list of players with most gems.",
+					"&f/maxrankup",
+					"&7Attempt to buy highest rank possible",
+					"&7based on your balance.",
 					" ",
-					"&f/gems [add/remove/set] [player] [amount]",
-					"&7Add, remove or set player's gems balance.",
-					" ",
-					"&f/gems pay [player] [amount]",
-					"&7Give an other player gems from your balance.",
-					" ",
-					"&f/gems help",
-					"&7Displays the help usage for gems."
+					"&f/setrank [player] [rank_id]",
+					"&7Forcibly set player's rank."
 			).buildItem().build());
+
 			//Back
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lBack").lore("&7Back to main gui.").build(() -> {
 				this.close();
@@ -94,7 +90,5 @@ public class GemsHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 		}
-
-
 	}
 }

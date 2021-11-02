@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class TokensHelpGui extends Gui {
+public class GemsHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class TokensHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public TokensHelpGui(Player player) {
-		super(player, 5, "Tokens Help");
+	public GemsHelpGui(Player player) {
+		super(player, 5, "Gems Help");
 	}
 
 	@Override
@@ -51,32 +51,28 @@ public class TokensHelpGui extends Gui {
 
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7Tokens is a currency that allows",
-					"&7your players to upgrade their",
-					"&7pickaxe enchants."
+					"&7Gems allows you to create any",
+					"&7shop you want. Gems is a currency",
+					"&7with tons of uses!"
 			).buildItem().build());
 
 			//Commands
-			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
-					"&f/tokens [player]",
-					"&7View yours or player's tokens balance.",
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
+					"&f/gems [player]",
+					"&7View yours or player's balance.",
 					" ",
-					"&f/tokenstop",
-					"&7View a list of players with most tokens.",
+					"&f/gemstop",
+					"&7View a list of players with most gems.",
 					" ",
-					"&f/tokens [add/remove/set] [player] [amount]",
-					"&7Add, remove or set player's tokens balance.",
+					"&f/gems [add/remove/set] [player] [amount]",
+					"&7Add, remove or set player's gems balance.",
 					" ",
-					"&f/tokens pay [player] [amount]",
-					"&7Give an other player tokens from your balance.",
+					"&f/gems pay [player] [amount]",
+					"&7Give an other player gems from your balance.",
 					" ",
-					"&f/tokens withdraw [amount] [value]",
-					"&7Withdraw your tokens to a physical form.",
-					" ",
-					"&f/tokens help",
-					"&7Displays the help usage for tokens."
+					"&f/gems help",
+					"&7Displays the help usage for gems."
 			).buildItem().build());
-
 			//Back
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lBack").lore("&7Back to main gui.").build(() -> {
 				this.close();
@@ -98,6 +94,7 @@ public class TokensHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 		}
+
 
 	}
 }

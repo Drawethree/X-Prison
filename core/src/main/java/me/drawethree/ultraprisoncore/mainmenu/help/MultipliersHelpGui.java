@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class GangsHelpGui extends Gui {
+public class MultipliersHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class GangsHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public GangsHelpGui(Player player) {
-		super(player, 5, "Gangs Help");
+	public MultipliersHelpGui(Player player) {
+		super(player, 5, "Multipliers Help");
 	}
 
 	@Override
@@ -50,45 +50,24 @@ public class GangsHelpGui extends Gui {
 			}
 
 			//Info
-			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore("&7Gangs are a way to let", "&7your players play together in", "&7competitive groups!").buildItem().build());
-
-			//Commands
-			this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&ePlayer Commands").lore(
-					"&f/gang create [name]",
-					"&7Create a gang.",
-					" ",
-					"&f/gang invite [player]",
-					"&7Invite a player to your gang.",
-					" ",
-					"&f/gang kick [player]",
-					"&7Kick a player for your gang.",
-					" ",
-					"&f/gang info [player/gang]",
-					"&7Shows information about gang.",
-					" ",
-					"&f/gang chat",
-					"&7Toggle gang chat.",
-					" ",
-					"&f/gang top",
-					"&7Display top gangs based on their value.",
-					" ",
-					"&f/gang accept",
-					"&7Accept a gang invite.",
-					" ",
-					"&f/gang disband",
-					"&7Disband your gang."
+			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
+					"&7Multipliers allows your players",
+					"&7to earn more money when they",
+					"&7are mining."
 			).buildItem().build());
 
 			//Commands
-			this.setItem(23, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eAdmin Commands").lore(
-					"&f/gang value [add/remove] [gang] [amount]",
-					"&7Add/remove value from/to a gang.",
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
+					"&f/gmulti [multiplier] [time in minutes]",
+					"&7Example: /gmulti 1.0 10",
+					"&7Set the global multiplier for all players on server.",
 					" ",
-					"&f/gang admin [add/remove] [player] [gang]",
-					"&7Forcibly add or remove player from a gang.",
+					"&f/pmulti [player] [multiplier] [time in minutes]",
+					"&7Example: /pmulti Drawethree 1.0 10",
+					"&7Set the personal multiplier for player.",
 					" ",
-					"&f/gang admin disband [gang]",
-					"&7Forcibly disband a gang."
+					"&f/multi",
+					"&7Check your active multipliers."
 			).buildItem().build());
 
 			//Back

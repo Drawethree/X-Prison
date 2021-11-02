@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class MultipliersHelpGui extends Gui {
+public class MinesHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class MultipliersHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public MultipliersHelpGui(Player player) {
-		super(player, 5, "Multipliers Help");
+	public MinesHelpGui(Player player) {
+		super(player, 5, "Mines Help");
 	}
 
 	@Override
@@ -51,23 +51,51 @@ public class MultipliersHelpGui extends Gui {
 
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7Multipliers allows your players",
-					"&7to earn more money when they",
-					"&7are mining."
+					"&7With Mines module",
+					"&7you can create unlimited",
+					"&7amount of prison mines",
+					"&7where your players can",
+					"&7mine blocks and progress."
 			).buildItem().build());
 
 			//Commands
-			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
-					"&f/gmulti [multiplier] [time in minutes]",
-					"&7Example: /gmulti 1.0 10",
-					"&7Set the global multiplier for all players on server.",
+			this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eAdmin Commands").lore(
+					"&f/mines create [name]",
+					"&7Create a mine.",
 					" ",
-					"&f/pmulti [player] [multiplier] [time in minutes]",
-					"&7Example: /pmulti Drawethree 1.0 10",
-					"&7Set the personal multiplier for player.",
+					"&f/mines delete [name]",
+					"&7Deletes a mine.",
 					" ",
-					"&f/multi",
-					"&7Check your active multipliers."
+					"&f/mines reset [name]",
+					"&7Resets a mine contents.",
+					" ",
+					"&f/mines panel [name]",
+					"&7Opens admin panel for a mine.",
+					" ",
+					"&f/mines save [name]",
+					"&7Saves a mine."
+			).buildItem().build());
+
+			//Commands
+			this.setItem(23, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eAdmin Commands").lore(
+					"&f/mines addblock [name]",
+					"&7Adds a block to a mine you hold in hand.",
+					" ",
+					"&f/mines settp [name]",
+					"&7Sets teleport location for a mine.",
+					" ",
+					"&f/mines tp [name]",
+					"&7Teleports to a mine.",
+					" ",
+					"&f/mines list",
+					"&7Shows all mines.",
+					" ",
+					"&f/mines tool",
+					"&7Gives you a mine selection tool.",
+					" ",
+					"&f/mines migrate <plugin>",
+					"&7Migrates mines from other plugins.",
+					"&7Currently supported: &fJetsPrisonMines, MineResetLite&7."
 			).buildItem().build());
 
 			//Back
@@ -90,6 +118,8 @@ public class MultipliersHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
+
+
 		}
 	}
 }

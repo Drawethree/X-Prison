@@ -12,7 +12,8 @@ import me.drawethree.ultraprisoncore.database.implementations.SQLiteDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
-import me.drawethree.ultraprisoncore.help.HelpGui;
+import me.drawethree.ultraprisoncore.mainmenu.MainMenu;
+import me.drawethree.ultraprisoncore.mainmenu.help.HelpGui;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.nms.NMSProvider;
@@ -24,7 +25,6 @@ import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import me.drawethree.ultraprisoncore.utils.gui.ClearDBGui;
 import me.jet315.prisonmines.JetsPrisonMines;
 import me.jet315.prisonmines.JetsPrisonMinesAPI;
 import me.lucko.helper.Commands;
@@ -36,7 +36,6 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -54,7 +53,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
 	private static final int METRICS_SERVICE_ID = 10520;
-	private static boolean DEBUG_MODE;
+	private boolean debugMode;
 
 	private LinkedHashMap<String, UltraPrisonModule> modules;
 
@@ -92,7 +91,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
-		DEBUG_MODE = this.getConfig().getBoolean("debug-mode", false);
+		this.debugMode = this.getConfig().getBoolean("debug-mode", false);
 
 		if (!loadNMSProvider()) {
 			this.getServer().getPluginManager().disablePlugin(this);
@@ -261,7 +260,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	public void debug(String msg, UltraPrisonModule module) {
-		if (!DEBUG_MODE) {
+		if (!this.debugMode) {
 			return;
 		}
 		if (module != null) {
@@ -271,7 +270,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 	}
 
-	private void reloadModule(UltraPrisonModule module) {
+	public void reloadModule(UltraPrisonModule module) {
 		if (!module.isEnabled()) {
 			return;
 		}
@@ -285,47 +284,13 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		String[] commandAliasesArray = commandAliases.toArray(new String[commandAliases.size()]);
 
 		Commands.create()
+				.assertOp()
+				.assertPlayer()
 				.handler(c -> {
-					if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
-						this.reload(c.sender());
-					} else if (((c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("help")) || c.args().size() == 0) && c.sender() instanceof Player) {
-						new HelpGui((Player) c.sender()).open();
-					} else if ((c.rawArg(0).equalsIgnoreCase("cleardb") || c.rawArg(0).equalsIgnoreCase("resetdb") || c.rawArg(0).equalsIgnoreCase("cleardata")) && c.sender().hasPermission("ultraprisoncore.admin")) {
-						UltraPrisonModule module = null;
-
-						if (c.args().size() == 2) {
-							module = this.getModuleByName(c.rawArg(1));
-							if (module == null) {
-								PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUltraPrisonCore - Unable to get module named " + c.rawArg(0)));
-								return;
-							}
-						}
-
-						if (c.sender() instanceof Player) {
-							new ClearDBGui(this.pluginDatabase, (Player) c.sender(), module).open();
-						} else {
-							if (this.pluginDatabase.resetAllData()) {
-								PlayerUtils.sendMessage(c.sender(), Text.colorize("&aUltraPrisonCore - All Modules Data have been reset."));
-							} else {
-								PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUltraPrisonCore - Something went wrong during reseting data. Please check console."));
-							}
-						}
-					} else if (c.args().size() == 1 && (c.rawArg(0).equalsIgnoreCase("version") || c.rawArg(0).equalsIgnoreCase("v")) && c.sender().hasPermission("ultraprisoncore.admin")) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&7This server is running &f" + this.getDescription().getFullName()));
-					} else if (c.args().size() == 1 && c.rawArg(0).equalsIgnoreCase("debug") && c.sender().hasPermission("ultraprisoncore.admin")) {
-						DEBUG_MODE = !DEBUG_MODE;
-						this.getConfig().set("debug-mode", DEBUG_MODE);
-						this.saveConfig();
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&7Debug Mode: " + (DEBUG_MODE ? "&aON" : "&cOFF")));
-					} else if (c.args().size() == 2 && c.rawArg(0).equalsIgnoreCase("reload") && c.sender().hasPermission("ultraprisoncore.admin")) {
-						UltraPrisonModule module = this.getModuleByName(c.rawArg(1));
-						if (module == null) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cModule " + c.rawArg(1) + " is not loaded."));
-							return;
-						}
-						this.reloadModule(module);
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&aModule " + c.rawArg(1) + " reloaded."));
-
+					if (c.args().size() == 0) {
+						new MainMenu(this, c.sender()).open();
+					} else if (c.args().size() == 1 && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
+						new HelpGui(c.sender()).open();
 					}
 				}).registerAndBind(this, commandAliasesArray);
 	}
@@ -422,5 +387,15 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	public Collection<UltraPrisonModule> getModules() {
 		return this.modules.values();
+	}
+
+	public boolean isDebugMode() {
+		return debugMode;
+	}
+
+	public void setDebugMode(boolean enabled) {
+		this.debugMode = enabled;
+		this.getConfig().set("debug-mode", debugMode);
+		this.saveConfig();
 	}
 }

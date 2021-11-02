@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.help;
+package me.drawethree.ultraprisoncore.mainmenu.help;
 
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -11,7 +11,7 @@ import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class AutoSellHelpGui extends Gui {
+public class TokensHelpGui extends Gui {
 
 	protected static final MenuScheme LAYOUT_WHITE = new MenuScheme()
 			.mask("011111110")
@@ -28,8 +28,8 @@ public class AutoSellHelpGui extends Gui {
 			.mask("100000001");
 
 
-	public AutoSellHelpGui(Player player) {
-		super(player, 5, "AutoSell Help");
+	public TokensHelpGui(Player player) {
+		super(player, 5, "Tokens Help");
 	}
 
 	@Override
@@ -51,32 +51,30 @@ public class AutoSellHelpGui extends Gui {
 
 			//Info
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.INFO_SKULL.clone()).name("&eWhat it is ?").lore(
-					"&7AutoSell lets your players",
-					"&7automatically sell any block",
-					"&7they mine in your set",
-					"&7mine regions."
+					"&7Tokens is a currency that allows",
+					"&7your players to upgrade their",
+					"&7pickaxe enchants."
 			).buildItem().build());
 
 			//Commands
 			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
-					"&f/sellprice [price]",
-					"&7Set the price for any item",
-					"&7you are holding. Make sure to",
-					"&7stand in the correct region that",
-					"&7you want autosell and sellall to work in.",
+					"&f/tokens [player]",
+					"&7View yours or player's tokens balance.",
 					" ",
-					"&f/autosell",
-					"&7Toggle your autosell mode.",
-					"&7If enabled, blocks mined will",
-					"&7be sold automatically.",
-					"&7If disabled, blocks mined will",
-					"&7go to your inventory.",
+					"&f/tokenstop",
+					"&7View a list of players with most tokens.",
 					" ",
-					"&f/sellall",
-					"&7Instantly sell every item",
-					"&7that is in your inventory.",
-					"&7You need to be standing in",
-					"&7mine region."
+					"&f/tokens [add/remove/set] [player] [amount]",
+					"&7Add, remove or set player's tokens balance.",
+					" ",
+					"&f/tokens pay [player] [amount]",
+					"&7Give an other player tokens from your balance.",
+					" ",
+					"&f/tokens withdraw [amount] [value]",
+					"&7Withdraw your tokens to a physical form.",
+					" ",
+					"&f/tokens help",
+					"&7Displays the help usage for tokens."
 			).buildItem().build());
 
 			//Back
@@ -99,7 +97,7 @@ public class AutoSellHelpGui extends Gui {
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
-
 		}
+
 	}
 }
