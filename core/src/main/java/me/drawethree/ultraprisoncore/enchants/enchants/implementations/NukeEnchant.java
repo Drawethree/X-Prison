@@ -86,6 +86,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 
 				if (this.plugin.isMinesModule()) {
 					Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
+
 					if (mine != null) {
 						mine.handleBlockBreak(blocksAffected);
 					}

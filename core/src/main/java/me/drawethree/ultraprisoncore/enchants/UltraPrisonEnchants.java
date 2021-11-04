@@ -69,12 +69,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	private List<UUID> disabledExplosive = new ArrayList<>();
 	private CooldownMap<Player> valueCooldown = CooldownMap.create(Cooldown.of(30, TimeUnit.SECONDS));
 	private boolean enabled;
-	@Getter
-	private boolean autoSellModule;
-	@Getter
-	private boolean minesModule;
-	@Getter
-	private boolean multipliersModule;
 
 	public UltraPrisonEnchants(UltraPrisonCore UltraPrisonCore) {
 		instance = this;
@@ -92,10 +86,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		this.config.reload();
 
 		this.loadMessages();
-
-		this.autoSellModule = this.core.isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME);
-		this.multipliersModule = this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
-		this.minesModule = this.core.isModuleEnabled(UltraPrisonMines.MODULE_NAME);
 
 		this.enchantsManager.reload();
 
@@ -117,9 +107,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		this.enabled = true;
 		this.config = this.core.getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
 		this.enchantsManager = new EnchantsManager(this);
-		this.autoSellModule = this.core.isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME);
-		this.multipliersModule = this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
-		this.minesModule = this.core.isModuleEnabled(UltraPrisonMines.MODULE_NAME);
 		this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
 		this.loadMessages();
 		this.registerCommands();
@@ -370,4 +357,15 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		return disabledExplosive.contains(p.getUniqueId());
 	}
 
+	public boolean isAutoSellModule() {
+		return this.core.isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME);
+	}
+
+	public boolean isMultipliersModule() {
+		return this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+	}
+
+	public boolean isMinesModule() {
+		return this.core.isModuleEnabled(UltraPrisonMines.MODULE_NAME);
+	}
 }

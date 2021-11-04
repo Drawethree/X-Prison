@@ -55,6 +55,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 	@Override
 	public void enable() {
+		this.enabled = true;
 		this.config = this.core.getFileManager().getConfig("mines.yml").copyDefaults(true).save();
 		this.loadMessages();
 		this.registerCommands();
@@ -65,6 +66,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 	@Override
 	public void disable() {
+		this.enabled = false;
 		this.manager.disable();
 	}
 
