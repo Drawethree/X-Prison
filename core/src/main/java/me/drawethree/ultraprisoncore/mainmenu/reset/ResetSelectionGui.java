@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.mainmenu.reset;
 
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.mainmenu.confirmation.ResetModulePlayerDataConfirmationGui;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -38,7 +39,7 @@ public class ResetSelectionGui extends Gui {
 	private final UltraPrisonCore core;
 
 	public ResetSelectionGui(UltraPrisonCore core, Player player) {
-		super(player, 5, "UltraPrisonCore - Reset Player Data");
+		super(player, 5, "UPC - Reset Player Data");
 		this.core = core;
 
 	}
@@ -61,68 +62,57 @@ public class ResetSelectionGui extends Gui {
 
 			//AutoMiner
 			this.setItem(12, ItemStackBuilder.of(Material.DIAMOND_PICKAXE).name("&e&lAutoMiner").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getAutoMiner());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lAutoMiner &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getAutoMiner()).open();
 			}));
 
 			//Autosell
 			this.setItem(13, ItemStackBuilder.of(SkullUtils.MONEY_SKULL.clone()).name("&e&lAutoSell").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getAutoSell());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lAutoSell &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getAutoSell()).open();
 			}));
 
 			//Enchants
 			this.setItem(14, ItemStackBuilder.of(CompMaterial.ENCHANTED_BOOK.toItem()).name("&e&lEnchants").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getEnchants());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lEnchants &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getEnchants()).open();
 			}));
 
 			//Gangs
 			this.setItem(20, ItemStackBuilder.of(SkullUtils.GANG_SKULL.clone()).name("&e&lGangs").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getGangs());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lGangs &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getGangs()).open();
 			}));
 
 			//Gems
 			this.setItem(21, ItemStackBuilder.of(Material.EMERALD).name("&e&lGems").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getGems());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lGems &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getGems()).open();
 			}));
 
 			//Ranks
 			this.setItem(22, ItemStackBuilder.of(SkullUtils.DIAMOND_R_SKULL.clone()).name("&e&lRanks").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getRanks());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lRanks &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getRanks()).open();
 			}));
 
 			//Prestiges
 			this.setItem(23, ItemStackBuilder.of(SkullUtils.DIAMOND_P_SKULL.clone()).name("&e&lPrestiges").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getRanks());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lPrestiges &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getRanks()).open();
 			}));
 
 			//PickaxeLevels
 			this.setItem(24, ItemStackBuilder.of(CompMaterial.EXPERIENCE_BOTTLE.toItem()).name("&e&lPickaxe Levels").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getPickaxeLevels());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lPickaxe Levels &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getPickaxeLevels()).open();
 			}));
 
 			//Tokens
 			this.setItem(30, ItemStackBuilder.of(SkullUtils.COIN_SKULL.clone()).name("&e&lTokens").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getTokens());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lTokens &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getTokens()).open();
 			}));
 
 			//Multipliers
 			this.setItem(31, ItemStackBuilder.of(Material.GOLD_INGOT).name("&e&lMultipliers").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getEnchants());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lMultipliers &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getMultipliers()).open();
 			}));
 
 			//Mines
 			this.setItem(32, ItemStackBuilder.of(Material.DIAMOND_ORE).name("&e&lMines").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				this.core.getPluginDatabase().resetData(this.core.getMines());
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&lMines &amodule."));
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getMines()).open();
 			}));
 
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lClose").lore("&7Click to close the gui.").build(this::close));

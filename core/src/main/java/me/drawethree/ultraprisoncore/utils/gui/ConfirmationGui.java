@@ -49,6 +49,4 @@ public abstract class ConfirmationGui extends Gui {
 	private final Item getInfoItem() {
 		return ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name(this.getInitialTitle()).lore("&c&lWARNING!", "&7This action cannot be undone.").buildItem().build();
 	}
-
-
 }
