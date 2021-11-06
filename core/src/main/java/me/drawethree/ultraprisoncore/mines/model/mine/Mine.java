@@ -6,7 +6,6 @@ import lombok.Setter;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.managers.MineManager;
 import me.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.gson.GsonSerializable;
@@ -33,10 +32,11 @@ import java.util.stream.Collectors;
 
 public class Mine implements GsonSerializable {
 
+	@Getter
 	private MineManager manager;
 
 	@Getter
-	private String name;
+	private final String name;
 	@Getter
 	private Region mineRegion;
 
@@ -70,16 +70,25 @@ public class Mine implements GsonSerializable {
 	@Setter
 	private boolean broadcastReset;
 
+	@Getter
+	@Setter
 	private Hologram blocksLeftHologram;
+	@Getter
+	@Setter
 	private Hologram blocksMinedHologram;
+	@Getter
+	@Setter
 	private Hologram timedResetHologram;
 
+	@Getter
+	@Setter
 	private Date nextResetDate;
 
 	@Getter
 	@Setter
 	private int resetTime;
 
+	@Getter
 	private Map<PotionEffectType, Integer> mineEffects;
 
 	public Mine(MineManager manager, String name, Region region) {
@@ -153,7 +162,7 @@ public class Mine implements GsonSerializable {
 		double ratio = (double) this.currentBlocks / this.totalBlocks * 100.0;
 
 		if (ratio <= this.resetPercentage && !this.resetting) {
-			this.resetMine();
+			this.manager.resetMine(this);
 		}
 
 		this.updateHolograms();
@@ -238,10 +247,10 @@ public class Mine implements GsonSerializable {
 	}
 
 	private void tick() {
-		this.getPlayersInMine().forEach(this::giveMineEffects);
+		this.getPlayersInMine().forEach(player -> this.manager.giveMineEffects(this, player));
 
 		if (!this.resetting && this.nextResetDate != null && System.currentTimeMillis() >= this.nextResetDate.getTime()) {
-			this.resetMine();
+			this.manager.resetMine(this);
 		}
 
 		if (!this.resetting && this.timedResetHologram != null) {
@@ -250,42 +259,7 @@ public class Mine implements GsonSerializable {
 		}
 	}
 
-	private void giveMineEffects(Player player) {
-		for (PotionEffectType type : this.mineEffects.keySet()) {
-			player.removePotionEffect(type);
-			player.addPotionEffect(this.getEffect(type));
-		}
-	}
 
-	public void resetMine() {
-
-		if (this.resetting) {
-			return;
-		}
-
-		this.resetting = true;
-
-		if (broadcastReset) {
-			Players.all().forEach(player -> PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_resetting").replace("%mine%", this.name)));
-		}
-
-		Schedulers.sync().runLater(() -> {
-
-			if (this.teleportLocation != null) {
-				this.getPlayersInMine().forEach(player -> player.teleport(this.teleportLocation.toLocation()));
-			}
-
-			this.resetType.reset(this, this.blockPalette);
-
-			if (broadcastReset) {
-				Players.all().forEach(player -> PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_reset").replace("%mine%", this.name)));
-			}
-
-			this.nextResetDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(this.resetTime));
-
-			this.resetting = false;
-		}, 5, TimeUnit.SECONDS);
-	}
 
 	@Nonnull
 	@Override
@@ -320,87 +294,6 @@ public class Mine implements GsonSerializable {
 
 	public List<Player> getPlayersInMine() {
 		return Players.all().stream().filter(player -> this.isInMine(player.getLocation())).collect(Collectors.toList());
-	}
-
-	public void createHologram(HologramType type, Player player) {
-		switch (type) {
-			case BLOCKS_LEFT: {
-				if (this.blocksLeftHologram == null) {
-					this.blocksLeftHologram = Hologram.create(Position.of(player.getLocation()), this.manager.getHologramBlocksLeftLines(this));
-					this.blocksLeftHologram.spawn();
-				} else {
-					this.blocksLeftHologram.despawn();
-					this.blocksLeftHologram.updatePosition(Position.of(player.getLocation()));
-					this.blocksLeftHologram.spawn();
-				}
-				break;
-			}
-			case BLOCKS_MINED: {
-				if (this.blocksMinedHologram == null) {
-					this.blocksMinedHologram = Hologram.create(Position.of(player.getLocation()), this.manager.getHologramBlocksMinedLines(this));
-					this.blocksMinedHologram.spawn();
-				} else {
-					this.blocksMinedHologram.despawn();
-					this.blocksMinedHologram.updatePosition(Position.of(player.getLocation()));
-					this.blocksMinedHologram.spawn();
-				}
-				break;
-			}
-			case TIMED_RESET: {
-				if (this.timedResetHologram == null) {
-					this.timedResetHologram = Hologram.create(Position.of(player.getLocation()), this.manager.getHologramTimedResetLines(this));
-					this.timedResetHologram.spawn();
-				} else {
-					this.timedResetHologram.despawn();
-					this.timedResetHologram.updatePosition(Position.of(player.getLocation()));
-					this.timedResetHologram.spawn();
-				}
-				break;
-			}
-		}
-		PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_hologram_create").replace("%type%", type.name()).replace("%mine%", this.name));
-	}
-
-	public void deleteHologram(HologramType type, Player player) {
-		switch (type) {
-			case BLOCKS_LEFT: {
-				if (this.blocksLeftHologram != null) {
-					this.blocksLeftHologram.despawn();
-					this.blocksLeftHologram = null;
-				}
-				break;
-			}
-			case BLOCKS_MINED: {
-				if (this.blocksMinedHologram != null) {
-					this.blocksMinedHologram.despawn();
-					this.blocksMinedHologram = null;
-				}
-				break;
-			}
-			case TIMED_RESET: {
-				if (this.timedResetHologram != null) {
-					this.timedResetHologram.despawn();
-					this.timedResetHologram = null;
-				}
-				break;
-			}
-		}
-		PlayerUtils.sendMessage(player, this.manager.getPlugin().getMessage("mine_hologram_delete").replace("%type%", type.name()).replace("%mine%", this.name));
-	}
-
-	public void despawnHolograms() {
-
-		if (this.blocksMinedHologram != null) {
-			this.blocksMinedHologram.despawn();
-		}
-
-		if (this.blocksLeftHologram != null) {
-			this.blocksLeftHologram.despawn();
-		}
-
-		if (this.timedResetHologram != null) {
-			this.timedResetHologram.despawn();
-		}
 	}
 
 	private void subscribeEvents() {

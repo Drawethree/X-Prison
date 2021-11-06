@@ -1,9 +1,8 @@
-package me.drawethree.ultraprisoncore.api.events;
+package me.drawethree.ultraprisoncore.autosell.api.events;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.drawethree.ultraprisoncore.autosell.SellRegion;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -11,31 +10,32 @@ import org.bukkit.event.HandlerList;
 
 
 @Getter
-public class UltraPrisonAutoSellEvent extends Event implements Cancellable {
+public class UltraPrisonSellAllEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
 	private final Player player;
 	private final SellRegion region;
-	private final Block block;
+
+	@Getter
 	@Setter
-	private double moneyToDeposit;
+	private double sellPrice;
+
+	@Getter
 	@Setter
 	private boolean cancelled;
 
 	/**
 	 * Called when mined blocks are automatically sold
 	 *
-	 * @param player         Player
-	 * @param reg            IWrappedRegion where block was mined
-	 * @param block          Block that was mined
-	 * @param moneyToDeposit Default amount to deposit
+	 * @param player    Player
+	 * @param reg       SellRegion where block was mined
+	 * @param sellPrice Amount what will player receive after selling
 	 */
-	public UltraPrisonAutoSellEvent(Player player, SellRegion reg, Block block, double moneyToDeposit) {
+	public UltraPrisonSellAllEvent(Player player, SellRegion reg, double sellPrice) {
 		this.player = player;
 		this.region = reg;
-		this.block = block;
-		this.moneyToDeposit = moneyToDeposit;
+		this.sellPrice = sellPrice;
 	}
 
 	@Override

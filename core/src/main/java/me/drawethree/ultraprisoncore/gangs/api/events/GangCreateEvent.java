@@ -19,10 +19,16 @@ public class GangCreateEvent extends Event implements Cancellable {
     @Getter
     private Gang gang;
 
-    public GangCreateEvent(CommandSender creator, Gang gang) {
-        this.creator = creator;
-        this.gang = gang;
-    }
+	/**
+	 * Fired when gang is created
+	 *
+	 * @param creator CommandSender who created the gang
+	 * @param gang    Gang
+	 */
+	public GangCreateEvent(CommandSender creator, Gang gang) {
+		this.creator = creator;
+		this.gang = gang;
+	}
 
     @Override
     public boolean isCancelled() {

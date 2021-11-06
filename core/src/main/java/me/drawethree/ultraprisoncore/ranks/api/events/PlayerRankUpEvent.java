@@ -1,13 +1,14 @@
-package me.drawethree.ultraprisoncore.api.events.player;
+package me.drawethree.ultraprisoncore.ranks.api.events;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEvent;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class UltraPrisonPlayerRankUpEvent extends UltraPrisonPlayerEvent implements Cancellable {
+public class PlayerRankUpEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 
 	private static final HandlerList handlers = new HandlerList();
@@ -30,7 +31,7 @@ public class UltraPrisonPlayerRankUpEvent extends UltraPrisonPlayerEvent impleme
 	 * @param oldR   old rank
 	 * @param newR   new rank
 	 */
-	public UltraPrisonPlayerRankUpEvent(Player player, Rank oldR, Rank newR) {
+	public PlayerRankUpEvent(Player player, Rank oldR, Rank newR) {
 		super(player);
 		this.oldRank = oldR;
 		this.newRank = newR;

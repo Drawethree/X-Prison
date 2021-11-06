@@ -4,7 +4,6 @@ import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Event;
 
-
 public abstract class UltraPrisonPlayerEvent extends Event {
 
 	@Getter

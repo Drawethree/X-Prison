@@ -4,11 +4,11 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
-import me.drawethree.ultraprisoncore.api.events.UltraPrisonBlockBreakEvent;
-import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerTokensReceiveEvent;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
+import me.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
@@ -217,7 +217,7 @@ public class TokensManager {
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens, this.plugin);
 
-			UltraPrisonPlayerTokensReceiveEvent event = new UltraPrisonPlayerTokensReceiveEvent(cause, p, amount);
+			PlayerTokensReceiveEvent event = new PlayerTokensReceiveEvent(cause, p, amount);
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Original amount :: " + amount, this.plugin);
 

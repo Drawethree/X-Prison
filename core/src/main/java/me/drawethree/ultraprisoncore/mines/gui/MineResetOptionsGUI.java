@@ -26,7 +26,7 @@ public class MineResetOptionsGUI extends Gui {
 
 		this.setItem(11, ItemStackBuilder.of(CompMaterial.STONE_BUTTON.toItem()).name("&eReset NOW").lore(" ", "&7Resets the mine now.").build(() -> {
 			this.close();
-			this.mine.resetMine();
+			this.mine.getManager().resetMine(this.mine);
 		}));
 
 		this.setItem(13, ItemStackBuilder.of(CompMaterial.COMPARATOR.toItem()).name("&eReset Type: " + this.mine.getResetType().getName()).lore(" ", "&7Instant: Will use more CPU power", "&7but the mine will reset instantly.", " ", "&7Gradual: Will use less CPU power", "&7but mine reset may take more time.", " ", "&aClick &7to change.").build(() -> {

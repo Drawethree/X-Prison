@@ -15,9 +15,14 @@ public class GangDisbandEvent extends Event implements Cancellable {
     @Getter
     private Gang gang;
 
-    public GangDisbandEvent(Gang gang) {
-        this.gang = gang;
-    }
+	/**
+	 * Called when gang is disbanded
+	 *
+	 * @param gang Gang
+	 */
+	public GangDisbandEvent(Gang gang) {
+		this.gang = gang;
+	}
 
     @Override
     public boolean isCancelled() {

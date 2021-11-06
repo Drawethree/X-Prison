@@ -19,10 +19,16 @@ public class GangLeaveEvent extends Event implements Cancellable {
     @Getter
     private Gang gang;
 
-    public GangLeaveEvent(Player player, Gang gang) {
-        this.player = player;
-        this.gang = gang;
-    }
+	/**
+	 * Called when player leave gang
+	 *
+	 * @param player Player
+	 * @param gang   Gang
+	 */
+	public GangLeaveEvent(Player player, Gang gang) {
+		this.player = player;
+		this.gang = gang;
+	}
 
     @Override
     public boolean isCancelled() {

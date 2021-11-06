@@ -39,14 +39,14 @@ public abstract class ConfirmationGui extends Gui {
 	public abstract void confirm(boolean confirm);
 
 
-	private final Item getItem(boolean action) {
+	private Item getItem(boolean action) {
 		return ItemStackBuilder.of(action ? YES_ITEM : NO_ITEM).build(() -> {
 			confirm(action);
 		});
 	}
 
 
-	private final Item getInfoItem() {
+	private Item getInfoItem() {
 		return ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name(this.getInitialTitle()).lore("&c&lWARNING!", "&7This action cannot be undone.").buildItem().build();
 	}
 }

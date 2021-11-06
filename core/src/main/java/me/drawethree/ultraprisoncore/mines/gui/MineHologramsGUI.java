@@ -21,24 +21,24 @@ public class MineHologramsGUI extends Gui {
 	public void redraw() {
 		this.setItem(0, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eBlocks Mined Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
 			this.close();
-			this.mine.deleteHologram(HologramType.BLOCKS_MINED, this.getPlayer());
+			this.mine.getManager().deleteHologram(this.mine, HologramType.BLOCKS_MINED, this.getPlayer());
 		}, () -> {
 			this.close();
-			this.mine.createHologram(HologramType.BLOCKS_MINED, this.getPlayer());
+			this.mine.getManager().createHologram(this.mine, HologramType.BLOCKS_MINED, this.getPlayer());
 		}));
 		this.setItem(1, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eBlocks Left Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
 			this.close();
-			this.mine.deleteHologram(HologramType.BLOCKS_LEFT, this.getPlayer());
+			this.mine.getManager().deleteHologram(this.mine, HologramType.BLOCKS_LEFT, this.getPlayer());
 		}, () -> {
 			this.close();
-			this.mine.createHologram(HologramType.BLOCKS_LEFT, this.getPlayer());
+			this.mine.getManager().createHologram(this.mine, HologramType.BLOCKS_LEFT, this.getPlayer());
 		}));
 		this.setItem(2, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eTimed Reset Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
 			this.close();
-			this.mine.deleteHologram(HologramType.TIMED_RESET, this.getPlayer());
+			this.mine.getManager().deleteHologram(this.mine, HologramType.TIMED_RESET, this.getPlayer());
 		}, () -> {
 			this.close();
-			this.mine.createHologram(HologramType.TIMED_RESET, this.getPlayer());
+			this.mine.getManager().createHologram(this.mine, HologramType.TIMED_RESET, this.getPlayer());
 		}));
 
 		this.setItem(8, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to panel").build(() -> {

@@ -2,8 +2,8 @@ package me.drawethree.ultraprisoncore.gems.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
-import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerGemsReceiveEvent;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.gems.api.events.PlayerGemsReceiveEvent;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
@@ -147,7 +147,7 @@ public class GemsManager {
     public void giveGems(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
         long currentgems = getPlayerGems(p);
 
-        UltraPrisonPlayerGemsReceiveEvent event = new UltraPrisonPlayerGemsReceiveEvent(cause, p, amount);
+		PlayerGemsReceiveEvent event = new PlayerGemsReceiveEvent(cause, p, amount);
 
         Events.callSync(event);
 

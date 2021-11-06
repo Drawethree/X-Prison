@@ -2,13 +2,21 @@ package me.drawethree.ultraprisoncore.mines.managers;
 
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
+import me.drawethree.ultraprisoncore.mines.api.events.MineCreateEvent;
+import me.drawethree.ultraprisoncore.mines.api.events.MineDeleteEvent;
+import me.drawethree.ultraprisoncore.mines.api.events.MinePostResetEvent;
+import me.drawethree.ultraprisoncore.mines.api.events.MinePreResetEvent;
 import me.drawethree.ultraprisoncore.mines.gui.MinePanelGUI;
+import me.drawethree.ultraprisoncore.mines.model.mine.HologramType;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.mines.model.mine.MineSelection;
 import me.drawethree.ultraprisoncore.mines.utils.MineLoader;
 import me.drawethree.ultraprisoncore.utils.LocationUtils;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.TimeUtil;
+import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
+import me.lucko.helper.hologram.Hologram;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
@@ -20,11 +28,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class MineManager {
 
@@ -105,9 +115,7 @@ public class MineManager {
 	}
 
 	private void saveMines() {
-		for (Mine mine : this.mines.values()) {
-			MineLoader.save(mine);
-		}
+		this.getMines().forEach(MineLoader::save);
 	}
 
 	public void selectPosition(Player player, int position, Position pos) {
@@ -155,6 +163,15 @@ public class MineManager {
 
 		Mine mine = new Mine(this, name, selection.toRegion());
 
+		MineCreateEvent event = new MineCreateEvent(creator, mine);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			this.plugin.getCore().debug("MineCreateEvent was cancelled.", this.plugin);
+			return true;
+		}
+
 		this.mines.put(mine.getName(), mine);
 
 		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_created").replace("%mine%", name));
@@ -169,11 +186,20 @@ public class MineManager {
 			return false;
 		}
 
+		MineDeleteEvent event = new MineDeleteEvent(mine);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			this.plugin.getCore().debug("MineDeleteEvent was cancelled.", this.plugin);
+			return true;
+		}
+
 		if (mine.getFile() != null) {
 			mine.getFile().delete();
 		}
 
-		mine.despawnHolograms();
+		this.despawnHolograms(mine);
 
 		this.mines.remove(mine.getName());
 
@@ -207,14 +233,7 @@ public class MineManager {
 
 	public void disable() {
 		this.saveMines();
-		this.despawnHolograms();
-
-	}
-
-	private void despawnHolograms() {
-		for (Mine mine : this.mines.values()) {
-			mine.despawnHolograms();
-		}
+		this.getMines().forEach(this::despawnHolograms);
 	}
 
 	public Collection<Mine> getMines() {
@@ -284,9 +303,7 @@ public class MineManager {
 	}
 
 	public void resetAllMines() {
-		for (Mine mine : this.getMines()) {
-			mine.resetMine();
-		}
+		this.getMines().forEach(this::resetMine);
 	}
 
 	public List<String> getHologramTimedResetLines(Mine mine) {
@@ -295,5 +312,142 @@ public class MineManager {
 			copy.add(s.replace("%mine%", mine.getName()).replace("%time%", TimeUtil.getTime(mine.getSecondsToNextReset())));
 		}
 		return copy;
+	}
+
+	public void resetMine(Mine mine) {
+
+		if (mine == null) {
+			return;
+		}
+
+		if (mine.isResetting()) {
+			return;
+		}
+
+		MinePreResetEvent preResetEvent = new MinePreResetEvent(mine);
+
+		Events.callSync(preResetEvent);
+
+		if (preResetEvent.isCancelled()) {
+			this.getPlugin().getCore().debug("MinePreResetEvent was cancelled.", this.getPlugin());
+			return;
+		}
+
+		mine.setResetting(true);
+
+		if (mine.isBroadcastReset()) {
+			mine.getPlayersInMine().forEach(player -> PlayerUtils.sendMessage(player, this.getPlugin().getMessage("mine_resetting").replace("%mine%", mine.getName())));
+		}
+
+		Schedulers.sync().runLater(() -> {
+
+			if (mine.getTeleportLocation() != null) {
+				mine.getPlayersInMine().forEach(player -> player.teleport(mine.getTeleportLocation().toLocation()));
+			}
+
+			mine.getResetType().reset(mine, mine.getBlockPalette());
+
+			if (mine.isBroadcastReset()) {
+				mine.getPlayersInMine().forEach(player -> PlayerUtils.sendMessage(player, this.getPlugin().getMessage("mine_reset").replace("%mine%", mine.getName())));
+			}
+
+			mine.setNextResetDate(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(mine.getResetTime())));
+
+			mine.setResetting(false);
+
+			MinePostResetEvent postResetEvent = new MinePostResetEvent(mine);
+
+			Events.call(postResetEvent);
+		}, 5, TimeUnit.SECONDS);
+
+	}
+
+	public void giveMineEffects(Mine mine, Player player) {
+		for (PotionEffectType type : mine.getMineEffects().keySet()) {
+			player.removePotionEffect(type);
+			player.addPotionEffect(mine.getEffect(type));
+		}
+	}
+
+
+	public void createHologram(Mine mine, HologramType type, Player player) {
+		switch (type) {
+			case BLOCKS_LEFT: {
+				if (mine.getBlocksLeftHologram() == null) {
+					mine.setBlocksLeftHologram(Hologram.create(Position.of(player.getLocation()), this.getHologramBlocksLeftLines(mine)));
+					mine.getBlocksLeftHologram().spawn();
+				} else {
+					mine.getBlocksLeftHologram().despawn();
+					mine.getBlocksLeftHologram().updatePosition(Position.of(player.getLocation()));
+					mine.getBlocksLeftHologram().spawn();
+				}
+				break;
+			}
+			case BLOCKS_MINED: {
+				if (mine.getBlocksMinedHologram() == null) {
+					mine.setBlocksMinedHologram(Hologram.create(Position.of(player.getLocation()), this.getHologramBlocksMinedLines(mine)));
+					mine.getBlocksMinedHologram().spawn();
+				} else {
+					mine.getBlocksMinedHologram().despawn();
+					mine.getBlocksMinedHologram().updatePosition(Position.of(player.getLocation()));
+					mine.getBlocksMinedHologram().spawn();
+				}
+				break;
+			}
+			case TIMED_RESET: {
+				if (mine.getTimedResetHologram() == null) {
+					mine.setTimedResetHologram(Hologram.create(Position.of(player.getLocation()), this.getHologramTimedResetLines(mine)));
+					mine.getTimedResetHologram().spawn();
+				} else {
+					mine.getTimedResetHologram().despawn();
+					mine.getTimedResetHologram().updatePosition(Position.of(player.getLocation()));
+					mine.getTimedResetHologram().spawn();
+				}
+				break;
+			}
+		}
+		PlayerUtils.sendMessage(player, this.getPlugin().getMessage("mine_hologram_create").replace("%type%", type.name()).replace("%mine%", mine.getName()));
+	}
+
+	public void deleteHologram(Mine mine, HologramType type, Player player) {
+		switch (type) {
+			case BLOCKS_LEFT: {
+				if (mine.getBlocksLeftHologram() != null) {
+					mine.getBlocksLeftHologram().despawn();
+					mine.setBlocksLeftHologram(null);
+				}
+				break;
+			}
+			case BLOCKS_MINED: {
+				if (mine.getBlocksMinedHologram() != null) {
+					mine.getBlocksMinedHologram().despawn();
+					mine.setBlocksMinedHologram(null);
+				}
+				break;
+			}
+			case TIMED_RESET: {
+				if (mine.getTimedResetHologram() != null) {
+					mine.getTimedResetHologram().despawn();
+					mine.setTimedResetHologram(null);
+				}
+				break;
+			}
+		}
+		PlayerUtils.sendMessage(player, this.getPlugin().getMessage("mine_hologram_delete").replace("%type%", type.name()).replace("%mine%", mine.getName()));
+	}
+
+	private void despawnHolograms(Mine mine) {
+
+		if (mine.getBlocksMinedHologram() != null) {
+			mine.getBlocksMinedHologram().despawn();
+		}
+
+		if (mine.getBlocksLeftHologram() != null) {
+			mine.getBlocksLeftHologram().despawn();
+		}
+
+		if (mine.getTimedResetHologram() != null) {
+			mine.getTimedResetHologram().despawn();
+		}
 	}
 }

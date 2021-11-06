@@ -1,8 +1,8 @@
 package me.drawethree.ultraprisoncore.ranks.manager;
 
-import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerPrestigeEvent;
-import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerRankUpEvent;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
+import me.drawethree.ultraprisoncore.ranks.api.events.PlayerPrestigeEvent;
+import me.drawethree.ultraprisoncore.ranks.api.events.PlayerRankUpEvent;
 import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
 import me.drawethree.ultraprisoncore.ranks.rank.Rank;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
@@ -294,7 +294,7 @@ public class RankManager {
 
 		Rank finalRank = this.getRankById(finalRankId);
 
-		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(p, currentRank, finalRank);
+		PlayerRankUpEvent event = new PlayerRankUpEvent(p, currentRank, finalRank);
 
 		Events.callSync(event);
 
@@ -336,7 +336,7 @@ public class RankManager {
 			return false;
 		}
 
-		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(p, currentRank, toBuy);
+		PlayerRankUpEvent event = new PlayerRankUpEvent(p, currentRank, toBuy);
 
 		Events.callSync(event);
 
@@ -405,7 +405,7 @@ public class RankManager {
 			return false;
 		}
 
-		UltraPrisonPlayerPrestigeEvent event = new UltraPrisonPlayerPrestigeEvent(p, currentPrestige, toBuy);
+		PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, toBuy);
 
 		Events.callSync(event);
 
@@ -506,7 +506,7 @@ public class RankManager {
 
 		while (p.isOnline() && !isMaxPrestige(p) && isMaxRank(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
 
-			UltraPrisonPlayerPrestigeEvent event = new UltraPrisonPlayerPrestigeEvent(p, currentPrestige, nextPrestige);
+			PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, nextPrestige);
 
 			Events.callSync(event);
 
@@ -636,7 +636,7 @@ public class RankManager {
 
 		Rank currentRank = this.getPlayerRank(target);
 
-		UltraPrisonPlayerRankUpEvent event = new UltraPrisonPlayerRankUpEvent(target, currentRank, rank);
+		PlayerRankUpEvent event = new PlayerRankUpEvent(target, currentRank, rank);
 
 		Events.callSync(event);
 

@@ -39,7 +39,7 @@ public class MineResetCommand extends MineCommand {
 			return true;
 		}
 
-		mine.resetMine();
+		this.plugin.getManager().resetMine(mine);
 		return true;
 	}
 

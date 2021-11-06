@@ -2,8 +2,8 @@ package me.drawethree.ultraprisoncore.enchants.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.Getter;
-import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEnchantEvent;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import me.drawethree.ultraprisoncore.enchants.api.events.UltraPrisonPlayerEnchantEvent;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;

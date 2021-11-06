@@ -1,19 +1,21 @@
-package me.drawethree.ultraprisoncore.api.events.player;
+package me.drawethree.ultraprisoncore.tokens.api.events;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
+import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEvent;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class UltraPrisonPlayerGemsReceiveEvent extends UltraPrisonPlayerEvent implements Cancellable {
+public class PlayerTokensReceiveEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 
 	private static final HandlerList handlers = new HandlerList();
 
 	@Getter
 	private final ReceiveCause cause;
+
 	@Getter
 	@Setter
 	private long amount;
@@ -23,13 +25,13 @@ public class UltraPrisonPlayerGemsReceiveEvent extends UltraPrisonPlayerEvent im
 	private boolean cancelled;
 
 	/**
-	 * Called when player receive gems
+	 * Called when player receive tokens
 	 *
 	 * @param cause  ReceiveCause
 	 * @param player Player
-	 * @param amount Amount of gems received
+	 * @param amount Amount of tokens received
 	 */
-	public UltraPrisonPlayerGemsReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
+	public PlayerTokensReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
 		super(player);
 		this.cause = cause;
 		this.amount = amount;

@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.api.events;
+package me.drawethree.ultraprisoncore.tokens.api.events;
 
 import lombok.Getter;
 import lombok.Setter;
