@@ -22,7 +22,6 @@ import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.jet315.prisonmines.JetsPrisonMines;
@@ -35,7 +34,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -284,7 +282,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		String[] commandAliasesArray = commandAliases.toArray(new String[commandAliases.size()]);
 
 		Commands.create()
-				.assertOp()
+				.assertPermission("ultraprisoncore.mainmenu")
 				.assertPlayer()
 				.handler(c -> {
 					if (c.args().size() == 0) {
@@ -294,15 +292,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 					}
 				}).registerAndBind(this, commandAliasesArray);
 	}
-
-	private void reload(CommandSender sender) {
-		for (UltraPrisonModule module : this.modules.values()) {
-			this.reloadModule(module);
-		}
-		PlayerUtils.sendMessage(sender, Text.colorize("&aUltraPrisonCore - Reloaded."));
-	}
-
-
 	@Override
 	protected void disable() {
 

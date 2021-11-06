@@ -68,18 +68,27 @@ public class MainMenu extends Gui {
 
 		//Reload
 		this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&e&lReload Modules").lore("&7Click to reload specific module").build(() -> {
+			if (!this.getPlayer().hasPermission("ultraprisoncore.mainmenu.reload")) {
+				return;
+			}
 			this.close();
 			new ReloadSelectionGui(this.core, this.getPlayer()).open();
 		}));
 
 		//Debug
 		this.setItem(22, ItemStackBuilder.of(this.core.isDebugMode() ? SkullUtils.CHECK_SKULL.clone() : SkullUtils.CROSS_SKULL.clone()).name("&e&lDebug Mode: " + (this.core.isDebugMode() ? "&2&lON" : "&c&lOFF")).lore("&7Click to toggle debug mode.").build(() -> {
+			if (!this.getPlayer().hasPermission("ultraprisoncore.mainmenu.debug")) {
+				return;
+			}
 			this.core.setDebugMode(!this.core.isDebugMode());
 			this.redraw();
 		}));
 
 		//Reset Data
 		this.setItem(23, ItemStackBuilder.of(SkullUtils.DANGER_SKULL.clone()).name("&e&lReset Player Data").lore("&7Click to select which module data", "&7would you like to wipe.").build(() -> {
+			if (!this.getPlayer().hasPermission("ultraprisoncore.mainmenu.reset")) {
+				return;
+			}
 			this.close();
 			new ResetSelectionGui(this.core, this.getPlayer()).open();
 		}));

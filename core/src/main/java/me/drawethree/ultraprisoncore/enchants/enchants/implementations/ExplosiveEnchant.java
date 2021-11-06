@@ -6,8 +6,6 @@ import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.utils.RegionUtils;
-import me.lucko.helper.cooldown.Cooldown;
-import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.time.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,18 +18,15 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private int cooldown;
-	private final CooldownMap<Player> cooldownMap;
 
 
 	public ExplosiveEnchant(UltraPrisonEnchants instance) {
 		super(instance, 9);
-		this.cooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
 	}
 
 	@Override
@@ -53,9 +48,6 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (plugin.hasExplosiveDisabled(e.getPlayer())) {
-			return;
-		}
-		if (!cooldownMap.test(e.getPlayer())) {
 			return;
 		}
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
@@ -136,9 +128,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 			}
 			long timeEnd = Time.nowMillis();
 			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.", this.plugin);
-
 		}
-
 	}
 
 	@Override
