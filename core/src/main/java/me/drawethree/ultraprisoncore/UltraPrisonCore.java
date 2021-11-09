@@ -51,6 +51,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
 	private static final int METRICS_SERVICE_ID = 10520;
+
 	private boolean debugMode;
 
 	private LinkedHashMap<String, UltraPrisonModule> modules;

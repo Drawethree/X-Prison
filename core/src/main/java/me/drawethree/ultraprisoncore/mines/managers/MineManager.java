@@ -108,6 +108,13 @@ public class MineManager {
 				}
 				this.mines.put(mine.getName(), mine);
 				this.plugin.getCore().getLogger().info("Loaded Mine " + mine.getName());
+
+				double ratio = (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0;
+
+				if (ratio <= mine.getResetPercentage() && !mine.isResetting()) {
+					this.resetMine(mine);
+				}
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
