@@ -14,7 +14,7 @@ import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
-import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 
 import java.util.Optional;
@@ -140,8 +140,8 @@ public class UltraPrisonMVdWPlaceholder {
 			return nextRank == null ? "" : nextRank.getPrefix();
 		});
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige", event -> plugin.getRanks().getApi().getPlayerPrestige(event.getPlayer()).getPrefix());
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige_id", event -> String.valueOf(plugin.getRanks().getApi().getPlayerPrestige(event.getPlayer()).getId()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige", event -> plugin.getPrestiges().getApi().getPlayerPrestige(event.getPlayer()).getPrefix());
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_prestige_id", event -> String.valueOf(plugin.getPrestiges().getApi().getPlayerPrestige(event.getPlayer()).getId()));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress", event -> String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_raw", event -> String.valueOf(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost", event -> String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));

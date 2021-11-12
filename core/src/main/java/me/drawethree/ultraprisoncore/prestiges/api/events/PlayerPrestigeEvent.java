@@ -1,9 +1,9 @@
-package me.drawethree.ultraprisoncore.ranks.api.events;
+package me.drawethree.ultraprisoncore.prestiges.api.events;
 
 import lombok.Getter;
 import lombok.Setter;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEvent;
-import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
+import me.drawethree.ultraprisoncore.prestiges.model.Prestige;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

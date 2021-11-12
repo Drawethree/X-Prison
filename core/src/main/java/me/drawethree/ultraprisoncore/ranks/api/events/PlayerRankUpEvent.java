@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.ranks.api.events;
 import lombok.Getter;
 import lombok.Setter;
 import me.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEvent;
-import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

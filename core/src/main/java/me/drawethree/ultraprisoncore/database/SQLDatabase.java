@@ -11,6 +11,7 @@ import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
+import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.Schedulers;
@@ -43,7 +44,9 @@ public abstract class SQLDatabase extends Database {
 
 	protected static final String RANKS_UUID_COLNAME = "UUID";
 	protected static final String RANKS_RANK_COLNAME = "id_rank";
-	protected static final String RANKS_PRESTIGE_COLNAME = "id_prestige";
+
+	protected static final String PRESTIGES_UUID_COLNAME = "UUID";
+	protected static final String PRESTIGES_PRESTIGE_COLNAME = "id_prestige";
 
 	protected static final String TOKENS_UUID_COLNAME = "UUID";
 	protected static final String TOKENS_TOKENS_COLNAME = "Tokens";
@@ -192,8 +195,13 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public void updateRankAndPrestige(OfflinePlayer player, int newRank, long newPrestige) {
-		this.execute("UPDATE " + UltraPrisonRanks.TABLE_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=?," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", newRank, newPrestige, player.getUniqueId().toString());
+	public void updateRank(OfflinePlayer player, int newRank) {
+		this.execute("UPDATE " + UltraPrisonRanks.TABLE_NAME + " SET " + MySQLDatabase.RANKS_RANK_COLNAME + "=? WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?", newRank, player.getUniqueId().toString());
+	}
+
+	@Override
+	public void updatePrestige(OfflinePlayer player, long newPrestige) {
+		this.execute("UPDATE " + UltraPrisonPrestiges.TABLE_NAME + " SET " + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + "=? WHERE " + MySQLDatabase.PRESTIGES_UUID_COLNAME + "=?", newPrestige, player.getUniqueId().toString());
 	}
 
 	@Override
@@ -213,11 +221,11 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public long getPlayerPrestige(OfflinePlayer player) {
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonRanks.TABLE_NAME + " WHERE " + MySQLDatabase.RANKS_UUID_COLNAME + "=?")) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonPrestiges.TABLE_NAME + " WHERE " + MySQLDatabase.PRESTIGES_UUID_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
-					return set.getLong(SQLDatabase.RANKS_PRESTIGE_COLNAME);
+					return set.getLong(SQLDatabase.PRESTIGES_PRESTIGE_COLNAME);
 				}
 			}
 		} catch (SQLException e) {
@@ -389,9 +397,9 @@ public abstract class SQLDatabase extends Database {
 	@Override
 	public Map<UUID, Integer> getTop10Prestiges() {
 		Map<UUID, Integer> top10Prestige = new LinkedHashMap<>();
-		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.RANKS_UUID_COLNAME + "," + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " FROM " + UltraPrisonRanks.TABLE_NAME + " ORDER BY " + MySQLDatabase.RANKS_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.PRESTIGES_UUID_COLNAME + "," + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + " FROM " + UltraPrisonPrestiges.TABLE_NAME + " ORDER BY " + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
 			while (set.next()) {
-				top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.RANKS_UUID_COLNAME)), set.getInt(MySQLDatabase.RANKS_PRESTIGE_COLNAME));
+				top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.PRESTIGES_UUID_COLNAME)), set.getInt(MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -457,8 +465,13 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public void addIntoRanksAndPrestiges(OfflinePlayer player) {
-		this.execute("INSERT IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
+	public void addIntoRanks(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+	}
+
+	@Override
+	public void addIntoPrestiges(OfflinePlayer player) {
+		this.execute("INSERT IGNORE INTO " + UltraPrisonPrestiges.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override

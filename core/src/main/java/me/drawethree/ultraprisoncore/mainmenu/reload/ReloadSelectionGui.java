@@ -91,7 +91,7 @@ public class ReloadSelectionGui extends Gui {
 
 			//Prestiges
 			this.setItem(23, ItemStackBuilder.of(SkullUtils.DIAMOND_P_SKULL.clone()).name("&e&lPrestiges").lore("&7Click to reload this module.").build(() -> {
-				new ReloadModuleConfirmationGui(this.getPlayer(), this.core.getRanks()).open();
+				new ReloadModuleConfirmationGui(this.getPlayer(), this.core.getPrestiges()).open();
 			}));
 
 			//PickaxeLevels

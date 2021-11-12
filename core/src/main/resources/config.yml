@@ -10,6 +10,7 @@ modules:
   tokens: true
   gems: true
   ranks: true
+  prestiges: true
   multipliers: true
   enchants: true
   autosell: true

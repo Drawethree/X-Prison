@@ -92,7 +92,7 @@ public class ResetSelectionGui extends Gui {
 
 			//Prestiges
 			this.setItem(23, ItemStackBuilder.of(SkullUtils.DIAMOND_P_SKULL.clone()).name("&e&lPrestiges").lore("&7Click to reset this module", "&7player data.").build(() -> {
-				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getRanks()).open();
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getPrestiges()).open();
 			}));
 
 			//PickaxeLevels

@@ -7,7 +7,7 @@ import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
-import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -178,9 +178,9 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "next_rank_cost_formatted":
 				return formatNumber(plugin.getRanks().getRankManager().getNextRankCost(player));
 			case "prestige":
-				return plugin.getRanks().getApi().getPlayerPrestige(player).getPrefix();
+				return plugin.getPrestiges().getApi().getPlayerPrestige(player).getPrefix();
 			case "prestige_id":
-				return String.valueOf(plugin.getRanks().getApi().getPlayerPrestige(player).getId());
+				return String.valueOf(plugin.getPrestiges().getApi().getPlayerPrestige(player).getId());
 			case "autominer_time":
 				return plugin.getAutoMiner().getTimeLeft(player);
 			case "tokens_formatted":

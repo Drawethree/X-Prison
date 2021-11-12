@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.ranks.rank;
+package me.drawethree.ultraprisoncore.prestiges.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,18 +10,17 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class Rank {
+public class Prestige {
 
-	private int id;
+	private long id;
 	private double cost;
 	private String prefix;
 	private List<String> commandsToExecute;
 
 	public void runCommands(Player p) {
 		if (commandsToExecute != null) {
-
 			if (!Bukkit.isPrimaryThread()) {
-				Schedulers.async().run(() -> {
+				Schedulers.sync().run(() -> {
 					executeCommands(p);
 				});
 			} else {
@@ -32,7 +31,7 @@ public class Rank {
 
 	private void executeCommands(Player p) {
 		for (String cmd : commandsToExecute) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix).replace("%Rank%", prefix));
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prefix));
 		}
 	}
 

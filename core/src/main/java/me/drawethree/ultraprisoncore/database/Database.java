@@ -46,7 +46,9 @@ public abstract class Database {
 
 	public abstract void updateGems(OfflinePlayer player, long newAmount);
 
-	public abstract void updateRankAndPrestige(OfflinePlayer player, int rank, long prestige);
+	public abstract void updateRank(OfflinePlayer player, int rank);
+
+	public abstract void updatePrestige(OfflinePlayer player, long prestige);
 
 	public abstract void removeExpiredAutoMiners();
 
@@ -78,7 +80,9 @@ public abstract class Database {
 
 	public abstract void addIntoGems(OfflinePlayer player);
 
-	public abstract void addIntoRanksAndPrestiges(OfflinePlayer player);
+	public abstract void addIntoRanks(OfflinePlayer player);
+
+	public abstract void addIntoPrestiges(OfflinePlayer player);
 
 	public abstract List<Gang> getAllGangs();
 

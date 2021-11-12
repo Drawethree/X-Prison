@@ -1,8 +1,7 @@
 package me.drawethree.ultraprisoncore.ranks.api;
 
 
-import me.drawethree.ultraprisoncore.ranks.rank.Prestige;
-import me.drawethree.ultraprisoncore.ranks.rank.Rank;
+import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import org.bukkit.entity.Player;
 
 public interface UltraPrisonRanksAPI {
@@ -14,14 +13,6 @@ public interface UltraPrisonRanksAPI {
 	 * @return Rank
 	 */
 	Rank getPlayerRank(Player p);
-
-	/**
-	 * Method to get player Prestige
-	 *
-	 * @param p Player
-	 * @return Prestige
-	 */
-	Prestige getPlayerPrestige(Player p);
 
 	/**
 	 * Method to get next player rank
@@ -46,21 +37,5 @@ public interface UltraPrisonRanksAPI {
 	 * @param rank   Rank
 	 */
 	void setPlayerRank(Player player, Rank rank);
-
-	/**
-	 * Sets a prestige to online player
-	 *
-	 * @param player   Player
-	 * @param prestige Prestige
-	 */
-	void setPlayerPrestige(Player player, Prestige prestige);
-
-	/**
-	 * Sets a prestige to online player
-	 *
-	 * @param player   Player
-	 * @param prestige Prestige
-	 */
-	void setPlayerPrestige(Player player, long prestige);
 
 }

@@ -20,6 +20,7 @@ import me.drawethree.ultraprisoncore.nms.NMSProvider;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
+import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.SkullUtils;
@@ -49,7 +50,6 @@ import java.util.stream.Collectors;
 @Getter
 public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
-
 	private static final int METRICS_SERVICE_ID = 10520;
 
 	private boolean debugMode;
@@ -65,6 +65,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	private UltraPrisonTokens tokens;
 	private UltraPrisonGems gems;
 	private UltraPrisonRanks ranks;
+	private UltraPrisonPrestiges prestiges;
 	private UltraPrisonMultipliers multipliers;
 	private UltraPrisonEnchants enchants;
 	private UltraPrisonAutoSell autoSell;
@@ -147,6 +148,10 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			this.loadModule(ranks);
 		}
 
+		if (this.getConfig().getBoolean("modules.prestiges")) {
+			this.loadModule(prestiges);
+		}
+
 		if (this.getConfig().getBoolean("modules.multipliers")) {
 			this.loadModule(multipliers);
 		}
@@ -209,6 +214,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.tokens = new UltraPrisonTokens(this);
 		this.gems = new UltraPrisonGems(this);
 		this.ranks = new UltraPrisonRanks(this);
+		this.prestiges = new UltraPrisonPrestiges(this);
 		this.multipliers = new UltraPrisonMultipliers(this);
 		this.enchants = new UltraPrisonEnchants(this);
 		this.autoSell = new UltraPrisonAutoSell(this);
@@ -220,6 +226,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.modules.put(this.tokens.getName().toLowerCase(), this.tokens);
 		this.modules.put(this.gems.getName().toLowerCase(), this.gems);
 		this.modules.put(this.ranks.getName().toLowerCase(), this.ranks);
+		this.modules.put(this.prestiges.getName().toLowerCase(), this.prestiges);
 		this.modules.put(this.multipliers.getName().toLowerCase(), this.multipliers);
 		this.modules.put(this.enchants.getName().toLowerCase(), this.enchants);
 		this.modules.put(this.autoSell.getName().toLowerCase(), this.autoSell);
@@ -315,13 +322,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	public boolean isModuleEnabled(String moduleName) {
 		UltraPrisonModule module = this.modules.get(moduleName.toLowerCase());
 		return module != null && module.isEnabled();
-	}
-
-	private UltraPrisonModule getModuleByName(String name) {
-		if (!this.isModuleEnabled(name)) {
-			return null;
-		}
-		return this.modules.get(name.toLowerCase());
 	}
 
 	private void registerPlaceholders() {

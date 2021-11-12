@@ -12,6 +12,7 @@ import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
+import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.utils.Log;
@@ -106,7 +107,7 @@ public class SQLiteDatabase extends SQLDatabase {
         }
 
         // v1.5.0 - Renamed multipliers table columns
-        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Multipliers"); ResultSet set = statement.executeQuery()) {
+        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonMultipliers.TABLE_NAME); ResultSet set = statement.executeQuery()) {
             if (set.next()) {
                 try {
                     set.findColumn("sell_multiplier");
@@ -132,8 +133,13 @@ public class SQLiteDatabase extends SQLDatabase {
     }
 
     @Override
-    public void addIntoRanksAndPrestiges(OfflinePlayer player) {
-        this.execute("INSERT OR IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + " VALUES(?,?,?)", player.getUniqueId().toString(), 0, 0);
+    public void addIntoRanks(OfflinePlayer player) {
+        this.execute("INSERT OR IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + "(UUID,id_rank) VALUES(?,?)", player.getUniqueId().toString(), 0);
+    }
+
+    @Override
+    public void addIntoPrestiges(OfflinePlayer player) {
+        this.execute("INSERT OR IGNORE INTO " + UltraPrisonPrestiges.TABLE_NAME + "(UUID,id_prestige)  VALUES(?,?)", player.getUniqueId().toString(), 0);
     }
 
     @Override
