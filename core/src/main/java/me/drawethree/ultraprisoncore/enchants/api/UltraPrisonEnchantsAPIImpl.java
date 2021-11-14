@@ -27,23 +27,18 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
     }
 
     @Override
-    public synchronized int getEnchantLevel(ItemStack item, int id) {
+    public int getEnchantLevel(ItemStack item, int id) {
         return this.enchantsManager.getEnchantLevel(item, id);
     }
 
     @Override
-    public ItemStack addEnchant(ItemStack item, Player p, int id, int level) {
-        return this.enchantsManager.addEnchant(p, item, id, level);
+    public ItemStack setEnchantLevel(ItemStack item, int id, int level) {
+        return this.enchantsManager.setEnchantLevel(item, id, level);
     }
 
     @Override
-    public ItemStack addEnchant(ItemStack item, int id, int level) {
-        return this.enchantsManager.addEnchant(item, id, level);
-    }
-
-    @Override
-    public ItemStack removeEnchant(ItemStack item, Player p, int id) {
-        return this.enchantsManager.removeEnchant(item, p, id, 0);
+    public ItemStack removeEnchant(ItemStack item, int id) {
+        return this.enchantsManager.removeEnchant(item, id);
     }
 
     @Override

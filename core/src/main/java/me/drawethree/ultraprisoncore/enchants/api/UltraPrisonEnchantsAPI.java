@@ -34,32 +34,21 @@ public interface UltraPrisonEnchantsAPI {
     int getEnchantLevel(ItemStack item, int id);
 
     /**
-     * Method to add custom enchant to ItemStack
-     * @param item ItemStack
-     * @param p Player
-     * @param id Enchant ID
-     * @param level Enchant Level
-     * @return modified ItemStack
-     */
-    ItemStack addEnchant(ItemStack item, Player p, int id, int level);
-
-    /**
-     * Method to add custom enchant to ItemStack
+	 * Method to set enchant with specific level to ItemStack
      * @param item ItemStack
      * @param id Enchant ID
      * @param level Enchant Level
      * @return modified ItemStack
      */
-    ItemStack addEnchant(ItemStack item, int id, int level);
+	ItemStack setEnchantLevel(ItemStack item, int id, int level);
 
     /**
      * Method to remove custom enchant from ItemStack
      * @param item ItemStack
-     * @param p Player
      * @param id Enchant ID
      * @return modified ItemStack
      */
-    ItemStack removeEnchant(ItemStack item, Player p, int id);
+	ItemStack removeEnchant(ItemStack item, int id);
 
     /**
      * Method to get Enchant by ID
