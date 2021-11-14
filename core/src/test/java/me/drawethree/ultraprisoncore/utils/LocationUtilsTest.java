@@ -13,7 +13,6 @@ public class LocationUtilsTest {
 	private Location mockLocation;
 	private World mockWorld;
 
-
 	@Before
 	public void setUp() {
 

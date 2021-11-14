@@ -10,6 +10,7 @@ import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsA
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.ProgressBar;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.item.ItemStackBuilder;
@@ -245,22 +246,11 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 		PickaxeLevel nextLevel = this.getNextPickaxeLevel(level);
 
 		if (nextLevel != null) {
-			long required = nextLevel.getBlocksRequired() - level.getBlocksRequired();
-			double treshold = required / 20.0;
-			long collected = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
-
-			StringBuilder result = new StringBuilder();
-			for (int i = 0; i < 20; i++) {
-				if (collected >= treshold * (i + 1)) {
-					result.append("&a:");
-				} else {
-					result.append("&c:");
-				}
-			}
-			return Text.colorize(result.toString());
-
+			double required = nextLevel.getBlocksRequired() - level.getBlocksRequired();
+			double current = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
+			return ProgressBar.getProgressBar(20, ":", current, required);
 		} else {
-			return Text.colorize("&a::::::::::::::::::::");
+			return ProgressBar.getProgressBar(20, ":", 1, 1);
 		}
 
 	}
