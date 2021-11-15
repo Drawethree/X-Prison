@@ -8,5 +8,6 @@ public enum ReceiveCause {
 	PAY,
 	GIVE,
 	REDEEM,
-	LUCKY_BLOCK;
+	LUCKY_BLOCK,
+	REFUND
 }

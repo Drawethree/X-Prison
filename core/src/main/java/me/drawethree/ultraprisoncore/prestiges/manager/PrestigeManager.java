@@ -487,6 +487,7 @@ public class PrestigeManager {
 	}
 
 	public int getPrestigeProgress(Player player) {
+
 		if (this.isMaxPrestige(player)) {
 			return 100;
 		}

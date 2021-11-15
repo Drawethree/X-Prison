@@ -82,6 +82,7 @@ messages:
   no_pickaxe_found: "&cYou do not have any diamond pickaxe!"
   enchant_max_level: "&e&l(!) &eYou have already maxed out this enchantment"
   enchant_max_level_exceed: "&e&l(!) &eThis transaction would exceed the max level for this enchant."
+  enchant_min_level_exceed: "&e&l(!) &eThis transaction would exceed the min level for this enchant."
   not_enough_tokens: "&cYou do not have enough tokens!"
   enchant_bought: "&e&lENCHANT &8» &c&l-%tokens% TOKENS"
   enchant_bought_multiple: "&e&lENCHANT &8» &7You have bought &f%amount% &7levels of %enchant%&r &7for &f%tokens% &7tokens."

@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.Getter;
+import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.api.events.UltraPrisonPlayerEnchantEvent;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
@@ -340,38 +341,36 @@ public class EnchantsManager {
 		}
 	}
 
-	private boolean disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
+	private void disenchant(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
 		if (currentLevel <= 0) {
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_no_level"));
-			return false;
+			return;
+		}
+
+		if (currentLevel - substraction < 0) {
+			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_min_level_exceed"));
+			return;
 		}
 
 		long totalRefunded = 0;
 
-		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
-
-		for (int i = 0; i < substraction; i++, currentLevel--) {
-
-			if (currentLevel <= 0) {
-				break;
-			}
-
-			long cost = enchantment.getCostOfLevel(currentLevel);
-
-			this.setEnchantLevel(gui.getPickAxe(), enchantment.getId(), currentLevel);
-			gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
-
-			totalRefunded += (cost * (this.refundPercentage / 100.0));
+		for (int j = 0; j < substraction; j++) {
+			totalRefunded += enchantment.getCostOfLevel(currentLevel + j + 1) * (this.refundPercentage / 100.0);
 		}
 
-		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+		plugin.getCore().getTokens().getTokensManager().giveTokens(gui.getPlayer(), totalRefunded, null, ReceiveCause.REFUND);
 
-		plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
+		this.setEnchantLevel(gui.getPickAxe(), enchantment.getId(), currentLevel - substraction);
+
+		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel - substraction);
+
+		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
 		PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_refunded").replace("%amount%", String.format("%,d", substraction)).replace("%enchant%", enchantment.getName()));
 		PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.format("%,d", totalRefunded)));
-		return true;
+		return;
 	}
 
 	private void disenchantMax(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel) {
@@ -418,7 +417,7 @@ public class EnchantsManager {
 				gui.redraw();
 			});
 
-			plugin.getCore().getTokens().getApi().addTokens(gui.getPlayer(), totalRefunded);
+			plugin.getCore().getTokens().getTokensManager().giveTokens(gui.getPlayer(), totalRefunded, null, ReceiveCause.REFUND);
 
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_refunded").replace("%amount%", String.format("%,d", levelsToRefund)).replace("%enchant%", enchantment.getName()));
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.format("%,d", totalRefunded)));

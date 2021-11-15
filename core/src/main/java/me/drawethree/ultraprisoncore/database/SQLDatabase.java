@@ -466,12 +466,12 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void addIntoRanks(OfflinePlayer player) {
-		this.execute("INSERT IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT IGNORE INTO " + UltraPrisonRanks.TABLE_NAME + "(UUID,id_rank) VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override
 	public void addIntoPrestiges(OfflinePlayer player) {
-		this.execute("INSERT IGNORE INTO " + UltraPrisonPrestiges.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+		this.execute("INSERT IGNORE INTO " + UltraPrisonPrestiges.TABLE_NAME + "(UUID,id_prestige) VALUES(?,?)", player.getUniqueId().toString(), 0);
 	}
 
 	@Override

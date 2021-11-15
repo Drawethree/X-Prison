@@ -231,7 +231,7 @@ public class TokensManager {
 
 			boolean multiModule = this.plugin.getCore().isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
 
-			if (multiModule && p.isOnline() && cause != ReceiveCause.REDEEM && cause != ReceiveCause.PAY) {
+			if (multiModule && p.isOnline() && cause != ReceiveCause.REDEEM && cause != ReceiveCause.PAY && cause != ReceiveCause.REFUND) {
 				finalAmount = (long) this.plugin.getCore().getMultipliers().getApi().getTotalToDeposit((Player) p, finalAmount, MultiplierType.TOKENS);
 			}
 

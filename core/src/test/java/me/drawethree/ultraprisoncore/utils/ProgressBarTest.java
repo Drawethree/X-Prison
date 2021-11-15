@@ -14,14 +14,10 @@ public class ProgressBarTest {
 		double required = 41412199.0;
 		double current = 0.0;
 
-		StringBuilder expected = new StringBuilder();
-		for (int i = 0; i < numberOfDelimeters; i++) {
-			expected.append(ProgressBar.NOT_AVAILABLE_COLOR).append(delimeter);
-		}
-
+		String expected = "&a&c::::::::::::::::::::";
 		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
 
-		assertEquals(Text.colorize(expected.toString()), actual);
+		assertEquals(Text.colorize(expected), actual);
 	}
 
 	@Test
@@ -31,14 +27,11 @@ public class ProgressBarTest {
 		double required = 1.0;
 		double current = 1.0;
 
-		StringBuilder expected = new StringBuilder();
-		for (int i = 0; i < numberOfDelimeters; i++) {
-			expected.append(ProgressBar.AVAILABLE_COLOR).append(delimeter);
-		}
 
+		String expected = "&a::::::::::::::::::::&c";
 		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
 
-		assertEquals(Text.colorize(expected.toString()), actual);
+		assertEquals(Text.colorize(expected), actual);
 	}
 
 	@Test
@@ -48,20 +41,9 @@ public class ProgressBarTest {
 		double required = 428919.0;
 		double current = 4244.0;
 
-		double treshold = required / numberOfDelimeters;
-		int numberOfGreens = (int) (current / treshold);
-
-		StringBuilder expected = new StringBuilder();
-
-		for (int i = 0; i < numberOfGreens; i++) {
-			expected.append(ProgressBar.AVAILABLE_COLOR).append(ProgressBar.DEFAULT_DELIMITER);
-		}
-		for (int i = 0; i < numberOfDelimeters - numberOfGreens; i++) {
-			expected.append(ProgressBar.NOT_AVAILABLE_COLOR).append(ProgressBar.DEFAULT_DELIMITER);
-		}
-
+		String expected = "&a&c::::::::::::::::::::";
 		String actual = ProgressBar.getProgressBar(numberOfDelimeters, null, current, required);
-		assertEquals(Text.colorize(expected.toString()), actual);
+		assertEquals(Text.colorize(expected), actual);
 	}
 
 
@@ -72,20 +54,11 @@ public class ProgressBarTest {
 		double required = 41851429.0;
 		double current = required / 2.0;
 
-		double treshold = required / numberOfDelimeters;
-		int numberOfGreens = (int) (current / treshold);
 
-		StringBuilder expected = new StringBuilder();
-
-		for (int i = 0; i < numberOfGreens; i++) {
-			expected.append(ProgressBar.AVAILABLE_COLOR).append(delimeter);
-		}
-		for (int i = 0; i < numberOfDelimeters - numberOfGreens; i++) {
-			expected.append(ProgressBar.NOT_AVAILABLE_COLOR).append(delimeter);
-		}
+		String expected = "&a|||||||||||||||||||||||||&c|||||||||||||||||||||||||";
 
 		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
-		assertEquals(Text.colorize(expected.toString()), actual);
+		assertEquals(Text.colorize(expected), actual);
 	}
 
 	@Test
@@ -95,19 +68,10 @@ public class ProgressBarTest {
 		double required = 41904129.0;
 		double current = (required / 2.0) - 1.0;
 
-		double treshold = required / numberOfDelimeters;
-		int numberOfGreens = (int) (current / treshold);
 
-		StringBuilder expected = new StringBuilder();
-
-		for (int i = 0; i < numberOfGreens; i++) {
-			expected.append(ProgressBar.AVAILABLE_COLOR).append(delimeter);
-		}
-		for (int i = 0; i < numberOfDelimeters - numberOfGreens; i++) {
-			expected.append(ProgressBar.NOT_AVAILABLE_COLOR).append(delimeter);
-		}
+		String expected = "&a||||||||||||||||||||||||&c||||||||||||||||||||||||||";
 
 		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
-		assertEquals(Text.colorize(expected.toString()), actual);
+		assertEquals(Text.colorize(expected), actual);
 	}
 }

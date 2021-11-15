@@ -16,14 +16,17 @@ public class ProgressBar {
 		}
 
 		double treshold = required / amountOfDelimeters;
+		int numberOfGreens = (int) (current / treshold);
 
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < amountOfDelimeters; i++) {
-			if (current >= treshold * (i + 1)) {
-				result.append(AVAILABLE_COLOR).append(delimeter);
-			} else {
-				result.append(NOT_AVAILABLE_COLOR).append(delimeter);
-			}
+
+		result.append(AVAILABLE_COLOR);
+		for (int i = 0; i < numberOfGreens; i++) {
+			result.append(delimeter);
+		}
+		result.append(NOT_AVAILABLE_COLOR);
+		for (int i = 0; i < amountOfDelimeters - numberOfGreens; i++) {
+			result.append(delimeter);
 		}
 		return Text.colorize(result.toString());
 	}

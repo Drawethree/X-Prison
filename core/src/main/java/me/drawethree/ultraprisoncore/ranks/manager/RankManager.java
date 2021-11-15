@@ -7,6 +7,7 @@ import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.api.events.PlayerRankUpEvent;
 import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.ProgressBar;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
@@ -326,5 +327,27 @@ public class RankManager {
 			throw new IllegalStateException("Prestiges module is not enabled");
 		}
 		return this.plugin.getCore().getPrestiges().getPrestigeManager();
+	}
+
+	public String getRankupProgressBar(Player player) {
+
+		double currentProgress, required = 100;
+		if (this.isMaxRank(player)) {
+			currentProgress = 100;
+			if (arePrestigesEnabled()) {
+				currentProgress = getPrestigeManager().getPrestigeProgress(player);
+			}
+		} else {
+			Rank current = this.getPlayerRank(player);
+			Rank next = this.getNextRank(current.getId());
+			double currentBalance = this.useTokensCurrency ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
+			currentProgress = (currentBalance / next.getCost()) * 100;
+		}
+
+		if (currentProgress > 100) {
+			currentProgress = 100;
+		}
+
+		return ProgressBar.getProgressBar(20, ":", currentProgress, required);
 	}
 }

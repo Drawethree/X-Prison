@@ -191,6 +191,8 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "rankup_progress":
 				return String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(player));
+			case "rankup_progress_bar":
+				return plugin.getRanks().getRankManager().getRankupProgressBar(player);
 			case "tokens_1":
 				return String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(player));
 			case "blocks_1":
