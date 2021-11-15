@@ -30,7 +30,7 @@ public class UltraPrisonTokensAPIImpl implements UltraPrisonTokensAPI {
     }
 
     @Override
-    public void addTokens(OfflinePlayer p, long amount) {
-		this.manager.giveTokens(p, amount, null, ReceiveCause.GIVE);
+    public void addTokens(OfflinePlayer p, long amount, ReceiveCause cause) {
+        this.manager.giveTokens(p, amount, null, cause);
     }
 }

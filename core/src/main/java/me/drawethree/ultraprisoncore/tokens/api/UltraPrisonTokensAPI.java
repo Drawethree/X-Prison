@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.tokens.api;
 
+import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import org.bukkit.OfflinePlayer;
 
 public interface UltraPrisonTokensAPI {
@@ -32,8 +33,9 @@ public interface UltraPrisonTokensAPI {
      * Method to add tokens to player
      * @param p Player
      * @param amount amount
+     * @param cause - Represents why player get these tokens
      */
-    void addTokens(OfflinePlayer p, long amount);
+    void addTokens(OfflinePlayer p, long amount, ReceiveCause cause);
 
 
 }

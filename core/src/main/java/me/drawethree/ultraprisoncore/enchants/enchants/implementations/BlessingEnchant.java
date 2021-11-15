@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
+import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
@@ -42,7 +43,7 @@ public class BlessingEnchant extends UltraPrisonEnchantment {
 
 			for (Player p : Players.all()) {
 				randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-				plugin.getCore().getTokens().getApi().addTokens(p, randAmount);
+				plugin.getCore().getTokens().getTokensManager().giveTokens(p, randAmount, null, ReceiveCause.MINING_OTHERS);
 
 				if (!this.isMessagesEnabled()) {
 					continue;

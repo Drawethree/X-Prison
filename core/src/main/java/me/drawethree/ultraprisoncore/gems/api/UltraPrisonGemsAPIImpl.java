@@ -30,7 +30,7 @@ public class UltraPrisonGemsAPIImpl implements UltraPrisonGemsAPI {
     }
 
     @Override
-	public void addGems(OfflinePlayer p, long amount) {
-		this.manager.giveGems(p, amount, null, ReceiveCause.GIVE);
+	public void addGems(OfflinePlayer p, long amount, ReceiveCause cause) {
+		this.manager.giveGems(p, amount, null, cause);
     }
 }

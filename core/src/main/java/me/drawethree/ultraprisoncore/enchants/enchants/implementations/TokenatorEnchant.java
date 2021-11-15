@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
+import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class TokenatorEnchant extends UltraPrisonEnchantment {
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
         if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
             long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-            plugin.getCore().getTokens().getApi().addTokens(e.getPlayer(), randAmount);
+            plugin.getCore().getTokens().getTokensManager().giveTokens(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
         }
     }
 

@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.gems.api;
 
+import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import org.bukkit.OfflinePlayer;
 
 public interface UltraPrisonGemsAPI {
@@ -29,10 +30,11 @@ public interface UltraPrisonGemsAPI {
 
 	/**
 	 * Method to add gems to player
-	 * @param p
-	 * @param amount
+	 * @param p Player
+	 * @param amount amount
+	 * @param cause - Represents why player get these gemes
 	 */
-	void addGems(OfflinePlayer p, long amount);
+	void addGems(OfflinePlayer p, long amount, ReceiveCause cause);
 
 
 }
