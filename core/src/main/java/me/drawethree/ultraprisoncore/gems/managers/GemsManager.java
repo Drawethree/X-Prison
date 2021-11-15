@@ -4,6 +4,8 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.gems.api.events.PlayerGemsReceiveEvent;
+import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.Events;
@@ -157,6 +159,11 @@ public class GemsManager {
 
         long finalAmount = event.getAmount();
 
+        boolean multiModule = this.plugin.getCore().isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+
+        if (multiModule && p.isOnline() && cause == ReceiveCause.MINING) {
+            finalAmount = (long) this.plugin.getCore().getMultipliers().getApi().getTotalToDeposit((Player) p, finalAmount, MultiplierType.TOKENS);
+        }
 
         if (!p.isOnline()) {
             this.plugin.getCore().getPluginDatabase().updateGems(p, currentgems + finalAmount);
