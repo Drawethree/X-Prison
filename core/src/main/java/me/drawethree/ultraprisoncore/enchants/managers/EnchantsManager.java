@@ -193,6 +193,34 @@ public class EnchantsManager {
 		applyLoreToPickaxe(p.getItemInHand());
 	}
 
+	public synchronized void addBlocksBrokenToItem(Player player, ItemStack item, int amount) {
+
+		if (amount == 0) {
+			return;
+		}
+
+		NBTItem nbtItem = new NBTItem(item);
+
+		try {
+			int amountToConvert = nbtItem.getInteger("blocks-broken");
+
+			if (amountToConvert > 0) {
+				amount += amountToConvert;
+				nbtItem.removeKey("blocks-broken");
+			}
+		} catch (Exception e) {
+			//Nothing to migrate
+		}
+
+		if (!nbtItem.hasKey("blocks-broken")) {
+			nbtItem.setLong("blocks-broken", 0L);
+		}
+
+		nbtItem.setLong("blocks-broken", nbtItem.getLong("blocks-broken") + amount);
+		player.setItemInHand(nbtItem.getItem());
+		applyLoreToPickaxe(player.getItemInHand());
+	}
+
 	public boolean hasEnchant(Player p, int id) {
 		ItemStack item = findPickaxe(p);
 		if (item == null) {

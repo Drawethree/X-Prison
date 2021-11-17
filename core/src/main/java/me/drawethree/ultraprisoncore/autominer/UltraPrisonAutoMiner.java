@@ -52,6 +52,8 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
     private List<UUID> disabledAutoMiner;
     private boolean enabled;
 
+    private int blocksBroken;
+
     public UltraPrisonAutoMiner(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
     }
@@ -83,7 +85,6 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         this.removeExpiredAutoMiners();
         this.loadAutoMinerRegion();
         this.loadPlayersAutoMiner();
-
         this.api = new UltraPrisonAutoMinerAPIImpl(this);
     }
 
@@ -137,6 +138,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         List<String> rewards = getConfig().get().getStringList("auto-miner-region.rewards");
 
         int seconds = getConfig().get().getInt("auto-miner-region.reward-period");
+        int blocksBroken = getConfig().get().getInt("auto-miner-region.blocks-broken");
 
         World world = Bukkit.getWorld(worldName);
 
@@ -156,7 +158,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
             return;
         }
 
-		this.region = new AutoMinerRegion(this, world, optRegion.get(), rewards, seconds);
+        this.region = new AutoMinerRegion(this, world, optRegion.get(), rewards, seconds, blocksBroken);
         core.getLogger().info("AutoMiner region loaded!");
 
     }

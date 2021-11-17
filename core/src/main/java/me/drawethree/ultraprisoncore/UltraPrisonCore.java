@@ -359,6 +359,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	public boolean isPickaxeSupported(ItemStack item) {
+		if (item == null) {
+			return false;
+		}
 		return isPickaxeSupported(item.getType());
 	}
 

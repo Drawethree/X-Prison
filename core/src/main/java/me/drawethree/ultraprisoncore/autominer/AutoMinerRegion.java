@@ -7,6 +7,7 @@ import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.List;
@@ -20,13 +21,15 @@ public class AutoMinerRegion {
 	private World world;
 	private IWrappedRegion region;
 	private List<String> commands;
+	private int blocksBroken;
 	private Task autoMinerTask;
 
-	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, List<String> rewards, int rewardPeriod) {
+	public AutoMinerRegion(UltraPrisonAutoMiner parent, World world, IWrappedRegion region, List<String> rewards, int rewardPeriod, int blocksBroken) {
 		this.parent = parent;
 		this.world = world;
 		this.region = region;
 		this.commands = rewards;
+		this.blocksBroken = blocksBroken;
 
 		AtomicInteger counter = new AtomicInteger();
 
@@ -41,12 +44,18 @@ public class AutoMinerRegion {
 				}
 
 				if (region.contains(p.getLocation())) {
+					ItemStack item = p.getItemInHand();
+					if (!this.parent.getCore().isPickaxeSupported(item)) {
+						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_no_pickaxe"));
+						continue;
+					}
 					if (!parent.hasAutoMinerTime(p)) {
 						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_disabled"));
 					} else {
 						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_enabled"));
 						if (current >= rewardPeriod) {
 							this.executeCommands(p);
+							this.parent.getCore().getEnchants().getEnchantsManager().addBlocksBrokenToItem(p, item, this.blocksBroken);
 						}
 						this.parent.decrementTime(p);
 					}

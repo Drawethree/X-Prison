@@ -5,6 +5,7 @@ auto-miner-region:
     - 'eco give %player% 1000'
     - 'tokens give %player% 10'
   reward-period: 5
+  blocks-broken: 5
 messages:
   not_enough_tokens: "&e&lAUTOMINER &8» &cYou do not have enough tokens! (Needed: %tokens%)"
   not_a_number: "&c%input% is not a number!"
@@ -13,5 +14,6 @@ messages:
   autominer_enabled: "&e&l(!) &7You've &a&lENABLED &7AutoMiner."
   auto_miner_enabled: "&aYou are now in &a&lAUTO-MINER &amode."
   auto_miner_disabled: "&cYou don't have &c&lAUTO-MINER &ctime."
+  auto_miner_no_pickaxe: "&cYou do not have any pickaxe equipped!"
   auto_miner_time: "&e&lAUTOMINER &8» &7You have &f%time% of Auto-Miner time."
   auto_miner_time_add: "&e&lAUTOMINER &8» &7You added &f%time% %timeunit% &7to &f%player%&7."

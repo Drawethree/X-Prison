@@ -89,7 +89,6 @@ public abstract class SQLDatabase extends Database {
 
 	public abstract void runSQLUpdates();
 
-	//Always execute async!
 	public synchronized void execute(String sql, Object... replacements) {
 
 		if (sql == null || sql.isEmpty()) {
@@ -101,6 +100,9 @@ public abstract class SQLDatabase extends Database {
 				for (int i = 0; i < replacements.length; i++) {
 					statement.setObject(i + 1, replacements[i]);
 				}
+			}
+			if (this.plugin.isDebugMode()) {
+				this.plugin.getLogger().info("Executing statement: " + sql + " (Replacement values: " + Arrays.toString(replacements) + ")");
 			}
 			statement.execute();
 		} catch (SQLException e) {
