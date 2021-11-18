@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
-	private int cooldown;
+	private boolean countBlocksBroken;
 
 
 	public ExplosiveEnchant(UltraPrisonEnchants instance) {
@@ -114,8 +114,11 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
 				}
 
-				plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
-				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
+				if (this.countBlocksBroken) {
+					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
+				}
+
+				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected, countBlocksBroken);
 
 				if (plugin.getCore().isUltraBackpacksEnabled()) {
 					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
@@ -134,6 +137,6 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void reload() {
 		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-		this.cooldown = plugin.getConfig().get().getInt("enchants." + id + ".Cooldown");
+		this.countBlocksBroken = plugin.getConfig().get().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 	}
 }

@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class LayerEnchant extends UltraPrisonEnchantment {
-	private double chance;
 
+	private double chance;
+	private boolean countBlocksBroken;
 
 	public LayerEnchant(UltraPrisonEnchants instance) {
 		super(instance, 10);
@@ -100,8 +101,10 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
 				}
 
-				plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
-				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected);
+				if (this.countBlocksBroken) {
+					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
+				}
+				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected, countBlocksBroken);
 
 				if (plugin.getCore().isUltraBackpacksEnabled()) {
 					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
@@ -121,6 +124,8 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void reload() {
 		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.countBlocksBroken = plugin.getConfig().get().getBoolean("enchants." + id + ".Count-Blocks-Broken");
+
 	}
 
 	@Override

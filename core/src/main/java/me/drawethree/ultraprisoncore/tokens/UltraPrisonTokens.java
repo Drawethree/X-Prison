@@ -192,15 +192,18 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 				.handler(e -> {
 					List<Block> blocks = new ArrayList<>(1);
 					blocks.add(e.getBlock());
-					this.handleBlockBreak(e.getPlayer(), blocks);
+					this.handleBlockBreak(e.getPlayer(), blocks, true);
 				}).bindWith(core);
 	}
 
-	public void handleBlockBreak(Player p, List<Block> blocks) {
+	public void handleBlockBreak(Player p, List<Block> blocks, boolean countBlocksBroken) {
 		long startTime = System.currentTimeMillis();
 		//Remove AIR blocks.
 		blocks.removeIf(block -> block.getType() == Material.AIR);
-		tokensManager.addBlocksBroken(p, blocks);
+
+		if (countBlocksBroken) {
+			tokensManager.addBlocksBroken(p, blocks);
+		}
 
 		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p.getPlayer());
 

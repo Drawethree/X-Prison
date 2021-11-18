@@ -160,7 +160,7 @@ public class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public void createGang(Gang g) {
-        this.executeAsync("INSERT OR IGNORE INTO " + UltraPrisonGangs.TABLE_NAME + "(name,owner,members) VALUES(?,?,?)", g.getName(), g.getGangOwner().toString(), "");
+        this.executeAsync("INSERT OR IGNORE INTO " + UltraPrisonGangs.TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)", g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
     }
 
     @Override
