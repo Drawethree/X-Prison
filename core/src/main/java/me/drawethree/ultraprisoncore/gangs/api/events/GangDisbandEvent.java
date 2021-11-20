@@ -13,7 +13,7 @@ public class GangDisbandEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     @Getter
-    private Gang gang;
+	private final Gang gang;
 
 	/**
 	 * Called when gang is disbanded

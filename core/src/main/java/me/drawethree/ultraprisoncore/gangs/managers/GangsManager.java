@@ -157,7 +157,7 @@ public class GangsManager {
 
 		this.plugin.getCore().debug("Calling GangCreateEvent for gang " + g.getName() + ".", this.plugin);
 
-		Events.callSync(gangCreateEvent);
+		Events.call(gangCreateEvent);
 
 		if (gangCreateEvent.isCancelled()) {
 			this.plugin.getCore().debug("GangCreateEvent for gang " + g.getName() + " was cancelled.", this.plugin);
@@ -388,15 +388,15 @@ public class GangsManager {
 
 		this.plugin.getCore().debug("Calling GangDisbandEvent for gang " + gang.getName() + ".", this.plugin);
 
-		Events.callSync(gangDisbandEvent);
+		Events.call(gangDisbandEvent);
 
 		if (gangDisbandEvent.isCancelled()) {
 			this.plugin.getCore().debug("GangDisbandEvent for gang " + gang.getName() + " was cancelled.", this.plugin);
 			return true;
 		}
 
-
 		gang.disband();
+
 		this.gangs.remove(gang.getUuid());
 		this.plugin.getCore().getPluginDatabase().deleteGang(gang);
 

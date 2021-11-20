@@ -66,7 +66,7 @@ public class Gang {
 
 		GangLeaveEvent event = new GangLeaveEvent(p, this);
 
-		Events.callSync(event);
+		Events.call(event);
 
 		if (event.isCancelled()) {
 			return false;
@@ -86,7 +86,7 @@ public class Gang {
 
 		GangJoinEvent event = new GangJoinEvent(p, this);
 
-		Events.callSync(event);
+		Events.call(event);
 
 		if (event.isCancelled()) {
 			return false;

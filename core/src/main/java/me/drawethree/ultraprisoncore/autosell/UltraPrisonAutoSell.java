@@ -304,6 +304,11 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 		return new String[0];
 	}
 
+	@Override
+	public boolean isHistoryEnabled() {
+		return false;
+	}
+
 	private void registerCommands() {
 		Commands.create()
 				.assertPlayer()
@@ -451,7 +456,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
 				UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(sender, sellRegion, totalPrice);
 
-				Events.callSync(event);
+			Events.call(event);
 
 				if (event.isCancelled()) {
 					this.core.debug("UltraPrisonSellAllEvent was cancelled.", this);

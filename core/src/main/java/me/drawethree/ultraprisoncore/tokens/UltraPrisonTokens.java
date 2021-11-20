@@ -169,6 +169,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		}
 	}
 
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
 	private void registerEvents() {
 
 		Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)

@@ -140,6 +140,11 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		return new String[0];
 	}
 
+	@Override
+	public boolean isHistoryEnabled() {
+		return false;
+	}
+
 	private void registerCommands() {
 
 

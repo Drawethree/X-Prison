@@ -5,6 +5,8 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPI;
 import me.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPIImpl;
+import me.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeReceiveEvent;
+import me.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
@@ -51,8 +53,6 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     private List<UUID> disabledAutoMiner;
     private boolean enabled;
-
-    private int blocksBroken;
 
     public UltraPrisonAutoMiner(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
@@ -199,27 +199,32 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 		}
 	}
 
-    private void registerCommands() {
-        Commands.create()
-                .assertPlayer()
-                .handler(c -> {
-                    if (c.args().size() == 0) {
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	private void registerCommands() {
+		Commands.create()
+				.assertPlayer()
+				.handler(c -> {
+					if (c.args().size() == 0) {
 						PlayerUtils.sendMessage(c.sender(), messages.get("auto_miner_time").replace("%time%", this.getTimeLeft(c.sender())));
-                    }
-                }).registerAndBind(core, "miner", "autominer");
-        Commands.create()
+					}
+				}).registerAndBind(core, "miner", "autominer");
+		Commands.create()
 				.assertPermission("ultraprison.autominer.admin")
 				.handler(c -> {
-                    if (c.args().size() == 4 && c.rawArg(0).equalsIgnoreCase("give")) {
-                        Player target = c.arg(1).parseOrFail(Player.class);
-                        long time = c.arg(2).parseOrFail(Long.class);
+					if (c.args().size() == 4 && c.rawArg(0).equalsIgnoreCase("give")) {
+						Player target = c.arg(1).parseOrFail(Player.class);
+						long time = c.arg(2).parseOrFail(Long.class);
 
-                        TimeUnit timeUnit;
-                        try {
-                            timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
-                        } catch (IllegalArgumentException e) {
+						TimeUnit timeUnit;
+						try {
+							timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
+						} catch (IllegalArgumentException e) {
 							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
-                            return;
+							return;
                         }
 
                         this.givePlayerAutoMinerTime(c.sender(), target, time, timeUnit);
@@ -230,26 +235,35 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
     private void givePlayerAutoMinerTime(CommandSender sender, Player p, long time, TimeUnit unit) {
 
-        if (p == null || !p.isOnline()) {
+		if (p == null || !p.isOnline()) {
 			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer is not online!"));
-            return;
-        }
+			return;
+		}
 
-        int currentTime = autoMinerTimes.getOrDefault(p.getUniqueId(), 0);
-        currentTime += unit.toSeconds(time);
+		int currentTime = autoMinerTimes.getOrDefault(p.getUniqueId(), 0);
+		currentTime += unit.toSeconds(time);
 
-        autoMinerTimes.put(p.getUniqueId(), currentTime);
+		autoMinerTimes.put(p.getUniqueId(), currentTime);
+
+		this.callAutoMinerTimeReceiveEvent(p, time, unit);
+
 		PlayerUtils.sendMessage(sender, messages.get("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
-    }
+	}
 
-    public boolean hasAutoMinerTime(Player p) {
-        return autoMinerTimes.containsKey(p.getUniqueId()) && autoMinerTimes.get(p.getUniqueId()) > 0;
-    }
+	private PlayerAutoMinerTimeReceiveEvent callAutoMinerTimeReceiveEvent(Player p, long time, TimeUnit unit) {
+		PlayerAutoMinerTimeReceiveEvent event = new PlayerAutoMinerTimeReceiveEvent(p, unit, time);
+		Events.call(event);
+		return event;
+	}
 
-    public void decrementTime(Player p) {
-        int newAmount = autoMinerTimes.get(p.getUniqueId()) - 1;
-        autoMinerTimes.put(p.getUniqueId(), newAmount);
-    }
+	public boolean hasAutoMinerTime(Player p) {
+		return autoMinerTimes.containsKey(p.getUniqueId()) && autoMinerTimes.get(p.getUniqueId()) > 0;
+	}
+
+	public void decrementTime(Player p) {
+		int newAmount = autoMinerTimes.get(p.getUniqueId()) - 1;
+		autoMinerTimes.put(p.getUniqueId(), newAmount);
+	}
 
     public String getMessage(String key) {
         return messages.get(key.toLowerCase());
@@ -292,14 +306,20 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
         return disabledAutoMiner.contains(p.getUniqueId());
     }
 
-    public int getAutoMinerTime(Player player) {
-        return this.autoMinerTimes.getOrDefault(player.getUniqueId(), 0);
-    }
+	public int getAutoMinerTime(Player player) {
+		return this.autoMinerTimes.getOrDefault(player.getUniqueId(), 0);
+	}
 
-    public boolean isInAutoMinerRegion(Player player) {
-        if (this.region == null) {
-            return false;
-        }
-        return this.region.getRegion().contains(player.getLocation());
-    }
+	public boolean isInAutoMinerRegion(Player player) {
+		if (this.region == null) {
+			return false;
+		}
+		return this.region.getRegion().contains(player.getLocation());
+	}
+
+	public PlayerAutomineEvent callAutoMineEvent(Player p) {
+		PlayerAutomineEvent event = new PlayerAutomineEvent(p, this.getAutoMinerTime(p));
+		Events.call(event);
+		return event;
+	}
 }

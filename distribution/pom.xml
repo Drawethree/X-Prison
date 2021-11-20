@@ -7,12 +7,12 @@
     <parent>
         <groupId>me.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.8.5</version>
+        <version>1.9.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
-        <release.status>STABLE</release.status>
+        <release.status>BETA</release.status>
     </properties>
     <build>
         <directory>../target</directory>

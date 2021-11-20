@@ -18,6 +18,7 @@ modules:
   pickaxe_levels: true
   gangs: true
   mines: true
+  history: true
 supported-pickaxes:
   - DIAMOND_PICKAXE
 main-command-aliases:

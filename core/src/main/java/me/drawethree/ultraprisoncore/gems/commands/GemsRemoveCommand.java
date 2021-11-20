@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.gems.commands;
 
 import com.google.common.collect.ImmutableList;
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.utils.Players;
@@ -20,7 +21,7 @@ public class GemsRemoveCommand extends GemsCommand {
             try {
                 long amount = Long.parseLong(args.get(1));
                 OfflinePlayer target = Players.getOfflineNullable(args.get(0));
-                plugin.getGemsManager().removeGems(target, amount, sender);
+				plugin.getGemsManager().removeGems(target, amount, sender, LostCause.ADMIN);
                 return true;
             } catch (NumberFormatException e) {
 				PlayerUtils.sendMessage(sender, plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));

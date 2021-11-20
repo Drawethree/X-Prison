@@ -8,6 +8,8 @@ import me.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.history.UltraPrisonHistory;
+import me.drawethree.ultraprisoncore.history.model.HistoryLine;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
@@ -77,12 +79,25 @@ public abstract class SQLDatabase extends Database {
 	protected static final String GANGS_MEMBERS_COLNAME = "members";
 	protected static final String GANGS_VALUE_COLNAME = "value";
 
+	protected static final String HISTORY_UUID_COLNAME = "uuid";
+	protected static final String HISTORY_PLAYER_UUID_COLNAME = "player_uuid";
+	protected static final String HISTORY_MODULE_COLNAME = "module";
+	protected static final String HISTORY_CONTEXT_COLNAME = "context";
+	protected static final String HISTORY_CREATED_AT_COLNAME = "created_at";
+
+	protected static final String INDEX_HISTORY_PLAYER = "idx_history_player";
+
 	protected UltraPrisonCore plugin;
 	protected HikariDataSource hikari;
 
 	public SQLDatabase(UltraPrisonCore plugin) {
 		super(plugin);
 		this.plugin = plugin;
+	}
+
+	@Override
+	public void createIndexes() {
+		this.executeAsync(String.format("CREATE INDEX %s ON %s (%s)", INDEX_HISTORY_PLAYER, UltraPrisonHistory.TABLE_NAME, HISTORY_PLAYER_UUID_COLNAME));
 	}
 
 	public abstract void connect();
@@ -106,7 +121,9 @@ public abstract class SQLDatabase extends Database {
 			}
 			statement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			if (e.getErrorCode() != 1061) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -555,5 +572,38 @@ public abstract class SQLDatabase extends Database {
 	@Override
 	public void deleteGang(Gang g) {
 		this.executeAsync("DELETE FROM " + UltraPrisonGangs.TABLE_NAME + " WHERE UUID=?", g.getUuid().toString());
+	}
+
+	@Override
+	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
+		List<HistoryLine> returnList = new ArrayList<>();
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonHistory.TABLE_NAME + " where player_uuid=?")) {
+			statement.setString(1, player.getUniqueId().toString());
+			try (ResultSet set = statement.executeQuery()) {
+				while (set.next()) {
+					UUID recordId = UUID.fromString(set.getString(HISTORY_UUID_COLNAME));
+					UUID playerUuid = UUID.fromString(set.getString(HISTORY_PLAYER_UUID_COLNAME));
+					String moduleName = set.getString(HISTORY_MODULE_COLNAME);
+					String context = set.getString(HISTORY_CONTEXT_COLNAME);
+					Date createdAt = set.getDate(HISTORY_CREATED_AT_COLNAME);
+
+					HistoryLine line = new HistoryLine(recordId, playerUuid, moduleName, context, createdAt);
+					returnList.add(line);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return returnList;
+	}
+
+	@Override
+	public void addHistoryLine(OfflinePlayer player, HistoryLine history) {
+		this.executeAsync("INSERT INTO " + UltraPrisonHistory.TABLE_NAME + " values(?,?,?,?,?)", history.getUuid().toString(), history.getPlayerUuid().toString(), history.getModule(), history.getContext(), history.getCreatedAt());
+	}
+
+	@Override
+	public void clearHistory(OfflinePlayer target) {
+		this.executeAsync("DELETE FROM " + UltraPrisonHistory.TABLE_NAME + " where player_uuid=?", target.getUniqueId().toString());
 	}
 }

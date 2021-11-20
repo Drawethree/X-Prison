@@ -127,17 +127,22 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		}
 	}
 
-    private void registerEvents() {
-    }
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
 
-    private void registerCommands() {
-        this.commands = new HashMap<>();
+	private void registerEvents() {
+	}
 
-        registerCommand(new GangHelpCommand(this));
-        registerCommand(new GangHelpCommand(this));
-        registerCommand(new GangInfoCommand(this));
-        registerCommand(new GangCreateCommand(this));
-        registerCommand(new GangInviteCommand(this));
+	private void registerCommands() {
+		this.commands = new HashMap<>();
+
+		registerCommand(new GangHelpCommand(this));
+		registerCommand(new GangHelpCommand(this));
+		registerCommand(new GangInfoCommand(this));
+		registerCommand(new GangCreateCommand(this));
+		registerCommand(new GangInviteCommand(this));
         registerCommand(new GangAcceptCommand(this));
         registerCommand(new GangLeaveCommand(this));
         registerCommand(new GangDisbandCommand(this));

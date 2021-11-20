@@ -18,4 +18,6 @@ public interface UltraPrisonModule {
 
 	String[] getCreateTablesSQL(DatabaseType type);
 
+	boolean isHistoryEnabled();
+
 }

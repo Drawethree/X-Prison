@@ -109,17 +109,22 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 		}
 	}
 
-    private void registerEvents() {
-        Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == this.gemsManager.getGemsItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
-                .handler(e -> {
-                    if (e.getItem().hasItemMeta()) {
-                        e.setCancelled(true);
-                        e.setUseInteractedBlock(Event.Result.DENY);
-                        boolean offHandClick = false;
-                        if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
-                            offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
-                        }
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	private void registerEvents() {
+		Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+				.filter(e -> e.getItem() != null && e.getItem().getType() == this.gemsManager.getGemsItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+				.handler(e -> {
+					if (e.getItem().hasItemMeta()) {
+						e.setCancelled(true);
+						e.setUseInteractedBlock(Event.Result.DENY);
+						boolean offHandClick = false;
+						if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
+							offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
+						}
                         this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
                     }
                 }).bindWith(core);

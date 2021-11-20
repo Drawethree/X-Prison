@@ -2,6 +2,7 @@ package me.drawethree.ultraprisoncore.enchants.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.Getter;
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.api.events.UltraPrisonPlayerEnchantEvent;
@@ -350,7 +351,7 @@ public class EnchantsManager {
 			return;
 		}
 
-		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
+		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost, LostCause.ENCHANT);
 
 		this.setEnchantLevel(gui.getPickAxe(), enchantment.getId(), currentLevel + addition);
 
@@ -398,7 +399,6 @@ public class EnchantsManager {
 
 		PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_refunded").replace("%amount%", String.format("%,d", substraction)).replace("%enchant%", enchantment.getName()));
 		PlayerUtils.sendMessage(gui.getPlayer(), plugin.getMessage("enchant_tokens_back").replace("%tokens%", String.format("%,d", totalRefunded)));
-		return;
 	}
 
 	private void disenchantMax(UltraPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel) {
@@ -545,14 +545,14 @@ public class EnchantsManager {
 
 			UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + levelsToBuy);
 
-			Events.callSync(event);
+			Events.call(event);
 
 			if (event.isCancelled()) {
 				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 				return;
 			}
 
-			plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost);
+			plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost, LostCause.ENCHANT);
 
 			int finalLevelsToBuy = levelsToBuy;
 

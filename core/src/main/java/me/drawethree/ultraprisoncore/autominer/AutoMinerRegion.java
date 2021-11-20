@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.autominer;
 
 import lombok.Getter;
+import me.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.utils.Players;
@@ -52,6 +53,12 @@ public class AutoMinerRegion {
 					if (!parent.hasAutoMinerTime(p)) {
 						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_disabled"));
 					} else {
+						PlayerAutomineEvent event = this.parent.callAutoMineEvent(p);
+
+						if (event.isCancelled()) {
+							return;
+						}
+
 						parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_enabled"));
 						if (current >= rewardPeriod) {
 							this.executeCommands(p);

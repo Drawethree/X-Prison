@@ -107,6 +107,11 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
         }
     }
 
+    @Override
+    public boolean isHistoryEnabled() {
+        return true;
+    }
+
     private void registerCommands() {
         Commands.create()
                 .assertPlayer()

@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.mainmenu;
 
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.history.gui.PlayerHistoryGUI;
 import me.drawethree.ultraprisoncore.mainmenu.reload.ReloadSelectionGui;
 import me.drawethree.ultraprisoncore.mainmenu.reset.ResetSelectionGui;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
@@ -8,12 +9,17 @@ import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
+import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
 import me.lucko.helper.text3.Text;
+import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class MainMenu extends Gui {
 
@@ -93,6 +99,15 @@ public class MainMenu extends Gui {
 			new ResetSelectionGui(this.core, this.getPlayer()).open();
 		}));
 
+		//Players History
+		this.setItem(31, ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name("&e&lPlayers History").lore("&7Click to see players history.").build(() -> {
+			if (!this.getPlayer().hasPermission("ultraprisoncore.mainmenu.history")) {
+				return;
+			}
+			this.close();
+			this.openHistorySelectorGui();
+		}));
+
 		this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lClose").lore("&7Click to close the gui.").build(this::close));
 		this.setItem(44, ItemStackBuilder.of(SkullUtils.HELP_SKULL.clone()).name("&e&lNeed more help?").lore("&7Right-Click to see plugin's Wiki", "&7Left-Click to join Discord Support.")
 				.build(() -> {
@@ -109,5 +124,14 @@ public class MainMenu extends Gui {
 					PlayerUtils.sendMessage(this.getPlayer(), " ");
 				}));
 
+	}
+
+	private void openHistorySelectorGui() {
+		PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
+		builder.lines(6);
+		builder.title("Select a player");
+		builder.build(this.getPlayer(), gui -> Players.all().stream().map(p -> ItemStackBuilder.of(SkullUtils.createPlayerHead(p, p.getName(), Collections.singletonList("&7Click to view history of this player."))).build(() -> {
+			new PlayerHistoryGUI(this.getPlayer(), p, this.core.getHistory()).open();
+		})).collect(Collectors.toList())).open();
 	}
 }

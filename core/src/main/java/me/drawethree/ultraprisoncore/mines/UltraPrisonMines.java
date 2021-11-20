@@ -99,6 +99,11 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		return new String[0];
 	}
 
+	@Override
+	public boolean isHistoryEnabled() {
+		return false;
+	}
+
 	private void loadMessages() {
 		this.messages = new HashMap<>();
 		for (String key : this.config.get().getConfigurationSection("messages").getKeys(false)) {

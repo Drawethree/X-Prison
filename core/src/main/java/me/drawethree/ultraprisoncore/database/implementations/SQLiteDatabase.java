@@ -10,6 +10,7 @@ import me.drawethree.ultraprisoncore.database.SQLDatabase;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.history.UltraPrisonHistory;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
@@ -121,6 +122,11 @@ public class SQLiteDatabase extends SQLDatabase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void createIndexes() {
+        this.executeAsync(String.format("CREATE INDEX IF NOT EXISTS %s ON %s (%s)", INDEX_HISTORY_PLAYER, UltraPrisonHistory.TABLE_NAME, HISTORY_PLAYER_UUID_COLNAME));
     }
 
 

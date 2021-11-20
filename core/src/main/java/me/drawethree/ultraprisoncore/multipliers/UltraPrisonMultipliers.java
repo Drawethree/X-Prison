@@ -3,26 +3,32 @@ package me.drawethree.ultraprisoncore.multipliers;
 import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
+import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import me.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
+import me.drawethree.ultraprisoncore.multipliers.api.events.PlayerMultiplierReceiveEvent;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
+import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
+import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.text.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -171,6 +177,15 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 					this.rankMultipliers.remove(e.getPlayer().getUniqueId());
 					this.saveSellMultiplier(e.getPlayer(), true);
 					this.saveTokenMultiplier(e.getPlayer(), true);
+				}).bindWith(core);
+
+		Events.subscribe(PlayerTokensReceiveEvent.class, EventPriority.HIGHEST)
+				.filter(EventFilters.ignoreCancelled())
+				.handler(e -> {
+					OfflinePlayer p = e.getPlayer();
+					if (p.isOnline() && e.getCause() == ReceiveCause.MINING) {
+						e.setAmount((long) this.getApi().getTotalToDeposit((Player) p, e.getAmount(), MultiplierType.TOKENS));
+					}
 				}).bindWith(core);
 	}
 
@@ -322,6 +337,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			default:
 				throw new IllegalStateException("Unsupported Database type: " + type);
 		}
+	}
+
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
 	}
 
 	private void saveAllMultipliers() {
@@ -485,6 +505,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			return;
 		}
 
+		this.callPlayerReceiveMultiplierEvent(onlinePlayer, amount, timeUnit, duration, MultiplierType.SELL);
+
 		if (sellMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			PlayerMultiplier multiplier = sellMultipliers.get(onlinePlayer.getUniqueId());
 			multiplier.addMultiplier(amount, this.playerSellMultiMax);
@@ -494,27 +516,36 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			sellMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, timeUnit, duration, this.playerSellMultiMax));
 		}
 
+
 		PlayerUtils.sendMessage(onlinePlayer, messages.get("sell_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%time%", duration + " " + StringUtils.capitalize(timeUnit.name())));
 		PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set &e%s's &eSell Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name()))));
 	}
 
-	private void setupTokenMultiplier(CommandSender sender, Player onlinePlayer, double amount, TimeUnit timeUnit, int minutes) {
+	private PlayerMultiplierReceiveEvent callPlayerReceiveMultiplierEvent(Player onlinePlayer, double amount, TimeUnit timeUnit, int duration, MultiplierType type) {
+		PlayerMultiplierReceiveEvent event = new PlayerMultiplierReceiveEvent(onlinePlayer, amount, timeUnit, duration, type);
+		Events.call(event);
+		return event;
+	}
+
+	private void setupTokenMultiplier(CommandSender sender, Player onlinePlayer, double amount, TimeUnit timeUnit, int duration) {
 		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
 			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer must be online!"));
 			return;
 		}
 
+		this.callPlayerReceiveMultiplierEvent(onlinePlayer, amount, timeUnit, duration, MultiplierType.TOKENS);
+
 		if (tokenMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			PlayerMultiplier multiplier = tokenMultipliers.get(onlinePlayer.getUniqueId());
 			multiplier.addMultiplier(amount, this.playerTokenMultiMax);
-			multiplier.addDuration(timeUnit, minutes);
+			multiplier.addDuration(timeUnit, duration);
 			tokenMultipliers.put(onlinePlayer.getUniqueId(), multiplier);
 		} else {
-			tokenMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, TimeUnit.MINUTES, minutes, this.playerTokenMultiMax));
+			tokenMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), amount, timeUnit, duration, this.playerTokenMultiMax));
 		}
 
-		PlayerUtils.sendMessage(onlinePlayer, messages.get("token_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%time%", minutes + " " + StringUtils.capitalize(timeUnit.name())));
-		PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set &e%s's &eToken Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, minutes, StringUtils.capitalize(timeUnit.name()))));
+		PlayerUtils.sendMessage(onlinePlayer, messages.get("token_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%time%", duration + " " + StringUtils.capitalize(timeUnit.name())));
+		PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set &e%s's &eToken Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name()))));
 	}
 
 

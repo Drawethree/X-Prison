@@ -61,58 +61,63 @@ public class ResetSelectionGui extends Gui {
 			}
 
 			//AutoMiner
-			this.setItem(12, ItemStackBuilder.of(Material.DIAMOND_PICKAXE).name("&e&lAutoMiner").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(11, ItemStackBuilder.of(Material.DIAMOND_PICKAXE).name("&e&lAutoMiner").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getAutoMiner()).open();
 			}));
 
 			//Autosell
-			this.setItem(13, ItemStackBuilder.of(SkullUtils.MONEY_SKULL.clone()).name("&e&lAutoSell").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(12, ItemStackBuilder.of(SkullUtils.MONEY_SKULL.clone()).name("&e&lAutoSell").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getAutoSell()).open();
 			}));
 
 			//Enchants
-			this.setItem(14, ItemStackBuilder.of(CompMaterial.ENCHANTED_BOOK.toItem()).name("&e&lEnchants").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(13, ItemStackBuilder.of(CompMaterial.ENCHANTED_BOOK.toItem()).name("&e&lEnchants").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getEnchants()).open();
 			}));
 
 			//Gangs
-			this.setItem(20, ItemStackBuilder.of(SkullUtils.GANG_SKULL.clone()).name("&e&lGangs").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(14, ItemStackBuilder.of(SkullUtils.GANG_SKULL.clone()).name("&e&lGangs").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getGangs()).open();
 			}));
 
 			//Gems
-			this.setItem(21, ItemStackBuilder.of(Material.EMERALD).name("&e&lGems").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(15, ItemStackBuilder.of(Material.EMERALD).name("&e&lGems").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getGems()).open();
 			}));
 
 			//Ranks
-			this.setItem(22, ItemStackBuilder.of(SkullUtils.DIAMOND_R_SKULL.clone()).name("&e&lRanks").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(19, ItemStackBuilder.of(SkullUtils.DIAMOND_R_SKULL.clone()).name("&e&lRanks").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getRanks()).open();
 			}));
 
 			//Prestiges
-			this.setItem(23, ItemStackBuilder.of(SkullUtils.DIAMOND_P_SKULL.clone()).name("&e&lPrestiges").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(20, ItemStackBuilder.of(SkullUtils.DIAMOND_P_SKULL.clone()).name("&e&lPrestiges").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getPrestiges()).open();
 			}));
 
 			//PickaxeLevels
-			this.setItem(24, ItemStackBuilder.of(CompMaterial.EXPERIENCE_BOTTLE.toItem()).name("&e&lPickaxe Levels").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(21, ItemStackBuilder.of(CompMaterial.EXPERIENCE_BOTTLE.toItem()).name("&e&lPickaxe Levels").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getPickaxeLevels()).open();
 			}));
 
 			//Tokens
-			this.setItem(30, ItemStackBuilder.of(SkullUtils.COIN_SKULL.clone()).name("&e&lTokens").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(22, ItemStackBuilder.of(SkullUtils.COIN_SKULL.clone()).name("&e&lTokens").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getTokens()).open();
 			}));
 
 			//Multipliers
-			this.setItem(31, ItemStackBuilder.of(Material.GOLD_INGOT).name("&e&lMultipliers").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(23, ItemStackBuilder.of(Material.GOLD_INGOT).name("&e&lMultipliers").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getMultipliers()).open();
 			}));
 
 			//Mines
-			this.setItem(32, ItemStackBuilder.of(Material.DIAMOND_ORE).name("&e&lMines").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(24, ItemStackBuilder.of(Material.DIAMOND_ORE).name("&e&lMines").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getMines()).open();
+			}));
+
+			//History
+			this.setItem(25, ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name("&e&lHistory").lore("&7Click to reset this module", "&7player data.").build(() -> {
+				new ResetModulePlayerDataConfirmationGui(this.getPlayer(), this.core.getHistory()).open();
 			}));
 
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lClose").lore("&7Click to close the gui.").build(this::close));

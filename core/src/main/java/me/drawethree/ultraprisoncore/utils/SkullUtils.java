@@ -3,10 +3,14 @@ package me.drawethree.ultraprisoncore.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
+import me.lucko.helper.item.ItemStackBuilder;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.UUID;
 
 public class SkullUtils {
@@ -47,5 +51,19 @@ public class SkullUtils {
 		}
 		head.setItemMeta(meta);
 		return head;
+	}
+
+
+	public static ItemStack createPlayerHead(OfflinePlayer player, String displayName, List<String> lore) {
+		ItemStack baseItem = CompMaterial.PLAYER_HEAD.toItem();
+		SkullMeta meta = (SkullMeta) baseItem.getItemMeta();
+
+		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_13)) {
+			meta.setOwningPlayer(player);
+		} else {
+			meta.setOwner(player.getName());
+		}
+		baseItem.setItemMeta(meta);
+		return ItemStackBuilder.of(baseItem).name(displayName).lore(lore).build();
 	}
 }

@@ -3,10 +3,10 @@ package me.drawethree.ultraprisoncore.tokens.managers;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
-import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
-import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import me.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
@@ -217,23 +217,7 @@ public class TokensManager {
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens, this.plugin);
 
-			PlayerTokensReceiveEvent event = new PlayerTokensReceiveEvent(cause, p, amount);
-
-			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Original amount :: " + amount, this.plugin);
-
-			Events.callSync(event);
-
-			if (event.isCancelled()) {
-				return;
-			}
-
-			long finalAmount = event.getAmount();
-
-			boolean multiModule = this.plugin.getCore().isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
-
-			if (multiModule && p.isOnline() && cause == ReceiveCause.MINING) {
-				finalAmount = (long) this.plugin.getCore().getMultipliers().getApi().getTotalToDeposit((Player) p, finalAmount, MultiplierType.TOKENS);
-			}
+			long finalAmount = this.callTokensReceiveEvent(cause, p, amount);
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
 
@@ -256,6 +240,18 @@ public class TokensManager {
 				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
 			}
 		});
+	}
+
+	private long callTokensReceiveEvent(ReceiveCause cause, OfflinePlayer p, long amount) {
+		PlayerTokensReceiveEvent event = new PlayerTokensReceiveEvent(cause, p, amount);
+
+		Events.callSync(event);
+
+		if (event.isCancelled()) {
+			return amount;
+		}
+
+		return event.getAmount();
 	}
 
 	public void redeemTokens(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
@@ -292,7 +288,7 @@ public class TokensManager {
 	public void payTokens(Player executor, long amount, OfflinePlayer target) {
 		Schedulers.async().run(() -> {
 			if (getPlayerTokens(executor) >= amount) {
-				this.removeTokens(executor, amount, null);
+				this.removeTokens(executor, amount, null, LostCause.PAY);
 				this.giveTokens(target, amount, null, ReceiveCause.PAY);
 				PlayerUtils.sendMessage(executor, plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
 				if (target.isOnline()) {
@@ -313,7 +309,7 @@ public class TokensManager {
 				return;
 			}
 
-			removeTokens(executor, totalAmount, null);
+			removeTokens(executor, totalAmount, null, LostCause.WITHDRAW);
 
 			ItemStack item = createTokenItem(amount, value);
 			Collection<ItemStack> notFit = executor.getInventory().addItem(item).values();
@@ -352,7 +348,7 @@ public class TokensManager {
 		}
 	}
 
-	public void removeTokens(OfflinePlayer p, long amount, CommandSender executor) {
+	public void removeTokens(OfflinePlayer p, long amount, CommandSender executor, LostCause cause) {
 		Schedulers.async().run(() -> {
 			long currentTokens = getPlayerTokens(p);
 			long finalTokens = currentTokens - amount;
@@ -360,6 +356,8 @@ public class TokensManager {
 			if (finalTokens < 0) {
 				finalTokens = 0;
 			}
+
+			this.callTokensLostEvent(cause, p, amount);
 
 			if (!p.isOnline()) {
 				this.plugin.getCore().getPluginDatabase().updateTokens(p, amount);
@@ -370,6 +368,11 @@ public class TokensManager {
 				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
 			}
 		});
+	}
+
+	private void callTokensLostEvent(LostCause cause, OfflinePlayer p, long amount) {
+		PlayerTokensLostEvent event = new PlayerTokensLostEvent(cause, p, amount);
+		Events.call(event);
 	}
 
 	private ItemStack createTokenItem(long amount, int value) {
@@ -440,7 +443,7 @@ public class TokensManager {
 		if (player.isOnline()) {
 			UltraPrisonBlockBreakEvent event = new UltraPrisonBlockBreakEvent((Player) player, blocks);
 
-			Events.callSync(event);
+			Events.call(event);
 
 			if (event.isCancelled()) {
 				return;

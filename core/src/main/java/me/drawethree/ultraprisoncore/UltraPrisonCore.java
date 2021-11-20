@@ -12,6 +12,7 @@ import me.drawethree.ultraprisoncore.database.implementations.SQLiteDatabase;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.history.UltraPrisonHistory;
 import me.drawethree.ultraprisoncore.mainmenu.MainMenu;
 import me.drawethree.ultraprisoncore.mainmenu.help.HelpGui;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
@@ -73,6 +74,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	private UltraPrisonPickaxeLevels pickaxeLevels;
 	private UltraPrisonGangs gangs;
 	private UltraPrisonMines mines;
+	private UltraPrisonHistory history;
 
 	private NMSProvider nmsProvider;
 
@@ -112,6 +114,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 		this.initModules();
 		this.pluginDatabase.createTables();
+		this.pluginDatabase.createIndexes();
 		this.loadModules();
 		this.initVariables();
 
@@ -184,6 +187,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 				this.loadModule(pickaxeLevels);
 			}
 		}
+		if (this.getConfig().getBoolean("modules.history")) {
+			this.loadModule(history);
+		}
 	}
 
 	private boolean initDatabase() {
@@ -222,6 +228,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.pickaxeLevels = new UltraPrisonPickaxeLevels(this);
 		this.gangs = new UltraPrisonGangs(this);
 		this.mines = new UltraPrisonMines(this);
+		this.history = new UltraPrisonHistory(this);
 
 		this.modules.put(this.tokens.getName().toLowerCase(), this.tokens);
 		this.modules.put(this.gems.getName().toLowerCase(), this.gems);
@@ -234,6 +241,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.modules.put(this.pickaxeLevels.getName().toLowerCase(), this.pickaxeLevels);
 		this.modules.put(this.gangs.getName().toLowerCase(), this.gangs);
 		this.modules.put(this.mines.getName().toLowerCase(), this.mines);
+		this.modules.put(this.history.getName().toLowerCase(), this.history);
 	}
 
 	private void registerMainEvents() {

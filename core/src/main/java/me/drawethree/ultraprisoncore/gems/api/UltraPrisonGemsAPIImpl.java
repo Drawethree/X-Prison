@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.gems.api;
 
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.gems.managers.GemsManager;
 import org.bukkit.OfflinePlayer;
@@ -26,7 +27,7 @@ public class UltraPrisonGemsAPIImpl implements UltraPrisonGemsAPI {
 
     @Override
 	public void removeGems(OfflinePlayer p, long amount) {
-        this.manager.removeGems(p, amount, null);
+		this.manager.removeGems(p, amount, null, LostCause.ADMIN);
     }
 
     @Override

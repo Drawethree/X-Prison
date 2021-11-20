@@ -172,7 +172,7 @@ public class MineManager {
 
 		MineCreateEvent event = new MineCreateEvent(creator, mine);
 
-		Events.callSync(event);
+		Events.call(event);
 
 		if (event.isCancelled()) {
 			this.plugin.getCore().debug("MineCreateEvent was cancelled.", this.plugin);
@@ -195,7 +195,7 @@ public class MineManager {
 
 		MineDeleteEvent event = new MineDeleteEvent(mine);
 
-		Events.callSync(event);
+		Events.call(event);
 
 		if (event.isCancelled()) {
 			this.plugin.getCore().debug("MineDeleteEvent was cancelled.", this.plugin);
@@ -333,7 +333,7 @@ public class MineManager {
 
 		MinePreResetEvent preResetEvent = new MinePreResetEvent(mine);
 
-		Events.callSync(preResetEvent);
+		Events.call(preResetEvent);
 
 		if (preResetEvent.isCancelled()) {
 			this.getPlugin().getCore().debug("MinePreResetEvent was cancelled.", this.getPlugin());

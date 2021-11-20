@@ -3,6 +3,7 @@ package me.drawethree.ultraprisoncore.database;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.gangs.model.Gang;
+import me.drawethree.ultraprisoncore.history.model.HistoryLine;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -23,6 +24,8 @@ public abstract class Database {
 	public abstract DatabaseType getDatabaseType();
 
 	public abstract void createTables();
+
+	public abstract void createIndexes();
 
 	public abstract long getPlayerTokens(OfflinePlayer player);
 
@@ -101,4 +104,10 @@ public abstract class Database {
 	public abstract PlayerMultiplier getSellMultiplier(Player player);
 
 	public abstract PlayerMultiplier getTokenMultiplier(Player player);
+
+	public abstract List<HistoryLine> getPlayerHistory(OfflinePlayer player);
+
+	public abstract void addHistoryLine(OfflinePlayer player, HistoryLine history);
+
+	public abstract void clearHistory(OfflinePlayer target);
 }

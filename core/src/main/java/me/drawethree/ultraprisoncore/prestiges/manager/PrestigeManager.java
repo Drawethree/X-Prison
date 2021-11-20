@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.prestiges.manager;
 
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.prestiges.api.events.PlayerPrestigeEvent;
 import me.drawethree.ultraprisoncore.prestiges.model.Prestige;
@@ -230,7 +231,7 @@ public class PrestigeManager {
 
 	private boolean completeTransaction(Player p, double cost) {
 		if (this.useTokensCurrency) {
-			this.plugin.getCore().getTokens().getApi().removeTokens(p, (long) cost);
+			this.plugin.getCore().getTokens().getApi().removeTokens(p, (long) cost, LostCause.RANKUP);
 			return true;
 		} else {
 			return this.plugin.getCore().getEconomy().withdrawPlayer(p, cost).transactionSuccess();
@@ -278,7 +279,7 @@ public class PrestigeManager {
 
 		PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, toBuy);
 
-		Events.callSync(event);
+		Events.call(event);
 
 		if (event.isCancelled()) {
 			this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);
@@ -384,7 +385,7 @@ public class PrestigeManager {
 
 			PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, nextPrestige);
 
-			Events.callSync(event);
+			Events.call(event);
 
 			if (event.isCancelled()) {
 				this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);

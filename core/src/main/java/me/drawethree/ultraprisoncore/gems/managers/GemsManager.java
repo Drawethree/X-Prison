@@ -1,8 +1,10 @@
 package me.drawethree.ultraprisoncore.gems.managers;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import me.drawethree.ultraprisoncore.gems.api.events.PlayerGemsLostEvent;
 import me.drawethree.ultraprisoncore.gems.api.events.PlayerGemsReceiveEvent;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
@@ -149,15 +151,7 @@ public class GemsManager {
     public void giveGems(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
         long currentgems = getPlayerGems(p);
 
-		PlayerGemsReceiveEvent event = new PlayerGemsReceiveEvent(cause, p, amount);
-
-        Events.callSync(event);
-
-        if (event.isCancelled()) {
-            return;
-        }
-
-        long finalAmount = event.getAmount();
+		long finalAmount = callGemsReceiveEvent(cause, p, amount);
 
         boolean multiModule = this.plugin.getCore().isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
 
@@ -166,25 +160,37 @@ public class GemsManager {
         }
 
         if (!p.isOnline()) {
-            this.plugin.getCore().getPluginDatabase().updateGems(p, currentgems + finalAmount);
-        } else {
-            gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-        }
-        if (executor != null && !(executor instanceof ConsoleCommandSender)) {
+			this.plugin.getCore().getPluginDatabase().updateGems(p, currentgems + finalAmount);
+		} else {
+			gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
+		}
+		if (executor != null && !(executor instanceof ConsoleCommandSender)) {
 			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", finalAmount)));
-        }
+		}
 
-    }
+	}
 
-    public void redeemGems(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
-        NBTItem nbtItem = new NBTItem(item);
-        if (nbtItem.hasKey("gems-amount")) {
-            long gemsAmount = nbtItem.getLong("gems-amount");
-            int itemAmount = item.getAmount();
-            if (shiftClick) {
-                if (offhand) {
-                    p.getInventory().setItemInOffHand(null);
-                } else {
+	private long callGemsReceiveEvent(ReceiveCause cause, OfflinePlayer p, long amount) {
+		PlayerGemsReceiveEvent event = new PlayerGemsReceiveEvent(cause, p, amount);
+
+		Events.call(event);
+
+		if (event.isCancelled()) {
+			return amount;
+		}
+
+		return event.getAmount();
+	}
+
+	public void redeemGems(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
+		NBTItem nbtItem = new NBTItem(item);
+		if (nbtItem.hasKey("gems-amount")) {
+			long gemsAmount = nbtItem.getLong("gems-amount");
+			int itemAmount = item.getAmount();
+			if (shiftClick) {
+				if (offhand) {
+					p.getInventory().setItemInOffHand(null);
+				} else {
                     p.setItemInHand(null);
                 }
                 this.giveGems(p, gemsAmount * itemAmount, null, ReceiveCause.REDEEM);
@@ -210,8 +216,8 @@ public class GemsManager {
     public void payGems(Player executor, long amount, OfflinePlayer target) {
         Schedulers.async().run(() -> {
             if (getPlayerGems(executor) >= amount) {
-                this.removeGems(executor, amount, null);
-                this.giveGems(target, amount, null, ReceiveCause.PAY);
+				this.removeGems(executor, amount, null, LostCause.PAY);
+				this.giveGems(target, amount, null, ReceiveCause.PAY);
 				PlayerUtils.sendMessage(executor, plugin.getMessage("gems_send").replace("%player%", target.getName()).replace("%gems%", String.format("%,d", amount)));
                 if (target.isOnline()) {
 					PlayerUtils.sendMessage((CommandSender) target, plugin.getMessage("gems_received").replace("%player%", executor.getName()).replace("%gems%", String.format("%,d", amount)));
@@ -231,7 +237,7 @@ public class GemsManager {
                 return;
             }
 
-            removeGems(executor, totalAmount, null);
+			removeGems(executor, totalAmount, null, LostCause.WITHDRAW);
 
             ItemStack item = createGemsItem(amount, value);
             Collection<ItemStack> notFit = executor.getInventory().addItem(item).values();
@@ -254,35 +260,42 @@ public class GemsManager {
         }
     }
 
-    public void removeGems(OfflinePlayer p, long amount, CommandSender executor) {
-        Schedulers.async().run(() -> {
-            long currentgems = getPlayerGems(p);
-            long finalgems = currentgems - amount;
+	public void removeGems(OfflinePlayer p, long amount, CommandSender executor, LostCause cause) {
+		Schedulers.async().run(() -> {
+			long currentgems = getPlayerGems(p);
+			long finalgems = currentgems - amount;
 
-            if (finalgems < 0) {
-                finalgems = 0;
-            }
+			if (finalgems < 0) {
+				finalgems = 0;
+			}
 
-            if (!p.isOnline()) {
-                this.plugin.getCore().getPluginDatabase().updateGems(p, finalgems);
-            } else {
-                gemsCache.put(p.getUniqueId(), finalgems);
-            }
-            if (executor != null) {
+			this.callGemsLostEvent(cause, p, amount);
+
+			if (!p.isOnline()) {
+				this.plugin.getCore().getPluginDatabase().updateGems(p, finalgems);
+			} else {
+				gemsCache.put(p.getUniqueId(), finalgems);
+			}
+			if (executor != null) {
 				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_remove_gems").replace("%player%", p.getName()).replace("%gems%", String.format("%,d", amount)));
-            }
-        });
-    }
+			}
+		});
+	}
 
-    private ItemStack createGemsItem(long amount, int value) {
-        ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
-        NBTItem nbt = new NBTItem(item);
-        nbt.setLong("gems-amount", amount);
-        return nbt.getItem();
-    }
+	private void callGemsLostEvent(LostCause cause, OfflinePlayer p, long amount) {
+		PlayerGemsLostEvent event = new PlayerGemsLostEvent(cause, p, amount);
+		Events.call(event);
+	}
 
-    public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {
-        Schedulers.async().run(() -> {
+	private ItemStack createGemsItem(long amount, int value) {
+		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+		NBTItem nbt = new NBTItem(item);
+		nbt.setLong("gems-amount", amount);
+		return nbt.getItem();
+	}
+
+	public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {
+		Schedulers.async().run(() -> {
             if (sender == target) {
 				PlayerUtils.sendMessage(sender, plugin.getMessage("your_gems").replace("%gems%", String.format("%,d", this.getPlayerGems(target))));
             } else {

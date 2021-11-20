@@ -108,6 +108,11 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 		}
 	}
 
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
 	private void registerCommands() {
 		Commands.create()
 				.assertPlayer()

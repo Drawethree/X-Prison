@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.tokens.api;
 
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import org.bukkit.OfflinePlayer;
 
@@ -22,12 +23,13 @@ public interface UltraPrisonTokensAPI {
      */
     boolean hasEnough(OfflinePlayer p, long amount);
 
-    /**
-     * Method to remove tokens from player
-     * @param p Player
-     * @param amount amount
-     */
-    void removeTokens(OfflinePlayer p, long amount);
+	/**
+	 * Method to remove tokens from player
+	 *
+	 * @param p      Player
+	 * @param amount amount
+	 */
+	void removeTokens(OfflinePlayer p, long amount, LostCause cause);
 
     /**
      * Method to add tokens to player

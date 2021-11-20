@@ -1,11 +1,11 @@
 package me.drawethree.ultraprisoncore.tokens.api;
 
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.tokens.managers.TokensManager;
 import org.bukkit.OfflinePlayer;
 
 public class UltraPrisonTokensAPIImpl implements UltraPrisonTokensAPI {
-
 
     private TokensManager manager;
 
@@ -25,8 +25,8 @@ public class UltraPrisonTokensAPIImpl implements UltraPrisonTokensAPI {
     }
 
     @Override
-    public void removeTokens(OfflinePlayer p, long amount) {
-        this.manager.removeTokens(p, amount, null);
+    public void removeTokens(OfflinePlayer p, long amount, LostCause cause) {
+        this.manager.removeTokens(p, amount, null, cause);
     }
 
     @Override

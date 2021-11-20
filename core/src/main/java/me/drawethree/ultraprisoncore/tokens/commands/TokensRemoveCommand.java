@@ -1,6 +1,7 @@
 package me.drawethree.ultraprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
+import me.drawethree.ultraprisoncore.api.enums.LostCause;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.utils.Players;
@@ -20,7 +21,7 @@ public class TokensRemoveCommand extends TokensCommand {
             try {
                 long amount = Long.parseLong(args.get(1));
                 OfflinePlayer target = Players.getOfflineNullable(args.get(0));
-                plugin.getTokensManager().removeTokens(target, amount, sender);
+				plugin.getTokensManager().removeTokens(target, amount, sender, LostCause.ADMIN);
                 return true;
             } catch (NumberFormatException e) {
                 PlayerUtils.sendMessage(sender, plugin.getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
