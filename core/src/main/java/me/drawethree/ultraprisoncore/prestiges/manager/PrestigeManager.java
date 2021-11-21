@@ -385,7 +385,7 @@ public class PrestigeManager {
 
 			PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, nextPrestige);
 
-			Events.call(event);
+			Events.callSync(event);
 
 			if (event.isCancelled()) {
 				this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);

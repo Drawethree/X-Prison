@@ -20,9 +20,11 @@ public class TokensWithdrawCommand extends TokensCommand {
             try {
                 long amount = Long.parseLong(args.get(0));
                 int value = Integer.parseInt(args.get(1));
+
                 if (0 >= amount || 0 >= value) {
                     return false;
                 }
+
                 plugin.getTokensManager().withdrawTokens(p, amount, value);
                 return true;
             } catch (NumberFormatException e) {
