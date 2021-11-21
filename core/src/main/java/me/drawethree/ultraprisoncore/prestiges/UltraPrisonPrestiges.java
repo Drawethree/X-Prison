@@ -10,7 +10,6 @@ import me.drawethree.ultraprisoncore.prestiges.api.UltraPrisonPrestigesAPIImpl;
 import me.drawethree.ultraprisoncore.prestiges.manager.PrestigeManager;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.text.Text;
 import org.bukkit.entity.Player;
 
@@ -130,9 +129,7 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 							return;
 						}
 
-						Schedulers.async().run(() -> {
-							this.prestigeManager.buyMaxPrestige(c.sender());
-						});
+						this.prestigeManager.buyMaxPrestige(c.sender());
 					}
 				}).registerAndBind(core, "maxprestige", "maxp", "mp");
 		Commands.create()

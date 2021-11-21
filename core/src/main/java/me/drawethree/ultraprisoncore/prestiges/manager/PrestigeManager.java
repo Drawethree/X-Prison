@@ -347,63 +347,63 @@ public class PrestigeManager {
 		this.plugin.getCore().getLogger().info("PrestigeTop updated!");
 	}
 
-	public boolean buyMaxPrestige(Player p) {
+	public void buyMaxPrestige(Player p) {
 
-		if (areRanksEnabled() && !getRankManager().isMaxRank(p)) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("not_last_rank"));
-			return false;
-		}
-
-		if (isMaxPrestige(p)) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("last_prestige"));
-			return false;
-		}
-
-		Prestige startPrestige = this.getPlayerPrestige(p);
-
-		Prestige currentPrestige = startPrestige;
-
-		Prestige nextPrestige = this.getNextPrestige(startPrestige);
-
-		if (!this.isTransactionAllowed(p, nextPrestige.getCost())) {
-			if (this.useTokensCurrency) {
-				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
-			} else {
-				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
-			}
-			return false;
-		}
-
-		PlayerUtils.sendMessage(p, this.plugin.getMessage("max_prestige_started"));
-
-		this.prestigingPlayers.add(p.getUniqueId());
-		while (p.isOnline() && !isMaxPrestige(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
-
+		Schedulers.async().run(() -> {
 			if (areRanksEnabled() && !getRankManager().isMaxRank(p)) {
-				break;
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_last_rank"));
+				return;
 			}
 
-			PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, nextPrestige);
-
-			Events.callSync(event);
-
-			if (event.isCancelled()) {
-				this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);
-				continue;
+			if (isMaxPrestige(p)) {
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("last_prestige"));
+				return;
 			}
 
-			doPrestige(p, nextPrestige);
-			currentPrestige = nextPrestige;
-			nextPrestige = this.getNextPrestige(nextPrestige);
-		}
+			Prestige startPrestige = this.getPlayerPrestige(p);
 
-		this.prestigingPlayers.remove(p.getUniqueId());
+			Prestige currentPrestige = startPrestige;
 
-		if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
-		}
+			Prestige nextPrestige = this.getNextPrestige(startPrestige);
 
-		return true;
+			if (!this.isTransactionAllowed(p, nextPrestige.getCost())) {
+				if (this.useTokensCurrency) {
+					PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+				} else {
+					PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+				}
+				return;
+			}
+
+			PlayerUtils.sendMessage(p, this.plugin.getMessage("max_prestige_started"));
+
+			this.prestigingPlayers.add(p.getUniqueId());
+			while (p.isOnline() && !isMaxPrestige(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
+
+				if (areRanksEnabled() && !getRankManager().isMaxRank(p)) {
+					break;
+				}
+
+				PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, nextPrestige);
+
+				Events.callSync(event);
+
+				if (event.isCancelled()) {
+					this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);
+					continue;
+				}
+
+				doPrestige(p, nextPrestige);
+				currentPrestige = nextPrestige;
+				nextPrestige = this.getNextPrestige(nextPrestige);
+			}
+
+			this.prestigingPlayers.remove(p.getUniqueId());
+
+			if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
+				PlayerUtils.sendMessage(p, this.plugin.getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
+			}
+		});
 	}
 
 	private void doPrestige(Player p, Prestige nextPrestige) {
