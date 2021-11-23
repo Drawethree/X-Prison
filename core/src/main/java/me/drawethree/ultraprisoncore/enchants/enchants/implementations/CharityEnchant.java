@@ -49,9 +49,9 @@ public class CharityEnchant extends UltraPrisonEnchantment {
                 }
 
                 if (p.equals(e.getPlayer())) {
-					PlayerUtils.sendMessage(e.getPlayer(), plugin.getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
+					PlayerUtils.sendMessage(p, plugin.getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
                 } else {
-					PlayerUtils.sendMessage(e.getPlayer(), plugin.getMessage("charity_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
+					PlayerUtils.sendMessage(p, plugin.getMessage("charity_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
                 }
             }
         }

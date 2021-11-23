@@ -2,7 +2,6 @@ package me.drawethree.ultraprisoncore.gangs.gui;
 
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.utils.gui.ConfirmationGui;
-import me.lucko.helper.Schedulers;
 import org.bukkit.entity.Player;
 
 public class DisbandGangGUI extends ConfirmationGui {
@@ -17,7 +16,7 @@ public class DisbandGangGUI extends ConfirmationGui {
     @Override
     public void confirm(boolean confirm) {
         if (confirm) {
-            Schedulers.async().run(() -> this.plugin.getGangsManager().disbandGang(this.getPlayer()));
+           this.plugin.getGangsManager().disbandGang(this.getPlayer());
         }
         this.close();
     }

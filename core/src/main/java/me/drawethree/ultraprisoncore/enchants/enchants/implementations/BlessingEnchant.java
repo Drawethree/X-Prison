@@ -50,9 +50,9 @@ public class BlessingEnchant extends UltraPrisonEnchantment {
 				}
 
 				if (p.equals(e.getPlayer())) {
-					PlayerUtils.sendMessage(e.getPlayer(), plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d", randAmount)));
+					PlayerUtils.sendMessage(p, plugin.getMessage("blessing_your").replace("%amount%", String.format("%,d", randAmount)));
 				} else {
-					PlayerUtils.sendMessage(e.getPlayer(), plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
+					PlayerUtils.sendMessage(p, plugin.getMessage("blessing_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
 				}
 			}
 		}

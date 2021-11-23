@@ -252,13 +252,13 @@ public class GemsManager {
         });
     }
 
-    public long getPlayerGems(OfflinePlayer p) {
-        if (!p.isOnline()) {
-            return this.plugin.getCore().getPluginDatabase().getPlayerGems(p);
-        } else {
-            return gemsCache.getOrDefault(p.getUniqueId(), (long) 0);
-        }
-    }
+    public synchronized long getPlayerGems(OfflinePlayer p) {
+		if (!p.isOnline()) {
+			return this.plugin.getCore().getPluginDatabase().getPlayerGems(p);
+		} else {
+			return gemsCache.getOrDefault(p.getUniqueId(), (long) 0);
+		}
+	}
 
 	public void removeGems(OfflinePlayer p, long amount, CommandSender executor, LostCause cause) {
 		Schedulers.async().run(() -> {

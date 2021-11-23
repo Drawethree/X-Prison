@@ -115,7 +115,7 @@ public class RankManager {
 		return this.ranksById.getOrDefault(id - 1, null);
 	}
 
-	public Rank getPlayerRank(Player p) {
+	public synchronized Rank getPlayerRank(Player p) {
 		return this.ranksById.getOrDefault(this.onlinePlayersRanks.get(p.getUniqueId()), this.ranksById.get(1));
 	}
 

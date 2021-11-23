@@ -212,7 +212,6 @@ public class TokensManager {
 	}
 
 	public void giveTokens(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
-		Schedulers.async().run(() -> {
 			long currentTokens = getPlayerTokens(p);
 
 			this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens, this.plugin);
@@ -239,7 +238,6 @@ public class TokensManager {
 			if (executor != null && !(executor instanceof ConsoleCommandSender)) {
 				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
 			}
-		});
 	}
 
 	private long callTokensReceiveEvent(ReceiveCause cause, OfflinePlayer p, long amount) {
@@ -324,7 +322,7 @@ public class TokensManager {
 		});
 	}
 
-	public long getPlayerTokens(OfflinePlayer p) {
+	public synchronized long getPlayerTokens(OfflinePlayer p) {
 		if (!p.isOnline()) {
 			return this.plugin.getCore().getPluginDatabase().getPlayerTokens(p);
 		} else {
@@ -332,7 +330,7 @@ public class TokensManager {
 		}
 	}
 
-	public long getPlayerBrokenBlocks(OfflinePlayer p) {
+	public synchronized long getPlayerBrokenBlocks(OfflinePlayer p) {
 		if (!p.isOnline()) {
 			return this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocks(p);
 		} else {
@@ -340,7 +338,7 @@ public class TokensManager {
 		}
 	}
 
-	public long getPlayerBrokenBlocksWeekly(OfflinePlayer p) {
+	public synchronized long getPlayerBrokenBlocksWeekly(OfflinePlayer p) {
 		if (!p.isOnline()) {
 			return this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocksWeekly(p);
 		} else {
@@ -349,7 +347,6 @@ public class TokensManager {
 	}
 
 	public void removeTokens(OfflinePlayer p, long amount, CommandSender executor, LostCause cause) {
-		Schedulers.async().run(() -> {
 			long currentTokens = getPlayerTokens(p);
 			long finalTokens = currentTokens - amount;
 
@@ -367,7 +364,6 @@ public class TokensManager {
 			if (executor != null) {
 				PlayerUtils.sendMessage(executor, plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
 			}
-		});
 	}
 
 	private void callTokensLostEvent(LostCause cause, OfflinePlayer p, long amount) {

@@ -195,7 +195,7 @@ public class PrestigeManager {
 		return this.prestigeById.getOrDefault(prestige.getId() + 1, null);
 	}
 
-	public Prestige getPlayerPrestige(Player p) {
+	public synchronized Prestige getPlayerPrestige(Player p) {
 		if (this.unlimitedPrestiges) {
 			long prestige = this.onlinePlayersPrestige.getOrDefault(p.getUniqueId(), 0L);
 			return new Prestige(prestige, this.calculatePrestigeCost(prestige), this.unlimitedPrestigePrefix.replace("%prestige%", String.format("%,d", prestige)), null);

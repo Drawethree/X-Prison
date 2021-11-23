@@ -67,7 +67,7 @@ public class SQLiteDatabase extends SQLDatabase {
         hikari.setMinimumIdle(MINIMUM_IDLE);
         hikari.setMaxLifetime(MAX_LIFETIME);
         hikari.setConnectionTimeout(0);
-        hikari.setMaximumPoolSize(MAXIMUM_POOL_SIZE);
+        hikari.setMaximumPoolSize(1);
         hikari.setLeakDetectionThreshold(0);
 
         this.hikari = new HikariDataSource(hikari);
