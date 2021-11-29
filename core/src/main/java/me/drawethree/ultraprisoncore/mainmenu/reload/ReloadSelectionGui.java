@@ -119,6 +119,11 @@ public class ReloadSelectionGui extends Gui {
 				new ReloadModuleConfirmationGui(this.getPlayer(), this.core.getHistory()).open();
 			}));
 
+			//All Modules
+			this.setItem(31, ItemStackBuilder.of(CompMaterial.REDSTONE_BLOCK.toItem()).name("&e&lReload All Modules").lore("&7Click to reload all modules.").build(() -> {
+				new ReloadModuleConfirmationGui(this.getPlayer(), null).open();
+			}));
+
 			this.setItem(36, ItemStackBuilder.of(Material.BARRIER).name("&c&lClose").lore("&7Click to close the gui.").build(this::close));
 			this.setItem(44, ItemStackBuilder.of(SkullUtils.HELP_SKULL.clone()).name("&e&lNeed more help?").lore("&7Right-Click to see plugin's Wiki", "&7Left-Click to join Discord Support.")
 					.build(() -> {

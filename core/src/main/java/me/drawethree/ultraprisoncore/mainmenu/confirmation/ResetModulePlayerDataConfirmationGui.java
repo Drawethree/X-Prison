@@ -10,16 +10,21 @@ public class ResetModulePlayerDataConfirmationGui extends ConfirmationGui {
 	private final UltraPrisonModule module;
 
 	public ResetModulePlayerDataConfirmationGui(Player player, UltraPrisonModule module) {
-		super(player, "Reset " + module.getName() + " player data?");
-
+		super(player, module == null ? "Reset all player data ?" : "Reset " + module.getName() + " player data?");
 		this.module = module;
 	}
 
 	@Override
 	public void confirm(boolean confirm) {
 		if (confirm) {
-			UltraPrisonCore.getInstance().getPluginDatabase().resetData(this.module);
-			this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&l" + this.module.getName() + " &amodule."));
+			if (module == null) {
+				UltraPrisonCore.getInstance().getModules().forEach(module1 -> UltraPrisonCore.getInstance().getPluginDatabase().resetData(module1));
+				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of all modules."));
+			} else {
+				UltraPrisonCore.getInstance().getPluginDatabase().resetData(this.module);
+				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&l" + this.module.getName() + " &amodule."));
+			}
+
 		}
 		this.close();
 	}
