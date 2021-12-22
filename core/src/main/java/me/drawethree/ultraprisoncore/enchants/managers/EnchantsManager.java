@@ -345,7 +345,7 @@ public class EnchantsManager {
 
 		UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + addition);
 
-		Events.call(event);
+		Events.callSync(event);
 
 		if (event.isCancelled()) {
 			return;
@@ -545,7 +545,7 @@ public class EnchantsManager {
 
 			UltraPrisonPlayerEnchantEvent event = new UltraPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + levelsToBuy);
 
-			Events.call(event);
+			Events.callSync(event);
 
 			if (event.isCancelled()) {
 				this.lockedPlayers.remove(gui.getPlayer().getUniqueId());

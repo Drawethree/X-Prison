@@ -284,7 +284,7 @@ public class GemsManager {
 
 	private void callGemsLostEvent(LostCause cause, OfflinePlayer p, long amount) {
 		PlayerGemsLostEvent event = new PlayerGemsLostEvent(cause, p, amount);
-		Events.call(event);
+		Events.callSync(event);
 	}
 
 	private ItemStack createGemsItem(long amount, int value) {

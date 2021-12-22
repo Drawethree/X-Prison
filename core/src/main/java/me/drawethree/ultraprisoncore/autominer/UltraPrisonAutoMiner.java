@@ -252,7 +252,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 	private PlayerAutoMinerTimeReceiveEvent callAutoMinerTimeReceiveEvent(Player p, long time, TimeUnit unit) {
 		PlayerAutoMinerTimeReceiveEvent event = new PlayerAutoMinerTimeReceiveEvent(p, unit, time);
-		Events.call(event);
+		Events.callSync(event);
 		return event;
 	}
 
@@ -319,7 +319,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 	public PlayerAutomineEvent callAutoMineEvent(Player p) {
 		PlayerAutomineEvent event = new PlayerAutomineEvent(p, this.getAutoMinerTime(p));
-		Events.call(event);
+		Events.callSync(event);
 		return event;
 	}
 }
