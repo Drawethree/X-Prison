@@ -368,7 +368,7 @@ public class TokensManager {
 
 	private void callTokensLostEvent(LostCause cause, OfflinePlayer p, long amount) {
 		PlayerTokensLostEvent event = new PlayerTokensLostEvent(cause, p, amount);
-		Events.call(event);
+		Events.callSync(event);
 	}
 
 	private ItemStack createTokenItem(long amount, int value) {
