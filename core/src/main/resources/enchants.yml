@@ -244,6 +244,7 @@ enchants:
     Description:
       - '&7&o(( Explodes nearby blocks while mining ))'
     Count-Blocks-Broken: true
+    Sounds: true
     Refund:
       Enabled: true
       InGuiSlot: 35

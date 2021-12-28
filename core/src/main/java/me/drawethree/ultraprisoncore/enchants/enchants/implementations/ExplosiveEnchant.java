@@ -23,6 +23,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private boolean countBlocksBroken;
+	private boolean soundsEnabled;
 
 
 	public ExplosiveEnchant(UltraPrisonEnchants instance) {
@@ -59,7 +60,9 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 				int threshold = this.getMaxLevel() / 3;
 				int radius = enchantLevel <= threshold ? 3 : enchantLevel <= threshold * 2 ? 4 : 5;
 
-				b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
+				if (this.soundsEnabled) {
+					b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
+				}
 
 				List<Block> blocksAffected = new ArrayList<>();
 				//int move = (radius / 2 - 1) + (radius % 2 == 0 ? 0 : 1);
@@ -138,5 +141,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 	public void reload() {
 		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
 		this.countBlocksBroken = plugin.getConfig().get().getBoolean("enchants." + id + ".Count-Blocks-Broken");
+		this.soundsEnabled = plugin.getConfig().get().getBoolean("enchants." + id + ".Sounds");
+
 	}
 }
