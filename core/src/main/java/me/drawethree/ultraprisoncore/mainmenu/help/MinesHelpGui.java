@@ -115,7 +115,7 @@ public class MinesHelpGui extends Gui {
 						this.close();
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&eUltraPrisonCore - Discord"));
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
+						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/9bRjBxKC6y"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 

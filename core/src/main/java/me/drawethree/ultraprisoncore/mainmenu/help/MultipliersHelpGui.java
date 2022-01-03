@@ -58,13 +58,20 @@ public class MultipliersHelpGui extends Gui {
 
 			//Commands
 			this.setItem(22, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&eCommands").lore(
-					"&f/gmulti [multiplier] [time in minutes]",
-					"&7Example: /gmulti 1.0 10",
-					"&7Set the global multiplier for all players on server.",
+					"&f/gmulti [sell/token] [multiplier] [duration] [time_unit] ",
+					"&7Example: /gmulti sell 1.0 10 MINUTES",
+					"&7Set the global sell / token multiplier for all players on server.",
 					" ",
-					"&f/pmulti [player] [multiplier] [time in minutes]",
-					"&7Example: /pmulti Drawethree 1.0 10",
-					"&7Set the personal multiplier for player.",
+					"&f/gmulti [sell/token] reset",
+					"&7Resets the global sell / token multiplier.",
+					" ",
+					"&f/sellmulti [player] [multiplier] [duration] [time_unit] ",
+					"&7Example: /sellmulti Drawethree 1.0 10 MINUTES",
+					"&7Set the personal sell multiplier for player.",
+					" ",
+					"&f/tokenmulti [player] [multiplier] [duration] [time_unit] ",
+					"&7Example: /tokenmulti Drawethree 1.0 10 MINUTES",
+					"&7Set the personal token multiplier for player.",
 					" ",
 					"&f/multi",
 					"&7Check your active multipliers."
@@ -87,7 +94,7 @@ public class MultipliersHelpGui extends Gui {
 						this.close();
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&eUltraPrisonCore - Discord"));
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/cssWTNK"));
+						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/9bRjBxKC6y"));
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 		}

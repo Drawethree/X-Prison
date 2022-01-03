@@ -63,7 +63,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	private LinkedHashMap<String, Double> permissionToMultiplier;
 
 	@Getter
-	private UltraPrisonCore core;
+	private final UltraPrisonCore core;
 	private boolean enabled;
 
 	private Task rankUpdateTask;

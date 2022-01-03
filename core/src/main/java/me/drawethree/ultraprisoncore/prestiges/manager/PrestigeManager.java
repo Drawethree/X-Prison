@@ -384,19 +384,14 @@ public class PrestigeManager {
 					break;
 				}
 
-				PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, nextPrestige);
-
-				Events.callSync(event);
-
-				if (event.isCancelled()) {
-					this.plugin.getCore().debug("PlayerPrestigeEvent was cancelled.", this.plugin);
-					continue;
-				}
-
 				doPrestige(p, nextPrestige);
 				currentPrestige = nextPrestige;
 				nextPrestige = this.getNextPrestige(nextPrestige);
 			}
+
+			PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, startPrestige, currentPrestige);
+
+			Events.callSync(event);
 
 			this.prestigingPlayers.remove(p.getUniqueId());
 
