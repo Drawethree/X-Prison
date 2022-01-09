@@ -29,6 +29,6 @@ public class GangCreateCommand extends GangCommand {
 
     @Override
     public boolean canExecute(CommandSender sender) {
-        return true;
+        return sender.hasPermission(UltraPrisonGangs.GANGS_CREATE_PERM);
     }
 }

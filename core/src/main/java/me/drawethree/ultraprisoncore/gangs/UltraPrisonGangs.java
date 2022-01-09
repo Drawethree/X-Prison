@@ -25,6 +25,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
     public static final String MODULE_NAME = "Gangs";
 	public static final String TABLE_NAME = "UltraPrison_Gangs";
     public static final String GANGS_ADMIN_PERM = "ultraprison.gangs.admin";
+	public static final String GANGS_CREATE_PERM = "ultraprison.gangs.create";
 
     @Getter
     private static UltraPrisonGangs instance;
