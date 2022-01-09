@@ -181,6 +181,8 @@ public class MineManager {
 
 		this.mines.put(mine.getName(), mine);
 
+		MineLoader.save(mine);
+
 		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_created").replace("%mine%", name));
 		return true;
 	}
@@ -456,5 +458,28 @@ public class MineManager {
 		if (mine.getTimedResetHologram() != null) {
 			mine.getTimedResetHologram().despawn();
 		}
+	}
+
+	public boolean renameMine(Player sender, String oldMineName, String newName) {
+
+		Mine mine = this.getMineByName(oldMineName);
+
+		if (mine == null) {
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists"));
+			return false;
+		}
+
+		if (mine.getFile() != null) {
+			mine.getFile().delete();
+		}
+
+		this.mines.remove(oldMineName);
+		mine.setName(newName);
+		this.mines.put(newName, mine);
+
+		MineLoader.save(mine);
+
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_renamed").replace("%mine%", oldMineName).replace("%new_name%", newName));
+		return true;
 	}
 }

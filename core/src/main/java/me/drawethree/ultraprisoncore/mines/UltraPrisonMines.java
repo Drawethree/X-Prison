@@ -130,6 +130,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		registerCommand(new MineSetTpCommand(this));
 		registerCommand(new MineSaveCommand(this));
 		registerCommand(new MineMigrateCommand(this));
+		registerCommand(new MineRenameCommand(this));
 
 		Commands.create()
 				.handler(c -> {

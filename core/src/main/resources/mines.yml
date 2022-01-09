@@ -30,6 +30,7 @@ messages:
   mine_migration_mine_completed: "&aMigration of Mine %mine% from %plugin% was completed."
   mine_all_reset_success: "&aAll mines were reset."
   mine_all_reset_started: "&aStarted reset of all mines."
+  mine_renamed: "&aMine &e%mine% &awas renamed to &e%new_name%&a."
 holograms:
   blocks_left:
     - " "

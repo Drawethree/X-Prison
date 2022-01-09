@@ -21,6 +21,7 @@ public class MineHelpCommand extends MineCommand {
 			PlayerUtils.sendMessage(sender, Text.colorize("&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"));
 			PlayerUtils.sendMessage(sender, Text.colorize("&e/mines create [mine] - Creates a new mine"));
 			PlayerUtils.sendMessage(sender, Text.colorize("&e/mines delete [mine] - Deletes a mine"));
+			PlayerUtils.sendMessage(sender, Text.colorize("&e/mines rename [mine] [new_name] - Renames a mine"));
 			PlayerUtils.sendMessage(sender, Text.colorize("&e/mines reset [mine/all] - Reset a mine"));
 			PlayerUtils.sendMessage(sender, Text.colorize("&e/mines panel [mine] - Opens a Mine Panel"));
 			PlayerUtils.sendMessage(sender, Text.colorize("&e/mines save [mine] - Force-save a mine"));

@@ -36,7 +36,9 @@ public class Mine implements GsonSerializable {
 	private MineManager manager;
 
 	@Getter
-	private final String name;
+	@Setter
+	private String name;
+
 	@Getter
 	private Region mineRegion;
 
