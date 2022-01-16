@@ -173,16 +173,6 @@ public class EnchantsManager {
 
 		NBTItem nbtItem = new NBTItem(p.getItemInHand());
 
-		try {
-			int amountToConvert = nbtItem.getInteger("blocks-broken");
-
-			if (amountToConvert > 0) {
-				amount += amountToConvert;
-				nbtItem.removeKey("blocks-broken");
-			}
-		} catch (Exception e) {
-			//Nothing to migrate
-		}
 
 		if (!nbtItem.hasKey("blocks-broken")) {
 			nbtItem.setLong("blocks-broken", 0L);
@@ -250,7 +240,11 @@ public class EnchantsManager {
 		return level;
 	}
 
-	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
+	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe, boolean inMineRegion) {
+		this.addBlocksBrokenToItem(e.getPlayer(), 1);
+		if (!inMineRegion && !this.isAllowEnchantsOutside()) {
+			return;
+		}
 		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
@@ -621,7 +615,6 @@ public class EnchantsManager {
 		this.firstJoinPickaxeMaterial = CompMaterial.fromString(plugin.getConfig().get().getString("first-join-pickaxe.material"));
 		this.firstJoinPickaxeEnchants = plugin.getConfig().get().getStringList("first-join-pickaxe.enchants");
 		this.firstJoinPickaxeName = plugin.getConfig().get().getString("first-join-pickaxe.name");
-
 	}
 
 	// /givepickaxe <player> <enchant:18=1;...> <name>

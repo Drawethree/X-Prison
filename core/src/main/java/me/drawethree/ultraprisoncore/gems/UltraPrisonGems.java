@@ -144,23 +144,25 @@ public final class UltraPrisonGems implements UltraPrisonModule {
         Commands.create()
                 .handler(c -> {
 
-                    if (c.args().size() == 0 && c.sender() instanceof Player) {
-                        this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
-                        return;
-                    }
+					if (c.args().size() == 0) {
+						if (c.sender() instanceof Player) {
+							this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
+						}
+						return;
+					}
 
-                    GemsCommand subCommand = this.getCommand(c.rawArg(0));
-                    if (subCommand != null) {
-                        if (subCommand.canExecute(c.sender())) {
-                            subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
-                        } else {
+					GemsCommand subCommand = this.getCommand(c.rawArg(0));
+					if (subCommand != null) {
+						if (subCommand.canExecute(c.sender())) {
+							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+						} else {
 							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
-                        }
-                    } else {
-                        OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-                        this.gemsManager.sendInfoMessage(c.sender(), target);
-                    }
-                })
+						}
+					} else {
+						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
+						this.gemsManager.sendInfoMessage(c.sender(), target);
+					}
+				})
                 .registerAndBind(core, "gems");
         Commands.create()
                 .handler(c -> {

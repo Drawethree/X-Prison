@@ -224,7 +224,7 @@ public class TokensManager {
 				this.plugin.getCore().getPluginDatabase().updateTokens(p, finalAmount + currentTokens);
 			} else {
 				tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-				if (executor != null && executor instanceof ConsoleCommandSender) {
+				if (executor != null && executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
 					PlayerUtils.sendMessage(p.getPlayer(), plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 				} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
 					PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));

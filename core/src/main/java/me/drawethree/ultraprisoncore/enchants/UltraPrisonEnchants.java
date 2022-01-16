@@ -296,10 +296,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(EventFilters.ignoreCancelled())
 				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
-				.filter(e -> this.enchantsManager.isAllowEnchantsOutside() || WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
 				.handler(e -> {
-					enchantsManager.addBlocksBrokenToItem(e.getPlayer(), 1);
-					enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand());
+					boolean inMineRegion = WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine"));
+					enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand(), inMineRegion);
 				}).bindWith(core);
 		Events.subscribe(BlockBreakEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
