@@ -478,6 +478,40 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 47
+  '22':
+    RawName: "gemfinder"
+    Name: '&aGem Finder'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 48
+    Increase-Cost-by: 6
+    Max: 1500
+    Chance: 0.06666
+    Max-Gems: 75
+    Min-Gems: 35
+    Cost: 12
+    Description:
+      - '&7&o(( Ability to find gems while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 48
+  '23':
+    RawName: "gang-value-finder"
+    Name: '&eGang Value Finder'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 49
+    Increase-Cost-by: 6
+    Max: 1500
+    Chance: 0.06666
+    Max-Value: 5
+    Min-Value: 1
+    Cost: 12
+    Description:
+      - '&7&o(( Ability to find gang value while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 49
 Pickaxe:
   lore:
     - '&8&m------------------------'
@@ -505,6 +539,8 @@ Pickaxe:
     - '%Enchant-19%'
     - '%Enchant-20%'
     - '%Enchant-21%'
+    - '%Enchant-22%'
+    - '%Enchant-23%'
 first-join-pickaxe:
   enabled: true
   name: "&e%player%'s Pickaxe"
