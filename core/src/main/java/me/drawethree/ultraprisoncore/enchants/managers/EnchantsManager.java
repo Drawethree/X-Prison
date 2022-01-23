@@ -247,6 +247,9 @@ public class EnchantsManager {
 		}
 		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
+			if (!enchantment.isEnabled()) {
+				continue;
+			}
 			enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
 		}
 	}
@@ -254,6 +257,9 @@ public class EnchantsManager {
 	public void handlePickaxeEquip(Player p, ItemStack newItem) {
 		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
+			if (!enchantment.isEnabled()) {
+				continue;
+			}
 			enchantment.onEquip(p, newItem, playerEnchants.get(enchantment));
 		}
 	}
@@ -262,6 +268,9 @@ public class EnchantsManager {
 		p.getActivePotionEffects().forEach(effect -> p.removePotionEffect(effect.getType()));
 		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
+			if (!enchantment.isEnabled()) {
+				continue;
+			}
 			enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
 		}
 	}
@@ -567,7 +576,6 @@ public class EnchantsManager {
 						.replace("%enchant%", enchantment.getName())
 						.replace("%tokens%", String.format("%,d", totalCost)));
 			}
-
 		});
 	}
 
