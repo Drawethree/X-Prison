@@ -32,7 +32,7 @@ public class SalaryEnchant extends UltraPrisonEnchantment {
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
         if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-            double randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+            double randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
 
             boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
 

@@ -32,7 +32,7 @@ public class GangValueFinderEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-			int randAmount = ThreadLocalRandom.current().nextInt(minAmount, maxAmount);
+			int randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextInt(minAmount, maxAmount);
 			plugin.getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + randAmount));
 		}
 	}

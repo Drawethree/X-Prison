@@ -38,11 +38,11 @@ public class BlessingEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble()) {
+		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 			long randAmount;
 
 			for (Player p : Players.all()) {
-				randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+				randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
 				plugin.getCore().getTokens().getTokensManager().giveTokens(p, randAmount, null, ReceiveCause.MINING_OTHERS);
 
 				if (!this.isMessagesEnabled()) {

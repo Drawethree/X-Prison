@@ -33,7 +33,7 @@ public class GemFinderEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-			long randAmount = ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+			long randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
 			plugin.getCore().getGems().getGemsManager().giveGems(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
 		}
 	}
