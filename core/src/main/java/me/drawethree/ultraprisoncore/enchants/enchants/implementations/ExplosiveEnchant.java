@@ -109,7 +109,8 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
 
-				double total = this.plugin.isMultipliersModule() ? luckyBooster ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) * 2 : plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : luckyBooster ? totalDeposit * 2 : totalDeposit;
+				double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+				total = luckyBooster ? total * 2 : total;
 
 				plugin.getCore().getEconomy().depositPlayer(p, total);
 

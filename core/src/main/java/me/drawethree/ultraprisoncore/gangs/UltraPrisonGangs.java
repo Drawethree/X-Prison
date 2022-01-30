@@ -140,7 +140,6 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		this.commands = new HashMap<>();
 
 		registerCommand(new GangHelpCommand(this));
-		registerCommand(new GangHelpCommand(this));
 		registerCommand(new GangInfoCommand(this));
 		registerCommand(new GangCreateCommand(this));
 		registerCommand(new GangInviteCommand(this));
