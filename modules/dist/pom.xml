@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <release.status>STABLE</release.status>
+        <release.status>SNAPSHOT</release.status>
     </properties>
     <build>
         <directory>../../target</directory>
