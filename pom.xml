@@ -8,7 +8,7 @@
     <version>1.10.0</version>
 
     <modules>
-        <module>core</module>
+        <module>modules/core</module>
         <module>modules/v1_8_R1</module>
         <module>modules/v1_8_R2</module>
         <module>modules/v1_8_R3</module>
@@ -25,7 +25,8 @@
         <module>modules/v1_16_R2</module>
         <module>modules/v1_16_R3</module>
         <module>modules/v1_17_R1</module>
-        <module>distribution</module>
+        <module>modules/v1_18_R1</module>
+        <module>modules/dist</module>
     </modules>
 
 
