@@ -67,82 +67,87 @@
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_8_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_8_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_8_R2</artifactId>
+            <artifactId>ultraprisoncore-v1_8_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_8_R3</artifactId>
+            <artifactId>ultraprisoncore-v1_8_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_9_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_9_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_9_R2</artifactId>
+            <artifactId>ultraprisoncore-v1_9_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_10_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_10_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_11_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_11_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_12_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_12_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_13_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_13_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_13_R2</artifactId>
+            <artifactId>ultraprisoncore-v1_13_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_14_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_14_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_15_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_15_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_16_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_16_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_16_R2</artifactId>
+            <artifactId>ultraprisoncore-v1_16_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_16_R3</artifactId>
+            <artifactId>ultraprisoncore-v1_16_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_1_17_R1</artifactId>
+            <artifactId>ultraprisoncore-v1_17_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>me.drawethree</groupId>
+            <artifactId>ultraprisoncore-v1_18_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
