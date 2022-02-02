@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>me.drawethree</groupId>
-            <artifactId>UltraPrisonCore_Core</artifactId>
+            <artifactId>ultraprisoncore-core</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>
