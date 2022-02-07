@@ -34,6 +34,7 @@ import java.util.*;
 
 import static me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion.V;
 
+
 /**
  * <b>CompMaterial</b> - Data Values/Pre-flattening<br>
  * 1.13 and above as priority.
@@ -1448,7 +1449,7 @@ public enum CompMaterial {
 
 	/**
 	 * The data value of this material <a href="https://minecraft.gamepedia.com/Java_Edition_data_values/Pre-flattening">pre-flattening</a>.
-	 * <p>
+	 *
 	 * Can be accessed with {@link ItemStack#getData()} then {@code MaterialData#getData()}
 	 * or {@link ItemStack#getDurability()} if not damageable.
 	 */
@@ -1458,7 +1459,6 @@ public enum CompMaterial {
 	/**
 	 * The version that this material was added in, otherwise 0 if the version is not recorded.
 	 *
-	 * @see #getMaterialVersion()
 	 * @since 7.0.0
 	 */
 	private final byte version;
@@ -1466,7 +1466,6 @@ public enum CompMaterial {
 	/**
 	 * A list of material names that was being used for older verions.
 	 *
-	 * @see #getLegacy()
 	 */
 	private final String[] legacy;
 
@@ -1494,7 +1493,7 @@ public enum CompMaterial {
 					break;
 			}
 
-		this.material = mat == null ? Material.STONE : mat;
+		this.material = mat != null ? mat : Material.STONE;
 	}
 
 	CompMaterial(int data, String... legacy) {
@@ -1511,6 +1510,143 @@ public enum CompMaterial {
 
 	CompMaterial(String... legacy) {
 		this(0, 0, legacy);
+	}
+
+	/**
+	 * Convenience method for giving 1 piece of this material into a players inventory
+	 *
+	 * @param player
+	 */
+	public final void give(final Player player) {
+		give(player, 1);
+	}
+
+	/**
+	 * Convenience method for giving this material into a players inventory
+	 *
+	 * @param player
+	 * @param amount
+	 */
+	public final void give(final Player player, final int amount) {
+		player.getInventory().addItem(this.toItem(amount));
+	}
+
+	/**
+	 * Parses an item from this CompMaterial.
+	 * Uses data values on older versions.
+	 *
+	 * @return an ItemStack with the same material (and data value if in older versions.)
+	 * @see #setType(ItemStack)
+	 */
+
+	public ItemStack toItem() {
+		return this.toItem(1);
+	}
+
+	/**
+	 * Parses an item from this CompMaterial.
+	 * Uses data values on older versions.
+	 *
+	 * @param amount
+	 * @return an ItemStack with the same material (and data value if in older versions.)
+	 * @see #setType(ItemStack)
+	 */
+
+	public ItemStack toItem(int amount) {
+		final Material material = this.toMaterial();
+
+		if (material == null)
+			return null;
+
+		return Data.ISFLAT ? new ItemStack(material, amount) : new ItemStack(material, amount, this.data);
+	}
+
+	/**
+	 * Parses the material of this CompMaterial.
+	 *
+	 * @return the material related to this CompMaterial based on the server version.
+	 * @since 1.0.0
+	 */
+
+	public Material toMaterial() {
+		return this.material;
+	}
+
+	/**
+	 * Return true if the {@link #getMaterial()} and the given Material matches.
+	 * <p>
+	 * NOT cross-version compatible. For this, use {@link #is(ItemStack)}
+	 *
+	 * @param mat
+	 * @return
+	 */
+	public final boolean is(final Material mat) {
+		return this.material == mat;
+	}
+
+	/**
+	 * Evaluates whether a given {@link ItemStack} is equal material-wise. Takes
+	 * data value in account if we are on Minecraft 1.13+ or older.
+	 *
+	 * @param comp the itemstack
+	 * @return -see above-
+	 */
+	public final boolean is(final ItemStack comp) {
+		if (MinecraftVersion.atLeast(V.v1_13))
+			return comp.getType() == material;
+
+		return is(comp.getType(), comp.getData().getData());
+	}
+
+	/**
+	 * Evaluates whether the given block equals this material
+	 *
+	 * @param block
+	 * @return
+	 */
+	public final boolean is(final Block block) {
+		if (MinecraftVersion.atLeast(V.v1_13))
+			return block.getType() == material;
+
+		return block != null && is(block.getType(), block.getData());
+	}
+
+	/**
+	 * Evaluates whether the given type/data equals this material
+	 *
+	 * @param type
+	 * @param data
+	 * @return
+	 */
+	public final boolean is(final Material type, final int data) {
+		if (MinecraftVersion.atLeast(V.v1_13))
+			return type == this.material;
+
+		if (type == toMaterial() && data == this.data)
+			return true;
+
+		final CompMaterial compMat = fromMaterial(type);
+
+		return isDamageable(compMat) && this.toMaterial() == type;
+	}
+
+	/**
+	 * Returns true for damageable materials.
+	 *
+	 * @return
+	 */
+	public final boolean isDamageable() {
+		return isDamageable(this);
+	}
+
+	/**
+	 * Return true if this class equals the given block, comparing data and {@link Material} type
+	 *
+	 * @param block
+	 * @return
+	 */
+	public final boolean equals(Block block) {
+		return block.getData() == this.getData() && block.getType() == this.material;
 	}
 
 	/**
@@ -1799,9 +1935,27 @@ public enum CompMaterial {
 		return false;
 	}
 
+	/*
+	 * Gets the CompMaterial with this name similar to {@link #valueOf(String)}
+	 * without throwing an exception.
+	 *
+	 * @param name the name of the material.
+	 *
+	 * @return an optional that can be empty.
+	 * @since 5.1.0
+	 */
+
 	private static CompMaterial getIfPresent(String name) {
 		return NAMES.get(name);
 	}
+
+	/*
+	 * When using 1.13+, this helps to find the old material name
+	 * with its data value using a cached search for optimization.
+	 *
+	 * @see #matchDefinedCompMaterial(String, byte)
+	 * @since 1.0.0
+	 */
 
 	private static CompMaterial requestOldMaterial(String name, int data) {
 
@@ -1818,7 +1972,6 @@ public enum CompMaterial {
 	 * value in the string if attached. Check {@link #matchWithData(String)} for more info.
 	 *
 	 * @see #matchWithData(String)
-	 * @see #fromLegacy(String, byte)
 	 * @since 2.0.0
 	 */
 	public static CompMaterial fromString(String key) {
@@ -1886,6 +2039,7 @@ public enum CompMaterial {
 	 * if not a damageable item {@link ItemStack#getDurability()}.
 	 *
 	 * @param item the ItemStack to match.
+	 *
 	 * @return an CompMaterial if matched any.
 	 * @throws IllegalArgumentException may be thrown as an unexpected exception.
 	 * @see #fromMaterial(Material)
@@ -1897,22 +2051,18 @@ public enum CompMaterial {
 		final String material = item.getType().name();
 		final byte data = (byte) (Data.ISFLAT || item.getType().getMaxDurability() > 0 ? 0 : item.getDurability());
 
-		final CompMaterial compmaterial = fromLegacy(material, data);
-
-		return compmaterial;
+		return fromLegacy(material, data);
 	}
 
 	/**
 	 * Parses the given material as an CompMaterial.
 	 *
 	 * @throws IllegalArgumentException may be thrown as an unexpected exception.
-	 * @see #fromLegacy(String, byte)
 	 * @see #fromItem(ItemStack)
 	 * @since 2.0.0
 	 */
 	public static CompMaterial fromMaterial(@NonNull Material material) {
-		final CompMaterial compmaterial = fromLegacy(material.name(), UNKNOWN_DATA_VALUE);
-		return compmaterial;
+		return fromLegacy(material.name(), UNKNOWN_DATA_VALUE);
 	}
 
 	/**
@@ -1923,8 +2073,7 @@ public enum CompMaterial {
 	 * @return
 	 */
 	public static CompMaterial fromStringStrict(final String key) {
-		final CompMaterial material = fromString(key);
-		return material;
+		return fromString(key);
 	}
 
 	/**
@@ -1954,9 +2103,9 @@ public enum CompMaterial {
 	 *
 	 * @param name the formatted name of the material.
 	 * @param data the data value of the material. Is always 0 or {@link #UNKNOWN_DATA_VALUE} when {@link Data#ISFLAT}
+	 *
 	 * @return an CompMaterial (with the same data value if specified)
 	 * @see #fromMaterial(Material)
-	 * @see #matchCompMaterial(int, byte)
 	 * @see #fromItem(ItemStack)
 	 * @since 3.0.0
 	 */
@@ -2010,22 +2159,13 @@ public enum CompMaterial {
 		return DUPLICATED.contains(name);
 	}
 
-	/*
-	 * Gets the CompMaterial with this name similar to {@link #valueOf(String)}
-	 * without throwing an exception.
-	 *
-	 * @param name the name of the material.
-	 *
-	 * @return an optional that can be empty.
-	 * @since 5.1.0
-	 */
-
 	/**
 	 * Gets the CompMaterial based on the material's ID (Magic Value) and data value.<br>
 	 * You should avoid using this for performance issues.
 	 *
 	 * @param id   the ID (Magic value) of the material.
 	 * @param data the data value of the material.
+	 *
 	 * @return a parsed CompMaterial with the same ID and data value.
 	 * @see #fromItem(ItemStack)
 	 * @since 2.0.0
@@ -2041,14 +2181,6 @@ public enum CompMaterial {
 		return null;
 	}
 
-	/*
-	 * When using 1.13+, this helps to find the old material name
-	 * with its data value using a cached search for optimization.
-	 *
-	 * @see #matchDefinedCompMaterial(String, byte)
-	 * @since 1.0.0
-	 */
-
 	/**
 	 * Attempts to build the string like an enum name.
 	 * Removes all the spaces, and extra non-English characters. Also removes some config/in-game based strings.
@@ -2056,6 +2188,7 @@ public enum CompMaterial {
 	 * the normal RegEx + String Methods approach for both formatted and unformatted material names.
 	 *
 	 * @param name the material name to modify.
+	 *
 	 * @return an enum name.
 	 * @since 2.0.0
 	 */
@@ -2102,6 +2235,19 @@ public enum CompMaterial {
 		return Data.VERSION >= version;
 	}
 
+	/*
+	 * Gets the exact major version (..., 1.9, 1.10, ..., 1.14)
+	 * In most cases, you shouldn't be using this method.
+	 *
+	 * @param version Supports {@link Bukkit#getVersion()}, {@link Bukkit#getBukkitVersion()} and normal formats such as "1.14"
+	 *
+	 * @return the exact major version.
+	 * @see #supports(int)
+	 * @see #getVersion()
+	 * @see #getMaterialVersion()
+	 * @since 2.0.0
+	 */
+
 	private static String getMajorVersion(@NonNull String version) {
 
 		// getVersion()
@@ -2120,156 +2266,6 @@ public enum CompMaterial {
 			version = version.substring(0, lastDot);
 
 		return version;
-	}
-
-	/**
-	 * Convenience method for giving 1 piece of this material into a players inventory
-	 *
-	 * @param player
-	 */
-	public final void give(final Player player) {
-		give(player, 1);
-	}
-
-	/**
-	 * Convenience method for giving this material into a players inventory
-	 *
-	 * @param player
-	 * @param amount
-	 */
-	public final void give(final Player player, final int amount) {
-		player.getInventory().addItem(this.toItem(amount));
-	}
-
-	/**
-	 * Parses an item from this CompMaterial.
-	 * Uses data values on older versions.
-	 *
-	 * @return an ItemStack with the same material (and data value if in older versions.)
-	 * @see #setType(ItemStack)
-	 */
-
-	public ItemStack toItem() {
-		return this.toItem(1);
-	}
-
-	/**
-	 * Parses an item from this CompMaterial.
-	 * Uses data values on older versions.
-	 *
-	 * @param amount
-	 * @return an ItemStack with the same material (and data value if in older versions.)
-	 * @see #setType(ItemStack)
-	 */
-
-	public ItemStack toItem(int amount) {
-		final Material material = this.toMaterial();
-
-		if (material == null)
-			return null;
-
-		return Data.ISFLAT ? new ItemStack(material, amount) : new ItemStack(material, amount, this.data);
-	}
-
-	/**
-	 * Parses the material of this CompMaterial.
-	 *
-	 * @return the material related to this CompMaterial based on the server version.
-	 * @since 1.0.0
-	 */
-
-	public Material toMaterial() {
-		return this.material;
-	}
-
-	/**
-	 * Return true if the {@link #getMaterial()} and the given Material matches.
-	 * <p>
-	 * NOT cross-version compatible. For this, use {@link #is(ItemStack)}
-	 *
-	 * @param mat
-	 * @return
-	 */
-	public final boolean is(final Material mat) {
-		return this.material == mat;
-	}
-
-	/**
-	 * Evaluates whether a given {@link ItemStack} is equal material-wise. Takes
-	 * data value in account if we are on Minecraft 1.13+ or older.
-	 *
-	 * @param comp the itemstack
-	 * @return -see above-
-	 */
-	public final boolean is(final ItemStack comp) {
-		if (MinecraftVersion.atLeast(V.v1_13))
-			return comp.getType() == material;
-
-		return is(comp.getType(), comp.getData().getData());
-	}
-
-	/**
-	 * Evaluates whether the given block equals this material
-	 *
-	 * @param block
-	 * @return
-	 */
-	public final boolean is(final Block block) {
-		if (MinecraftVersion.atLeast(V.v1_13))
-			return block.getType() == material;
-
-		return block != null && is(block.getType(), block.getData());
-	}
-
-	/**
-	 * Evaluates whether the given type/data equals this material
-	 *
-	 * @param type
-	 * @param data
-	 * @return
-	 */
-	public final boolean is(final Material type, final int data) {
-		if (MinecraftVersion.atLeast(V.v1_13))
-			return type == this.material;
-
-		if (type == toMaterial() && data == this.data)
-			return true;
-
-		final CompMaterial compMat = fromMaterial(type);
-
-		return isDamageable(compMat) && this.toMaterial() == type;
-	}
-
-	/**
-	 * Returns true for damageable materials.
-	 *
-	 * @return
-	 */
-	public final boolean isDamageable() {
-		return isDamageable(this);
-	}
-
-	/*
-	 * Gets the exact major version (..., 1.9, 1.10, ..., 1.14)
-	 * In most cases, you shouldn't be using this method.
-	 *
-	 * @param version Supports {@link Bukkit#getVersion()}, {@link Bukkit#getBukkitVersion()} and normal formats such as "1.14"
-	 *
-	 * @return the exact major version.
-	 * @see #supports(int)
-	 * @see #getVersion()
-	 * @see #getMaterialVersion()
-	 * @since 2.0.0
-	 */
-
-	/**
-	 * Return true if this class equals the given block, comparing data and {@link Material} type
-	 *
-	 * @param block
-	 * @return
-	 */
-	public final boolean equals(Block block) {
-		return block.getData() == this.getData() && block.getType() == this.material;
 	}
 
 	/*
@@ -2316,6 +2312,7 @@ public enum CompMaterial {
 	 * <p>
 	 *
 	 * @param materials the material names to check base material on.
+	 *
 	 * @return true if one of the given material names is similar to the base material.
 	 * @since 3.1.1
 	 */
@@ -2351,6 +2348,7 @@ public enum CompMaterial {
 	 * Use {@link #toItem()} instead when creating new ItemStacks.
 	 *
 	 * @param item the item to change its type.
+	 *
 	 * @see #toItem()
 	 * @since 3.0.0
 	 */

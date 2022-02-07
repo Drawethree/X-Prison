@@ -19,104 +19,12 @@ public final class MinecraftVersion {
 	@Getter
 	private static V current;
 
-	// Initialize the version
-	static {
-		try {
-
-			final String packageName = Bukkit.getServer() == null ? "" : Bukkit.getServer().getClass().getPackage().getName();
-			final String curr = packageName.substring(packageName.lastIndexOf('.') + 1);
-			final boolean hasGatekeeper = !"craftbukkit".equals(curr) && !"".equals(packageName);
-
-			serverVersion = curr;
-
-			if (hasGatekeeper) {
-				int pos = 0;
-
-				for (final char ch : curr.toCharArray()) {
-					pos++;
-
-					if (pos > 2 && ch == 'R')
-						break;
-				}
-
-				final String numericVersion = curr.substring(1, pos - 2).replace("_", ".");
-
-				current = V.parse(Integer.parseInt(numericVersion.split("\\.")[1]));
-
-			} else
-				current = V.v1_3_AND_BELOW;
-
-		} catch (final Throwable t) {
-			t.printStackTrace();
-		}
-	}
-
-	/**
-	 * Does the current Minecraft version equal the given version?
-	 *
-	 * @param version
-	 * @return
-	 */
-	public static boolean equals(V version) {
-		return compareWith(version) == 0;
-	}
-
-	/**
-	 * Is the current Minecraft version older than the given version?
-	 *
-	 * @param version
-	 * @return
-	 */
-	public static boolean olderThan(V version) {
-		return compareWith(version) < 0;
-	}
-
-	/**
-	 * Is the current Minecraft version newer than the given version?
-	 *
-	 * @param version
-	 * @return
-	 */
-	public static boolean newerThan(V version) {
-		return compareWith(version) > 0;
-	}
-
-	/**
-	 * Is the current Minecraft version at equals or newer than the given version?
-	 *
-	 * @param version
-	 * @return
-	 */
-	public static boolean atLeast(V version) {
-		return equals(version) || newerThan(version);
-	}
-
-	// Compares two versions by the number
-	private static int compareWith(V version) {
-		try {
-			return getCurrent().minorVersionNumber - version.minorVersionNumber;
-
-		} catch (final Throwable t) {
-			t.printStackTrace();
-
-			return 0;
-		}
-	}
-
-	/**
-	 * Return the class versioning such as v1_14_R1
-	 *
-	 * @return
-	 */
-	public static String getServerVersion() {
-		return serverVersion.equals("craftbukkit") ? "" : serverVersion;
-	}
-
 	/**
 	 * The version wrapper
 	 */
 	public enum V {
-		v1_18(18, false),
+		v1_19(19, false),
+		v1_18(18),
 		v1_17(17),
 		v1_16(16),
 		v1_15(15),
@@ -186,6 +94,99 @@ public final class MinecraftVersion {
 		@Override
 		public String toString() {
 			return "1." + this.minorVersionNumber;
+		}
+	}
+
+	/**
+	 * Does the current Minecraft version equal the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean equals(V version) {
+		return compareWith(version) == 0;
+	}
+
+	/**
+	 * Is the current Minecraft version older than the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean olderThan(V version) {
+		return compareWith(version) < 0;
+	}
+
+	/**
+	 * Is the current Minecraft version newer than the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean newerThan(V version) {
+		return compareWith(version) > 0;
+	}
+
+	/**
+	 * Is the current Minecraft version at equals or newer than the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean atLeast(V version) {
+		return equals(version) || newerThan(version);
+	}
+
+	// Compares two versions by the number
+	private static int compareWith(V version) {
+		try {
+			return getCurrent().minorVersionNumber - version.minorVersionNumber;
+
+		} catch (final Throwable t) {
+			t.printStackTrace();
+
+			return 0;
+		}
+	}
+
+	/**
+	 * Return the class versioning such as v1_14_R1
+	 *
+	 * @return
+	 */
+	public static String getServerVersion() {
+		return serverVersion.equals("craftbukkit") ? "" : serverVersion;
+	}
+
+	// Initialize the version
+	static {
+		try {
+
+			final String packageName = Bukkit.getServer() == null ? "" : Bukkit.getServer().getClass().getPackage().getName();
+			final String curr = packageName.substring(packageName.lastIndexOf('.') + 1);
+			final boolean hasGatekeeper = !"craftbukkit".equals(curr) && !"".equals(packageName);
+
+			serverVersion = curr;
+
+			if (hasGatekeeper) {
+				int pos = 0;
+
+				for (final char ch : curr.toCharArray()) {
+					pos++;
+
+					if (pos > 2 && ch == 'R')
+						break;
+				}
+
+				final String numericVersion = curr.substring(1, pos - 2).replace("_", ".");
+
+				current = V.parse(Integer.parseInt(numericVersion.split("\\.")[1]));
+
+			} else
+				current = V.v1_3_AND_BELOW;
+
+		} catch (final Throwable t) {
+			t.printStackTrace();
 		}
 	}
 }

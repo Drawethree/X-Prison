@@ -441,9 +441,9 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 					PlayerUtils.sendMessage(c.sender(), messages.get("global_sell_multi").replace("%multiplier%", String.valueOf(this.globalSellMultiplier.getMultiplier())).replace("%duration%", this.globalSellMultiplier.getTimeLeftString()));
 					PlayerUtils.sendMessage(c.sender(), messages.get("global_token_multi").replace("%multiplier%", String.valueOf(this.globalTokenMultiplier.getMultiplier())).replace("%duration%", this.globalTokenMultiplier.getTimeLeftString()));
-					PlayerUtils.sendMessage(c.sender(), messages.get("rank_multi").replace("%multiplier%", rankMulti == null ? "0.0" : String.valueOf(rankMulti.getMultiplier())));
-					PlayerUtils.sendMessage(c.sender(), messages.get("sell_multi").replace("%multiplier%", sellMulti == null || sellMulti.isExpired() ? "0.0" : String.valueOf(sellMulti.getMultiplier())).replace("%duration%", sellMulti == null || sellMulti.isExpired() ? "" : sellMulti.getTimeLeftString()));
-					PlayerUtils.sendMessage(c.sender(), messages.get("token_multi").replace("%multiplier%", tokenMulti == null || tokenMulti.isExpired() ? "0.0" : String.valueOf(tokenMulti.getMultiplier())).replace("%duration%", tokenMulti == null || tokenMulti.isExpired() ? "" : tokenMulti.getTimeLeftString()));
+					PlayerUtils.sendMessage(c.sender(), messages.get("rank_multi").replace("%multiplier%", rankMulti == null ? "0.0" : String.format("%,.2f", rankMulti.getMultiplier())));
+					PlayerUtils.sendMessage(c.sender(), messages.get("sell_multi").replace("%multiplier%", sellMulti == null || sellMulti.isExpired() ? "0.0" : String.format("%,.2f", sellMulti.getMultiplier())).replace("%duration%", sellMulti == null || sellMulti.isExpired() ? "" : sellMulti.getTimeLeftString()));
+					PlayerUtils.sendMessage(c.sender(), messages.get("token_multi").replace("%multiplier%", tokenMulti == null || tokenMulti.isExpired() ? "0.0" : String.format("%,.2f", tokenMulti.getMultiplier())).replace("%duration%", tokenMulti == null || tokenMulti.isExpired() ? "" : tokenMulti.getTimeLeftString()));
 				}).registerAndBind(core, "multiplier", "multi");
 	}
 
