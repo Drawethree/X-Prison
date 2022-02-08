@@ -328,7 +328,6 @@ public abstract class SQLDatabase extends Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -373,6 +372,12 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void saveSellMultiplier(Player player, PlayerMultiplier multiplier) {
+
+		if (multiplier == null || !multiplier.isValid()) {
+			this.deleteSellMultiplier(player);
+			return;
+		}
+
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + UltraPrisonMultipliers.TABLE_NAME + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_MULTIPLIER_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_TIMELEFT_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());
@@ -387,7 +392,35 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
+	public void deleteSellMultiplier(Player player) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + UltraPrisonMultipliers.TABLE_NAME + " WHERE " + MySQLDatabase.MULTIPLIERS_UUID_COLNAME + "=?")) {
+			statement.setString(1, player.getUniqueId().toString());
+			statement.execute();
+		} catch (SQLException e) {
+			this.plugin.getLogger().warning("Could not delete sell multiplier for player " + player.getName() + "!");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void deleteTokenMultiplier(Player player) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + UltraPrisonMultipliers.TABLE_NAME_TOKEN + " WHERE " + MySQLDatabase.MULTIPLIERS_UUID_COLNAME + "=?")) {
+			statement.setString(1, player.getUniqueId().toString());
+			statement.execute();
+		} catch (SQLException e) {
+			this.plugin.getLogger().warning("Could not delete token multiplier for player " + player.getName() + "!");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
 	public void saveTokenMultiplier(Player player, PlayerMultiplier multiplier) {
+
+		if (multiplier == null || !multiplier.isValid()) {
+			this.deleteTokenMultiplier(player);
+			return;
+		}
+
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + UltraPrisonMultipliers.TABLE_NAME_TOKEN + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE " + MySQLDatabase.MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME + "=?, " + MySQLDatabase.MULTIPLIERS_TOKEN_TIMELEFT_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			statement.setDouble(2, multiplier.getMultiplier());

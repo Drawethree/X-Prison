@@ -99,7 +99,11 @@ public abstract class Database {
 
 	public abstract void saveSellMultiplier(Player player, PlayerMultiplier multiplier);
 
+	public abstract void deleteSellMultiplier(Player player);
+
 	public abstract void saveTokenMultiplier(Player player, PlayerMultiplier multiplier);
+
+	public abstract void deleteTokenMultiplier(Player player);
 
 	public abstract PlayerMultiplier getSellMultiplier(Player player);
 

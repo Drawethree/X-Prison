@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+//No current use
+@Deprecated
 public class PlayerMultiplierExpireEvent extends UltraPrisonPlayerEvent {
 
 

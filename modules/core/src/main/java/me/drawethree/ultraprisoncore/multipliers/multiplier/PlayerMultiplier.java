@@ -10,43 +10,19 @@ import java.util.concurrent.TimeUnit;
 public class PlayerMultiplier extends Multiplier {
 
 	private final UUID playerUUID;
-	private MultiplierType type;
-	private double maxMulti;
+	private final MultiplierType type;
 
 	//New via command
-	public PlayerMultiplier(UUID playerUUID, double multiplier, TimeUnit timeUnit, int duration, double maxMulti) {
+	public PlayerMultiplier(UUID playerUUID, double multiplier, TimeUnit timeUnit, int duration, MultiplierType type) {
 		super(multiplier, timeUnit, duration);
-		this.maxMulti = maxMulti;
-
-		if (this.multiplier > maxMulti) {
-			this.multiplier = maxMulti;
-		}
-
-		this.playerUUID = playerUUID;
-	}
-
-	//Old from DB
-	public PlayerMultiplier(UUID playerUUID, double multiplier, long timeLeft, MultiplierType type) {
-		super(multiplier, timeLeft);
 		this.type = type;
 		this.playerUUID = playerUUID;
 	}
 
-	@Override
-	public void setEndTime(long endTime) {
-		this.startTime = System.currentTimeMillis();
-		this.endTime = endTime;
-	}
-
-	@Override
-	public void addDuration(TimeUnit unit, int duration) {
-		this.startTime = System.currentTimeMillis();
-		this.endTime = this.endTime == 0 ? (System.currentTimeMillis() + unit.toMillis(duration)) : this.endTime + unit.toMillis(duration);
-	}
-
-	public void reset() {
-		this.multiplier = 0.0;
-		this.startTime = 0;
-		this.endTime = 0;
+	//From DB
+	public PlayerMultiplier(UUID playerUUID, double multiplier, long timeLeft, MultiplierType type) {
+		super(multiplier, timeLeft);
+		this.type = type;
+		this.playerUUID = playerUUID;
 	}
 }

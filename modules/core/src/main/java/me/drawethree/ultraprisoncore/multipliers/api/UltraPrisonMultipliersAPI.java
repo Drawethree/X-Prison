@@ -12,14 +12,14 @@ public interface UltraPrisonMultipliersAPI {
 	/**
 	 * Method to get current global sell multiplier
 	 *
-	 * @return global multiplier value
+	 * @return GlobalMultiplier
 	 */
 	GlobalMultiplier getGlobalSellMultiplier();
 
 	/**
 	 * Method to get current global token multiplier
 	 *
-	 * @return global multiplier value
+	 * @return GlobalMultiplier
 	 */
 	GlobalMultiplier getGlobalTokenMultiplier();
 
@@ -27,7 +27,7 @@ public interface UltraPrisonMultipliersAPI {
 	 * Method to get player's sell multiplier
 	 *
 	 * @param p Player
-	 * @return vote multiplier
+	 * @return PlayerMultiplier
 	 */
 	PlayerMultiplier getSellMultiplier(Player p);
 
@@ -35,7 +35,7 @@ public interface UltraPrisonMultipliersAPI {
 	 * Method to get player's token multiplier
 	 *
 	 * @param p Player
-	 * @return vote multiplier
+	 * @return PlayerMultiplier
 	 */
 	PlayerMultiplier getTokenMultiplier(Player p);
 
@@ -43,7 +43,7 @@ public interface UltraPrisonMultipliersAPI {
 	 * Method to get player's rank multiplier
 	 *
 	 * @param p Player
-	 * @return rank multiplier
+	 * @return Multiplier
 	 */
 	Multiplier getRankMultiplier(Player p);
 
@@ -51,7 +51,7 @@ public interface UltraPrisonMultipliersAPI {
 	 * Method to get overall player's multiplier based on multiplier type (SELL / TOKENS)
 	 *
 	 * @param p              Player
-	 * @param multiplierType MultiplierType.SELL or MultiplierType.TOKENS
+	 * @param multiplierType MultiplierType
 	 * @return overall player's multiplier
 	 */
 	double getPlayerMultiplier(Player p, MultiplierType multiplierType);
@@ -61,7 +61,7 @@ public interface UltraPrisonMultipliersAPI {
 	 *
 	 * @param p       Player
 	 * @param deposit original amount to deposit
-	 * @param type    MultiplierType.SELL or MultiplierType.TOKENS
+	 * @param type    MultiplierType
 	 * @return new amount to deposit
 	 */
 	default double getTotalToDeposit(Player p, double deposit, MultiplierType type) {

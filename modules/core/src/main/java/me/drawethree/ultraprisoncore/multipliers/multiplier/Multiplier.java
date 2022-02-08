@@ -11,20 +11,16 @@ public abstract class Multiplier {
 
 	protected double multiplier;
 
-	protected long startTime;
-
 	@Setter
 	protected long endTime;
 
 	Multiplier(double multiplier, TimeUnit timeUnit, long duration) {
 		this.multiplier = multiplier;
-		this.startTime = System.currentTimeMillis();
-		this.endTime = startTime + timeUnit.toMillis(duration);
+		this.endTime = System.currentTimeMillis() + timeUnit.toMillis(duration);
 	}
 
 	Multiplier(double multiplier, long endTime) {
 		this.multiplier = multiplier;
-		this.startTime = System.currentTimeMillis();
 		this.endTime = endTime;
 	}
 
@@ -34,7 +30,7 @@ public abstract class Multiplier {
 			return "";
 		}
 
-		long timeLeft = endTime - System.currentTimeMillis();
+		long timeLeft = this.endTime - System.currentTimeMillis();
 
 		long days = timeLeft / (24 * 60 * 60 * 1000);
 		timeLeft -= days * (24 * 60 * 60 * 1000);
@@ -52,25 +48,32 @@ public abstract class Multiplier {
 		return ChatColor.GRAY + "(" + ChatColor.WHITE + days + "d " + hours + "h " + minutes + "m " + seconds + "s" + ChatColor.GRAY + ")";
 	}
 
-	public abstract void setEndTime(long endTime);
-
-	public void setMultiplier(double amount, double maxMultiplier) {
-		this.multiplier = Math.min(amount, maxMultiplier);
+	public void setMultiplier(double amount) {
+		this.multiplier = amount;
 	}
 
-	public void addMultiplier(double amount, double maxMultiplier) {
+	public void addMultiplier(double amount) {
+		this.multiplier += amount;
+	}
 
-		if (this.multiplier + amount > maxMultiplier) {
-			this.multiplier = maxMultiplier;
-		} else {
-			this.multiplier += amount;
+	public void addDuration(TimeUnit unit, int duration) {
+		if (this.endTime == 0) {
+			this.endTime = System.currentTimeMillis();
 		}
+		this.endTime += unit.toMillis(duration);
 	}
-
-	public abstract void addDuration(TimeUnit timeUnit, int duration);
 
 	public boolean isExpired() {
 		return System.currentTimeMillis() > this.endTime;
+	}
+
+	public boolean isValid() {
+		return !this.isExpired() && this.multiplier > 0.0;
+	}
+
+	public void reset() {
+		this.multiplier = 0.0;
+		this.endTime = 0;
 	}
 
 }

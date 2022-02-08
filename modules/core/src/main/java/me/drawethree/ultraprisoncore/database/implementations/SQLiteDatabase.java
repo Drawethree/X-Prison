@@ -182,6 +182,12 @@ public class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public void saveSellMultiplier(Player player, PlayerMultiplier multiplier) {
+
+        if (multiplier == null || !multiplier.isValid()) {
+            this.deleteSellMultiplier(player);
+            return;
+        }
+
         try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + UltraPrisonMultipliers.TABLE_NAME + " VALUES(?,?,?)")) {
             statement.setString(1, player.getUniqueId().toString());
             statement.setDouble(2, multiplier.getMultiplier());
@@ -195,6 +201,12 @@ public class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public void saveTokenMultiplier(Player player, PlayerMultiplier multiplier) {
+
+        if (multiplier == null || !multiplier.isValid()) {
+            this.deleteTokenMultiplier(player);
+            return;
+        }
+
         try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + UltraPrisonMultipliers.TABLE_NAME_TOKEN + " VALUES(?,?,?)")) {
             statement.setString(1, player.getUniqueId().toString());
             statement.setDouble(2, multiplier.getMultiplier());

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class UltraPrisonMultipliersAPIImpl implements UltraPrisonMultipliersAPI {
 
-	private UltraPrisonMultipliers plugin;
+	private final UltraPrisonMultipliers plugin;
 
 	public UltraPrisonMultipliersAPIImpl(UltraPrisonMultipliers plugin) {
 
@@ -45,25 +45,27 @@ public class UltraPrisonMultipliersAPIImpl implements UltraPrisonMultipliersAPI 
 	public double getPlayerMultiplier(Player p, MultiplierType type) {
 		double toReturn = 0.0;
 
-		Multiplier rankMulti = this.getRankMultiplier(p);
-
 		switch (type) {
 			case SELL:
 				PlayerMultiplier sellMulti = this.getSellMultiplier(p);
 				if (sellMulti != null && !sellMulti.isExpired()) {
 					toReturn += sellMulti.getMultiplier();
 				}
-				toReturn += this.getGlobalSellMultiplier().getMultiplier();
+				if (!this.getGlobalSellMultiplier().isExpired()) {
+					toReturn += this.getGlobalSellMultiplier().getMultiplier();
+				}
 				break;
 			case TOKENS:
 				PlayerMultiplier tokenMulti = this.getTokenMultiplier(p);
 				if (tokenMulti != null && !tokenMulti.isExpired()) {
 					toReturn += tokenMulti.getMultiplier();
-
 				}
-				toReturn += this.getGlobalTokenMultiplier().getMultiplier();
+				if (!this.getGlobalTokenMultiplier().isExpired()) {
+					toReturn += this.getGlobalSellMultiplier().getMultiplier();
+				}
 				break;
 		}
+		Multiplier rankMulti = this.getRankMultiplier(p);
 		toReturn += rankMulti == null ? 0.0 : rankMulti.getMultiplier();
 		return toReturn;
 	}
