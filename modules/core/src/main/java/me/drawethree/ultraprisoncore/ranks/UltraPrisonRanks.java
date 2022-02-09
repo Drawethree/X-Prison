@@ -11,7 +11,7 @@ import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
 import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

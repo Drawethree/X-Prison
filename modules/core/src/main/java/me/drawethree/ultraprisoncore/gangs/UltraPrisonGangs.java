@@ -13,7 +13,7 @@ import me.drawethree.ultraprisoncore.gangs.commands.impl.*;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Commands;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

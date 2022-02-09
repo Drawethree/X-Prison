@@ -31,7 +31,7 @@ import me.jet315.prisonmines.JetsPrisonMinesAPI;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;

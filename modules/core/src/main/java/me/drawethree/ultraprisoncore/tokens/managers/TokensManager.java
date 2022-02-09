@@ -15,7 +15,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.scheduler.Task;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;

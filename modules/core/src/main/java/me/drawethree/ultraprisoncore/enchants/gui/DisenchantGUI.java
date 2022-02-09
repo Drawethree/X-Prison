@@ -11,7 +11,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;

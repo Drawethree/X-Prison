@@ -14,7 +14,7 @@ import me.drawethree.ultraprisoncore.utils.ProgressBar;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.item.ItemStackBuilder;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

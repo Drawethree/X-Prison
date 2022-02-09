@@ -4,7 +4,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.database.Database;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 
 public class ClearDBGui extends ConfirmationGui {

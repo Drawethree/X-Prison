@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.tokens.commands;
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.utils.PlayerUtils;
-import me.lucko.helper.text.Text;
+import me.lucko.helper.text3.Text;
 import org.bukkit.command.CommandSender;
 
 public class TokensHelpCommand extends TokensCommand {
