@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.history.gui.confirmation;
 
 import me.drawethree.ultraprisoncore.history.UltraPrisonHistory;
 import me.drawethree.ultraprisoncore.utils.gui.ConfirmationGui;
-import me.lucko.helper.text3.Text;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -21,7 +21,7 @@ public class PlayerClearHistoryConfirmationGUI extends ConfirmationGui {
 	public void confirm(boolean confirm) {
 		if (confirm) {
 			this.plugin.getHistoryManager().clearPlayerHistory(this.target);
-			this.getPlayer().sendMessage(Text.colorize("&aYou have cleared history data of player &e" + target.getName()));
+			PlayerUtils.sendMessage(this.getPlayer(),"&aYou have cleared history data of player &e" + target.getName());
 		}
 		this.close();
 	}

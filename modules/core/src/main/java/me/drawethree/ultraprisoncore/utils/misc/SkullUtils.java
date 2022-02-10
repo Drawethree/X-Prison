@@ -1,10 +1,10 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.misc;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
-import me.lucko.helper.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -64,5 +64,9 @@ public class SkullUtils {
 		}
 		baseItem.setItemMeta(meta);
 		return ItemStackBuilder.of(baseItem).name(displayName).lore(lore).build();
+	}
+
+	private SkullUtils() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

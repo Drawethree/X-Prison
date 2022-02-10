@@ -12,13 +12,13 @@ import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import me.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
 import me.drawethree.ultraprisoncore.tokens.commands.*;
 import me.drawethree.ultraprisoncore.tokens.managers.TokensManager;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.reflect.MinecraftVersion;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -330,11 +330,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 								this.tokensManager.setBlocksBroken(c.sender(), target, amount);
 								break;
 							default:
-								PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
+								PlayerUtils.sendMessage(c.sender(),"&c/blocksadmin <add/set/remove> <player> <amount>");
 								break;
 						}
 					} else {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/blocksadmin <add/set/remove> <player> <amount>"));
+						PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
 					}
 				})
 				.registerAndBind(core, "blocksadmin", "blocksa");
@@ -343,7 +343,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key, Text.colorize(this.getConfig().get().getString("messages." + key)));
+			messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 

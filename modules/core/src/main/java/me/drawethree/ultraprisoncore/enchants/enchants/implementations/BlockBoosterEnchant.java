@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.enchants.enchants.implementations;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;

@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.utils;
 
+import me.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import org.bukkit.Location;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;

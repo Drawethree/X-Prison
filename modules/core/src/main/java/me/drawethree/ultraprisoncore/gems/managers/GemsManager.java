@@ -6,13 +6,12 @@ import me.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import me.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import me.drawethree.ultraprisoncore.gems.api.events.PlayerGemsLostEvent;
 import me.drawethree.ultraprisoncore.gems.api.events.PlayerGemsReceiveEvent;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.scheduler.Task;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -319,10 +318,10 @@ public class GemsManager {
 
 	public void sendGemsTop(CommandSender sender) {
 		Schedulers.async().run(() -> {
-			PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE));
+			PlayerUtils.sendMessage(sender, SPACER_LINE);
 			if (this.updating) {
 				PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
-				PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE_BOTTOM));
+				PlayerUtils.sendMessage(sender, SPACER_LINE_BOTTOM);
 				return;
 			}
 			for (int i = 0; i < 10; i++) {
@@ -341,7 +340,7 @@ public class GemsManager {
 					break;
 				}
 			}
-			PlayerUtils.sendMessage(sender, Text.colorize(SPACER_LINE_BOTTOM));
+			PlayerUtils.sendMessage(sender, SPACER_LINE_BOTTOM);
 		});
 	}
 

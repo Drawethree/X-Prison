@@ -9,9 +9,9 @@ import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPI;
 import me.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPIImpl;
 import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
 import me.drawethree.ultraprisoncore.ranks.model.Rank;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
-import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -68,12 +68,12 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), Text.colorize(this.getConfig().get().getString("messages." + key)));
+			messages.put(key.toLowerCase(), TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 
 	public String getMessage(String key) {
-		return messages.getOrDefault(key.toLowerCase(), Text.colorize("&cMessage " + key + " not found."));
+		return messages.getOrDefault(key.toLowerCase(), TextUtils.applyColor("&cMessage " + key + " not found."));
 	}
 
 
@@ -128,7 +128,7 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 						Rank rank = this.getRankManager().getRankById(c.arg(1).parseOrFail(Integer.class));
 
 						if (rank == null) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid rank id provided."));
+							PlayerUtils.sendMessage(c.sender(), "&cInvalid rank id provided.");
 							return;
 						}
 

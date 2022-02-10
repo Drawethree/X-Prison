@@ -9,13 +9,13 @@ import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import me.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.scheduler.Task;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
@@ -103,7 +103,7 @@ public class TokensManager {
 		this.blockRewards = new LinkedHashMap<>();
 		for (String key : this.plugin.getBlockRewardsConfig().get().getConfigurationSection("block-rewards").getKeys(false)) {
 			long blocksNeeded = Long.parseLong(key);
-			String message = Text.colorize(this.plugin.getBlockRewardsConfig().get().getString("block-rewards." + key + ".message"));
+			String message = TextUtils.applyColor(this.plugin.getBlockRewardsConfig().get().getString("block-rewards." + key + ".message"));
 			List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("block-rewards." + key + ".commands");
 			this.blockRewards.put(blocksNeeded, new BlockReward(blocksNeeded, commands, message));
 		}
@@ -401,7 +401,7 @@ public class TokensManager {
 
 		if (amount <= 0) {
 			if (sender != null) {
-				PlayerUtils.sendMessage(sender, Text.colorize("&cPlease specify amount greater than 0!"));
+				PlayerUtils.sendMessage(sender, "&cPlease specify amount greater than 0!");
 			}
 			return;
 		}
@@ -489,7 +489,7 @@ public class TokensManager {
 	public void removeBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
 		if (amount <= 0) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlease specify amount greater than 0!"));
+			PlayerUtils.sendMessage(sender, "&cPlease specify amount greater than 0!");
 			return;
 		}
 
@@ -514,7 +514,7 @@ public class TokensManager {
 	public void setBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
 
 		if (amount < 0) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlease specify positive amount!"));
+			PlayerUtils.sendMessage(sender, "&cPlease specify positive amount!");
 			return;
 		}
 
@@ -581,13 +581,13 @@ public class TokensManager {
 							name = player.getName();
 						}
 						long tokens = top10Tokens.get(uuid);
-						PlayerUtils.sendMessage(sender, Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens))));
+						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens)));
 					} catch (Exception e) {
 						break;
 					}
 				}
 			} else {
-				PlayerUtils.sendMessage(sender, me.lucko.helper.text3.Text.colorize(s));
+				PlayerUtils.sendMessage(sender, s);
 			}
 		}
 	}
@@ -602,7 +602,7 @@ public class TokensManager {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
 				sendBlocksTop(sender, s, top10Blocks);
 			} else {
-				PlayerUtils.sendMessage(sender, Text.colorize(s));
+				PlayerUtils.sendMessage(sender, s);
 			}
 		}
 	}
@@ -620,7 +620,7 @@ public class TokensManager {
 					name = player.getName();
 				}
 				long blocks = top.get(uuid);
-				PlayerUtils.sendMessage(sender, Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%blocks%", String.format("%,d", blocks))));
+				PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%blocks%", String.format("%,d", blocks)));
 			} catch (Exception e) {
 				break;
 			}
@@ -637,7 +637,7 @@ public class TokensManager {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
 				sendBlocksTop(sender, s, top10BlocksWeekly);
 			} else {
-				PlayerUtils.sendMessage(sender, Text.colorize(s));
+				PlayerUtils.sendMessage(sender, s);
 			}
 		}
 	}
@@ -666,11 +666,11 @@ public class TokensManager {
 
 	public void resetBlocksTopWeekly(CommandSender sender) {
 		Schedulers.async().run(() -> {
-			PlayerUtils.sendMessage(sender, Text.colorize("&7&oStarting to reset BlocksTop - Weekly. This may take a while..."));
+			PlayerUtils.sendMessage(sender, "&7&oStarting to reset BlocksTop - Weekly. This may take a while...");
 			this.top10BlocksWeekly.clear();
 			this.nextResetWeekly = Time.nowMillis() + TimeUnit.DAYS.toMillis(7);
 			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
-			PlayerUtils.sendMessage(sender, Text.colorize("&aBlocksTop - Weekly - Resetted!"));
+			PlayerUtils.sendMessage(sender, "&aBlocksTop - Weekly - Resetted!");
 		});
 	}
 

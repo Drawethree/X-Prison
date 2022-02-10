@@ -5,7 +5,7 @@ import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
-import me.drawethree.ultraprisoncore.utils.RegionUtils;
+import me.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import me.lucko.helper.time.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;

@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.mainmenu.confirmation;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.utils.gui.ConfirmationGui;
-import me.lucko.helper.text3.Text;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.entity.Player;
 
 public class ResetModulePlayerDataConfirmationGui extends ConfirmationGui {
@@ -19,10 +19,10 @@ public class ResetModulePlayerDataConfirmationGui extends ConfirmationGui {
 		if (confirm) {
 			if (module == null) {
 				UltraPrisonCore.getInstance().getModules().forEach(module1 -> UltraPrisonCore.getInstance().getPluginDatabase().resetData(module1));
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of all modules."));
+				PlayerUtils.sendMessage(this.getPlayer(), "&aSuccessfully reset player data of all modules.");
 			} else {
 				UltraPrisonCore.getInstance().getPluginDatabase().resetData(this.module);
-				this.getPlayer().sendMessage(Text.colorize("&aSuccessfully reset player data of &e&l" + this.module.getName() + " &amodule."));
+				PlayerUtils.sendMessage(this.getPlayer(),"&aSuccessfully reset player data of &e&l" + this.module.getName() + " &amodule.");
 			}
 
 		}

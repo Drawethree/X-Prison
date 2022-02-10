@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.misc;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,5 +17,9 @@ public class MapUtil {
 						(e1, e2) -> e1,
 						LinkedHashMap::new
 				));
+	}
+
+	private MapUtil() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

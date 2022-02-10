@@ -3,7 +3,7 @@ package me.drawethree.ultraprisoncore.mines.gui;
 import me.drawethree.ultraprisoncore.mines.model.mine.HologramType;
 import me.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import me.lucko.helper.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

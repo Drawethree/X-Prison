@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.misc;
 
 import org.bukkit.Location;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
@@ -34,5 +34,9 @@ public class RegionUtils {
 	public static IWrappedRegion getFirstRegionAtLocation(Location loc) {
 		Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc);
 		return regions.size() == 0 ? null : regions.iterator().next();
+	}
+
+	private RegionUtils() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

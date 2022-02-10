@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.utils;
 
+import me.drawethree.ultraprisoncore.utils.location.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.Assert;

@@ -1,13 +1,13 @@
 package me.drawethree.ultraprisoncore.mainmenu.help;
 
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
-import me.drawethree.ultraprisoncore.utils.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.Constants;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import me.lucko.helper.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.misc.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
 import me.lucko.helper.menu.scheme.MenuScheme;
-import me.lucko.helper.text3.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -95,14 +95,14 @@ public class EnchantsHelpGui extends Gui {
 					.build(() -> {
 						this.close();
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&eUltraPrisonCore - Wiki"));
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://github.com/Drawethree/UltraPrisonCore/wiki"));
+						PlayerUtils.sendMessage(this.getPlayer(), "&eUltraPrisonCore - Wiki");
+						PlayerUtils.sendMessage(this.getPlayer(), "&7https://github.com/Drawethree/UltraPrisonCore/wiki");
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}, () -> {
 						this.close();
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&eUltraPrisonCore - Discord"));
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&7https://discord.com/invite/9bRjBxKC6y"));
+						PlayerUtils.sendMessage(this.getPlayer(), "&eUltraPrisonCore - Discord");
+						PlayerUtils.sendMessage(this.getPlayer(), "&7" + Constants.DISCORD_LINK);
 						PlayerUtils.sendMessage(this.getPlayer(), " ");
 					}));
 		}

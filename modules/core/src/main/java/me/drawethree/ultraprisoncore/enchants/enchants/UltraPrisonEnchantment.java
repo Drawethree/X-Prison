@@ -4,9 +4,8 @@ import lombok.Getter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.*;
-import me.drawethree.ultraprisoncore.utils.TextUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import me.lucko.helper.text3.Text;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -91,14 +90,14 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 			enchant.reload();
 		});
 
-		UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully reloaded all enchants."));
+		UltraPrisonCore.getInstance().getLogger().info(TextUtils.applyColor("&aSuccessfully reloaded all enchants."));
 	}
 
 	private void reloadDefaultAttributes() {
 		this.rawName = this.plugin.getConfig().get().getString("enchants." + id + ".RawName");
-		this.name = Text.colorize(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
+		this.name = TextUtils.applyColor(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
 		this.material = CompMaterial.fromString(this.plugin.getConfig().get().getString("enchants." + id + ".Material")).toMaterial();
-		this.description = TextUtils.colorize(this.plugin.getConfig().get().getStringList("enchants." + id + ".Description"));
+		this.description = TextUtils.applyColor(this.plugin.getConfig().get().getStringList("enchants." + id + ".Description"));
 		this.enabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Enabled");
 		this.guiSlot = this.plugin.getConfig().get().getInt("enchants." + id + ".InGuiSlot");
 		this.maxLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Max");
@@ -136,7 +135,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 	public void register() {
 
 		if (allEnchantmentsById.containsKey(this.getId()) || allEnchantmentsByName.containsKey(this.getRawName())) {
-			UltraPrisonCore.getInstance().getLogger().warning(Text.colorize("&cUnable to register enchant " + this.getName() + "&c created by " + this.getAuthor() + ". That enchant is already registered."));
+			UltraPrisonCore.getInstance().getLogger().warning(TextUtils.applyColor("&cUnable to register enchant " + this.getName() + "&c created by " + this.getAuthor() + ". That enchant is already registered."));
 			return;
 		}
 
@@ -145,20 +144,20 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 		allEnchantmentsById.put(this.getId(), this);
 		allEnchantmentsByName.put(this.getRawName().toLowerCase(), this);
 
-		UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully registered enchant " + this.getName() + "&a created by " + this.getAuthor()));
+		UltraPrisonCore.getInstance().getLogger().info(TextUtils.applyColor("&aSuccessfully registered enchant " + this.getName() + "&a created by " + this.getAuthor()));
 	}
 
 	public void unregister() {
 
 		if (!allEnchantmentsById.containsKey(this.getId()) && !allEnchantmentsByName.containsKey(this.getRawName())) {
-			UltraPrisonCore.getInstance().getLogger().warning(Text.colorize("&cUnable to unregister enchant " + this.getName() + "&c created by " + this.getAuthor() + ". That enchant is not registered."));
+			UltraPrisonCore.getInstance().getLogger().warning(TextUtils.applyColor("&cUnable to unregister enchant " + this.getName() + "&c created by " + this.getAuthor() + ". That enchant is not registered."));
 			return;
 		}
 
 		allEnchantmentsById.remove(this.getId());
 		allEnchantmentsByName.remove(this.getRawName());
 
-		UltraPrisonCore.getInstance().getLogger().info(Text.colorize("&aSuccessfully unregistered enchant " + this.getName() + "&a created by " + this.getAuthor()));
+		UltraPrisonCore.getInstance().getLogger().info(TextUtils.applyColor("&aSuccessfully unregistered enchant " + this.getName() + "&a created by " + this.getAuthor()));
 	}
 
 	public int getMaxLevel() {

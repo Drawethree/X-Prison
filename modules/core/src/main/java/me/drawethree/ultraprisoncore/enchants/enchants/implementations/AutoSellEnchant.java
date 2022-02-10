@@ -5,7 +5,7 @@ import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
-import me.drawethree.ultraprisoncore.utils.RegionUtils;
+import me.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;

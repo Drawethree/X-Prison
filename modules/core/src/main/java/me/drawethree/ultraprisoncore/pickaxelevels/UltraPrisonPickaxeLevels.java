@@ -9,12 +9,12 @@ import me.drawethree.ultraprisoncore.database.DatabaseType;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import me.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
-import me.drawethree.ultraprisoncore.utils.ProgressBar;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.misc.ProgressBar;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
-import me.lucko.helper.item.ItemStackBuilder;
-import me.lucko.helper.text3.Text;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -56,7 +56,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), Text.colorize(this.getConfig().get().getString("messages." + key)));
+			messages.put(key.toLowerCase(), TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 
@@ -72,7 +72,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
 			int levelId = Integer.parseInt(level);
 
-			String displayName = Text.colorize(this.getConfig().get().getString("levels." + level + ".display_name"));
+			String displayName = TextUtils.applyColor(this.getConfig().get().getString("levels." + level + ".display_name"));
 			long blocksRequire = this.getConfig().get().getLong("levels." + level + ".blocks_required");
 			List<String> rewards = this.getConfig().get().getStringList("levels." + level + ".rewards");
 

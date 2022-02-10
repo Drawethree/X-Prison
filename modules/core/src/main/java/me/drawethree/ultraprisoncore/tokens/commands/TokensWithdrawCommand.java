@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

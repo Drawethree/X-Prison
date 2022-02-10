@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.misc;
 
 import java.util.StringJoiner;
 
@@ -32,5 +32,9 @@ public class TimeUtil {
 		}
 
 		return joiner.toString();
+	}
+
+	private TimeUtil() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

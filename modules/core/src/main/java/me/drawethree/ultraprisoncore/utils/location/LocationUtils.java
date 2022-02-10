@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.location;
 
 import org.bukkit.Location;
 
@@ -21,5 +21,9 @@ public class LocationUtils {
 				", " +
 				"World: " +
 				location.getWorld().getName();
+	}
+
+	private LocationUtils() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

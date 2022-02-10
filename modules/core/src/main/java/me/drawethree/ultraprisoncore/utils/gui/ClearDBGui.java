@@ -2,9 +2,8 @@ package me.drawethree.ultraprisoncore.utils.gui;
 
 import me.drawethree.ultraprisoncore.UltraPrisonModule;
 import me.drawethree.ultraprisoncore.database.Database;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 
 public class ClearDBGui extends ConfirmationGui {
@@ -24,9 +23,9 @@ public class ClearDBGui extends ConfirmationGui {
 			Schedulers.async().run(() -> {
 				if (this.module == null) {
 					if (this.database.resetAllData()) {
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&aUltraPrisonCore - All Modules Data have been reset."));
+						PlayerUtils.sendMessage(this.getPlayer(), "&aUltraPrisonCore - All Modules Data have been reset.");
 					} else {
-						PlayerUtils.sendMessage(this.getPlayer(), Text.colorize("&cUltraPrisonCore - Something went wrong during reseting data. Please check console."));
+						PlayerUtils.sendMessage(this.getPlayer(), "&cUltraPrisonCore - Something went wrong during reseting data. Please check console.");
 					}
 				} else {
 					this.database.resetData(module);

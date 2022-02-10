@@ -10,11 +10,11 @@ import me.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPIImpl;
 import me.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import me.drawethree.ultraprisoncore.mines.commands.impl.*;
 import me.drawethree.ultraprisoncore.mines.managers.MineManager;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.serialize.Position;
-import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -107,12 +107,12 @@ public class UltraPrisonMines implements UltraPrisonModule {
 	private void loadMessages() {
 		this.messages = new HashMap<>();
 		for (String key : this.config.get().getConfigurationSection("messages").getKeys(false)) {
-			this.messages.put(key.toLowerCase(), Text.colorize(this.config.get().getString("messages." + key)));
+			this.messages.put(key.toLowerCase(), TextUtils.applyColor(this.config.get().getString("messages." + key)));
 		}
 	}
 
 	public String getMessage(String key) {
-		return this.messages.getOrDefault(key.toLowerCase(), Text.colorize("&cInvalid message key: " + key));
+		return this.messages.getOrDefault(key.toLowerCase(), TextUtils.applyColor("&cInvalid message key: " + key));
 	}
 
 	private void registerCommands() {
@@ -149,7 +149,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 						}
 
 						if (!subCommand.execute(c.sender(), c.args().subList(1, c.args().size()))) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize(subCommand.getUsage()));
+							PlayerUtils.sendMessage(c.sender(), subCommand.getUsage());
 						}
 
 					} else {

@@ -13,17 +13,17 @@ import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import me.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
-import me.drawethree.ultraprisoncore.utils.MaterialUtils;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
-import me.drawethree.ultraprisoncore.utils.RegionUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.misc.MaterialUtils;
+import me.drawethree.ultraprisoncore.utils.misc.RegionUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -84,7 +84,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), Text.colorize(this.getConfig().get().getString("messages." + key)));
+			messages.put(key.toLowerCase(), TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 
@@ -196,7 +196,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 				}
 				long lastItems = this.lastItems.getOrDefault(p.getUniqueId(), 0L);
 				for (String s : this.autoSellBroadcastMessage) {
-					PlayerUtils.sendMessage(p, Text.colorize(s.replace("%money%", String.format("%,.0f", lastAmount)).replace("%items%", String.format("%,d", lastItems))));
+					PlayerUtils.sendMessage(p, s.replace("%money%", String.format("%,.0f", lastAmount)).replace("%items%", String.format("%,d", lastItems)));
 				}
 			});
 			lastEarnings.clear();
@@ -226,9 +226,9 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						} else {
 							if (this.inventoryFullNoticiation && inventoryFullCooldown.test(e.getPlayer())) {
 								if (this.inventoryFullTitle != null && !this.inventoryFullTitle.isEmpty() && !this.inventoryFullTitle.get(0).isEmpty() && !this.inventoryFullTitle.get(1).isEmpty()) {
-									e.getPlayer().sendTitle(Text.colorize(this.inventoryFullTitle.get(0)), Text.colorize(this.inventoryFullTitle.get(1)));
+									e.getPlayer().sendTitle(TextUtils.applyColor(this.inventoryFullTitle.get(0)), TextUtils.applyColor(this.inventoryFullTitle.get(1)));
 								} else if (!this.inventoryFullChat.isEmpty()) {
-									PlayerUtils.sendMessage(e.getPlayer(), Text.colorize(this.inventoryFullChat));
+									PlayerUtils.sendMessage(e.getPlayer(), this.inventoryFullChat);
 								}
 							}
 
@@ -327,7 +327,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 					if (c.args().size() == 1) {
 
 						if (c.sender().getItemInHand() == null) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cPlease hold some item!"));
+							PlayerUtils.sendMessage(c.sender(), "&cPlease hold some item!");
 							return;
 						}
 
@@ -337,36 +337,36 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 						try {
 							type = CompMaterial.fromString(c.rawArg(0));
 						} catch (Exception e) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid material name!"));
+							PlayerUtils.sendMessage(c.sender(), "&cInvalid material name!");
 							return;
 						}
 						price = c.arg(1).parseOrFail(Double.class);
 					} else {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid usage!"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/sellprice <material> <price> - Sets the sell price of specified material."));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/sellprice <price> - Sets the sell price of item material you have in your hand."));
+						PlayerUtils.sendMessage(c.sender(), "&cInvalid usage!");
+						PlayerUtils.sendMessage(c.sender(), "&c/sellprice <material> <price> - Sets the sell price of specified material.");
+						PlayerUtils.sendMessage(c.sender(), "&c/sellprice <price> - Sets the sell price of item material you have in your hand.");
 						return;
 					}
 
 					if (type == null) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cUnable to parse material!"));
+						PlayerUtils.sendMessage(c.sender(), "&cUnable to parse material!");
 						return;
 					}
 
 					if (type.name().endsWith("PICKAXE")) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cI think you do not want to let your players sell pickaxes."));
+						PlayerUtils.sendMessage(c.sender(),"&cI think you do not want to let your players sell pickaxes.");
 						return;
 					}
 
 					if (price <= 0.0) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cSell price needs to be higher than 0!"));
+						PlayerUtils.sendMessage(c.sender(), "&cSell price needs to be higher than 0!");
 						return;
 					}
 
 					IWrappedRegion region = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
 
 					if (region == null) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cYou must be standing in a region!"));
+						PlayerUtils.sendMessage(c.sender(), "&cYou must be standing in a region!");
 						return;
 					}
 
@@ -385,7 +385,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 					sellRegion.addSellPrice(type, price);
 					regionsAutoSell.put(region.getId(), sellRegion);
 
-					PlayerUtils.sendMessage(c.sender(), Text.colorize(String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId())));
+					PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId()));
 
 				}).registerAndBind(core, "sellprice");
 		Commands.create()

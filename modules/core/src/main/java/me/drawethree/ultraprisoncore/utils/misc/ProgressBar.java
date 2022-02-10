@@ -1,6 +1,6 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.misc;
 
-import me.lucko.helper.text3.Text;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import org.bukkit.ChatColor;
 
 public class ProgressBar {
@@ -28,6 +28,10 @@ public class ProgressBar {
 		for (int i = 0; i < amountOfDelimeters - numberOfGreens; i++) {
 			result.append(delimeter);
 		}
-		return Text.colorize(result.toString());
+		return TextUtils.applyColor(result.toString());
+	}
+
+	private ProgressBar() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

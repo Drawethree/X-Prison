@@ -2,7 +2,7 @@ package me.drawethree.ultraprisoncore.mines.migration;
 
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.utils.MigrationUtils;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.jet315.prisonmines.JetsPrisonMines;
 import me.jet315.prisonmines.JetsPrisonMinesAPI;
 import me.jet315.prisonmines.mine.Mine;

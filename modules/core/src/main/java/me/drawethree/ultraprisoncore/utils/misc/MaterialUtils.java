@@ -1,4 +1,4 @@
-package me.drawethree.ultraprisoncore.utils;
+package me.drawethree.ultraprisoncore.utils.misc;
 
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import org.bukkit.Material;
@@ -27,5 +27,9 @@ public class MaterialUtils {
 			default:
 				return m;
 		}
+	}
+
+	private MaterialUtils() {
+		throw new UnsupportedOperationException("Cannot instantiate");
 	}
 }

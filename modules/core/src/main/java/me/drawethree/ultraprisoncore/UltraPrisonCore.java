@@ -24,14 +24,14 @@ import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
 import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
-import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.misc.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.jet315.prisonmines.JetsPrisonMines;
 import me.jet315.prisonmines.JetsPrisonMinesAPI;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
-import me.lucko.helper.text3.Text;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -179,7 +179,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 		if (this.getConfig().getBoolean("modules.pickaxe_levels")) {
 			if (!this.isModuleEnabled("Enchants")) {
-				this.getLogger().warning(Text.colorize("UltraPrisonCore - Module 'Pickaxe Levels' requires to have enchants module enabled."));
+				this.getLogger().warning(TextUtils.applyColor("&cUltraPrisonCore - Module 'Pickaxe Levels' requires to have enchants module enabled."));
 			} else {
 				this.loadModule(pickaxeLevels);
 			}
@@ -258,7 +258,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			return;
 		}
 		module.enable();
-		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s loaded.", module.getName())));
+		this.getLogger().info(TextUtils.applyColor(String.format("&aUltraPrisonCore - Module %s loaded.", module.getName())));
 	}
 
 	//Always unload via iterator!
@@ -267,7 +267,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			return;
 		}
 		module.disable();
-		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s unloaded.", module.getName())));
+		this.getLogger().info(TextUtils.applyColor(String.format("&aUltraPrisonCore - Module %s unloaded.", module.getName())));
 	}
 
 	public void debug(String msg, UltraPrisonModule module) {
@@ -275,9 +275,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			return;
 		}
 		if (module != null) {
-			this.getLogger().info(String.format("[%s] %s", module.getName(), Text.colorize(msg)));
+			this.getLogger().info(String.format("[%s] %s", module.getName(), TextUtils.applyColor(msg)));
 		} else {
-			this.getLogger().info(Text.colorize(msg));
+			this.getLogger().info(TextUtils.applyColor(msg));
 		}
 	}
 
@@ -286,7 +286,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			return;
 		}
 		module.reload();
-		this.getLogger().info(Text.colorize(String.format("UltraPrisonCore - Module %s reloaded.", module.getName())));
+		this.getLogger().info(TextUtils.applyColor(String.format("UltraPrisonCore - Module %s reloaded.", module.getName())));
 	}
 
 	private void registerMainCommand() {

@@ -4,7 +4,7 @@ import com.koletar.jj.mineresetlite.Mine;
 import com.koletar.jj.mineresetlite.MineResetLite;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.mines.utils.MigrationUtils;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 

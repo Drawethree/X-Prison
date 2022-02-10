@@ -15,14 +15,14 @@ import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import me.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import me.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
@@ -98,7 +98,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key, Text.colorize(getConfig().get().getString("messages." + key)));
+			messages.put(key, TextUtils.applyColor(getConfig().get().getString("messages." + key)));
 		}
 	}
 
@@ -153,7 +153,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.handler(c -> {
 
 					if (c.args().size() == 0) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/givepickaxe <player> <[enchant1]=[level1],[enchant2]=[level2],...[enchantX]=[levelX]> <pickaxe_name>"));
+						PlayerUtils.sendMessage(c.sender(), "&c/givepickaxe <player> <[enchant1]=[level1],[enchant2]=[level2],...[enchantX]=[levelX]> <pickaxe_name>");
 						return;
 					}
 
@@ -179,14 +179,14 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.handler(c -> {
 
 					if (c.args().size() == 0) {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/givefirstjoinpickaxe <player>"));
+						PlayerUtils.sendMessage(c.sender(), "&c/givefirstjoinpickaxe <player>");
 						return;
 					}
 
 					Player target = c.arg(0).parseOrFail(Player.class);
 
 					target.getInventory().addItem(this.enchantsManager.createFirstJoinPickaxe(target));
-					PlayerUtils.sendMessage(c.sender(), Text.colorize("&aYou have given first join pickaxe to &e" + target.getName()));
+					PlayerUtils.sendMessage(c.sender(), "&aYou have given first join pickaxe to &e" + target.getName());
 				}).registerAndBind(core, "givefirstjoinpickaxe");
 
 		Commands.create()
@@ -350,7 +350,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	}
 
 	public String getMessage(String key) {
-		return messages.getOrDefault(key.toLowerCase(), Text.colorize("&cMessage " + key + " not found."));
+		return messages.getOrDefault(key.toLowerCase(), TextUtils.applyColor("&cMessage " + key + " not found."));
 	}
 
 	public boolean hasLayerDisabled(Player p) {

@@ -11,9 +11,9 @@ import me.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import me.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import me.drawethree.ultraprisoncore.gangs.commands.impl.*;
 import me.drawethree.ultraprisoncore.gangs.managers.GangsManager;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
-import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -75,7 +75,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		this.placeholders = new HashMap<>();
 
 		for (String key : this.config.get().getConfigurationSection("placeholders").getKeys(false)) {
-			this.placeholders.put(key.toLowerCase(), Text.colorize(this.config.get().getString("placeholders." + key)));
+			this.placeholders.put(key.toLowerCase(), TextUtils.applyColor(this.config.get().getString("placeholders." + key)));
 		}
 
 	}
@@ -176,7 +176,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key, Text.colorize(this.getConfig().get().getString("messages." + key)));
+			messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 

@@ -14,13 +14,13 @@ import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.scheduler.Task;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
@@ -330,7 +330,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), Text.colorize(getConfig().get().getString("messages." + key)));
+			messages.put(key.toLowerCase(), TextUtils.applyColor(getConfig().get().getString("messages." + key)));
 		}
 	}
 
@@ -346,7 +346,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						try {
 							timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
 						} catch (IllegalArgumentException e) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
+							PlayerUtils.sendMessage(c.sender(), "&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ","));
 							return;
 						}
 
@@ -355,9 +355,9 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						String type = c.rawArg(0);
 						resetGlobalMultiplier(c.sender(), type);
 					} else {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid usage!"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/gmulti <money/token> <multiplier> <time> <time_unit>"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/gmulti <money/token> reset"));
+						PlayerUtils.sendMessage(c.sender(), "&cInvalid usage!");
+						PlayerUtils.sendMessage(c.sender(), "&c/gmulti <money/token> <multiplier> <time> <time_unit>");
+						PlayerUtils.sendMessage(c.sender(), "&c/gmulti <money/token> reset");
 					}
 				}).registerAndBind(core, "globalmultiplier", "gmulti");
 		Commands.create()
@@ -372,7 +372,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						try {
 							timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
 						} catch (IllegalArgumentException e) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
+							PlayerUtils.sendMessage(c.sender(), "&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ","));
 							return;
 						}
 
@@ -381,9 +381,9 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						Player onlinePlayer = Players.getNullable(c.rawArg(0));
 						resetSellMultiplier(c.sender(), onlinePlayer);
 					} else {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid usage!"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/sellmulti <player> <multiplier> <time> <time_unit>"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/sellmulti <player> reset"));
+						PlayerUtils.sendMessage(c.sender(), "&cInvalid usage!");
+						PlayerUtils.sendMessage(c.sender(), "&c/sellmulti <player> <multiplier> <time> <time_unit>");
+						PlayerUtils.sendMessage(c.sender(), "&c/sellmulti <player> reset");
 					}
 				}).registerAndBind(core, "sellmulti", "sellmultiplier", "smulti");
 		Commands.create()
@@ -397,7 +397,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						try {
 							timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
 						} catch (IllegalArgumentException e) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
+							PlayerUtils.sendMessage(c.sender(), "&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ","));
 							return;
 						}
 						setupTokenMultiplier(c.sender(), onlinePlayer, amount, timeUnit, duration);
@@ -405,9 +405,9 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						Player onlinePlayer = Players.getNullable(c.rawArg(0));
 						resetTokenMultiplier(c.sender(), onlinePlayer);
 					} else {
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid usage!"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/tokenmulti <player> <multiplier> <time> <time_unit>"));
-						PlayerUtils.sendMessage(c.sender(), Text.colorize("&c/tokenmulti <player> reset"));
+						PlayerUtils.sendMessage(c.sender(), "&cInvalid usage!");
+						PlayerUtils.sendMessage(c.sender(), "&c/tokenmulti <player> <multiplier> <time> <time_unit>");
+						PlayerUtils.sendMessage(c.sender(), "&c/tokenmulti <player> reset");
 					}
 				}).registerAndBind(core, "tokenmulti", "tokenmultiplier", "tmulti");
 		Commands.create()
@@ -437,49 +437,49 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			case "sell":
 			case "money":
 				this.globalSellMultiplier.reset();
-				PlayerUtils.sendMessage(sender, Text.colorize("&eGlobal Sell Multiplier &awas reset."));
+				PlayerUtils.sendMessage(sender, "&eGlobal Sell Multiplier &awas reset.");
 				break;
 			case "tokens":
 			case "token":
 				this.globalTokenMultiplier.reset();
-				PlayerUtils.sendMessage(sender, Text.colorize("&eGlobal Token Multiplier &awas reset."));
+				PlayerUtils.sendMessage(sender, "&eGlobal Token Multiplier &awas reset.");
 				break;
 		}
 	}
 
 	private void resetSellMultiplier(CommandSender sender, Player onlinePlayer) {
 		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer must be online!"));
+			PlayerUtils.sendMessage(sender,"&cPlayer must be online!");
 			return;
 		}
 
 		if (this.sellMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			this.sellMultipliers.remove(onlinePlayer.getUniqueId());
-			PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have reset &e%s's &eSell Multiplier.", onlinePlayer.getName())));
+			PlayerUtils.sendMessage(sender, String.format("&aYou have reset &e%s's &eSell Multiplier.", onlinePlayer.getName()));
 			PlayerUtils.sendMessage(onlinePlayer, messages.get("sell_multi_reset"));
 		} else {
-			PlayerUtils.sendMessage(sender, Text.colorize(String.format("&cCould not fetch the &e%s's &eSell Multiplier.", onlinePlayer.getName())));
+			PlayerUtils.sendMessage(sender, String.format("&cCould not fetch the &e%s's &eSell Multiplier.", onlinePlayer.getName()));
 		}
 	}
 
 	private void resetTokenMultiplier(CommandSender sender, Player onlinePlayer) {
 		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer must be online!"));
+			PlayerUtils.sendMessage(sender, "&cPlayer must be online!");
 			return;
 		}
 
 		if (this.tokenMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			this.tokenMultipliers.remove(onlinePlayer.getUniqueId());
-			PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have reset &e%s's &eToken Multiplier.", onlinePlayer.getName())));
+			PlayerUtils.sendMessage(sender, String.format("&aYou have reset &e%s's &eToken Multiplier.", onlinePlayer.getName()));
 			PlayerUtils.sendMessage(onlinePlayer, messages.get("token_multi_reset"));
 		} else {
-			PlayerUtils.sendMessage(sender, Text.colorize(String.format("&cCould not fetch the &e%s's &eToken Multiplier.", onlinePlayer.getName())));
+			PlayerUtils.sendMessage(sender, String.format("&cCould not fetch the &e%s's &eToken Multiplier.", onlinePlayer.getName()));
 		}
 	}
 
 	private void setupSellMultiplier(CommandSender sender, Player onlinePlayer, double amount, TimeUnit timeUnit, int duration) {
 		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer must be online!"));
+			PlayerUtils.sendMessage(sender, "&cPlayer must be online!");
 			return;
 		}
 
@@ -502,7 +502,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			sellMultipliers.put(onlinePlayer.getUniqueId(), new PlayerMultiplier(onlinePlayer.getUniqueId(), Math.min(amount, this.playerSellMultiMax), timeUnit, duration, MultiplierType.SELL));
 		}
 		PlayerUtils.sendMessage(onlinePlayer, messages.get("sell_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%time%", duration + " " + StringUtils.capitalize(timeUnit.name())));
-		PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set &e%s's &eSell Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name()))));
+		PlayerUtils.sendMessage(sender, String.format("&aYou have set &e%s's &eSell Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name())));
 	}
 
 	private PlayerMultiplierReceiveEvent callPlayerReceiveMultiplierEvent(Player onlinePlayer, double amount, TimeUnit timeUnit, int duration, MultiplierType type) {
@@ -513,7 +513,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 	private void setupTokenMultiplier(CommandSender sender, Player onlinePlayer, double amount, TimeUnit timeUnit, int duration) {
 		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer must be online!"));
+			PlayerUtils.sendMessage(sender, "&cPlayer must be online!");
 			return;
 		}
 
@@ -537,7 +537,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		}
 
 		PlayerUtils.sendMessage(onlinePlayer, messages.get("token_multi_apply").replace("%multiplier%", String.valueOf(amount)).replace("%time%", duration + " " + StringUtils.capitalize(timeUnit.name())));
-		PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set &e%s's &eToken Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name()))));
+		PlayerUtils.sendMessage(sender, String.format("&aYou have set &e%s's &eToken Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name())));
 	}
 
 
@@ -549,14 +549,14 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 				finalMulti = this.globalSellMultiplier.getMultiplier() + amount > this.globalSellMultiMax ? this.globalSellMultiMax : this.globalSellMultiplier.getMultiplier() + amount;
 				this.globalSellMultiplier.setMultiplier(finalMulti);
 				this.globalSellMultiplier.addDuration(timeUnit, time);
-				PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set the &eGlobal Sell Multiplier &ato &e%.2f &afor &e%d &a%s.", amount, time, StringUtils.capitalize(timeUnit.name()))));
+				PlayerUtils.sendMessage(sender, String.format("&aYou have set the &eGlobal Sell Multiplier &ato &e%.2f &afor &e%d &a%s.", amount, time, StringUtils.capitalize(timeUnit.name())));
 				break;
 			case "tokens":
 			case "token":
 				finalMulti = this.globalTokenMultiplier.getMultiplier() + amount > this.globalTokenMultiMax ? this.globalTokenMultiMax : this.globalTokenMultiplier.getMultiplier() + amount;
 				this.globalTokenMultiplier.setMultiplier(finalMulti);
 				this.globalTokenMultiplier.addDuration(timeUnit, time);
-				PlayerUtils.sendMessage(sender, Text.colorize(String.format("&aYou have set the &eGlobal Token Multiplier &ato &e%.2f &afor &e%d &a%s.", amount, time, StringUtils.capitalize(timeUnit.name()))));
+				PlayerUtils.sendMessage(sender, String.format("&aYou have set the &eGlobal Token Multiplier &ato &e%.2f &afor &e%d &a%s.", amount, time, StringUtils.capitalize(timeUnit.name())));
 				break;
 		}
 	}

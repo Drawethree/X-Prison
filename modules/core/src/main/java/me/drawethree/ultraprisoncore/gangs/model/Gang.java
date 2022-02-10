@@ -5,7 +5,7 @@ import lombok.Setter;
 import me.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;
 import me.drawethree.ultraprisoncore.gangs.api.events.GangLeaveEvent;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;

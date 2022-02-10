@@ -1,7 +1,7 @@
 package me.drawethree.ultraprisoncore.utils.gui;
 
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import me.lucko.helper.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import org.bukkit.entity.Player;

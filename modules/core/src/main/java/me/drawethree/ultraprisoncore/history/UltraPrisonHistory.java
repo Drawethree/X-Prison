@@ -21,11 +21,11 @@ import me.drawethree.ultraprisoncore.prestiges.api.events.PlayerPrestigeEvent;
 import me.drawethree.ultraprisoncore.ranks.api.events.PlayerRankUpEvent;
 import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import me.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
-import me.drawethree.ultraprisoncore.utils.TimeUtil;
+import me.drawethree.ultraprisoncore.utils.misc.TimeUtil;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
-import me.lucko.helper.text3.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -131,7 +131,7 @@ public class UltraPrisonHistory implements UltraPrisonModule {
 				.assertPlayer()
 				.handler(c -> {
 					if (c.args().size() != 1) {
-						c.sender().sendMessage(Text.colorize("&c/history <player>"));
+						PlayerUtils.sendMessage(c.sender(),"&c/history <player>");
 						return;
 					}
 					OfflinePlayer target = c.arg(0).parseOrFail(OfflinePlayer.class);

@@ -7,11 +7,11 @@ import me.drawethree.ultraprisoncore.prestiges.model.Prestige;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.api.events.PlayerRankUpEvent;
 import me.drawethree.ultraprisoncore.ranks.model.Rank;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
-import me.drawethree.ultraprisoncore.utils.ProgressBar;
+import me.drawethree.ultraprisoncore.utils.misc.ProgressBar;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -96,7 +96,7 @@ public class RankManager {
 		this.ranksById = new LinkedHashMap<>();
 		for (String key : plugin.getConfig().get().getConfigurationSection("Ranks").getKeys(false)) {
 			int id = Integer.parseInt(key);
-			String prefix = Text.colorize(plugin.getConfig().get().getString("Ranks." + key + ".Prefix"));
+			String prefix = TextUtils.applyColor(plugin.getConfig().get().getString("Ranks." + key + ".Prefix"));
 			long cost = plugin.getConfig().get().getLong("Ranks." + key + ".Cost");
 			List<String> commands = plugin.getConfig().get().getStringList("Ranks." + key + ".CMD");
 

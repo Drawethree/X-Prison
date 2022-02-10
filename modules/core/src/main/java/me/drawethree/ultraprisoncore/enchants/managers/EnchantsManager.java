@@ -11,14 +11,14 @@ import me.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import me.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import me.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
-import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.misc.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -142,7 +142,7 @@ public class EnchantsManager {
 					continue;
 				}
 			}
-			lore.add(Text.colorize(s));
+			lore.add(TextUtils.applyColor(s));
 		}
 
 		meta.setLore(lore);

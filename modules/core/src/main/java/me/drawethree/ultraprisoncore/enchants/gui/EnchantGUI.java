@@ -5,13 +5,13 @@ import lombok.Setter;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
-import me.drawethree.ultraprisoncore.utils.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import me.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import me.drawethree.ultraprisoncore.utils.misc.SkullUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
-import me.lucko.helper.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
-import me.lucko.helper.text3.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -63,7 +63,7 @@ public class EnchantGUI extends Gui {
 
 	public static void reload() {
 
-		GUI_TITLE = Text.colorize(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
+		GUI_TITLE = TextUtils.applyColor(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.title"));
 		EMPTY_SLOT_ITEM = ItemStackBuilder.
 				of(CompMaterial.fromString(UltraPrisonEnchants.getInstance().getConfig().get().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
 		GUI_LINES = UltraPrisonEnchants.getInstance().getConfig().get().getInt("enchant_menu.lines");

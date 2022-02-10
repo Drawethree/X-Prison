@@ -6,11 +6,11 @@ import me.drawethree.ultraprisoncore.prestiges.api.events.PlayerPrestigeEvent;
 import me.drawethree.ultraprisoncore.prestiges.model.Prestige;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.manager.RankManager;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -109,7 +109,7 @@ public class PrestigeManager {
 		this.prestigeTopFormat = plugin.getConfig().get().getStringList("prestige-top-format");
 		this.unlimitedPrestiges = plugin.getConfig().get().getBoolean("unlimited_prestiges.enabled");
 		this.unlimitedPrestigeCost = plugin.getConfig().get().getDouble("unlimited_prestiges.prestige_cost");
-		this.unlimitedPrestigePrefix = Text.colorize(plugin.getConfig().get().getString("unlimited_prestiges.prefix"));
+		this.unlimitedPrestigePrefix = TextUtils.applyColor(plugin.getConfig().get().getString("unlimited_prestiges.prefix"));
 		this.unlimitedPrestigeMax = plugin.getConfig().get().getLong("unlimited_prestiges.max_prestige");
 
 		this.increaseCostEnabled = plugin.getConfig().get().getBoolean("unlimited_prestiges.increase_cost.enabled");
@@ -167,7 +167,7 @@ public class PrestigeManager {
 		} else {
 			for (String key : this.plugin.getConfig().get().getConfigurationSection("Prestige").getKeys(false)) {
 				long id = Long.parseLong(key);
-				String prefix = Text.colorize(this.plugin.getConfig().get().getString("Prestige." + key + ".Prefix"));
+				String prefix = TextUtils.applyColor(this.plugin.getConfig().get().getString("Prestige." + key + ".Prefix"));
 				long cost = this.plugin.getConfig().get().getLong("Prestige." + key + ".Cost");
 				List<String> commands = this.plugin.getConfig().get().getStringList("Prestige." + key + ".CMD");
 				Prestige p = new Prestige(id, cost, prefix, commands);
@@ -313,13 +313,13 @@ public class PrestigeManager {
 							name = player.getName();
 						}
 						long prestige = top10Prestige.get(uuid);
-						PlayerUtils.sendMessage(sender, Text.colorize(rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige))));
+						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige)));
 					} catch (Exception e) {
 						break;
 					}
 				}
 			} else {
-				PlayerUtils.sendMessage(sender, me.lucko.helper.text3.Text.colorize(s));
+				PlayerUtils.sendMessage(sender, s);
 			}
 		}
 	}

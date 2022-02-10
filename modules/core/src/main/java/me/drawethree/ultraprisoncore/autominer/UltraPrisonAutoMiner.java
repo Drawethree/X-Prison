@@ -9,11 +9,11 @@ import me.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeRec
 import me.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
 import me.drawethree.ultraprisoncore.config.FileManager;
 import me.drawethree.ultraprisoncore.database.DatabaseType;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -162,7 +162,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), Text.colorize(getConfig().get().getString("messages." + key)));
+			messages.put(key.toLowerCase(), TextUtils.applyColor(getConfig().get().getString("messages." + key)));
 		}
 	}
 
@@ -219,7 +219,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 						try {
 							timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
 						} catch (IllegalArgumentException e) {
-							PlayerUtils.sendMessage(c.sender(), Text.colorize("&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ",")));
+							PlayerUtils.sendMessage(c.sender(), "&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ","));
 							return;
 						}
 
@@ -232,7 +232,7 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 	private void givePlayerAutoMinerTime(CommandSender sender, Player p, long time, TimeUnit unit) {
 
 		if (p == null || !p.isOnline()) {
-			PlayerUtils.sendMessage(sender, Text.colorize("&cPlayer is not online!"));
+			PlayerUtils.sendMessage(sender, "&cPlayer is not online!");
 			return;
 		}
 

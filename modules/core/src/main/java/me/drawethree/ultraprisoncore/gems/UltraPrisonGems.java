@@ -9,11 +9,11 @@ import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import me.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
 import me.drawethree.ultraprisoncore.gems.commands.*;
 import me.drawethree.ultraprisoncore.gems.managers.GemsManager;
-import me.drawethree.ultraprisoncore.utils.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.reflect.MinecraftVersion;
-import me.lucko.helper.text3.Text;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -176,7 +176,7 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key, Text.colorize(this.getConfig().get().getString("messages." + key)));
+			messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 
