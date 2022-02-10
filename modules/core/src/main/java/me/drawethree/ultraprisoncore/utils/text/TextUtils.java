@@ -1,5 +1,6 @@
 package me.drawethree.ultraprisoncore.utils.text;
 
+import me.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
@@ -12,13 +13,15 @@ public class TextUtils {
 	private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
 
 	public static String applyColor(String message) {
-		Matcher matcher = HEX_PATTERN.matcher(message);
-		while (matcher.find()) {
-			final ChatColor hexColor = ChatColor.of(matcher.group().substring(1));
-			final String before = message.substring(0, matcher.start());
-			final String after = message.substring(matcher.end());
-			message = before + hexColor + after;
-			matcher = HEX_PATTERN.matcher(message);
+		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_16)) {
+			Matcher matcher = HEX_PATTERN.matcher(message);
+			while (matcher.find()) {
+				final ChatColor hexColor = ChatColor.of(matcher.group().substring(1));
+				final String before = message.substring(0, matcher.start());
+				final String after = message.substring(matcher.end());
+				message = before + hexColor + after;
+				matcher = HEX_PATTERN.matcher(message);
+			}
 		}
 		return ChatColor.translateAlternateColorCodes('&', message);
 	}
