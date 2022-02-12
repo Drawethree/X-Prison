@@ -62,12 +62,12 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	private FileManager.Config config;
 
 	@Getter
-	private UltraPrisonCore core;
+	private final UltraPrisonCore core;
 
 	private HashMap<String, String> messages;
-	private List<UUID> disabledLayer = new ArrayList<>();
-	private List<UUID> disabledExplosive = new ArrayList<>();
-	private CooldownMap<Player> valueCooldown = CooldownMap.create(Cooldown.of(30, TimeUnit.SECONDS));
+	private final List<UUID> disabledLayer = new ArrayList<>();
+	private final List<UUID> disabledExplosive = new ArrayList<>();
+	private final CooldownMap<Player> valueCooldown = CooldownMap.create(Cooldown.of(30, TimeUnit.SECONDS));
 	private boolean enabled;
 
 	public UltraPrisonEnchants(UltraPrisonCore UltraPrisonCore) {

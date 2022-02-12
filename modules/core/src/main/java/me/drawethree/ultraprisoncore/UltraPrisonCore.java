@@ -24,6 +24,7 @@ import me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
 import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.Constants;
 import me.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.drawethree.ultraprisoncore.utils.misc.SkullUtils;
 import me.drawethree.ultraprisoncore.utils.text.TextUtils;
@@ -51,9 +52,9 @@ import java.util.stream.Collectors;
 @Getter
 public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
-	private static final int METRICS_SERVICE_ID = 10520;
 	@Getter
 	private static UltraPrisonCore instance;
+
 	private boolean debugMode;
 	private LinkedHashMap<String, UltraPrisonModule> modules;
 	private Database pluginDatabase;
@@ -109,11 +110,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 			this.getLogger().info("Economy provider for Vault found - " + this.getEconomy().getName());
 		}
 
+		this.initVariables();
+
 		this.initModules();
 		this.pluginDatabase.createTables();
 		this.pluginDatabase.createIndexes();
 		this.loadModules();
-		this.initVariables();
 
 		this.registerPlaceholders();
 		this.registerJetsPrisonMines();
@@ -250,7 +252,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void startMetrics() {
-		new Metrics(this, METRICS_SERVICE_ID);
+		new Metrics(this, Constants.METRICS_SERVICE_ID);
 	}
 
 	private void loadModule(UltraPrisonModule module) {

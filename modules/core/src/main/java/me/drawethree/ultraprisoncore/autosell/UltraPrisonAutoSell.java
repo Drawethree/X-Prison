@@ -64,7 +64,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 	private UltraPrisonAutoSellAPI api;
 	private List<UUID> enabledAutoSell;
 	@Getter
-	private UltraPrisonCore core;
+	private final UltraPrisonCore core;
 	private boolean enabled;
 	private boolean enableAutosellAutomatically;
 	private boolean autoSmelt;
@@ -74,7 +74,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 	private String inventoryFullChat;
 
 
-	private CooldownMap<Player> inventoryFullCooldown = CooldownMap.create(Cooldown.of(2, TimeUnit.SECONDS));
+	private final CooldownMap<Player> inventoryFullCooldown = CooldownMap.create(Cooldown.of(2, TimeUnit.SECONDS));
 	private boolean multipliersModule;
 
 	public UltraPrisonAutoSell(UltraPrisonCore UltraPrisonCore) {
@@ -178,6 +178,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 		this.inventoryFullTitle = this.getConfig().get().getStringList("inventory_full_notification.title");
 		this.inventoryFullChat = this.getConfig().get().getString("inventory_full_notification.chat");
 		this.multipliersModule = this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+
 		this.loadAutoSellRegions();
 		this.loadMessages();
 		this.registerCommands();

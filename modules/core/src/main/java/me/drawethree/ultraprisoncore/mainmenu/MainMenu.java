@@ -43,6 +43,8 @@ public class MainMenu extends Gui {
 			.mask("001111100")
 			.mask("000111000")
 			.mask("000000000");
+
+
 	private final UltraPrisonCore core;
 
 	public MainMenu(UltraPrisonCore core, Player player) {
