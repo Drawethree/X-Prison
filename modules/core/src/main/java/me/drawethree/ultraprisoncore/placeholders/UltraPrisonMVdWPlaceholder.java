@@ -17,22 +17,25 @@ import me.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import me.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import me.drawethree.ultraprisoncore.ranks.model.Rank;
 import me.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import me.drawethree.ultraprisoncore.utils.misc.MathUtils;
+import me.drawethree.ultraprisoncore.utils.misc.TimeUtil;
 
 import java.util.Optional;
 
-import static me.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder.formatNumber;
-
 public class UltraPrisonMVdWPlaceholder {
 
-	private UltraPrisonCore plugin;
+	private final UltraPrisonCore plugin;
+	private final boolean enabled;
 
 	public UltraPrisonMVdWPlaceholder(UltraPrisonCore plugin) {
 		this.plugin = plugin;
+		this.enabled = plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI");
+	}
 
-		if (!plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
+	public void register() {
+		if (!this.enabled) {
 			return;
 		}
-
 		this.registerTokensPlaceholders();
 		this.registerGemsPlaceholders();
 		this.registerGangsPlaceholders();
@@ -156,7 +159,7 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress_bar", event -> plugin.getRanks().getRankManager().getRankupProgressBar(event.getPlayer()));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_raw", event -> String.valueOf(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost", event -> String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_formatted", event -> formatNumber(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_formatted", event -> MathUtils.formatNumber(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
 	}
 
 	private void registerMultipliersPlaceholders() {
@@ -198,9 +201,9 @@ public class UltraPrisonMVdWPlaceholder {
 		}
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_1", event -> String.valueOf(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_2", event -> String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_3", event -> formatNumber(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_3", event -> MathUtils.formatNumber(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems", event -> String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_formatted", event -> formatNumber(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gems_formatted", event -> MathUtils.formatNumber(plugin.getGems().getGemsManager().getPlayerGems(event.getPlayer())));
 	}
 
 	private void registerTokensPlaceholders() {
@@ -208,16 +211,16 @@ public class UltraPrisonMVdWPlaceholder {
 			return;
 		}
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_formatted", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_formatted", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_1", event -> String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_2", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_3", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_3", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_formatted", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_formatted", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_1", event -> String.valueOf(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_2", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_3", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_formatted", event -> formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_blocks_3", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_tokens_formatted", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 
 	}
 
@@ -230,6 +233,7 @@ public class UltraPrisonMVdWPlaceholder {
 		for (Mine mine : this.plugin.getMines().getManager().getMines()) {
 			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_blocks_left", event -> String.format("%,d", mine.getCurrentBlocks()));
 			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_blocks_left_percentage", event -> String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D));
+			PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_mine_" + mine.getName() + "_reset_time", event -> TimeUtil.getTime(mine.getSecondsToNextReset()));
 		}
 	}
 

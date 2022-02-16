@@ -336,8 +336,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
 			new UltraPrisonPAPIPlaceholder(this).register();
 		}
-
-		new UltraPrisonMVdWPlaceholder(this);
+		new UltraPrisonMVdWPlaceholder(this).register();
 	}
 
 	private void registerJetsPrisonMines() {

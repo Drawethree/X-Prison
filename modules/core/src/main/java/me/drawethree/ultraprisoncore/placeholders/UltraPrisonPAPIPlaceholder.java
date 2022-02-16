@@ -8,10 +8,10 @@ import me.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import me.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import me.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import me.drawethree.ultraprisoncore.ranks.model.Rank;
+import me.drawethree.ultraprisoncore.utils.misc.MathUtils;
+import me.drawethree.ultraprisoncore.utils.misc.TimeUtil;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 
-	private UltraPrisonCore plugin;
+	private final UltraPrisonCore plugin;
 
 	/**
 	 * Since we register the expansion inside our own plugin, we
@@ -31,21 +31,6 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 	 */
 	public UltraPrisonPAPIPlaceholder(UltraPrisonCore plugin) {
 		this.plugin = plugin;
-	}
-
-	static String formatNumber(double amount) {
-		if (amount <= 1000.0D)
-			return String.valueOf(amount);
-		ArrayList<String> suffixes = new ArrayList<>(Arrays.asList("", "k", "M", "B", "T", "q", "Q", "QT", "S", "SP", "O",
-				"N", "D"));
-		double chunks = Math.floor(Math.floor(Math.log10(amount) / 3.0D));
-		amount /= Math.pow(10.0D, chunks * 3.0D - 1.0D);
-		amount /= 10.0D;
-		String suffix = suffixes.get((int) chunks);
-		String format = String.valueOf(amount);
-		if (format.replace(".", "").length() > 5)
-			format = format.substring(0, 5);
-		return format + suffix;
 	}
 
 	/**
@@ -143,6 +128,9 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				case "blocks_left_percentage": {
 					return String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D);
 				}
+				case "reset_time": {
+					return TimeUtil.getTime(mine.getSecondsToNextReset());
+				}
 			}
 		}
 
@@ -191,7 +179,7 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "next_rank_cost":
 				return String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(player));
 			case "next_rank_cost_formatted":
-				return formatNumber(plugin.getRanks().getRankManager().getNextRankCost(player));
+				return MathUtils.formatNumber(plugin.getRanks().getRankManager().getNextRankCost(player));
 			case "prestige":
 				return plugin.getPrestiges().getApi().getPlayerPrestige(player).getPrefix();
 			case "prestige_id":
@@ -200,10 +188,10 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return plugin.getAutoMiner().getTimeLeft(player);
 			case "tokens_formatted":
 			case "tokens_3":
-				return formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
+				return MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
 			case "gems_formatted":
 			case "gems_3":
-				return formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
+				return MathUtils.formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "rankup_progress":
 				return String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(player));
 			case "rankup_progress_bar":
@@ -213,7 +201,7 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "blocks_1":
 				return String.valueOf(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
 			case "blocks_3":
-				return formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+				return MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
 			case "gems_1":
 				return String.valueOf(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "pickaxe_level": {
