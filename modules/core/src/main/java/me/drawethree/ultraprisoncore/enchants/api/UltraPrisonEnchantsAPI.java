@@ -4,7 +4,7 @@ import me.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface UltraPrisonEnchantsAPI {
 
@@ -15,7 +15,7 @@ public interface UltraPrisonEnchantsAPI {
 	 * @param itemStack ItemStack
 	 * @return
 	 */
-	HashMap<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack itemStack);
+	Map<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack itemStack);
 
 	/**
 	 * Method to check if player has specific enchant on his current item in hand

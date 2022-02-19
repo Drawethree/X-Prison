@@ -5,11 +5,11 @@ import me.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
 
-	private EnchantsManager enchantsManager;
+	private final EnchantsManager enchantsManager;
 
 	public UltraPrisonEnchantsAPIImpl(EnchantsManager enchantsManager) {
 
@@ -17,7 +17,7 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
 	}
 
 	@Override
-	public HashMap<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack pickAxe) {
+	public Map<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack pickAxe) {
 		return this.enchantsManager.getItemEnchants(pickAxe);
 	}
 

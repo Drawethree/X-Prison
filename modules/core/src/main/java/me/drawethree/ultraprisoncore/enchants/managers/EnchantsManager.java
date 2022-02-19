@@ -29,16 +29,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EnchantsManager {
 
 	private static final String NBT_TAG_INDETIFIER = "ultra-prison-ench-";
+	private static final Pattern PICKAXE_LORE_ENCHANT_PATTER = Pattern.compile("%Enchant-\\d+%");
 
 	private final UltraPrisonEnchants plugin;
 	private List<String> ENCHANT_GUI_ITEM_LORE;
@@ -67,15 +65,25 @@ public class EnchantsManager {
 		this.reload();
 	}
 
-	public HashMap<UltraPrisonEnchantment, Integer> getItemEnchants(ItemStack pickAxe) {
-		HashMap<UltraPrisonEnchantment, Integer> returnMap = new HashMap<>();
-		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
-			int level = this.getEnchantLevel(pickAxe, enchantment.getId());
-			if (level == 0) {
-				continue;
-			}
-			returnMap.put(enchantment, level);
+	public Map<UltraPrisonEnchantment, Integer> getItemEnchants(ItemStack itemStack) {
+
+		Map<UltraPrisonEnchantment,Integer> returnMap = new HashMap<>();
+
+		if (itemStack == null || itemStack.getType() == Material.AIR) {
+			return returnMap;
 		}
+
+		NBTItem nbtItem = new NBTItem(itemStack);
+
+		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
+			if (!nbtItem.hasKey(NBT_TAG_INDETIFIER + enchantment.getId())) {
+				returnMap.put(enchantment,0);
+			} else {
+				int level = nbtItem.getInteger(NBT_TAG_INDETIFIER + enchantment.getId());
+				returnMap.put(enchantment,Math.min(level, enchantment.getMaxLevel()));
+			}
+		}
+
 		return returnMap;
 	}
 
@@ -102,6 +110,7 @@ public class EnchantsManager {
 
 
 	private void applyLoreToPickaxe(ItemStack item) {
+
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = new ArrayList<>();
 
@@ -109,30 +118,33 @@ public class EnchantsManager {
 
 		PickaxeLevel currentLevel = null;
 		PickaxeLevel nextLevel = null;
+		String pickaxeProgressBar = "";
 
 		if (pickaxeLevels) {
 			currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item);
 			nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(currentLevel);
+			pickaxeProgressBar = this.plugin.getCore().getPickaxeLevels().getProgressBar(item);
 		}
 
-		Pattern pt = Pattern.compile("%Enchant-\\d+%");
+		long blocksBroken = getBlocksBroken(item);
+		Map<UltraPrisonEnchantment, Integer> enchants = this.getItemEnchants(item);
 
 		for (String s : PICKAXE_LORE) {
-			s = s.replace("%Blocks%", String.valueOf(getBlocksBroken(item)));
+			s = s.replace("%Blocks%", String.valueOf(blocksBroken));
 
 			if (pickaxeLevels) {
 				s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
 				s = s.replace("%PickaxeLevel%", currentLevel == null ? "0" : String.valueOf(currentLevel.getLevel()));
-				s = s.replace("%PickaxeProgress%", this.plugin.getCore().getPickaxeLevels().getProgressBar(item));
+				s = s.replace("%PickaxeProgress%", pickaxeProgressBar);
 			}
 
-			Matcher matcher = pt.matcher(s);
+			Matcher matcher = PICKAXE_LORE_ENCHANT_PATTER.matcher(s);
 
 			if (matcher.find()) {
 				int enchId = Integer.parseInt(matcher.group().replaceAll("\\D", ""));
 				UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantById(enchId);
 				if (enchantment != null) {
-					int enchLvl = getEnchantLevel(item, enchId);
+					int enchLvl = enchants.get(enchantment);
 					if (enchLvl > 0) {
 						s = s.replace(matcher.group(), enchantment.getName() + " " + enchLvl);
 					} else {
@@ -233,19 +245,20 @@ public class EnchantsManager {
 		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER + id)) {
 			return 0;
 		}
+
 		int level = nbtItem.getInteger(NBT_TAG_INDETIFIER + id);
-		if (level > enchantment.getMaxLevel()) {
-			return enchantment.getMaxLevel();
-		}
-		return level;
+
+		return Math.min(level, enchantment.getMaxLevel());
 	}
 
 	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe, boolean inMineRegion) {
 		this.addBlocksBrokenToItem(e.getPlayer(), 1);
+
 		if (!inMineRegion && !this.isAllowEnchantsOutside()) {
 			return;
 		}
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
+
+		Map<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			if (!enchantment.isEnabled()) {
 				continue;
@@ -255,7 +268,7 @@ public class EnchantsManager {
 	}
 
 	public void handlePickaxeEquip(Player p, ItemStack newItem) {
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
+		Map<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			if (!enchantment.isEnabled()) {
 				continue;
@@ -266,7 +279,7 @@ public class EnchantsManager {
 
 	public void handlePickaxeUnequip(Player p, ItemStack newItem) {
 		p.getActivePotionEffects().forEach(effect -> p.removePotionEffect(effect.getType()));
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
+		Map<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			if (!enchantment.isEnabled()) {
 				continue;
@@ -603,7 +616,7 @@ public class EnchantsManager {
 
 	public long getPickaxeValue(ItemStack pickAxe) {
 		long sum = 0;
-		HashMap<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
+		Map<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			for (int i = 1; i <= playerEnchants.get(enchantment); i++) {
 				sum += enchantment.getCostOfLevel(i);
