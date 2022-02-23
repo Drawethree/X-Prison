@@ -30,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -283,6 +284,17 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	}
 
 	private void registerEvents() {
+		Events.subscribe(PlayerDeathEvent.class, EventPriority.HIGHEST)
+				.handler(e-> {
+
+					if (!this.enchantsManager.isKeepPickaxesOnDeath()) {
+						return;
+					}
+
+					if (!e.getKeepInventory()) {
+						e.getDrops().removeIf(itemStack -> this.getCore().isPickaxeSupported(itemStack) && this.enchantsManager.hasEnchants(itemStack));
+					}
+				}).bindWith(core);
 		Events.subscribe(PlayerInteractEvent.class)
 				.filter(e -> e.getItem() != null && this.getCore().isPickaxeSupported(e.getItem().getType()))
 				.filter(e -> (e.getAction() == Action.RIGHT_CLICK_AIR || (e.getAction() == Action.RIGHT_CLICK_BLOCK && this.enchantsManager.isOpenEnchantMenuOnRightClickBlock())))

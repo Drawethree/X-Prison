@@ -1,3 +1,4 @@
+keep-pickaxes-on-death: true
 open-menu-on-right-click-block: false
 allow-enchants-outside-mine-regions: false
 refund-percentage: 50.0

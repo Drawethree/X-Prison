@@ -58,6 +58,8 @@ public class EnchantsManager {
 	private CompMaterial firstJoinPickaxeMaterial;
 	private List<String> firstJoinPickaxeEnchants;
 	private String firstJoinPickaxeName;
+	@Getter
+	private boolean keepPickaxesOnDeath;
 
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
@@ -636,6 +638,7 @@ public class EnchantsManager {
 		this.firstJoinPickaxeMaterial = CompMaterial.fromString(plugin.getConfig().get().getString("first-join-pickaxe.material"));
 		this.firstJoinPickaxeEnchants = plugin.getConfig().get().getStringList("first-join-pickaxe.enchants");
 		this.firstJoinPickaxeName = plugin.getConfig().get().getString("first-join-pickaxe.name");
+		this.keepPickaxesOnDeath =  plugin.getConfig().get().getBoolean("keep-pickaxes-on-death");
 	}
 
 	// /givepickaxe <player> <enchant:18=1;...> <name>
