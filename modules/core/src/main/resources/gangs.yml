@@ -1,8 +1,14 @@
+# Maximum amount of players in a gang
 max-gang-members: 5
+# Frequency of updating /gang top
 gang-top-update: 1
+# Maximum allowed length of gang name
 max-gang-name-length: 10
+# Should gang names contain colors?
 color-codes-in-gang-name: true
+# EventPriority for listening for gang chat (Do not touch if you do now know)
 gang-chat-priority: LOW
+# PAPI/MVdW Placeholders replacements
 placeholders:
   gang-without: '&c✗'
   gang-in-gang: '&9%gang%'
@@ -86,5 +92,6 @@ gang-top-format:
   - "{FOR_EACH_GANG} &f&l#%position%. &e%gang% &8» &7%value% Points"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 gang-disband-gui-title: "Disband your gang?"
+# What words should not a gang name contain
 restricted-names:
   - shit

@@ -1,11 +1,15 @@
+# Should plugin show debug messages?
 debug-mode: false
+# Database type (SQLite, MySQL)
 database_type: SQLite
+# MySQL connection details
 mysql:
   host: localhost
   port: 3306
   database: dbName
   username: dbUser
   password: dbPass
+# Enabling / Disabling of specific modules
 modules:
   tokens: true
   gems: true
@@ -19,8 +23,10 @@ modules:
   gangs: true
   mines: true
   history: true
+# List of supported pickaxes by UPC Enchants
 supported-pickaxes:
   - DIAMOND_PICKAXE
+# Aliases for main command
 main-command-aliases:
   - upc
   - prisoncore

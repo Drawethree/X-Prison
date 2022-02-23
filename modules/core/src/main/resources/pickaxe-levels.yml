@@ -1,10 +1,16 @@
+# Pickaxe Levels settings
 levels:
   1:
+    # Pickaxe display name
     display_name: "&7Level 1 Pickaxe"
+    # Number of blocks mined required to hit certain level
     blocks_required: 0
   2:
+    # Pickaxe display name
     display_name: "&aLevel 2 Pickaxe"
+    # Number of blocks mined required to hit certain level
     blocks_required: 1000
+    # Commands executed when reaching this level
     rewards:
       - 'eco give %player% 1000'
 messages:

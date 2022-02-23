@@ -8,23 +8,35 @@ messages:
   token_multi_apply: "&e&l(!) &7You've &a&lENABLED &7Token Multiplier x%multiplier% for %time%."
   sell_multi_reset: "&e&l(!) &cYour sell multiplier was reset."
   token_multi_reset: "&e&l(!) &cYour token multiplier was reset."
+# Rank Multipliers settings
 ranks: { }
   #ultra: 1.0
-#donor: 0.7
-#vip: 0.5
+  #donor: 0.7
+  #vip: 0.5
 #default: 0.1
+# Should the plugins check for LuckPerms groups instead of ultraprison permissions?
 use-luckperms-groups: true
+# GlobalMultiplier settings
 global-multiplier:
   sell:
+    # Maximum x of Global Sell Multiplier that can be active
     max: 10.0
+    # Current Global Sell Multiplier
     multiplier: 0.0
+    # Time when Global Sell Multiplier ends
     timeLeft: -1
   tokens:
+    # Maximum x of Global Token Multiplier that can be active
     max: 10.0
+    # Current Global Token Multiplier
     multiplier: 0.0
+    # Time when Global Token Multiplier ends
     timeLeft: -1
+# Interval for refreshing online players rank mulipliers
 rank-multiplier-update-time: 5
+# Maximum player sell multiplier
 sell-multiplier:
   max: 10.0
+# Maximum player token multiplier
 token-multiplier:
   max: 10.0

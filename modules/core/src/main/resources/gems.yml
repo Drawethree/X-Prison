@@ -22,10 +22,12 @@ messages:
   top_weekly_reset: "&7&oTime Left: %time%"
   gems_received_mining: "&a&lGEMS &8» &7You found &6%amount% Gems &7while mining"
   gems_received_console: "&a&lGEMS &8» &7You have received &f%gems% Gems&7."
+# Physical item settings
 gems:
   item:
     material: EMERALD
     name: "&a&l%amount% &2&lGEMS"
     lore:
       - "&7Right-Click to Redeem"
+# Cooldown in seconds to check other player's gems balances (/gems <player>)
 gems-command-cooldown: 5

@@ -4,12 +4,19 @@ messages:
   not_enough_tokens: '&e&lRANKUP &8» &7You don''t have enough tokens to rankup. You need %cost% Tokens.'
   prestige_needed: '&e&lRANKUP &8» &7In order to continue to the next stage do &f/prestige&7.'
   rank_set: "&e&lRANKUP &8» &7You have set %player%'s rank to %rank%"
+# Should we use tokens as a currency for ranks ?
 use_tokens_currency: false
+# Ranks settings
 Ranks:
+  # Id of rank
   '1':
+    # Rank prefix
     Prefix: '&a&lA'
   '2':
+    # Rank prefix
     Prefix: '&b&lB'
+    # Rank cost (In tokens / vault currency)
     Cost: 500000
+    # Commands to run when player reaches this rank
     CMD:
       - lp user %player% perm set essentials.warps.B

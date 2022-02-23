@@ -30,19 +30,28 @@ messages:
 tokens:
   breaking:
     chance: 5.0
+    # Maximum amount of tokens to receive
     max: 5
+    # Minimum amount of tokens to receive
     min: 1
+  # Physical token item settings
   item:
     material: SUNFLOWER
     name: "&e&l%amount% TOKENS"
     lore:
       - "&7Right-Click to Redeem"
+# LuckyBlocks settings for rewards
 lucky-blocks:
   SPONGE:
     - tokens give %player% 1000
+# This value determines when will the next weekly top reset be. Updated automatically with /resetblockstopweekly command
 next-reset-weekly: 0
+# Should players receive token messages when mining?
 display-token-messages: true
+# Interval in minutes for updating /tokens top
 top_update_interval: 10
+# Cooldown in seconds to check other player's tokens balances (/tokens <player>)
+# Applies also for /blocks <player>
 tokens-command-cooldown: 5
 tokens-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"

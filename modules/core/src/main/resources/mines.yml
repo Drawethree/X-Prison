@@ -31,15 +31,19 @@ messages:
   mine_all_reset_success: "&aAll mines were reset."
   mine_all_reset_started: "&aStarted reset of all mines."
   mine_renamed: "&aMine &e%mine% &awas renamed to &e%new_name%&a."
+# Mine holograms settings
 holograms:
+  # How should blocks left hologram look like.
   blocks_left:
     - " "
     - "&7-- &aThere are &b%blocks%% &ablocks left in mine &b%mine% &7--"
     - " "
+  # How should blocks mined hologram look like.
   blocks_mined:
     - " "
     - "&7-- &b%blocks% blocks &ahave been mined &7--"
     - " "
+  # How should time left hologram look like.
   timed_reset:
     - " "
     - "&7-- &b%time% &aleft till next reset &7--"

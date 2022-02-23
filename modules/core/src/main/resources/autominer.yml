@@ -1,10 +1,16 @@
+# Settings for auto-miner region
 auto-miner-region:
+  # WorldGuard region name
   name: automine
+  # World where region is
   world: world
+  # Rewards to give
   rewards:
     - 'eco give %player% 1000'
     - 'tokens give %player% 10'
+  # Interval of giving rewards (in seconds)
   reward-period: 5
+  # Amount of blocks broken added to player every cycle
   blocks-broken: 5
 messages:
   not_enough_tokens: "&e&lAUTOMINER &8» &cYou do not have enough tokens! (Needed: %tokens%)"

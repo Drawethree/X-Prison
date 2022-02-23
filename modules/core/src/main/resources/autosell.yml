@@ -7,9 +7,13 @@ messages:
   last_minute_earn: "&e&lINFO &8>> &7You've earn &a$%amount% &7in last minute."
   no_permission_sell: "&e&l(!) &cYou do not have permission to sell in this region! (%perm%)"
   no_permission_autosell_toggle: "&e&l(!) &cYou do not have permission to toggle autosell feature!"
+# Should be autosell enabled automatically on player join?
 enable-autosell-automatically: true
+# Should blocks be smelted when mined? Example: STONE -> COBBLESTONE, IRON_ORE -> IRON_INGOT
 auto-smelt: false
+# Settings for broadcasting earnings during autosell
 auto_sell_broadcast:
+  # Interval in seconds
   time: 60
   message:
     - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
@@ -17,8 +21,12 @@ auto_sell_broadcast:
     - " &8&l➥ &e&lMONEY MADE: &2$&a%money%"
     - " &8&l➥ &e&lITEMS SOLD: &f%items%"
     - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+# Sellprices for each regions
 regions: { }
+# Notification when player has full inventory
+# If 'title' is set, it will send title to players, otherwise it will display chat message.
 inventory_full_notification:
+  # Should players be notified if they have full inventory?
   enabled: true
   title:
     - "&e&lInventory full!"

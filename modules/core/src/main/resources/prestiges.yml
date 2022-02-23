@@ -10,26 +10,38 @@ messages:
   prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
   max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
   max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
+# Update interval in minutes for /prestige top
 prestige_top_update_interval: 10
+# Should we use tokens as a currency for prestiges ?
 use_tokens_currency: false
+# Should we reset player rank after he prestiges ?
 reset_rank_after_prestige: false
 prestige-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lPRESTIGE TOP"
   - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%prestige% Prestige"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+# Infinite prestiges settings
 unlimited_prestiges:
+  # Should we enable infinite prestiges ?
   enabled: false
+  # Top limit of prestige
   max_prestige: 1000000
+  # Initial cost of prestige
   prestige_cost: 1000000
+  # Increasing cost of prestige
   increase_cost:
     enabled: true
     increase_cost_by: 1.25
+  # Prestige prefix
   prefix: '&2&lP%prestige%'
+  # Rewarding players after each prestige
   rewards-per-prestige:
     enabled: false
+    # Commands to be exectured
     rewards:
       - 'eco give %player% 1'
+  # Rewarding players on different prestiges
   rewards:
     10:
       - 'eco give %player% 10'
@@ -39,12 +51,17 @@ unlimited_prestiges:
       - 'eco give %player% 1000'
     10000:
       - 'eco give %player% 10000'
+# Manual prestige settings
 Prestige:
   '0':
+    # Prestige prefix
     Prefix: '&f&lP0'
   '1':
+    # Prestige prefix
     Prefix: '&2&lP1'
+    # Prestige cost
     Cost: 30000000000
+    # Commands to run when player reaches this prestige
     CMD:
       - tokens give 25000 %player%
       - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
