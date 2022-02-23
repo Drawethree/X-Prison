@@ -17,6 +17,8 @@ import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
+import me.lucko.helper.cooldown.Cooldown;
+import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.utils.Players;
@@ -25,6 +27,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -39,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
@@ -70,10 +74,12 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	private Map<String, TokensCommand> commands;
 	private Map<Material, List<String>> luckyBlockRewards;
 
+
 	private double chance;
 	private long minAmount;
 	private long maxAmount;
 	private boolean enabled;
+	private CooldownMap<CommandSender> tokensCommandCooldownMap;
 
 
 	public UltraPrisonTokens(UltraPrisonCore prisonCore) {
@@ -102,6 +108,10 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.chance = getConfig().get().getDouble("tokens.breaking.chance");
 		this.minAmount = getConfig().get().getLong("tokens.breaking.min");
 		this.maxAmount = getConfig().get().getLong("tokens.breaking.max");
+
+		long cooldown = getConfig().get().getLong("tokens-command-cooldown");
+		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
+
 		this.luckyBlockRewards = new HashMap<>();
 
 		for (String key : this.getConfig().get().getConfigurationSection("lucky-blocks").getKeys(false)) {
@@ -112,6 +122,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 			}
 			this.luckyBlockRewards.put(material.toMaterial(), rewards);
 		}
+
 
 	}
 
@@ -261,6 +272,9 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
 						}
 					} else {
+						if (!checkCommandCooldown(c.sender())) {
+							return;
+						}
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.tokensManager.sendInfoMessage(c.sender(), target, true);
 					}
@@ -306,6 +320,9 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 					if (c.args().size() == 0) {
 						this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
 					} else if (c.args().size() == 1) {
+						if (!checkCommandCooldown(c.sender())) {
+							return;
+						}
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.tokensManager.sendInfoMessage(c.sender(), target, false);
 					}
@@ -330,7 +347,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 								this.tokensManager.setBlocksBroken(c.sender(), target, amount);
 								break;
 							default:
-								PlayerUtils.sendMessage(c.sender(),"&c/blocksadmin <add/set/remove> <player> <amount>");
+								PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
 								break;
 						}
 					} else {
@@ -338,6 +355,17 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 					}
 				})
 				.registerAndBind(core, "blocksadmin", "blocksa");
+	}
+
+	private boolean checkCommandCooldown(CommandSender sender) {
+		if (sender.hasPermission(TOKENS_ADMIN_PERM)) {
+			return true;
+		}
+		if (!tokensCommandCooldownMap.test(sender)) {
+			PlayerUtils.sendMessage(sender, this.getMessage("cooldown").replace("%time%", String.format("%,d", this.tokensCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
+			return false;
+		}
+		return true;
 	}
 
 	private void loadMessages() {

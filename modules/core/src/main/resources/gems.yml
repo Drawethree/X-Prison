@@ -1,6 +1,7 @@
 messages:
   no_permission: "&c&l(!) &fYou do not have permission to do that!"
   not_enough_gems: "&e&l(!) &eYou don't have enough gems"
+  cooldown: "&cPlease wait %time% seconds before executing this command again."
   your_gems: "&eYour Gems: %gems%"
   other_gems: "&e%player%'s gems: %gems%"
   withdraw_successful: "&aYou have withdrawn &e%value%x %amount% gems!"
@@ -27,3 +28,4 @@ gems:
     name: "&a&l%amount% &2&lGEMS"
     lore:
       - "&7Right-Click to Redeem"
+gems-command-cooldown: 5

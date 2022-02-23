@@ -13,9 +13,12 @@ import me.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
+import me.lucko.helper.cooldown.Cooldown;
+import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.reflect.MinecraftVersion;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -24,6 +27,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonGems implements UltraPrisonModule {
 
@@ -47,6 +51,9 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
 	private HashMap<String, String> messages;
 	private HashMap<String, GemsCommand> commands;
+
+	private CooldownMap<CommandSender> gemsCommandCooldownMap;
+
 	private boolean enabled;
 
 	public UltraPrisonGems(UltraPrisonCore UltraPrisonCore) {
@@ -71,6 +78,9 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	public void enable() {
 		this.enabled = true;
 		this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
+		long cooldown = getConfig().get().getLong("gems-command-cooldown");
+		this.gemsCommandCooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
+
 		this.loadMessages();
 		this.gemsManager = new GemsManager(this);
 		this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);
@@ -84,7 +94,6 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 		this.gemsManager.stopUpdating();
 		this.gemsManager.savePlayerDataOnDisable();
 		this.enabled = false;
-
 	}
 
 	@Override
@@ -144,10 +153,8 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 		Commands.create()
 				.handler(c -> {
 
-					if (c.args().size() == 0) {
-						if (c.sender() instanceof Player) {
-							this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
-						}
+					if (c.args().size() == 0 && c.sender() instanceof Player) {
+						this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
 						return;
 					}
 
@@ -159,6 +166,9 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
 						}
 					} else {
+						if (!checkCommandCooldown(c.sender())) {
+							return;
+						}
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.gemsManager.sendInfoMessage(c.sender(), target);
 					}
@@ -169,8 +179,18 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 					if (c.args().size() == 0) {
 						this.gemsManager.sendGemsTop(c.sender());
 					}
-				})
-				.registerAndBind(core, "gemstop", "gemtop");
+				}).registerAndBind(core, "gemstop", "gemtop");
+	}
+
+	private boolean checkCommandCooldown(CommandSender sender) {
+		if (sender.hasPermission(GEMS_ADMIN_PERM)) {
+			return true;
+		}
+		if (!gemsCommandCooldownMap.test(sender)) {
+			PlayerUtils.sendMessage(sender, this.getMessage("cooldown").replace("%time%", String.format("%,d", this.gemsCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
+			return false;
+		}
+		return true;
 	}
 
 	private void loadMessages() {

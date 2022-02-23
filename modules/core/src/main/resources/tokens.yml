@@ -3,6 +3,7 @@ messages:
   not_enough_tokens: "&e&l(!) &eYou don't have enough tokens"
   your_tokens: "&eYour Tokens: %tokens%"
   other_tokens: "&e%player%'s Tokens: %tokens%"
+  cooldown: "&cPlease wait %time% seconds before executing this command again."
   your_blocks: "&eYour Blocks: %blocks%"
   other_blocks: "&e%player%'s Blocks: %blocks%"
   withdraw_successful: "&aYou have withdrawn &e%value%x %amount% Tokens!"
@@ -42,6 +43,7 @@ lucky-blocks:
 next-reset-weekly: 0
 display-token-messages: true
 top_update_interval: 10
+tokens-command-cooldown: 5
 tokens-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lTOKENS TOP"
