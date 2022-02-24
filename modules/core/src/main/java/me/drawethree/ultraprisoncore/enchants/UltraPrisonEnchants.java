@@ -291,7 +291,10 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 						return;
 					}
 
+					this.core.debug("PlayerDeathEvent:: Keep Inventory flag: " + e.getKeepInventory(),this);
+
 					if (!e.getKeepInventory()) {
+						this.core.debug("PlayerDeathEvent:: Removing " + e.getEntity().getName() + "'s pickaxes from drops...",this);
 						e.getDrops().removeIf(itemStack -> this.getCore().isPickaxeSupported(itemStack) && this.enchantsManager.hasEnchants(itemStack));
 					}
 				}).bindWith(core);
