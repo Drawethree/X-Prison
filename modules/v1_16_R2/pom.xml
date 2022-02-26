@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ultraprisoncore-v1_16_R2</artifactId>
+    <artifactId>v1_16_R2</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>me.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.10.9</version>
+        <version>1.10.10</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <build>

@@ -5,9 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.drawethree</groupId>
     <artifactId>UltraPrisonCore</artifactId>
-    <version>1.10.9</version>
+    <version>1.10.10</version>
 
     <modules>
+        <module>modules/api</module>
         <module>modules/core</module>
         <module>modules/v1_8_R1</module>
         <module>modules/v1_8_R2</module>
@@ -28,7 +29,6 @@
         <module>modules/v1_18_R1</module>
         <module>modules/dist</module>
     </modules>
-
 
     <packaging>pom</packaging>
     <name>UltraPrisonCore</name>

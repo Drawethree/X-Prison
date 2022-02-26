@@ -1,0 +1,35 @@
+package dev.drawethree.ultraprisoncore.gangs.commands.impl;
+
+import com.google.common.collect.ImmutableList;
+import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class GangLeaveCommand extends GangCommand {
+
+	public GangLeaveCommand(UltraPrisonGangs plugin) {
+		super(plugin, "leave", "quit");
+	}
+
+	@Override
+	public String getUsage() {
+		return ChatColor.RED + "/gang leave";
+	}
+
+	@Override
+	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+		if (args.size() == 0 && sender instanceof Player) {
+			Player p = (Player) sender;
+			return this.plugin.getGangsManager().leaveGang(p);
+		}
+		return false;
+	}
+
+
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return true;
+	}
+}

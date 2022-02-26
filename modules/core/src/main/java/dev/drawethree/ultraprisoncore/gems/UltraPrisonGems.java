@@ -1,0 +1,210 @@
+package dev.drawethree.ultraprisoncore.gems;
+
+import dev.drawethree.ultraprisoncore.UltraPrisonCore;
+import dev.drawethree.ultraprisoncore.UltraPrisonModule;
+import dev.drawethree.ultraprisoncore.config.FileManager;
+import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
+import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
+import dev.drawethree.ultraprisoncore.gems.commands.*;
+import dev.drawethree.ultraprisoncore.gems.managers.GemsManager;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
+import lombok.Getter;
+import me.lucko.helper.Commands;
+import me.lucko.helper.Events;
+import me.lucko.helper.cooldown.Cooldown;
+import me.lucko.helper.cooldown.CooldownMap;
+import me.lucko.helper.reflect.MinecraftVersion;
+import me.lucko.helper.utils.Players;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+public final class UltraPrisonGems implements UltraPrisonModule {
+
+	public static final String TABLE_NAME = "UltraPrison_Gems";
+	public static final String MODULE_NAME = "Gems";
+	public static final String GEMS_ADMIN_PERM = "ultraprison.gems.admin";
+
+	@Getter
+	private static UltraPrisonGems instance;
+
+	@Getter
+	private FileManager.Config config;
+
+	@Getter
+	private UltraPrisonGemsAPI api;
+
+	@Getter
+	private GemsManager gemsManager;
+	@Getter
+	private UltraPrisonCore core;
+
+	private HashMap<String, String> messages;
+	private HashMap<String, GemsCommand> commands;
+
+	private CooldownMap<CommandSender> gemsCommandCooldownMap;
+
+	private boolean enabled;
+
+	public UltraPrisonGems(UltraPrisonCore UltraPrisonCore) {
+		instance = this;
+		this.core = UltraPrisonCore;
+	}
+
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void reload() {
+		this.config.reload();
+		this.loadMessages();
+		this.gemsManager.reload();
+	}
+
+	@Override
+	public void enable() {
+		this.enabled = true;
+		this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
+		long cooldown = getConfig().get().getLong("gems-command-cooldown");
+		this.gemsCommandCooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
+
+		this.loadMessages();
+		this.gemsManager = new GemsManager(this);
+		this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);
+		this.registerCommands();
+		this.registerEvents();
+	}
+
+
+	@Override
+	public void disable() {
+		this.gemsManager.stopUpdating();
+		this.gemsManager.savePlayerDataOnDisable();
+		this.enabled = false;
+	}
+
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
+
+	@Override
+	public String[] getTables() {
+		return new String[]{TABLE_NAME};
+	}
+
+	@Override
+	public String[] getCreateTablesSQL(DatabaseType type) {
+		switch (type) {
+			case SQLITE:
+			case MYSQL: {
+				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))"};
+			}
+			default:
+				throw new IllegalStateException("Unsupported Database type: " + type);
+		}
+	}
+
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	private void registerEvents() {
+		Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+				.filter(e -> e.getItem() != null && e.getItem().getType() == this.gemsManager.getGemsItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+				.handler(e -> {
+					if (e.getItem().hasItemMeta()) {
+						e.setCancelled(true);
+						e.setUseInteractedBlock(Event.Result.DENY);
+						boolean offHandClick = false;
+						if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
+							offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
+						}
+						this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
+					}
+				}).bindWith(core);
+	}
+
+	private void registerCommands() {
+
+		this.commands = new HashMap<>();
+		this.commands.put("give", new GemsGiveCommand(this));
+		this.commands.put("add", new GemsGiveCommand(this));
+		this.commands.put("remove", new GemsRemoveCommand(this));
+		this.commands.put("set", new GemsSetCommand(this));
+		this.commands.put("help", new GemsHelpCommand(this));
+		this.commands.put("pay", new GemsPayCommand(this));
+		this.commands.put("withdraw", new GemsWithdrawCommand(this));
+
+		Commands.create()
+				.handler(c -> {
+
+					if (c.args().size() == 0 && c.sender() instanceof Player) {
+						this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
+						return;
+					}
+
+					GemsCommand subCommand = this.getCommand(c.rawArg(0));
+					if (subCommand != null) {
+						if (subCommand.canExecute(c.sender())) {
+							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
+						} else {
+							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
+						}
+					} else {
+						if (!checkCommandCooldown(c.sender())) {
+							return;
+						}
+						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
+						this.gemsManager.sendInfoMessage(c.sender(), target);
+					}
+				})
+				.registerAndBind(core, "gems");
+		Commands.create()
+				.handler(c -> {
+					if (c.args().size() == 0) {
+						this.gemsManager.sendGemsTop(c.sender());
+					}
+				}).registerAndBind(core, "gemstop", "gemtop");
+	}
+
+	private boolean checkCommandCooldown(CommandSender sender) {
+		if (sender.hasPermission(GEMS_ADMIN_PERM)) {
+			return true;
+		}
+		if (!gemsCommandCooldownMap.test(sender)) {
+			PlayerUtils.sendMessage(sender, this.getMessage("cooldown").replace("%time%", String.format("%,d", this.gemsCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
+			return false;
+		}
+		return true;
+	}
+
+	private void loadMessages() {
+		messages = new HashMap<>();
+		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
+		}
+	}
+
+	public String getMessage(String key) {
+		return messages.get(key);
+	}
+
+	private GemsCommand getCommand(String arg) {
+		return commands.get(arg.toLowerCase());
+	}
+}
