@@ -2,10 +2,13 @@ package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import dev.drawethree.ultraprisoncore.enchants.api.events.LayerTriggerEvent;
 import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
+import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,15 +53,10 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 			Block b = e.getBlock();
 			IWrappedRegion region = RegionUtils.getMineRegionWithHighestPriority(b.getLocation());
 			if (region != null) {
+
 				Player p = e.getPlayer();
 				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
-
 				List<Block> blocksAffected = new ArrayList<>();
-
-				double totalDeposit = 0;
-				int blockCount = 0;
-				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
-				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
 
 				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
 
@@ -68,17 +66,34 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 						if (b1.getType() == Material.AIR) {
 							continue;
 						}
-						blockCount++;
 						blocksAffected.add(b1);
-						if (autoSellPlayerEnabled) {
-							totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1) + 0.0) * amplifier);
-						} else {
-							if (plugin.getCore().isUltraBackpacksEnabled()) {
-								continue;
-							}
-							p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
-						}
 					}
+				}
+
+				LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, blocksAffected);
+
+				if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
+					this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+					return;
+				}
+
+				double totalDeposit = 0;
+				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
+				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
+
+				blocksAffected = event.getBlocksAffected();
+
+				for (Block block : blocksAffected) {
+					if (autoSellPlayerEnabled) {
+						totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), block) + 0.0) * amplifier);
+					} else {
+						if (plugin.getCore().isUltraBackpacksEnabled()) {
+							continue;
+						}
+						ItemStack toGive = CompMaterial.fromBlock(block).toItem(fortuneLevel + 1);
+						p.getInventory().addItem(toGive);
+					}
+					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(block.getWorld(), block.getX(), block.getY(), block.getZ(), 0, (byte) 0, true);
 				}
 
 				if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
@@ -92,19 +107,10 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 					}
 				}
 
-				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-
-				double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
-				total = luckyBooster ? total * 2 : total;
-
-				plugin.getCore().getEconomy().depositPlayer(p, total);
-
-				if (plugin.isAutoSellModule()) {
-					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
-				}
+				this.giveEconomyRewardsToPlayer(p, totalDeposit);
 
 				if (this.countBlocksBroken) {
-					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
+					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
 				}
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected, countBlocksBroken);
 
@@ -112,15 +118,29 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
 				}
 
-				for (Block b1 : blocksAffected) {
-					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(b1.getWorld(), b1.getX(), b1.getY(), b1.getZ(), 0, (byte) 0, true);
-				}
-
 			}
 			long timeEnd = Time.nowMillis();
 			this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
 		}
+	}
 
+	private void giveEconomyRewardsToPlayer(Player p, double totalDeposit) {
+		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p);
+
+		double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+		total = luckyBooster ? total * 2 : total;
+
+		plugin.getCore().getEconomy().depositPlayer(p, total);
+
+		if (plugin.isAutoSellModule()) {
+			plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+		}
+	}
+
+	private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, List<Block> blocksAffected) {
+		LayerTriggerEvent event = new LayerTriggerEvent(player, region, blocksAffected);
+		Events.callSync(event);
+		return event;
 	}
 
 	@Override

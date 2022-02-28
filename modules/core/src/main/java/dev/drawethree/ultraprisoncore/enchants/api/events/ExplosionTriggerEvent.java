@@ -2,7 +2,7 @@ package dev.drawethree.ultraprisoncore.enchants.api.events;
 
 
 import lombok.Getter;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
@@ -15,7 +15,7 @@ public class ExplosionTriggerEvent extends BlockEnchantEvent {
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 	private boolean cancelled;
 
-	public ExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, List<BlockState> blocksAffected) {
+	public ExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, List<Block> blocksAffected) {
 		super(p, mineRegion, blocksAffected);
 	}
 

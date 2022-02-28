@@ -2,7 +2,7 @@ package dev.drawethree.ultraprisoncore.enchants.api.events;
 
 
 import lombok.Getter;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
@@ -15,8 +15,8 @@ public class LayerTriggerEvent extends BlockEnchantEvent {
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 	private boolean cancelled;
 
-	public LayerTriggerEvent(Player p, IWrappedRegion mineRegion, List<BlockState> blocksAffected) {
-		super(p, mineRegion, blocksAffected);
+	public LayerTriggerEvent(Player p, IWrappedRegion mineRegion, List<Block> blocks) {
+		super(p, mineRegion, blocks);
 	}
 
 	public static HandlerList getHandlerList() {

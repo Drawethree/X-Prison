@@ -2,10 +2,13 @@ package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import dev.drawethree.ultraprisoncore.enchants.api.events.ExplosionTriggerEvent;
 import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
+import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,23 +60,9 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 			IWrappedRegion region = RegionUtils.getMineRegionWithHighestPriority(b.getLocation());
 			if (region != null) {
 				Player p = e.getPlayer();
-				int threshold = this.getMaxLevel() / 3;
-				int radius = enchantLevel <= threshold ? 3 : enchantLevel <= threshold * 2 ? 4 : 5;
-
-				if (this.soundsEnabled) {
-					b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
-				}
-
+				int radius = this.calculateRadius(enchantLevel);
 				List<Block> blocksAffected = new ArrayList<>();
-				//int move = (radius / 2 - 1) + (radius % 2 == 0 ? 0 : 1);
-				double totalDeposit = 0;
-				int blockCount = 0;
-				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
-				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-
-				final Location startLocation = e.getBlock().getLocation();
-
-				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+				final Location startLocation = b.getLocation();
 
 				for (int x = startLocation.getBlockX() - (radius == 4 ? 0 : (radius / 2)); x <= startLocation.getBlockX() + (radius == 4 ? radius - 1 : (radius / 2)); x++) {
 					for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius - 1 : (radius / 2)); z++) {
@@ -82,18 +71,40 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 							if (!region.contains(b1.getLocation()) || b1.getType() == Material.AIR) {
 								continue;
 							}
-							blockCount++;
 							blocksAffected.add(b1);
-							if (autoSellPlayerEnabled) {
-								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1) + 0.0) * amplifier);
-							} else {
-								if (this.plugin.getCore().isUltraBackpacksEnabled()) {
-									continue;
-								}
-								p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
-							}
 						}
 					}
+				}
+
+				ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, blocksAffected);
+
+				if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
+					this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> ExplosiveTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+					return;
+				}
+
+				blocksAffected = event.getBlocksAffected();
+
+				double totalDeposit = 0;
+				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
+				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
+				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+
+				if (this.soundsEnabled) {
+					b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
+				}
+
+				for (Block block : blocksAffected) {
+					if (autoSellPlayerEnabled) {
+						totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), block) + 0.0) * amplifier);
+					} else {
+						if (this.plugin.getCore().isUltraBackpacksEnabled()) {
+							continue;
+						}
+						ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(fortuneLevel + 1);
+						p.getInventory().addItem(itemToGive);
+					}
+					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(block.getWorld(), block.getX(), block.getY(), block.getZ(), 0, (byte) 0, true);
 				}
 
 				if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
@@ -107,19 +118,10 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 					}
 				}
 
-				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-
-				double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
-				total = luckyBooster ? total * 2 : total;
-
-				plugin.getCore().getEconomy().depositPlayer(p, total);
-
-				if (this.plugin.isAutoSellModule()) {
-					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
-				}
+				this.giveEconomyRewardToPlayer(p, totalDeposit);
 
 				if (this.countBlocksBroken) {
-					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
+					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
 				}
 
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected, countBlocksBroken);
@@ -128,14 +130,34 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
 				}
 
-				for (Block b1 : blocksAffected) {
-					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(b1.getWorld(), b1.getX(), b1.getY(), b1.getZ(), 0, (byte) 0, true);
-				}
-
 			}
 			long timeEnd = Time.nowMillis();
 			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.", this.plugin);
 		}
+	}
+
+	private void giveEconomyRewardToPlayer(Player p, double totalDeposit) {
+		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p);
+
+		double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+		total = luckyBooster ? total * 2 : total;
+
+		plugin.getCore().getEconomy().depositPlayer(p, total);
+
+		if (this.plugin.isAutoSellModule()) {
+			plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+		}
+	}
+
+	private int calculateRadius(int enchantLevel) {
+		int threshold = this.getMaxLevel() / 3;
+		return enchantLevel <= threshold ? 3 : enchantLevel <= threshold * 2 ? 4 : 5;
+	}
+
+	private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, List<Block> blocks) {
+		ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, mineRegion, blocks);
+		Events.callSync(event);
+		return event;
 	}
 
 	@Override
