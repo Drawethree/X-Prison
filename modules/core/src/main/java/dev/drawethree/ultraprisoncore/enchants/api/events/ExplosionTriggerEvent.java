@@ -15,8 +15,16 @@ public class ExplosionTriggerEvent extends BlockEnchantEvent {
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 	private boolean cancelled;
 
-	public ExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, List<Block> blocksAffected) {
-		super(p, mineRegion, blocksAffected);
+	/**
+	 * Called when explosive enchant procs
+	 *
+	 * @param p              Player
+	 * @param mineRegion     WorldGuard region where it was triggered
+	 * @param originBlock    Original block broken that triggered it
+	 * @param blocksAffected List of affected blocks (marked for removal)
+	 */
+	public ExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocksAffected) {
+		super(p, mineRegion, originBlock, blocksAffected);
 	}
 
 	public static HandlerList getHandlerList() {

@@ -14,11 +14,13 @@ public abstract class BlockEnchantEvent extends Event implements Cancellable {
 
 	protected final Player player;
 	protected final IWrappedRegion mineRegion;
+	protected final Block originBlock;
 	protected final List<Block> blocksAffected;
 
-	public BlockEnchantEvent(Player p, IWrappedRegion mineRegion, List<Block> blocksAffected) {
+	public BlockEnchantEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocksAffected) {
 		this.player = p;
 		this.mineRegion = mineRegion;
+		this.originBlock = originBlock;
 		this.blocksAffected = blocksAffected;
 	}
 }

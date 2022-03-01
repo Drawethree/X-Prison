@@ -70,7 +70,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 					}
 				}
 
-				LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, blocksAffected);
+				LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
 				if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
 					this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
@@ -137,8 +137,8 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 		}
 	}
 
-	private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, List<Block> blocksAffected) {
-		LayerTriggerEvent event = new LayerTriggerEvent(player, region, blocksAffected);
+	private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
+		LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
 		Events.callSync(event);
 		return event;
 	}

@@ -76,7 +76,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 					}
 				}
 
-				ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, blocksAffected);
+				ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
 				if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
 					this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> ExplosiveTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
@@ -154,8 +154,8 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 		return enchantLevel <= threshold ? 3 : enchantLevel <= threshold * 2 ? 4 : 5;
 	}
 
-	private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, List<Block> blocks) {
-		ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, mineRegion, blocks);
+	private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
+		ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, mineRegion, originBlock, blocks);
 		Events.callSync(event);
 		return event;
 	}
@@ -165,6 +165,5 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
 		this.countBlocksBroken = plugin.getConfig().get().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 		this.soundsEnabled = plugin.getConfig().get().getBoolean("enchants." + id + ".Sounds");
-
 	}
 }

@@ -20,7 +20,6 @@ public class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 
 	private static final Map<UUID, Long> boostedPlayers = new HashMap<>();
 
-
 	private double chance;
 
 	public LuckyBoosterEnchant(UltraPrisonEnchants instance) {

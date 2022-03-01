@@ -10,12 +10,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FuelEnchant extends UltraPrisonEnchantment {
+public class KeyallsEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private List<String> commandsToExecute;
 
-	public FuelEnchant(UltraPrisonEnchants instance) {
+	public KeyallsEnchant(UltraPrisonEnchants instance) {
 		super(instance, 18);
 	}
 
