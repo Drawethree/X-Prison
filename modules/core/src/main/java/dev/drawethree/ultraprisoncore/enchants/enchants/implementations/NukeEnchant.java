@@ -2,10 +2,14 @@ package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import dev.drawethree.ultraprisoncore.enchants.api.events.LayerTriggerEvent;
+import dev.drawethree.ultraprisoncore.enchants.api.events.NukeTriggerEvent;
 import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
+import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,23 +45,16 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-
 			long startTime = Time.nowMillis();
 			Block b = e.getBlock();
 			IWrappedRegion region = RegionUtils.getMineRegionWithHighestPriority(b.getLocation());
+
 			if (region != null) {
 				Player p = e.getPlayer();
 				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
 
 				List<Block> blocksAffected = new ArrayList<>();
-
-				double totalDeposit = 0;
-				int blockCount = 0;
-				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
-				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-
-				boolean autoSellEnabledPlayer = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
-
+				long startTimeLoop = Time.nowMillis();
 				for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
 					for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
 						for (int y = selection.getMinimumPoint().getBlockY(); y <= selection.getMaximumPoint().getBlockY(); y++) {
@@ -65,21 +62,39 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 							if (b1.getType() == Material.AIR) {
 								continue;
 							}
-							blockCount++;
 							blocksAffected.add(b1);
-							if (autoSellEnabledPlayer) {
-								totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), b1) + 0.0) * amplifier);
-							} else {
-								if (plugin.getCore().isUltraBackpacksEnabled()) {
-									continue;
-								}
-								p.getInventory().addItem(new ItemStack(b1.getType(), fortuneLevel + 1));
-							}
 						}
 					}
 				}
 
-				this.plugin.getCore().debug("NukeEnchant::onBlockBreak::LoopingBlocks >> Took " + (System.currentTimeMillis() - startTime) + " ms.", this.plugin);
+				this.plugin.getCore().debug("NukeEnchant::onBlockBreak::LoopingBlocks >> Took " + (System.currentTimeMillis() - startTimeLoop) + " ms.", this.plugin);
+
+				NukeTriggerEvent event = this.callNukeTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
+
+				if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
+					this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> NukeTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+					return;
+				}
+
+				double totalDeposit = 0;
+				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
+				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
+				boolean autoSellEnabledPlayer = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+
+
+				for (Block block : blocksAffected) {
+					if (autoSellEnabledPlayer) {
+						totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), block) + 0.0) * amplifier);
+					} else {
+						if (plugin.getCore().isUltraBackpacksEnabled()) {
+							continue;
+						}
+						ItemStack toGive = CompMaterial.fromBlock(block).toItem(fortuneLevel + 1);
+						p.getInventory().addItem(toGive);
+					}
+					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(block.getWorld(), block.getX(), block.getY(), block.getZ(), 0, (byte) 0, true);
+				}
+
 
 				if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
 					plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
@@ -93,28 +108,16 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 					}
 				}
 
-				boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-
-				double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
-				total = luckyBooster ? total * 2 : total;
-
-				plugin.getCore().getEconomy().depositPlayer(p, total);
-
-				if (this.plugin.isAutoSellModule()) {
-					plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
-				}
+				this.giveEconomyRewardsToPlayer(p,totalDeposit);
 
 				if (this.countBlocksBroken) {
-					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blockCount);
+					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
 				}
+
 				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected, countBlocksBroken);
 
 				if (plugin.getCore().isUltraBackpacksEnabled()) {
 					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
-				}
-
-				for (Block b1 : blocksAffected) {
-					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(b1.getWorld(), b1.getX(), b1.getY(), b1.getZ(), 0, (byte) 0, true);
 				}
 
 			}
@@ -122,6 +125,25 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 			this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
 		}
 
+	}
+
+	private void giveEconomyRewardsToPlayer(Player p, double totalDeposit) {
+		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p);
+
+		double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+		total = luckyBooster ? total * 2 : total;
+
+		plugin.getCore().getEconomy().depositPlayer(p, total);
+
+		if (plugin.isAutoSellModule()) {
+			plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+		}
+	}
+
+	private NukeTriggerEvent callNukeTriggerEvent(Player p, IWrappedRegion region, Block startBlock,List<Block> affectedBlocks) {
+		NukeTriggerEvent event = new NukeTriggerEvent(p,region,startBlock,affectedBlocks);
+		Events.callSync(event);
+		return event;
 	}
 
 	@Override
