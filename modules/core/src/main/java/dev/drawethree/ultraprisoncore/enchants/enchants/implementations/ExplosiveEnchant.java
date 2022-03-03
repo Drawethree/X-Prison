@@ -157,6 +157,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 	private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
 		ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, mineRegion, originBlock, blocks);
 		Events.callSync(event);
+		this.plugin.getCore().debug("ExplosiveEnchant::callExplosiveTriggerEvent >> ExplosiveTriggerEvent called.", this.plugin);
 		return event;
 	}
 

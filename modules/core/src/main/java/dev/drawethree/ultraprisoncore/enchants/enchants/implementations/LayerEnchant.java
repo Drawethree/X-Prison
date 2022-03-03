@@ -140,6 +140,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 	private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
 		LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
 		Events.callSync(event);
+		this.plugin.getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", this.plugin);
 		return event;
 	}
 

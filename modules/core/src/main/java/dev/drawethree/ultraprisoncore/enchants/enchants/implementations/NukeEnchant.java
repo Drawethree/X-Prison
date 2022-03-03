@@ -143,6 +143,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 	private NukeTriggerEvent callNukeTriggerEvent(Player p, IWrappedRegion region, Block startBlock,List<Block> affectedBlocks) {
 		NukeTriggerEvent event = new NukeTriggerEvent(p,region,startBlock,affectedBlocks);
 		Events.callSync(event);
+		this.plugin.getCore().debug("NukeEnchant::callNukeTriggerEvent >> NukeTriggerEvent called.", this.plugin);
 		return event;
 	}
 
