@@ -63,7 +63,7 @@ public class AutoMinerHelpGui extends Gui {
 					"&7Shows the remaining time",
 					"&7on a player's autominer.",
 					" ",
-					"&f/adminautominer give [player] [time in seconds]",
+					"&f/adminautominer give [player] [time] [DAYS/HOURS/MINUTES/SECONDS]",
 					"&7Give a player autominer time."
 			).buildItem().build());
 
