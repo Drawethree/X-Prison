@@ -408,7 +408,7 @@ public class EnchantsManager {
 		long totalRefunded = 0;
 
 		for (int j = 0; j < substraction; j++) {
-			totalRefunded += enchantment.getCostOfLevel(currentLevel + j + 1) * (this.refundPercentage / 100.0);
+			totalRefunded += enchantment.getCostOfLevel(currentLevel - j) * (this.refundPercentage / 100.0);
 		}
 
 		plugin.getCore().getTokens().getTokensManager().giveTokens(gui.getPlayer(), totalRefunded, null, ReceiveCause.REFUND);
@@ -618,6 +618,9 @@ public class EnchantsManager {
 	}
 
 	private long getRefundForLevel(UltraPrisonEnchantment enchantment, int currentLevel) {
+		if (currentLevel <= 0) {
+			return 0L;
+		}
 		return (long) ((enchantment.getCost() + (enchantment.getIncreaseCost() * (currentLevel - 1))) * (this.refundPercentage / 100.0));
 	}
 
