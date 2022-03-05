@@ -7,6 +7,7 @@ messages:
   mine_exists: "&cMine with such name already exists!"
   mine_not_exists: "&cMine with such name does not exist!"
   mine_created: "&aMine %mine% has been created! Use &e/mine panel %mine% &ato edit it."
+  mine_redefined: "&aYou have redefined mine region for mine %mine%."
   mine_deleted: "&aMine %mine% has been deleted!"
   mine_teleport: "&aYou have been teleported to mine %mine%!"
   mine_no_teleport_location: "&cMine %mine% does not have teleport location set!"

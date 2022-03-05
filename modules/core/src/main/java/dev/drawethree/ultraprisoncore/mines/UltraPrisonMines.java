@@ -42,7 +42,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 	@Getter
 	private UltraPrisonMinesAPI api;
 	@Getter
-	private UltraPrisonCore core;
+	private final UltraPrisonCore core;
 
 	private Map<String, MineCommand> commands;
 
@@ -120,6 +120,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 
 		registerCommand(new MineCreateCommand(this));
 		registerCommand(new MineDeleteCommand(this));
+		registerCommand(new MineRedefineCommand(this));
 		registerCommand(new MinePanelCommand(this));
 		registerCommand(new MineTeleportCommand(this));
 		registerCommand(new MineToolCommand(this));

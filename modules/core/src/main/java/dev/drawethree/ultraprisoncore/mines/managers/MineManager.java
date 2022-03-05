@@ -22,6 +22,7 @@ import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
+import me.lucko.helper.serialize.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -503,5 +504,26 @@ public class MineManager {
 			}
 		}
 		this.plugin.getCore().getLogger().info("Removed " + count + " old holograms.");
+	}
+
+	public boolean redefineMine(Player creator, String name) {
+		MineSelection selection = this.getMineSelection(creator);
+
+		if (selection == null || !selection.isValid()) {
+			PlayerUtils.sendMessage(creator, this.plugin.getMessage("selection_invalid"));
+			return false;
+		}
+
+		Mine mine = this.getMineByName(name);
+		if (mine == null) {
+			PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_not_exists"));
+			return false;
+		}
+
+		Region region = selection.toRegion();
+		mine.setMineRegion(region);
+
+		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_redefined").replace("%mine%", name));
+		return true;
 	}
 }

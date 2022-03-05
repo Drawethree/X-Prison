@@ -20,6 +20,7 @@ public class MineHelpCommand extends MineCommand {
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");
 			PlayerUtils.sendMessage(sender, "&e/mines create [mine] - Creates a new mine");
 			PlayerUtils.sendMessage(sender, "&e/mines delete [mine] - Deletes a mine");
+			PlayerUtils.sendMessage(sender, "&e/mines redefine [mine] - Redefine mine region for a mine");
 			PlayerUtils.sendMessage(sender, "&e/mines rename [mine] [new_name] - Renames a mine");
 			PlayerUtils.sendMessage(sender, "&e/mines reset [mine/all] - Reset a mine");
 			PlayerUtils.sendMessage(sender, "&e/mines panel [mine] - Opens a Mine Panel");

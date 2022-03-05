@@ -33,13 +33,14 @@ import java.util.stream.Collectors;
 public class Mine implements GsonSerializable {
 
 	@Getter
-	private MineManager manager;
+	private final MineManager manager;
 
 	@Getter
 	@Setter
 	private String name;
 
 	@Getter
+	@Setter
 	private Region mineRegion;
 
 	@Getter
@@ -47,14 +48,14 @@ public class Mine implements GsonSerializable {
 	private Point teleportLocation;
 
 	@Getter
-	private BlockPalette blockPalette;
+	private final BlockPalette blockPalette;
 
 	@Getter
 	@Setter
 	private double resetPercentage;
 
 	@Getter
-	private int totalBlocks;
+	private final int totalBlocks;
 
 	@Getter
 	@Setter
@@ -91,7 +92,7 @@ public class Mine implements GsonSerializable {
 	private int resetTime;
 
 	@Getter
-	private Map<PotionEffectType, Integer> mineEffects;
+	private final Map<PotionEffectType, Integer> mineEffects;
 
 	public Mine(MineManager manager, String name, Region region) {
 		this.manager = manager;
