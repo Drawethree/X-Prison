@@ -9,9 +9,9 @@ public abstract class GangCommand {
 
 	protected UltraPrisonGangs plugin;
 	@Getter
-	private String name;
+	private final String name;
 	@Getter
-	private String[] aliases;
+	private final String[] aliases;
 
 	public GangCommand(UltraPrisonGangs plugin, String name, String... aliases) {
 		this.plugin = plugin;

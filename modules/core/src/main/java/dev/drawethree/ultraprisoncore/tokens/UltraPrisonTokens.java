@@ -9,25 +9,19 @@ import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
-import dev.drawethree.ultraprisoncore.tokens.commands.*;
+import dev.drawethree.ultraprisoncore.tokens.commands.TokensCommand;
+import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.tokens.managers.TokensManager;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
-import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
-import me.lucko.helper.cooldown.Cooldown;
-import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.reflect.MinecraftVersion;
-import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
@@ -42,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
@@ -67,11 +60,14 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	@Getter
 	private TokensManager tokensManager;
+
 	@Getter
-	private UltraPrisonCore core;
+	private CommandManager commandManager;
+
+	@Getter
+	private final UltraPrisonCore core;
 
 	private Map<String, String> messages;
-	private Map<String, TokensCommand> commands;
 	private Map<Material, List<String>> luckyBlockRewards;
 
 
@@ -79,7 +75,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	private long minAmount;
 	private long maxAmount;
 	private boolean enabled;
-	private CooldownMap<CommandSender> tokensCommandCooldownMap;
+	@Getter
+	private long commandCooldown;
 
 
 	public UltraPrisonTokens(UltraPrisonCore prisonCore) {
@@ -102,6 +99,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.loadMessages();
 		this.loadVariables();
 		this.tokensManager.reloadConfig();
+		this.commandManager.reload();
 	}
 
 	private void loadVariables() {
@@ -109,8 +107,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.minAmount = getConfig().get().getLong("tokens.breaking.min");
 		this.maxAmount = getConfig().get().getLong("tokens.breaking.max");
 
-		long cooldown = getConfig().get().getLong("tokens-command-cooldown");
-		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
+		this.commandCooldown = getConfig().get().getLong("tokens-command-cooldown");
 
 		this.luckyBlockRewards = new HashMap<>();
 
@@ -122,7 +119,6 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 			}
 			this.luckyBlockRewards.put(material.toMaterial(), rewards);
 		}
-
 
 	}
 
@@ -138,9 +134,11 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.loadVariables();
 
 		this.tokensManager = new TokensManager(this);
+		this.commandManager = new CommandManager(this);
 		this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
 
-		this.registerCommands();
+		this.commandManager.registerCommands();
+
 		this.registerEvents();
 	}
 
@@ -151,7 +149,6 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.tokensManager.saveWeeklyReset();
 		this.tokensManager.savePlayerDataOnDisable();
 		this.enabled = false;
-
 	}
 
 	@Override
@@ -247,127 +244,6 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.getCore().debug("UltraPrisonTokens::handleBlockBreak >> Took " + (System.currentTimeMillis() - startTime) + " ms.", this);
 	}
 
-	private void registerCommands() {
-
-		this.commands = new HashMap<>();
-		this.commands.put("give", new TokensGiveCommand(this));
-		this.commands.put("add", new TokensGiveCommand(this));
-		this.commands.put("pay", new TokensPayCommand(this));
-		this.commands.put("remove", new TokensRemoveCommand(this));
-		this.commands.put("set", new TokensSetCommand(this));
-		this.commands.put("withdraw", new TokensWithdrawCommand(this));
-		this.commands.put("help", new TokensHelpCommand(this));
-
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
-						this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
-						return;
-					}
-					TokensCommand subCommand = this.getCommand(c.rawArg(0));
-					if (subCommand != null) {
-						if (subCommand.canExecute(c.sender())) {
-							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
-						} else {
-							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
-						}
-					} else {
-						if (!checkCommandCooldown(c.sender())) {
-							return;
-						}
-						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-						this.tokensManager.sendInfoMessage(c.sender(), target, true);
-					}
-				}).registerAndBind(core, "tokens", "token");
-
-		Commands.create()
-				.assertPlayer()
-				.handler(c -> {
-					this.tokensManager.toggleTokenMessage(c.sender());
-				}).registerAndBind(core, "tokenmessage");
-
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.tokensManager.sendBlocksTop(c.sender());
-					}
-				})
-				.registerAndBind(core, "blockstop", "blocktop");
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.tokensManager.sendBlocksTopWeekly(c.sender());
-					}
-				})
-				.registerAndBind(core, "blockstopweekly", "blockstopw", "btw");
-		Commands.create()
-				.assertPermission("ultraprison.tokens.admin")
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.tokensManager.resetBlocksTopWeekly(c.sender());
-					}
-				})
-				.registerAndBind(core, "blockstopweeklyreset");
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.tokensManager.sendTokensTop(c.sender());
-					}
-				})
-				.registerAndBind(core, "tokenstop", "tokentop");
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.tokensManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
-					} else if (c.args().size() == 1) {
-						if (!checkCommandCooldown(c.sender())) {
-							return;
-						}
-						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-						this.tokensManager.sendInfoMessage(c.sender(), target, false);
-					}
-				})
-				.registerAndBind(core, "blocks", "block");
-		Commands.create()
-				.assertPermission("ultraprison.tokens.admin")
-				.handler(c -> {
-					if (c.args().size() == 3) {
-
-						OfflinePlayer target = c.arg(1).parseOrFail(OfflinePlayer.class);
-						long amount = c.arg(2).parseOrFail(Long.class);
-
-						switch (c.rawArg(0).toLowerCase()) {
-							case "add":
-								this.tokensManager.addBlocksBroken(c.sender(), target, amount);
-								break;
-							case "remove":
-								this.tokensManager.removeBlocksBroken(c.sender(), target, amount);
-								break;
-							case "set":
-								this.tokensManager.setBlocksBroken(c.sender(), target, amount);
-								break;
-							default:
-								PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
-								break;
-						}
-					} else {
-						PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
-					}
-				})
-				.registerAndBind(core, "blocksadmin", "blocksa");
-	}
-
-	private boolean checkCommandCooldown(CommandSender sender) {
-		if (sender.hasPermission(TOKENS_ADMIN_PERM)) {
-			return true;
-		}
-		if (!tokensCommandCooldownMap.test(sender)) {
-			PlayerUtils.sendMessage(sender, this.getMessage("cooldown").replace("%time%", String.format("%,d", this.tokensCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
-			return false;
-		}
-		return true;
-	}
-
 	private void loadMessages() {
 		messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
@@ -377,9 +253,5 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	public String getMessage(String key) {
 		return messages.get(key);
-	}
-
-	private TokensCommand getCommand(String arg) {
-		return commands.get(arg.toLowerCase());
 	}
 }
