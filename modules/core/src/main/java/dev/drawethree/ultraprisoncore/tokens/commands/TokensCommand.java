@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 
 public abstract class TokensCommand implements Permissionable {
 
-	protected static final String PERMISSION_ROOT = "ultraprison.tokens.";
+	protected static final String PERMISSION_ROOT = "ultraprison.tokens.command.";
 
 	@Getter
 	private final String name;

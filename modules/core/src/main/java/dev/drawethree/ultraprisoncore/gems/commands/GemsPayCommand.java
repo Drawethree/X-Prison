@@ -1,6 +1,7 @@
 package dev.drawethree.ultraprisoncore.gems.commands;
 
 import com.google.common.collect.ImmutableList;
+import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
@@ -51,7 +52,7 @@ public class GemsPayCommand extends GemsCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(this.getRequiredPermission());
+		return sender.hasPermission(UltraPrisonGems.GEMS_ADMIN_PERM) || sender.hasPermission(this.getRequiredPermission());
 	}
 
 	@Override
