@@ -40,6 +40,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class MineManager {
 
@@ -278,7 +279,8 @@ public class MineManager {
 
 		builder.build(player, paginatedGui -> {
 			List<Item> items = new ArrayList<>();
-			for (Mine mine : this.mines.values()) {
+			List<Mine> mines = this.mines.values().stream().sorted(Comparator.comparing(Mine::getName)).collect(Collectors.toList());
+			for (Mine mine : mines) {
 				items.add(ItemStackBuilder.of(Material.STONE).name(mine.getName()).lore("&aLeft-Click &7to open Mine Panel for this mine.", "&aRight-Click &7to teleport to this mine.").build(() -> {
 					this.teleportToMine(player, mine);
 				}, () -> {
