@@ -7,6 +7,7 @@ import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
 import dev.drawethree.ultraprisoncore.gems.commands.*;
+import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.gems.managers.GemsManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
@@ -47,14 +48,15 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	@Getter
 	private GemsManager gemsManager;
 	@Getter
-	private UltraPrisonCore core;
+	private final UltraPrisonCore core;
 
 	private HashMap<String, String> messages;
-	private HashMap<String, GemsCommand> commands;
-
-	private CooldownMap<CommandSender> gemsCommandCooldownMap;
 
 	private boolean enabled;
+	private CommandManager commandManager;
+
+	@Getter
+	private long commandCooldown;
 
 	public UltraPrisonGems(UltraPrisonCore UltraPrisonCore) {
 		instance = this;
@@ -70,22 +72,33 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	@Override
 	public void reload() {
 		this.config.reload();
+
 		this.loadMessages();
+		this.loadVariables();
+
 		this.gemsManager.reload();
+		this.commandManager.reload();
 	}
 
 	@Override
 	public void enable() {
 		this.enabled = true;
 		this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
-		long cooldown = getConfig().get().getLong("gems-command-cooldown");
-		this.gemsCommandCooldownMap = CooldownMap.create(Cooldown.of(cooldown, TimeUnit.SECONDS));
 
+		this.loadVariables();
 		this.loadMessages();
+
 		this.gemsManager = new GemsManager(this);
+		this.commandManager = new CommandManager(this);
 		this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);
-		this.registerCommands();
+
+		this.commandManager.registerCommands();
+
 		this.registerEvents();
+	}
+
+	private void loadVariables() {
+		this.commandCooldown = getConfig().get().getLong("gems-command-cooldown");
 	}
 
 
@@ -139,72 +152,15 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 				}).bindWith(core);
 	}
 
-	private void registerCommands() {
-
-		this.commands = new HashMap<>();
-		this.commands.put("give", new GemsGiveCommand(this));
-		this.commands.put("add", new GemsGiveCommand(this));
-		this.commands.put("remove", new GemsRemoveCommand(this));
-		this.commands.put("set", new GemsSetCommand(this));
-		this.commands.put("help", new GemsHelpCommand(this));
-		this.commands.put("pay", new GemsPayCommand(this));
-		this.commands.put("withdraw", new GemsWithdrawCommand(this));
-
-		Commands.create()
-				.handler(c -> {
-
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
-						this.gemsManager.sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
-						return;
-					}
-
-					GemsCommand subCommand = this.getCommand(c.rawArg(0));
-					if (subCommand != null) {
-						if (subCommand.canExecute(c.sender())) {
-							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
-						} else {
-							PlayerUtils.sendMessage(c.sender(), this.getMessage("no_permission"));
-						}
-					} else {
-						if (!checkCommandCooldown(c.sender())) {
-							return;
-						}
-						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-						this.gemsManager.sendInfoMessage(c.sender(), target);
-					}
-				})
-				.registerAndBind(core, "gems");
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.gemsManager.sendGemsTop(c.sender());
-					}
-				}).registerAndBind(core, "gemstop", "gemtop");
-	}
-
-	private boolean checkCommandCooldown(CommandSender sender) {
-		if (sender.hasPermission(GEMS_ADMIN_PERM)) {
-			return true;
-		}
-		if (!gemsCommandCooldownMap.test(sender)) {
-			PlayerUtils.sendMessage(sender, this.getMessage("cooldown").replace("%time%", String.format("%,d", this.gemsCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
-			return false;
-		}
-		return true;
-	}
 
 	private void loadMessages() {
-		messages = new HashMap<>();
+		this.messages = new HashMap<>();
 		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
+			this.messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
 		}
 	}
 
 	public String getMessage(String key) {
-		return messages.get(key);
-	}
-
-	private GemsCommand getCommand(String arg) {
-		return commands.get(arg.toLowerCase());
+		return this.messages.get(key);
 	}
 }

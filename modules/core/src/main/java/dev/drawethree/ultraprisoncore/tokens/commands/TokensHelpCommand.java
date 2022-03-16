@@ -19,8 +19,6 @@ public class TokensHelpCommand extends TokensCommand {
 	@Override
 	public boolean execute(CommandSender sender, ImmutableList<String> args) {
 		if (args.isEmpty()) {
-
-			Set<TokensCommand> commands = this.commandManager.getAll();
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");
 			PlayerUtils.sendMessage(sender, "&e&lTOKEN HELP MENU ");
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");

@@ -30,11 +30,11 @@ import java.util.concurrent.TimeUnit;
 public class GemsManager {
 
 
-	private UltraPrisonGems plugin;
+	private final UltraPrisonGems plugin;
 	private String SPACER_LINE;
 	private String SPACER_LINE_BOTTOM;
 	private String TOP_FORMAT_GEMS;
-	private HashMap<UUID, Long> gemsCache = new HashMap<>();
+	private final HashMap<UUID, Long> gemsCache = new HashMap<>();
 	private LinkedHashMap<UUID, Long> top10Gems = new LinkedHashMap<>();
 	private Task task;
 	private boolean updating;

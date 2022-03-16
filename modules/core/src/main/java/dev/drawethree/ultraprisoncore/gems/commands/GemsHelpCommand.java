@@ -1,14 +1,17 @@
 package dev.drawethree.ultraprisoncore.gems.commands;
 
 import com.google.common.collect.ImmutableList;
-import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
 public class GemsHelpCommand extends GemsCommand {
 
-	public GemsHelpCommand(UltraPrisonGems plugin) {
-		super(plugin);
+	private static final String COMMAND_NAME = "help";
+	private static final String[] COMMAND_ALIASES = {"?"};
+
+	public GemsHelpCommand(CommandManager commandManager) {
+		super(commandManager, COMMAND_NAME, COMMAND_ALIASES);
 	}
 
 	@Override
@@ -17,13 +20,10 @@ public class GemsHelpCommand extends GemsCommand {
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");
 			PlayerUtils.sendMessage(sender, "&e&lGEMS HELP MENU ");
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");
-			PlayerUtils.sendMessage(sender, "&e/gems [player]");
-			PlayerUtils.sendMessage(sender, "&e/gems pay [player] [amount]");
-			PlayerUtils.sendMessage(sender, "&e/gems withdraw [amount] [value]");
-			if (sender.hasPermission(UltraPrisonGems.GEMS_ADMIN_PERM)) {
-				PlayerUtils.sendMessage(sender, "&e/gems give [player] [amount]");
-				PlayerUtils.sendMessage(sender, "&e/gems remove [player] [amount]");
-				PlayerUtils.sendMessage(sender, "&e/gems set [player] [amount]");
+			for (GemsCommand command : this.commandManager.getAll()) {
+				if (command.canExecute(sender)) {
+					PlayerUtils.sendMessage(sender, "&e" + command.getUsage());
+				}
 			}
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");
 			return true;
@@ -34,5 +34,10 @@ public class GemsHelpCommand extends GemsCommand {
 	@Override
 	public boolean canExecute(CommandSender sender) {
 		return true;
+	}
+
+	@Override
+	public String getUsage() {
+		return "/gems help - Displays all available commands.";
 	}
 }

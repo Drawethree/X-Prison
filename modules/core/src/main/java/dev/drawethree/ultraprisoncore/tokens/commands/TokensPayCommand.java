@@ -53,7 +53,7 @@ public class TokensPayCommand extends TokensCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return true;
+		return sender.hasPermission(this.getRequiredPermission());
 	}
 
 	@Override
