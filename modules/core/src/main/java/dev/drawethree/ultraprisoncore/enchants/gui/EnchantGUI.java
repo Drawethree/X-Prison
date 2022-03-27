@@ -10,6 +10,7 @@ import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
+import me.lucko.helper.Schedulers;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
 import org.bukkit.entity.Player;
@@ -45,7 +46,7 @@ public class EnchantGUI extends Gui {
 	private ItemStack pickAxe;
 
 	@Getter
-	private int pickaxePlayerInventorySlot;
+	private final int pickaxePlayerInventorySlot;
 
 	public EnchantGUI(Player player, ItemStack pickAxe, int pickaxePlayerInventorySlot) {
 		super(player, GUI_LINES, GUI_TITLE);
@@ -59,6 +60,13 @@ public class EnchantGUI extends Gui {
 					UltraPrisonCore.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
 					UltraPrisonCore.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
 				}).bindWith(this);
+
+		// Checking for duping
+		Schedulers.sync().runLater(() -> {
+			if (!pickAxe.equals(this.getPlayer().getInventory().getItem(this.pickaxePlayerInventorySlot))) {
+				this.close();
+			}
+		},10);
 	}
 
 	public static void reload() {

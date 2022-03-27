@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 
-	private UltraPrisonAutoSell plugin;
+	private final UltraPrisonAutoSell plugin;
 
 	public UltraPrisonAutoSellAPIImpl(UltraPrisonAutoSell plugin) {
 		this.plugin = plugin;
