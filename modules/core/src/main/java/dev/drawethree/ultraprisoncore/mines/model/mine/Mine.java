@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.managers.MineManager;
 import dev.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
+import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
@@ -100,6 +101,7 @@ public class Mine implements GsonSerializable {
 		this.mineRegion = region;
 		this.teleportLocation = null;
 		this.blockPalette = new BlockPalette();
+		this.blockPalette.addToPalette(CompMaterial.STONE, 100.0);
 		this.resetType = ResetType.INSTANT;
 		this.resetPercentage = 50.0;
 		this.resetTime = 10;

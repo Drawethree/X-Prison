@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
-import dev.drawethree.ultraprisoncore.mines.utils.MineLoader;
+import dev.drawethree.ultraprisoncore.mines.utils.MineUtils;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
@@ -29,7 +29,7 @@ public class MineSaveCommand extends MineCommand {
 			return true;
 		}
 
-		MineLoader.save(mine);
+		MineUtils.save(mine);
 
 		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_saved").replace("%mine%", mine.getName()));
 		return true;

@@ -9,7 +9,7 @@ import dev.drawethree.ultraprisoncore.mines.gui.MinePanelGUI;
 import dev.drawethree.ultraprisoncore.mines.model.mine.HologramType;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.mines.model.mine.MineSelection;
-import dev.drawethree.ultraprisoncore.mines.utils.MineLoader;
+import dev.drawethree.ultraprisoncore.mines.utils.MineUtils;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import dev.drawethree.ultraprisoncore.utils.location.LocationUtils;
 import dev.drawethree.ultraprisoncore.utils.misc.TimeUtil;
@@ -108,7 +108,7 @@ public class MineManager {
 				continue;
 			}
 			try (FileReader reader = new FileReader(file)) {
-				Mine mine = MineLoader.load(this, reader, file.getName());
+				Mine mine = MineUtils.load(this, reader, file.getName());
 				if (mine == null) {
 					continue;
 				}
@@ -128,7 +128,7 @@ public class MineManager {
 	}
 
 	private void saveMines() {
-		this.getMines().forEach(MineLoader::save);
+		this.getMines().forEach(MineUtils::save);
 	}
 
 	public void selectPosition(Player player, int position, Position pos) {
@@ -187,7 +187,7 @@ public class MineManager {
 
 		this.mines.put(mine.getName(), mine);
 
-		MineLoader.save(mine);
+		MineUtils.save(mine);
 
 		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_created").replace("%mine%", name));
 		return true;
@@ -484,7 +484,7 @@ public class MineManager {
 		mine.setName(newName);
 		this.mines.put(newName, mine);
 
-		MineLoader.save(mine);
+		MineUtils.save(mine);
 
 		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_renamed").replace("%mine%", oldMineName).replace("%new_name%", newName));
 		return true;

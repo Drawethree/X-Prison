@@ -1,5 +1,6 @@
 package dev.drawethree.ultraprisoncore.mines.model.mine.reset;
 
+import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.mines.model.mine.BlockPalette;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -21,7 +22,8 @@ public class InstantReset extends ResetType {
 	public void reset(Mine mine, BlockPalette blockPalette) {
 
 		if (blockPalette.isEmpty()) {
-			blockPalette.addToPalette(CompMaterial.STONE, 100.0);
+			UltraPrisonCore.getInstance().getLogger().warning("Reset for Mine " + mine.getName() + " aborted. Block palette is empty.");
+			return;
 		}
 
 		RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getMaterials(), blockPalette::getPercentage);

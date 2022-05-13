@@ -1,5 +1,6 @@
 package dev.drawethree.ultraprisoncore.mines.model.mine.reset;
 
+import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.mines.model.mine.BlockPalette;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -22,7 +23,8 @@ public class GradualReset extends ResetType {
 	@Override
 	public void reset(Mine paramMine, BlockPalette blockPalette) {
 		if (blockPalette.isEmpty()) {
-			blockPalette.addToPalette(CompMaterial.STONE, 100.0);
+			UltraPrisonCore.getInstance().getLogger().warning("Reset for Mine " + paramMine.getName() + " aborted. Block palette is empty.");
+			return;
 		}
 		this.schedule(paramMine, blockPalette, paramMine.getBlocksIterator());
 	}

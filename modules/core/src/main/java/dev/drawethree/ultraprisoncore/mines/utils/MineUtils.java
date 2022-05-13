@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MineLoader {
+public class MineUtils {
 
 	public static Mine load(MineManager manager, FileReader reader, String fileName) {
 		try {
