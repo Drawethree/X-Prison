@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.drawethree</groupId>
     <artifactId>UltraPrisonCore</artifactId>
-    <version>1.10.17</version>
+    <version>1.10.19</version>
 
     <modules>
         <module>modules/api</module>
