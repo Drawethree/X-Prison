@@ -512,8 +512,8 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public void addIntoTokens(OfflinePlayer player) {
-		this.execute("INSERT IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_TOKENS + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+	public void addIntoTokens(OfflinePlayer player, long startingTokens) {
+		this.execute("INSERT IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_TOKENS + " VALUES(?,?)", player.getUniqueId().toString(), startingTokens);
 	}
 
 	@Override
@@ -537,8 +537,8 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public void addIntoGems(OfflinePlayer player) {
-		this.execute("INSERT IGNORE INTO " + UltraPrisonGems.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+	public void addIntoGems(OfflinePlayer player, long startingGems) {
+		this.execute("INSERT IGNORE INTO " + UltraPrisonGems.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), startingGems);
 	}
 
 	@Override

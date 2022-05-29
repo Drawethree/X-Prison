@@ -22,6 +22,8 @@ messages:
   top_weekly_reset: "&7&oTime Left: %time%"
   gems_received_mining: "&a&lGEMS &8» &7You found &6%amount% Gems &7while mining"
   gems_received_console: "&a&lGEMS &8» &7You have received &f%gems% Gems&7."
+# Starting tokens for players
+starting-gems: 1000
 # Physical item settings
 gems:
   item:

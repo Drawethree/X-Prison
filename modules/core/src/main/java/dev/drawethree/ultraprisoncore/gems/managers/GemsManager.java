@@ -43,6 +43,8 @@ public class GemsManager {
 	private ItemStack gemsItem;
 	private List<String> gemsItemLore;
 
+	private long startingGems;
+
 	public GemsManager(UltraPrisonGems plugin) {
 		this.plugin = plugin;
 		this.reload();
@@ -69,7 +71,7 @@ public class GemsManager {
 		this.gemsItemDisplayName = plugin.getConfig().get().getString("gems.item.name");
 		this.gemsItemLore = plugin.getConfig().get().getStringList("gems.item.lore");
 		this.gemsItem = CompMaterial.fromString(plugin.getConfig().get().getString("gems.item.material")).toItem();
-
+		this.startingGems = plugin.getConfig().get().getLong("starting-gems");
 	}
 
 	public void stopUpdating() {
@@ -118,7 +120,7 @@ public class GemsManager {
 
 	private void addIntoTable(Player player) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoGems(player);
+			this.plugin.getCore().getPluginDatabase().addIntoGems(player, startingGems);
 		});
 	}
 

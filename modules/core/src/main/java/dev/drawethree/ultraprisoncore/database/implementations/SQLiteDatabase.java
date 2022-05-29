@@ -135,8 +135,8 @@ public class SQLiteDatabase extends SQLDatabase {
     }
 
     @Override
-    public void addIntoTokens(OfflinePlayer player) {
-        this.execute("INSERT OR IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_TOKENS + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+    public void addIntoTokens(OfflinePlayer player, long startingTokens) {
+        this.execute("INSERT OR IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_TOKENS + " VALUES(?,?)", player.getUniqueId().toString(), startingTokens);
     }
 
     @Override
@@ -160,8 +160,8 @@ public class SQLiteDatabase extends SQLDatabase {
     }
 
     @Override
-    public void addIntoGems(OfflinePlayer player) {
-        this.execute("INSERT OR IGNORE INTO " + UltraPrisonGems.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), 0);
+    public void addIntoGems(OfflinePlayer player, long startingGems) {
+        this.execute("INSERT OR IGNORE INTO " + UltraPrisonGems.TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), startingGems);
     }
 
     @Override

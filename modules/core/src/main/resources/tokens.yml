@@ -27,6 +27,8 @@ messages:
   token_message_enabled: "&e&lTOKENS &8» &7Messages &a&lON"
   tokens_received_mining: "&e&lTOKENS &8» &7You found &6%amount% Tokens &7while mining"
   lucky_block_mined: "&e&lLUCKY BLOCK &8» &7You have mined a &e&lLUCKY BLOCK &7and received &6%amount% Tokens!"
+# Starting tokens for players
+starting-tokens: 1000
 tokens:
   breaking:
     chance: 5.0

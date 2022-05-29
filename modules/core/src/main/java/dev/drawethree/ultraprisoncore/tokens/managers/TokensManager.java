@@ -7,18 +7,16 @@ import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
+import dev.drawethree.ultraprisoncore.tokens.model.BlockReward;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -65,6 +63,8 @@ public class TokensManager {
 
 	private List<UUID> tokenMessageOnPlayers;
 
+	private long startingTokens;
+
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
 		this.tokensTopFormat = this.plugin.getConfig().get().getStringList("tokens-top-format");
@@ -76,6 +76,7 @@ public class TokensManager {
 		this.tokenItemDisplayName = plugin.getConfig().get().getString("tokens.item.name");
 		this.tokenItemLore = plugin.getConfig().get().getStringList("tokens.item.lore");
 		this.tokenItem = CompMaterial.fromString(plugin.getConfig().get().getString("tokens.item.material")).toItem();
+		this.startingTokens = plugin.getConfig().get().getLong("starting-tokens");
 		this.tokenMessageOnPlayers = new ArrayList<>();
 
 		Events.subscribe(PlayerJoinEvent.class)
@@ -174,7 +175,7 @@ public class TokensManager {
 
 	private void addIntoTable(Player player) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoTokens(player);
+			this.plugin.getCore().getPluginDatabase().addIntoTokens(player, this.startingTokens);
 			this.plugin.getCore().getPluginDatabase().addIntoBlocks(player);
 			this.plugin.getCore().getPluginDatabase().addIntoBlocksWeekly(player);
 		});
@@ -734,32 +735,5 @@ public class TokensManager {
 
 	public Material getTokenItemMaterial() {
 		return this.tokenItem.getType();
-	}
-
-	@AllArgsConstructor
-	@Getter
-	private class BlockReward {
-
-		private long blocksRequired;
-		private List<String> commandsToRun;
-		private String message;
-
-		public void giveTo(Player p) {
-
-			if (!Bukkit.isPrimaryThread()) {
-				Schedulers.sync().run(() -> {
-					for (String s : this.commandsToRun) {
-						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
-					}
-				});
-			} else {
-				for (String s : this.commandsToRun) {
-					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
-				}
-			}
-			PlayerUtils.sendMessage(p, this.message);
-		}
-
-
 	}
 }

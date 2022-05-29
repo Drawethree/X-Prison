@@ -75,13 +75,13 @@ public abstract class Database {
 
 	public abstract Map<UUID, Long> getTop10Blocks();
 
-	public abstract void addIntoTokens(OfflinePlayer player);
+	public abstract void addIntoTokens(OfflinePlayer player, long startingTokens);
 
 	public abstract void addIntoBlocks(OfflinePlayer player);
 
 	public abstract void addIntoBlocksWeekly(OfflinePlayer player);
 
-	public abstract void addIntoGems(OfflinePlayer player);
+	public abstract void addIntoGems(OfflinePlayer player, long startingGems);
 
 	public abstract void addIntoRanks(OfflinePlayer player);
 
