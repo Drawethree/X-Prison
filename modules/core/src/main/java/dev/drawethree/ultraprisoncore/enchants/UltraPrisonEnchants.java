@@ -32,19 +32,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public final class UltraPrisonEnchants implements UltraPrisonModule {
 
@@ -68,6 +63,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	private HashMap<String, String> messages;
 	private final List<UUID> disabledLayer = new ArrayList<>();
 	private final List<UUID> disabledExplosive = new ArrayList<>();
+	private final Map<UUID, List<ItemStack>> respawnItemsMap = new HashMap<>();
 	private final CooldownMap<Player> valueCooldown = CooldownMap.create(Cooldown.of(30, TimeUnit.SECONDS));
 	private boolean enabled;
 
@@ -284,21 +280,31 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	}
 
 	private void registerEvents() {
-		Events.subscribe(PlayerDeathEvent.class, EventPriority.HIGHEST)
+		Events.subscribe(PlayerDeathEvent.class, EventPriority.LOWEST)
 				.handler(e-> {
 
 					if (!this.enchantsManager.isKeepPickaxesOnDeath()) {
 						return;
 					}
 
-					boolean removed = e.getDrops().removeIf(itemStack -> this.getCore().isPickaxeSupported(itemStack) && this.enchantsManager.hasEnchants(itemStack));
+					List<ItemStack> pickaxes = e.getDrops().stream().filter(itemStack -> this.getCore().isPickaxeSupported(itemStack) && this.enchantsManager.hasEnchants(itemStack)).collect(Collectors.toList());
+					e.getDrops().removeAll(pickaxes);
 
-					if (removed) {
-						this.core.debug("Removed " + e.getEntity().getName() + "'s pickaxes from drops (PlayerDeathEvent)", this);
+					this.respawnItemsMap.put(e.getEntity().getUniqueId(),pickaxes);
+
+					if (pickaxes.size() > 0 ) {
+						this.core.debug("Removed " + e.getEntity().getName() + "'s pickaxes from drops (" + pickaxes.size() + "). Will be given back on respawn.", this);
 					} else {
 						this.core.debug("No Pickaxes found for player " + e.getEntity().getName() + " (PlayerDeathEvent)", this);
 					}
-
+				}).bindWith(core);
+		Events.subscribe(PlayerRespawnEvent.class, EventPriority.LOWEST)
+				.handler(e -> {
+					if (this.respawnItemsMap.containsKey(e.getPlayer().getUniqueId())) {
+						this.respawnItemsMap.remove(e.getPlayer().getUniqueId()).forEach(itemStack -> {
+							e.getPlayer().getInventory().addItem(itemStack);
+						});
+					}
 				}).bindWith(core);
 		Events.subscribe(PlayerInteractEvent.class)
 				.filter(e -> e.getItem() != null && this.getCore().isPickaxeSupported(e.getItem().getType()))
