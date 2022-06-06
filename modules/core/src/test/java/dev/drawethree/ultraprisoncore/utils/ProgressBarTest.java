@@ -1,10 +1,10 @@
 package dev.drawethree.ultraprisoncore.utils;
 
 
-import dev.drawethree.ultraprisoncore.utils.misc.ProgressBar;
-import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import org.junit.Test;
 
+import static dev.drawethree.ultraprisoncore.utils.misc.ProgressBar.getProgressBar;
+import static dev.drawethree.ultraprisoncore.utils.text.TextUtils.applyColor;
 import static org.junit.Assert.assertEquals;
 
 public class ProgressBarTest {
@@ -17,9 +17,9 @@ public class ProgressBarTest {
 		double current = 0.0;
 
 		String expected = "&a&c::::::::::::::::::::";
-		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
+		String actual = getProgressBar(numberOfDelimeters, delimeter, current, required);
 
-		assertEquals(TextUtils.applyColor(expected), actual);
+		assertEquals(applyColor(expected), actual);
 	}
 
 	@Test
@@ -31,9 +31,9 @@ public class ProgressBarTest {
 
 
 		String expected = "&a::::::::::::::::::::&c";
-		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
+		String actual = getProgressBar(numberOfDelimeters, delimeter, current, required);
 
-		assertEquals(TextUtils.applyColor(expected), actual);
+		assertEquals(applyColor(expected), actual);
 	}
 
 	@Test
@@ -44,8 +44,8 @@ public class ProgressBarTest {
 		double current = 4244.0;
 
 		String expected = "&a&c::::::::::::::::::::";
-		String actual = ProgressBar.getProgressBar(numberOfDelimeters, null, current, required);
-		assertEquals(TextUtils.applyColor(expected), actual);
+		String actual = getProgressBar(numberOfDelimeters, null, current, required);
+		assertEquals(applyColor(expected), actual);
 	}
 
 
@@ -59,8 +59,8 @@ public class ProgressBarTest {
 
 		String expected = "&a|||||||||||||||||||||||||&c|||||||||||||||||||||||||";
 
-		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
-		assertEquals(TextUtils.applyColor(expected), actual);
+		String actual = getProgressBar(numberOfDelimeters, delimeter, current, required);
+		assertEquals(applyColor(expected), actual);
 	}
 
 	@Test
@@ -73,7 +73,7 @@ public class ProgressBarTest {
 
 		String expected = "&a||||||||||||||||||||||||&c||||||||||||||||||||||||||";
 
-		String actual = ProgressBar.getProgressBar(numberOfDelimeters, delimeter, current, required);
-		assertEquals(TextUtils.applyColor(expected), actual);
+		String actual = getProgressBar(numberOfDelimeters, delimeter, current, required);
+		assertEquals(applyColor(expected), actual);
 	}
 }

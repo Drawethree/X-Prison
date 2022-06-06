@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dev.drawethree.ultraprisoncore.utils.misc.MathUtils.formatNumber;
 import static org.junit.Assert.assertEquals;
 
 public class MathUtilsTest {
@@ -30,7 +31,7 @@ public class MathUtilsTest {
 	@Test
 	public void formatNumbers() {
 		for (Map.Entry<Double, String> entry : this.numbersToTest.entrySet()) {
-			assertEquals(entry.getValue(), MathUtils.formatNumber(entry.getKey()));
+			assertEquals(entry.getValue(), formatNumber(entry.getKey()));
 		}
 	}
 }

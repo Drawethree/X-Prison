@@ -6,46 +6,48 @@ import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Mock;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({RegionUtils.class, WorldGuardWrapper.class})
+import static org.mockito.Mockito.*;
+
 public class RegionUtilsTest {
 
+	@Mock
 	private WorldGuardWrapper mockWrapper;
+	@Mock
 	private IWrappedRegion mockRegion1;
+	@Mock
 	private IWrappedRegion mockRegion2;
+	@Mock
 	private IWrappedRegion mockRegion3;
-
+	@Mock
 	private Location mockLocation;
+
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		mockStatic(WorldGuardWrapper.class);
+	}
 
 	@Before
 	public void setUp() {
-		mockRegion1 = Mockito.mock(IWrappedRegion.class);
-		mockRegion2 = Mockito.mock(IWrappedRegion.class);
-		mockRegion3 = Mockito.mock(IWrappedRegion.class);
-		mockLocation = Mockito.mock(Location.class);
-		mockWrapper = Mockito.mock(WorldGuardWrapper.class);
+		mockRegion1 = mock(IWrappedRegion.class);
+		mockRegion2 = mock(IWrappedRegion.class);
+		mockRegion3 = mock(IWrappedRegion.class);
+		mockLocation = mock(Location.class);
+		mockWrapper = mock(WorldGuardWrapper.class);
 
+		when(mockRegion1.getId()).thenReturn("mine-a");
+		when(mockRegion2.getId()).thenReturn("mine-b");
+		when(mockRegion3.getId()).thenReturn("mine-c");
 
-		Mockito.when(mockRegion1.getId()).thenReturn("mine-a");
-		Mockito.when(mockRegion2.getId()).thenReturn("mine-b");
-		Mockito.when(mockRegion3.getId()).thenReturn("mine-c");
-
-		Mockito.when(mockRegion1.getPriority()).thenReturn(10);
-		Mockito.when(mockRegion2.getPriority()).thenReturn(20);
-		Mockito.when(mockRegion3.getPriority()).thenReturn(30);
-
-		PowerMockito.mockStatic(WorldGuardWrapper.class);
+		when(mockRegion1.getPriority()).thenReturn(10);
+		when(mockRegion2.getPriority()).thenReturn(20);
+		when(mockRegion3.getPriority()).thenReturn(30);
 	}
 
 	@Test
@@ -57,8 +59,8 @@ public class RegionUtilsTest {
 		regions.add(mockRegion2);
 		regions.add(mockRegion3);
 
-		Mockito.when(WorldGuardWrapper.getInstance()).thenReturn(mockWrapper);
-		Mockito.when(mockWrapper.getRegions(Mockito.any(Location.class))).thenReturn(regions);
+		when(WorldGuardWrapper.getInstance()).thenReturn(mockWrapper);
+		when(mockWrapper.getRegions(any(Location.class))).thenReturn(regions);
 
 		//When
 		IWrappedRegion result = RegionUtils.getMineRegionWithHighestPriority(mockLocation);
@@ -72,8 +74,8 @@ public class RegionUtilsTest {
 		//Given
 		Set<IWrappedRegion> regions = new HashSet<>();
 
-		Mockito.when(WorldGuardWrapper.getInstance()).thenReturn(mockWrapper);
-		Mockito.when(mockWrapper.getRegions(Mockito.any(Location.class))).thenReturn(regions);
+		when(WorldGuardWrapper.getInstance()).thenReturn(mockWrapper);
+		when(mockWrapper.getRegions(any(Location.class))).thenReturn(regions);
 
 		//When
 		IWrappedRegion result = RegionUtils.getMineRegionWithHighestPriority(mockLocation);
@@ -91,22 +93,16 @@ public class RegionUtilsTest {
 		regions.add(mockRegion2);
 		regions.add(mockRegion3);
 
-		Mockito.when(mockRegion1.getId()).thenReturn("12345");
-		Mockito.when(mockRegion2.getId()).thenReturn("456");
+		when(mockRegion1.getId()).thenReturn("12345");
+		when(mockRegion2.getId()).thenReturn("456");
 
-		Mockito.when(WorldGuardWrapper.getInstance()).thenReturn(mockWrapper);
-		Mockito.when(mockWrapper.getRegions(Mockito.any(Location.class))).thenReturn(regions);
+		when(WorldGuardWrapper.getInstance()).thenReturn(mockWrapper);
+		when(mockWrapper.getRegions(any(Location.class))).thenReturn(regions);
 
 		//When
 		IWrappedRegion result = RegionUtils.getMineRegionWithHighestPriority(mockLocation);
 
 		//Then
 		Assert.assertEquals(mockRegion3, result);
-	}
-
-	@Test
-	@Ignore
-	public void getFirstRegionAtLocation() {
-		//No need to write test for this...
 	}
 }
