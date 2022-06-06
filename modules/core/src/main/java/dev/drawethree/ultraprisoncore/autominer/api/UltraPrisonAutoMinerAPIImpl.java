@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 
 public class UltraPrisonAutoMinerAPIImpl implements UltraPrisonAutoMinerAPI {
 
-	private UltraPrisonAutoMiner plugin;
+	private final UltraPrisonAutoMiner plugin;
 
 	public UltraPrisonAutoMinerAPIImpl(UltraPrisonAutoMiner plugin) {
 		this.plugin = plugin;
@@ -13,11 +13,11 @@ public class UltraPrisonAutoMinerAPIImpl implements UltraPrisonAutoMinerAPI {
 
 	@Override
 	public boolean isInAutoMinerRegion(Player player) {
-		return this.plugin.isInAutoMinerRegion(player);
+		return this.plugin.getManager().isInAutoMinerRegion(player);
 	}
 
 	@Override
 	public int getAutoMinerTime(Player player) {
-		return this.plugin.getAutoMinerTime(player);
+		return this.plugin.getManager().getAutoMinerTime(player);
 	}
 }

@@ -3,6 +3,8 @@ package dev.drawethree.ultraprisoncore.placeholders;
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
+import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
@@ -37,6 +39,7 @@ public class UltraPrisonMVdWPlaceholder {
 			return;
 		}
 		this.registerTokensPlaceholders();
+		this.registerEnchantsPlaceholders();
 		this.registerGemsPlaceholders();
 		this.registerGangsPlaceholders();
 		this.registerMultipliersPlaceholders();
@@ -45,6 +48,23 @@ public class UltraPrisonMVdWPlaceholder {
 		this.registerPickaxeLevelsPlaceholders();
 		this.registerAutoSellPlaceholders();
 		this.registerMinesPlaceholders();
+	}
+
+	private void registerEnchantsPlaceholders() {
+		if (!this.plugin.isModuleEnabled(UltraPrisonEnchants.MODULE_NAME)) {
+			return;
+		}
+
+		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
+			PlaceholderAPI.registerPlaceholder(plugin, enchantment.getRawName() + "_levels", event -> {
+				return "";
+			});
+
+			PlaceholderAPI.registerPlaceholder(plugin, enchantment.getRawName() + "_cost_max", event -> {
+				return "";
+			});
+
+		}
 	}
 
 	private void registerPrestigesPlaceholders() {
@@ -63,7 +83,7 @@ public class UltraPrisonMVdWPlaceholder {
 			return;
 		}
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_autominer_time", event -> plugin.getAutoMiner().getTimeLeft(event.getPlayer()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_autominer_time", event -> plugin.getAutoMiner().getManager().getPlayerAutoMinerTimeLeftFormatted(event.getPlayer()));
 
 	}
 

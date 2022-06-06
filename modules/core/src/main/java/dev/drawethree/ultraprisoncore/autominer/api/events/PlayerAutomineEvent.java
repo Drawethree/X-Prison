@@ -17,7 +17,7 @@ public class PlayerAutomineEvent extends UltraPrisonPlayerEvent implements Cance
 	private boolean cancelled;
 
 	@Getter
-	private int timeLeft;
+	private final int timeLeft;
 
 	/**
 	 * Called when player auto mines in region

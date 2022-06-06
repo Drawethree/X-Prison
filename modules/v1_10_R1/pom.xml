@@ -11,7 +11,7 @@
     <parent>
         <groupId>me.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.10.20</version>
+        <version>1.11.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <build>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>internal</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.10.20</version>
+            <version>1.10.2</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../../libs/spigot/spigot-1.10.2-R0.1-SNAPSHOT-latest.jar</systemPath>
         </dependency>

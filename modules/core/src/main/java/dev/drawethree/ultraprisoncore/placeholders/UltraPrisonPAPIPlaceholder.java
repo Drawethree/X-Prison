@@ -132,6 +132,9 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 					return TimeUtil.getTime(mine.getSecondsToNextReset());
 				}
 			}
+		} else if (identifier.startsWith("token_has_")) {
+			long amount = Long.parseLong(identifier.replace("token_has_", ""));
+			return String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(player) >= amount);
 		}
 
 		switch (identifier.toLowerCase()) {
@@ -185,7 +188,7 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "prestige_id":
 				return String.valueOf(plugin.getPrestiges().getApi().getPlayerPrestige(player).getId());
 			case "autominer_time":
-				return plugin.getAutoMiner().getTimeLeft(player);
+				return plugin.getAutoMiner().getManager().getPlayerAutoMinerTimeLeftFormatted(player);
 			case "tokens_formatted":
 			case "tokens_3":
 				return MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
