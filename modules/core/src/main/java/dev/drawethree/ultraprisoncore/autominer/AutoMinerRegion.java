@@ -43,6 +43,7 @@ public class AutoMinerRegion {
 		this.autoMinerTask = Schedulers.async().runRepeating(() -> {
 
 			int current = counter.getAndIncrement();
+			boolean resetCounterAfterEnd = current >= rewardPeriod;
 
 			List<Player> players = this.getPlayersInRegion();
 			for (Player p : players) {
@@ -53,12 +54,12 @@ public class AutoMinerRegion {
 
 				this.decrementPlayerAutoMinerTimeAndNotify(p);
 
-				if (current >= rewardPeriod) {
+				if (resetCounterAfterEnd) {
 					this.executeTaskLogic(p);
 				}
 			}
 
-			if (current >= rewardPeriod) {
+			if (resetCounterAfterEnd) {
 				counter.set(0);
 			}
 
