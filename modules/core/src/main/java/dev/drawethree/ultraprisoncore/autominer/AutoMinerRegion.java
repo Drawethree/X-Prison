@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,15 +44,14 @@ public class AutoMinerRegion {
 
 			int current = counter.getAndIncrement();
 
-			for (Player p : Players.all()) {
+			List<Player> players = this.getPlayersInRegion();
+			for (Player p : players) {
 
-				if (this.executeTaskValidationAndNotifyPlayerOnFail(p)) {
+				if (!this.executeTaskValidationAndNotifyPlayerOnFail(p)) {
 					continue;
 				}
 
 				this.decrementPlayerAutoMinerTimeAndNotify(p);
-
-				this.executeTaskLogic(p);
 
 				if (current >= rewardPeriod) {
 					this.executeTaskLogic(p);
@@ -72,11 +72,6 @@ public class AutoMinerRegion {
 
 	private boolean executeTaskValidationAndNotifyPlayerOnFail(Player p) {
 
-		// We are not notifying here as player is not standing the region.
-		if (!this.isInAutoMinerRegion(p)) {
-			return false;
-		}
-
 		if (!this.checkPlayerAutoMinerTime(p)) {
 			parent.getCore().getNmsProvider().sendActionBar(p, parent.getMessage("auto_miner_disabled"));
 			return false;
@@ -90,8 +85,18 @@ public class AutoMinerRegion {
 		return true;
 	}
 
+	private List<Player> getPlayersInRegion() {
+		List<Player> list = new ArrayList<>();
+		for (Player p : Players.all()) {
+			if (isInAutoMinerRegion(p)) {
+				list.add(p);
+			}
+		}
+		return list;
+	}
+
 	private boolean isInAutoMinerRegion(Player p) {
-		return p.getWorld().getName().equals(world.getName()) || !region.contains(p.getLocation());
+		return p.getWorld().getName().equals(this.world.getName()) && region.contains(p.getLocation());
 	}
 
 	private void executeTaskLogic(Player p) {

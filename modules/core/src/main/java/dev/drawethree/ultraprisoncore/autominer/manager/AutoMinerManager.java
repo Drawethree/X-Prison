@@ -79,7 +79,7 @@ public class AutoMinerManager {
 	}
 
 	public boolean hasAutoMinerTime(Player p) {
-		return autoMinerTimes.containsKey(p.getUniqueId()) && autoMinerTimes.get(p.getUniqueId()) > 0;
+		return autoMinerTimes.getOrDefault(p.getUniqueId(), 0) > 0;
 	}
 
 	public void decrementPlayerAutominerTime(Player p) {
