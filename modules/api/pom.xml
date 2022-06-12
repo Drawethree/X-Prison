@@ -6,7 +6,7 @@
 
     <groupId>me.drawethree</groupId>
     <artifactId>UltraPrisonCoreAPI</artifactId>
-    <version>1.11.0</version>
+    <version>1.11.1</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
