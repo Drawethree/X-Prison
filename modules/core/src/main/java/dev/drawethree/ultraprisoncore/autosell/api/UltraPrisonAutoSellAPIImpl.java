@@ -1,10 +1,10 @@
 package dev.drawethree.ultraprisoncore.autosell.api;
 
-import dev.drawethree.ultraprisoncore.autosell.SellRegion;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
+import dev.drawethree.ultraprisoncore.autosell.model.SellRegion;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 
@@ -18,26 +18,26 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 
 	@Override
 	public double getCurrentEarnings(Player player) {
-		return plugin.getCurrentEarnings(player);
+		return plugin.getManager().getCurrentEarnings(player);
 	}
 
 	@Override
-	public double getPriceForBlock(String regionName, Block block) {
-		return plugin.getPriceForBrokenBlock(regionName, block);
+	public double getPriceForItem(String regionName, ItemStack item) {
+		return plugin.getManager().getPriceForItem(regionName, item);
 	}
 
 	@Override
 	public boolean hasAutoSellEnabled(Player p) {
-		return plugin.hasAutoSellEnabled(p);
+		return plugin.getManager().hasAutoSellEnabled(p);
 	}
 
 	@Override
 	public Collection<SellRegion> getSellRegions() {
-		return plugin.getAutoSellRegions();
+		return plugin.getManager().getAutoSellRegions();
 	}
 
 	@Override
 	public SellRegion getSellRegionAtLocation(Location location) {
-		return plugin.getAutoSellRegion(location);
+		return plugin.getManager().getAutoSellRegion(location);
 	}
 }

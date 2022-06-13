@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ExplosiveEnchant extends UltraPrisonEnchantment {
+public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private boolean countBlocksBroken;
@@ -88,7 +88,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 				double totalDeposit = 0;
 				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
 				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
 				if (this.soundsEnabled) {
 					b.getWorld().createExplosion(b.getLocation().getX(), b.getLocation().getY(), b.getLocation().getZ(), 0F, false, false);
@@ -96,7 +96,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 				for (Block block : blocksAffected) {
 					if (autoSellPlayerEnabled) {
-						totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), block) + 0.0) * amplifier);
+						totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
 					} else {
 						if (this.plugin.getCore().isUltraBackpacksEnabled()) {
 							continue;
@@ -145,7 +145,7 @@ public class ExplosiveEnchant extends UltraPrisonEnchantment {
 		plugin.getCore().getEconomy().depositPlayer(p, total);
 
 		if (this.plugin.isAutoSellModule()) {
-			plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+			plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
 		}
 	}
 

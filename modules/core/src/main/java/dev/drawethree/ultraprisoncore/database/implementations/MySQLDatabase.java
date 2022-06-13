@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
-public class MySQLDatabase extends SQLDatabase {
+public final class MySQLDatabase extends SQLDatabase {
 
     private final DatabaseCredentials credentials;
 

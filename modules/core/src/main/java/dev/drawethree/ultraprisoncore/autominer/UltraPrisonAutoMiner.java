@@ -5,6 +5,7 @@ import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPI;
 import dev.drawethree.ultraprisoncore.autominer.api.UltraPrisonAutoMinerAPIImpl;
 import dev.drawethree.ultraprisoncore.autominer.manager.AutoMinerManager;
+import dev.drawethree.ultraprisoncore.autominer.model.AutoMinerRegion;
 import dev.drawethree.ultraprisoncore.config.FileManager;
 import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;

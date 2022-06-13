@@ -1,5 +1,6 @@
-package dev.drawethree.ultraprisoncore.autominer;
+package dev.drawethree.ultraprisoncore.autominer.model;
 
+import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
 import lombok.Getter;
 import me.lucko.helper.Schedulers;

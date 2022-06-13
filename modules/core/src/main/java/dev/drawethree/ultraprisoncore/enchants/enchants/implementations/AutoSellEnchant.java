@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class AutoSellEnchant extends UltraPrisonEnchantment {
+public final class AutoSellEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 
@@ -42,7 +42,7 @@ public class AutoSellEnchant extends UltraPrisonEnchantment {
 			if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
 				UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
 			} else if (this.plugin.getCore().isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME)) {
-				this.plugin.getCore().getAutoSell().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()), this.isMessagesEnabled());
+				this.plugin.getCore().getAutoSell().getManager().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()));
 			}
 		}
 

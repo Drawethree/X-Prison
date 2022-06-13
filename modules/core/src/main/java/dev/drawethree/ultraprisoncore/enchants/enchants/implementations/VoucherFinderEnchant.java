@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class VoucherFinderEnchant extends UltraPrisonEnchantment {
+public final class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private List<CommandWithChance> commandsToExecute;
@@ -46,7 +46,7 @@ public class VoucherFinderEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-			CommandWithChance randomCmd = RandomSelector.weighted(this.commandsToExecute, element -> element.getChance()).pick();
+			CommandWithChance randomCmd = RandomSelector.weighted(this.commandsToExecute, CommandWithChance::getChance).pick();
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.getCommand().replace("%player%", e.getPlayer().getName()));
 		}
 	}
@@ -64,8 +64,8 @@ public class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
 	@AllArgsConstructor
 	@Getter
-	private class CommandWithChance {
-		private String command;
-		private double chance;
+	private static class CommandWithChance {
+		private final String command;
+		private final double chance;
 	}
 }

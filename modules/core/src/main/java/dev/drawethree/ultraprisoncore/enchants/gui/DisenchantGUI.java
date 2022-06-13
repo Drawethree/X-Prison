@@ -18,7 +18,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class DisenchantGUI extends Gui {
+public final class DisenchantGUI extends Gui {
 
 	private static String GUI_TITLE;
 	private static Item EMPTY_SLOT_ITEM;

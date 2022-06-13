@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GangValueFinderEnchant extends UltraPrisonEnchantment {
+public final class GangValueFinderEnchant extends UltraPrisonEnchantment {
 
 	private int maxAmount;
 	private int minAmount;

@@ -2,7 +2,6 @@ package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.api.events.LayerTriggerEvent;
 import dev.drawethree.ultraprisoncore.enchants.api.events.NukeTriggerEvent;
 import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class NukeEnchant extends UltraPrisonEnchantment {
+public final class NukeEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private boolean countBlocksBroken;
@@ -79,12 +78,12 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 				double totalDeposit = 0;
 				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
 				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
-				boolean autoSellEnabledPlayer = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+				boolean autoSellEnabledPlayer = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
 
 				for (Block block : blocksAffected) {
 					if (autoSellEnabledPlayer) {
-						totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), block) + 0.0) * amplifier);
+						totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
 					} else {
 						if (plugin.getCore().isUltraBackpacksEnabled()) {
 							continue;
@@ -136,7 +135,7 @@ public class NukeEnchant extends UltraPrisonEnchantment {
 		plugin.getCore().getEconomy().depositPlayer(p, total);
 
 		if (plugin.isAutoSellModule()) {
-			plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+			plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
 		}
 	}
 

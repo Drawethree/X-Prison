@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class PrestigeFinderEnchant extends UltraPrisonEnchantment {
+public final class PrestigeFinderEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private int minLevels;

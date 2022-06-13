@@ -8,7 +8,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class EfficiencyEnchant extends UltraPrisonEnchantment {
+public final class EfficiencyEnchant extends UltraPrisonEnchantment {
 	public EfficiencyEnchant(UltraPrisonEnchants instance) {
 		super(instance, 1);
 	}

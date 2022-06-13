@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class SalaryEnchant extends UltraPrisonEnchantment {
+public final class SalaryEnchant extends UltraPrisonEnchantment {
 
 	private long minAmount;
 	private long maxAmount;
@@ -38,7 +38,7 @@ public class SalaryEnchant extends UltraPrisonEnchantment {
 
 			plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
 			if (this.plugin.isAutoSellModule()) {
-				plugin.getCore().getAutoSell().addToCurrentEarnings(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
+				plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
 			}
 		}
 

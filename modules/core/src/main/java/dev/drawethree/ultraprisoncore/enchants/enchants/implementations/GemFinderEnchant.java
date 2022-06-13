@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class GemFinderEnchant extends UltraPrisonEnchantment {
+public final class GemFinderEnchant extends UltraPrisonEnchantment {
 
 	private long maxAmount;
 	private long minAmount;

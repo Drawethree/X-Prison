@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class SpeedEnchant extends UltraPrisonEnchantment {
+public final class SpeedEnchant extends UltraPrisonEnchantment {
 	public SpeedEnchant(UltraPrisonEnchants instance) {
 		super(instance, 5);
 	}

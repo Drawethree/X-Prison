@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class LuckyBoosterEnchant extends UltraPrisonEnchantment {
+public final class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 
 	private static final Map<UUID, Long> boostedPlayers = new HashMap<>();
 

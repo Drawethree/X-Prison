@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class KeyallsEnchant extends UltraPrisonEnchantment {
+public final class KeyallsEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private List<String> commandsToExecute;

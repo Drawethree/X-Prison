@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class HasteEnchant extends UltraPrisonEnchantment {
+public final class HasteEnchant extends UltraPrisonEnchantment {
 
 	public HasteEnchant(UltraPrisonEnchants instance) {
 		super(instance, 4);

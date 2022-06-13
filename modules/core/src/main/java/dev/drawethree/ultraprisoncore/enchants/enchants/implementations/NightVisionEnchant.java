@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class NightVisionEnchant extends UltraPrisonEnchantment {
+public final class NightVisionEnchant extends UltraPrisonEnchantment {
 	public NightVisionEnchant(UltraPrisonEnchants instance) {
 		super(instance, 7);
 	}

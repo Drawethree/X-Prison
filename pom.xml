@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>me.drawethree</groupId>
     <artifactId>UltraPrisonCore</artifactId>
-    <version>1.11.1</version>
+    <version>1.11.2</version>
 
     <modules>
         <module>modules/api</module>
@@ -33,23 +33,6 @@
 
     <packaging>pom</packaging>
     <name>UltraPrisonCore</name>
-
-    <!--<properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <item.nbt.api.version>2.7.1</item.nbt.api.version>
-        <bstats.version>2.2.1</bstats.version>
-        <placeholderapi.version>2.10.9</placeholderapi.version>
-        <helper.version>5.6.8</helper.version>
-        <lombok.version>1.18.12</lombok.version>
-        <vault.version>1.7</vault.version>
-        <wgwrapper.version>1.2.0-SNAPSHOT</wgwrapper.version>
-        <hikari.version>3.4.2</hikari.version>
-        <luckperms.version>3.1</luckperms.version>
-        <junit.version>4.12</junit.version>
-        <mysql.connector.version>8.0.19</mysql.connector.version>
-        <luckperms.version>5.3</luckperms.version>
-        <build.minecraft.version>1.8.8</build.minecraft.version>
-    </properties>-->
 
     <build>
         <defaultGoal>clean install</defaultGoal>

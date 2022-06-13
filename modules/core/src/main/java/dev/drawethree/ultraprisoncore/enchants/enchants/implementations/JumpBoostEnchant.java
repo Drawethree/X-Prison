@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class JumpBoostEnchant extends UltraPrisonEnchantment {
+public final class JumpBoostEnchant extends UltraPrisonEnchantment {
 	public JumpBoostEnchant(UltraPrisonEnchants instance) {
 		super(instance, 6);
 	}

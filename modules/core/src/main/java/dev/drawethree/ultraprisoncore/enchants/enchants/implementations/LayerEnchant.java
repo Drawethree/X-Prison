@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class LayerEnchant extends UltraPrisonEnchantment {
+public final class LayerEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private boolean countBlocksBroken;
@@ -58,7 +58,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
 				List<Block> blocksAffected = new ArrayList<>();
 
-				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().hasAutoSellEnabled(p);
+				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
 				for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
 					for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
@@ -85,7 +85,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 
 				for (Block block : blocksAffected) {
 					if (autoSellPlayerEnabled) {
-						totalDeposit += ((plugin.getCore().getAutoSell().getPriceForBrokenBlock(region.getId(), block) + 0.0) * amplifier);
+						totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
 					} else {
 						if (plugin.getCore().isUltraBackpacksEnabled()) {
 							continue;
@@ -133,7 +133,7 @@ public class LayerEnchant extends UltraPrisonEnchantment {
 		plugin.getCore().getEconomy().depositPlayer(p, total);
 
 		if (plugin.isAutoSellModule()) {
-			plugin.getCore().getAutoSell().addToCurrentEarnings(p, total);
+			plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
 		}
 	}
 

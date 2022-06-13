@@ -31,10 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SQLiteDatabase extends SQLDatabase {
+public final class SQLiteDatabase extends SQLDatabase {
 
     private static final String FILE_NAME = "playerdata.db";
-    private String filePath;
+    private final String filePath;
 
     public SQLiteDatabase(UltraPrisonCore plugin) {
         super(plugin);

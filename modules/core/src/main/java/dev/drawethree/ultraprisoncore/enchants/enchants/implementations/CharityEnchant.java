@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CharityEnchant extends UltraPrisonEnchantment {
+public final class CharityEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private long minAmount;

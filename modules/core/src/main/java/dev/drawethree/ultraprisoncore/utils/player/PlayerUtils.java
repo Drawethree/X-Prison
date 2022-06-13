@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class PlayerUtils {
+public final class PlayerUtils {
 
 	/**
 	 * Sends a message to a player and replaces colors and also hex colors
@@ -41,6 +41,25 @@ public class PlayerUtils {
 			}
 			commandSender.sendMessage(TextUtils.applyColor(s));
 		}
+	}
+
+	/**
+	 * Sends a title with subtitle to a player and replaces colors and also hex colors
+	 *
+	 * @param player to who should be message send
+	 * @param title title
+	 * @param subTitle sub title
+	 */
+	public static void sendTitle(Player player, String title, String subTitle) {
+		if (!player.isOnline()) {
+			return;
+		}
+
+		if (StringUtils.isBlank(title) || StringUtils.isBlank(subTitle)) {
+			return;
+		}
+
+		player.sendTitle(TextUtils.applyColor(title),TextUtils.applyColor(subTitle));
 	}
 
 	private PlayerUtils() {

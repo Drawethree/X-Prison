@@ -8,7 +8,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class UnbreakingEnchant extends UltraPrisonEnchantment {
+public final class UnbreakingEnchant extends UltraPrisonEnchantment {
 
 	public UnbreakingEnchant(UltraPrisonEnchants instance) {
 		super(instance, 2);
