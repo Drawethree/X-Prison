@@ -17,35 +17,38 @@ import lombok.Getter;
 
 public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
-    public static final String MODULE_NAME = "Auto Sell";
+	public static final String MODULE_NAME = "Auto Sell";
 
-    @Getter
-    private final UltraPrisonCore core;
-    @Getter
-    private UltraPrisonAutoSellAPI api;
-    @Getter
-    private AutoSellConfig autoSellConfig;
-    @Getter
-    private AutoSellManager manager;
-    @Getter
-    private AutoSellBroadcastTask broadcastTask;
+	@Getter
+	private static UltraPrisonAutoSell instance;
+	@Getter
+	private final UltraPrisonCore core;
+	@Getter
+	private UltraPrisonAutoSellAPI api;
+	@Getter
+	private AutoSellConfig autoSellConfig;
+	@Getter
+	private AutoSellManager manager;
+	@Getter
+	private AutoSellBroadcastTask broadcastTask;
 
-    private boolean enabled;
+	private boolean enabled;
 
-    public UltraPrisonAutoSell(UltraPrisonCore core) {
-        this.core = core;
-    }
+	public UltraPrisonAutoSell(UltraPrisonCore core) {
+		instance = this;
+		this.core = core;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    @Override
-    public void reload() {
-        this.autoSellConfig.loadVariables();
-        this.manager.reload();
-    }
+	@Override
+	public void reload() {
+		this.autoSellConfig.loadVariables();
+		this.manager.reload();
+	}
 
 
     @Override

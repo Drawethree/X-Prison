@@ -33,13 +33,10 @@ public class AutoSellManager {
 
     private static final CooldownMap<Player> INVENTORY_FULL_COOLDOWN_MAP = CooldownMap.create(Cooldown.of(2, TimeUnit.SECONDS));
 
-
     private final UltraPrisonAutoSell plugin;
-
-    private Map<String, SellRegion> regionsAutoSell;
-
     private final Map<UUID, Double> lastEarnings;
     private final Map<UUID, Long> lastItems;
+    private final Map<String, SellRegion> regionsAutoSell;
     private final List<UUID> enabledAutoSellPlayers;
 
     public AutoSellManager(UltraPrisonAutoSell plugin) {
@@ -47,11 +44,12 @@ public class AutoSellManager {
         this.enabledAutoSellPlayers = new ArrayList<>();
         this.lastEarnings = new HashMap<>();
         this.lastItems = new HashMap<>();
+        this.regionsAutoSell = new HashMap<>();
     }
 
 
     private void loadAutoSellRegions() {
-        this.regionsAutoSell = new HashMap<>();
+        this.regionsAutoSell.clear();
 
         YamlConfiguration configuration = this.plugin.getAutoSellConfig().getYamlConfig();
 

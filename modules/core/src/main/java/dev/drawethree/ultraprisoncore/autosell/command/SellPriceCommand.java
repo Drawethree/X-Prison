@@ -1,6 +1,7 @@
 package dev.drawethree.ultraprisoncore.autosell.command;
 
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
+import dev.drawethree.ultraprisoncore.autosell.gui.AllSellRegionsGui;
 import dev.drawethree.ultraprisoncore.autosell.model.SellRegion;
 import dev.drawethree.ultraprisoncore.autosell.utils.AutoSellContants;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -30,6 +31,11 @@ public class SellPriceCommand {
 
                     if (!this.validateContext(c)) {
                         this.sendInvalidUsage(c.sender());
+                        return;
+                    }
+
+                    if (isEditorCommand(c)) {
+                        this.openEditorGui(c.sender());
                         return;
                     }
 
@@ -69,6 +75,14 @@ public class SellPriceCommand {
                 }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);
     }
 
+    private void openEditorGui(Player sender) {
+        AllSellRegionsGui.createAndOpenTo(sender);
+    }
+
+    private boolean isEditorCommand(CommandContext<Player> c) {
+        return "editor".equalsIgnoreCase(c.rawArg(0));
+    }
+
     private SellRegion getSellRegionFromWrappedRegion(IWrappedRegion region) {
         return this.plugin.getManager().getSellRegionFromWrappedRegion(region);
     }
@@ -87,6 +101,7 @@ public class SellPriceCommand {
 
     private void sendInvalidUsage(Player player) {
         PlayerUtils.sendMessage(player, "&cInvalid usage!");
+        PlayerUtils.sendMessage(player, "&c/sellprice editor - Opens Editor GUI for sell prices");
         PlayerUtils.sendMessage(player, "&c/sellprice <material> <price> - Sets the sell price of specified material.");
         PlayerUtils.sendMessage(player, "&c/sellprice <price> - Sets the sell price of item material you have in your hand.");
     }

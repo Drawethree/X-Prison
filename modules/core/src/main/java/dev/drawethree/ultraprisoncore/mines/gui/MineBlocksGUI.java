@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class MineBlocksGUI extends Gui {
 
-	private Mine mine;
+	private final Mine mine;
 
 	public MineBlocksGUI(Mine mine, Player player) {
 		super(player, 5, mine.getName() + " - Blocks");

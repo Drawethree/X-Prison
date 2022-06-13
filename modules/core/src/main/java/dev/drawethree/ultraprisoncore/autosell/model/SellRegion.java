@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @ToString
@@ -37,10 +38,13 @@ public class SellRegion {
         return sellPrices.getOrDefault(material, 0.0);
     }
 
-    public Set<CompMaterial> getSellingMaterial() {
+    public Set<CompMaterial> getSellingMaterials() {
         return this.sellPrices.keySet();
     }
 
+    public Set<CompMaterial> getSellingMaterialsSorted(Comparator<CompMaterial> comparator) {
+        return this.sellPrices.keySet().stream().sorted(comparator).collect(Collectors.toCollection(LinkedHashSet::new));
+    }
 
     public void addSellPrice(CompMaterial material, double price) {
         this.sellPrices.put(material, price);
@@ -90,5 +94,9 @@ public class SellRegion {
 
     public boolean sellsMaterial(CompMaterial material) {
         return this.sellPrices.containsKey(material);
+    }
+
+    public void removeSellPrice(CompMaterial material) {
+        this.sellPrices.remove(material);
     }
 }

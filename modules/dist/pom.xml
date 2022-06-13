@@ -155,5 +155,10 @@
             <artifactId>ultraprisoncore-v1_18_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>me.drawethree</groupId>
+            <artifactId>ultraprisoncore-v1_19_R1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -96,7 +96,7 @@ public class AutoSellConfig {
 
     public void saveSellRegion(SellRegion region) {
         this.getConfig().set("regions." + region.getRegion().getId() + ".world", region.getWorld().getName());
-        for (CompMaterial material : region.getSellingMaterial()) {
+        for (CompMaterial material : region.getSellingMaterials()) {
             double sellPrice = region.getSellPriceForMaterial(material);
             if (sellPrice <= 0.0) {
                 continue;
