@@ -2,9 +2,9 @@ package dev.drawethree.ultraprisoncore.placeholders;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
+import dev.drawethree.ultraprisoncore.autominer.utils.AutoMinerUtils;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
@@ -54,17 +54,6 @@ public class UltraPrisonMVdWPlaceholder {
 		if (!this.plugin.isModuleEnabled(UltraPrisonEnchants.MODULE_NAME)) {
 			return;
 		}
-
-		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
-			PlaceholderAPI.registerPlaceholder(plugin, enchantment.getRawName() + "_levels", event -> {
-				return "";
-			});
-
-			PlaceholderAPI.registerPlaceholder(plugin, enchantment.getRawName() + "_cost_max", event -> {
-				return "";
-			});
-
-		}
 	}
 
 	private void registerPrestigesPlaceholders() {
@@ -83,7 +72,10 @@ public class UltraPrisonMVdWPlaceholder {
 			return;
 		}
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_autominer_time", event -> plugin.getAutoMiner().getManager().getPlayerAutoMinerTimeLeftFormatted(event.getPlayer()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_autominer_time", event -> {
+			int autominerTime = plugin.getAutoMiner().getManager().getAutoMinerTime(event.getPlayer());
+			return AutoMinerUtils.getAutoMinerTimeLeftFormatted(autominerTime);
+		});
 
 	}
 
@@ -133,10 +125,7 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_has_gang", event -> plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer()).isPresent() ? "Yes" : "No");
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_is_leader", event -> {
 			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
-			if (optionalGang.isPresent()) {
-				return optionalGang.get().isOwner(event.getPlayer()) ? "Yes" : "No";
-			}
-			return "";
+			return optionalGang.map(gang -> gang.isOwner(event.getPlayer()) ? "Yes" : "No").orElse("");
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_leader_name", event -> {
 			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
@@ -147,18 +136,12 @@ public class UltraPrisonMVdWPlaceholder {
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_members_amount", event -> {
 			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
-			if (optionalGang.isPresent()) {
-				// +1 because of leader
-				return String.valueOf(optionalGang.get().getMembersOffline().size() + 1);
-			}
-			return "";
+			// +1 because of leader
+			return optionalGang.map(gang -> String.valueOf(gang.getMembersOffline().size() + 1)).orElse("");
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_members_online", event -> {
 			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
-			if (optionalGang.isPresent()) {
-				return String.valueOf(optionalGang.get().getOnlinePlayers().size());
-			}
-			return "";
+			return optionalGang.map(gang -> String.valueOf(gang.getOnlinePlayers().size())).orElse("");
 		});
 	}
 

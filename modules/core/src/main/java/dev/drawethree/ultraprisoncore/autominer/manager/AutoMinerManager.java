@@ -3,16 +3,21 @@ package dev.drawethree.ultraprisoncore.autominer.manager;
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeReceiveEvent;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
+import dev.drawethree.ultraprisoncore.autominer.model.AutoMinerRegion;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
+import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class AutoMinerManager {
@@ -21,12 +26,15 @@ public class AutoMinerManager {
 
 	private final Map<UUID, Integer> autoMinerTimes;
 
+	@Getter
+	private AutoMinerRegion autoMinerRegion;
+
 	public AutoMinerManager(UltraPrisonAutoMiner plugin) {
 		this.plugin = plugin;
 		this.autoMinerTimes = new HashMap<>();
 	}
 
-	public void loadAllPlayersAutoMinerData() {
+	private void loadAllPlayersAutoMinerData() {
 		Players.all().forEach(this::loadPlayerAutoMinerData);
 	}
 
@@ -69,7 +77,7 @@ public class AutoMinerManager {
 
 		this.callAutoMinerTimeReceiveEvent(p, time, unit);
 
-		PlayerUtils.sendMessage(sender, this.plugin.getMessage("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
+		PlayerUtils.sendMessage(sender, this.plugin.getAutoMinerConfig().getMessage("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
 	}
 
 	private PlayerAutoMinerTimeReceiveEvent callAutoMinerTimeReceiveEvent(Player p, long time, TimeUnit unit) {
@@ -87,37 +95,15 @@ public class AutoMinerManager {
 		autoMinerTimes.put(p.getUniqueId(), newAmount);
 	}
 
-	public String getPlayerAutoMinerTimeLeftFormatted(Player p) {
-
-		int timeLeft = this.getAutoMinerTime(p);
-
-		if (timeLeft == 0) {
-			return "0s";
-		}
-
-		long days = timeLeft / (24 * 60 * 60);
-		timeLeft -= days * (24 * 60 * 60);
-
-		long hours = timeLeft / (60 * 60);
-		timeLeft -= hours * (60 * 60);
-
-		long minutes = timeLeft / (60);
-		timeLeft -= minutes * (60);
-
-		long seconds = timeLeft;
-
-		return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-	}
-
 	public int getAutoMinerTime(Player player) {
 		return this.autoMinerTimes.getOrDefault(player.getUniqueId(), 0);
 	}
 
 	public boolean isInAutoMinerRegion(Player player) {
-		if (this.plugin.getRegion() == null) {
+		if (this.autoMinerRegion == null) {
 			return false;
 		}
-		return this.plugin.getRegion().getRegion().contains(player.getLocation());
+		return this.autoMinerRegion.getRegion().contains(player.getLocation());
 	}
 
 	public PlayerAutomineEvent callAutoMineEvent(Player p) {
@@ -128,5 +114,81 @@ public class AutoMinerManager {
 
 	public void saveAllPlayerAutoMinerData(boolean async) {
 		Players.all().forEach(p -> savePlayerAutoMinerData(p, async));
+	}
+
+	private void loadAutoMinerRegion() {
+
+		YamlConfiguration configuration = this.plugin.getAutoMinerConfig().getYamlConfig();
+
+		String worldName = configuration.getString("auto-miner-region.world");
+		World world = Bukkit.getWorld(worldName);
+
+		if (world == null) {
+			plugin.getCore().getLogger().warning(String.format("Unable to get world with name %s!  Disabling AutoMiner region.", worldName));
+			return;
+		}
+
+		int rewardPeriod = configuration.getInt("auto-miner-region.reward-period");
+
+		if (rewardPeriod <= 0) {
+			plugin.getCore().getLogger().warning("reward-perion in autominer.yml needs to be greater than 0!  Disabling AutoMiner region.");
+			return;
+		}
+
+		String regionName = configuration.getString("auto-miner-region.name");
+		Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world, regionName);
+
+		if (optRegion.isEmpty()) {
+			plugin.getCore().getLogger().warning(String.format("There is no such region named %s in world %s!  Disabling AutoMiner region.", regionName, world.getName()));
+			return;
+		}
+
+		List<String> rewards = configuration.getStringList("auto-miner-region.rewards");
+
+		if (rewards.isEmpty()) {
+			plugin.getCore().getLogger().warning("rewards in autominer.yml are empty! Disabling AutoMiner region.");
+			return;
+		}
+
+		int blocksBroken = configuration.getInt("auto-miner-region.blocks-broken");
+
+		if (blocksBroken <= 0) {
+			this.plugin.getCore().getLogger().warning("blocks-broken in autominer.yml needs to be greater than 0!  Disabling AutoMiner region.");
+			return;
+		}
+
+		this.autoMinerRegion = new AutoMinerRegion(this.plugin, world, optRegion.get(), rewards, rewardPeriod, blocksBroken);
+		this.autoMinerRegion.startAutoMinerTask();
+
+		this.plugin.getCore().getLogger().info("AutoMiner region loaded successfully!");
+	}
+
+	public void load() {
+		this.removeExpiredAutoMiners();
+		this.loadAllPlayersAutoMinerData();
+		this.loadAutoMinerRegion();
+	}
+
+	private void removeExpiredAutoMiners() {
+		Schedulers.async().run(() -> {
+			this.plugin.getCore().getPluginDatabase().removeExpiredAutoMiners();
+			this.plugin.getCore().getLogger().info("Removed expired AutoMiners from database");
+		});
+	}
+
+	public void reload() {
+		this.stopAutoMinerTask();
+		this.loadAutoMinerRegion();
+	}
+
+	public void disable() {
+		this.stopAutoMinerTask();
+		this.saveAllPlayerAutoMinerData(false);
+	}
+
+	private void stopAutoMinerTask() {
+		if (this.autoMinerRegion != null) {
+			this.autoMinerRegion.stopAutoMinerTask();
+		}
 	}
 }

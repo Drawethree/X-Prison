@@ -46,7 +46,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 
 	@Override
 	public void reload() {
-		this.autoSellConfig.loadVariables();
+		this.autoSellConfig.load();
 		this.manager.reload();
 	}
 

@@ -1,6 +1,7 @@
 package dev.drawethree.ultraprisoncore.placeholders;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
+import dev.drawethree.ultraprisoncore.autominer.utils.AutoMinerUtils;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
@@ -187,8 +188,10 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return plugin.getPrestiges().getApi().getPlayerPrestige(player).getPrefix();
 			case "prestige_id":
 				return String.valueOf(plugin.getPrestiges().getApi().getPlayerPrestige(player).getId());
-			case "autominer_time":
-				return plugin.getAutoMiner().getManager().getPlayerAutoMinerTimeLeftFormatted(player);
+			case "autominer_time": {
+				int autominerTime = plugin.getAutoMiner().getManager().getAutoMinerTime(player);
+				return AutoMinerUtils.getAutoMinerTimeLeftFormatted(autominerTime);
+			}
 			case "tokens_formatted":
 			case "tokens_3":
 				return MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));

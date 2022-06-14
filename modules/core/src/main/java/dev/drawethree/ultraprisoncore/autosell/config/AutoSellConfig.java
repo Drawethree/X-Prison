@@ -36,7 +36,7 @@ public class AutoSellConfig {
         this.loadVariables();
     }
 
-    public void loadVariables() {
+    private void loadVariables() {
         this.loadMessages();
         this.autoSellBroadcastTime = this.getYamlConfig().getInt("auto_sell_broadcast.time");
         this.autoSellBroadcastMessage = this.getYamlConfig().getStringList("auto_sell_broadcast.message");
