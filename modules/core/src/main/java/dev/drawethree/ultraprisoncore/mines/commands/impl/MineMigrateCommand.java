@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import dev.drawethree.ultraprisoncore.mines.migration.MinesMigration;
+import dev.drawethree.ultraprisoncore.mines.migration.MinesMigrationFactory;
+import dev.drawethree.ultraprisoncore.mines.migration.MinesMigrationNotSupportedException;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
@@ -21,16 +23,21 @@ public class MineMigrateCommand extends MineCommand {
 		}
 
 		String pluginName = args.get(0);
+		MinesMigration migration;
 
-		MinesMigration migration = MinesMigration.fromPlugin(pluginName);
-
-		if (migration == null) {
+		try {
+			migration = this.getMinesMigrationFromPluginName(pluginName);
+		} catch (MinesMigrationNotSupportedException e) {
 			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_migration_invalid_plugin"));
 			return true;
 		}
 
 		migration.migrate(sender);
 		return true;
+	}
+
+	private MinesMigration getMinesMigrationFromPluginName(String pluginName) throws MinesMigrationNotSupportedException {
+		return MinesMigrationFactory.fromPlugin(pluginName);
 	}
 
 	@Override

@@ -18,10 +18,10 @@ public class MineResetLiteMigration extends MinesMigration {
 	}
 
 	@Override
-	public boolean migrate(CommandSender sender) {
+	public void migrate(CommandSender sender) {
 		if (this.plugin == null) {
 			PlayerUtils.sendMessage(sender, this.mines.getMessage("mine_migration_plugin_not_present").replace("%plugin%", this.fromPlugin));
-			return false;
+			return;
 		}
 
 		int completed = 0, failed = 0, skipped = 0;
@@ -52,6 +52,5 @@ public class MineResetLiteMigration extends MinesMigration {
 		PlayerUtils.sendMessage(sender, this.mines.getMessage("mine_migration_completed").replace("%plugin%", this.fromPlugin));
 		PlayerUtils.sendMessage(sender, this.mines.getMessage("mine_migration_result").replace("%plugin%", this.fromPlugin).replace("%completed%", String.format("%,d", completed)).replace("%skipped%", String.format("%,d", skipped)).replace("%failed%", String.format("%,d", failed)));
 
-		return true;
 	}
 }

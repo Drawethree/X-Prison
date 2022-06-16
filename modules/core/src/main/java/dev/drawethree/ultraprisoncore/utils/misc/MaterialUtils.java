@@ -2,30 +2,33 @@ package dev.drawethree.ultraprisoncore.utils.misc;
 
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class MaterialUtils {
 
-	public static Material getSmeltedForm(Material m) {
+	public static ItemStack getSmeltedFormAsItemStack(Material m) {
 		CompMaterial material = CompMaterial.fromMaterial(m);
 		switch (material) {
 			case STONE:
-				return Material.COBBLESTONE;
+				return CompMaterial.COBBLESTONE.toItem();
 			case COAL_ORE:
-				return Material.COAL;
+				return CompMaterial.COAL.toItem();
 			case DIAMOND_ORE:
-				return Material.DIAMOND;
+				return CompMaterial.DIAMOND.toItem();
 			case EMERALD_ORE:
-				return Material.EMERALD;
+				return CompMaterial.EMERALD.toItem();
 			case REDSTONE_ORE:
-				return Material.REDSTONE;
+				return CompMaterial.REDSTONE.toItem();
 			case GOLD_ORE:
-				return Material.GOLD_INGOT;
+				return CompMaterial.GOLD_INGOT.toItem();
 			case IRON_ORE:
-				return Material.IRON_INGOT;
+				return CompMaterial.IRON_INGOT.toItem();
 			case NETHER_QUARTZ_ORE:
-				return Material.QUARTZ;
+				return CompMaterial.QUARTZ.toItem();
+			case LAPIS_ORE:
+				return CompMaterial.LAPIS_LAZULI.toItem();
 			default:
-				return m;
+				return material.toItem();
 		}
 	}
 

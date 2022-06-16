@@ -13,14 +13,5 @@ public abstract class MinesMigration {
 		this.fromPlugin = fromPlugin;
 	}
 
-	public static MinesMigration fromPlugin(String pluginName) {
-		if ("jetsprisonmines".equalsIgnoreCase(pluginName)) {
-			return new JetsPrisonMinesMigration();
-		} else if ("mineresetlite".equalsIgnoreCase(pluginName)) {
-			return new MineResetLiteMigration();
-		}
-		return null;
-	}
-
-	public abstract boolean migrate(CommandSender sender);
+	public abstract void migrate(CommandSender sender);
 }

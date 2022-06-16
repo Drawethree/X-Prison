@@ -285,12 +285,21 @@ public class AutoSellManager {
             return true;
         }
 
+        player.getInventory().addItem(createItemStackToGive(player, block));
+        return true;
+    }
+
+    private ItemStack createItemStackToGive(Player player, Block block) {
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(player.getItemInHand());
 
-        ItemStack toGive = new ItemStack(this.plugin.getAutoSellConfig().isAutoSmelt() ? MaterialUtils.getSmeltedForm(block.getType()) : block.getType(), 1 + fortuneLevel);
-
-        player.getInventory().addItem(toGive);
-        return true;
+        ItemStack toGive;
+        if (this.plugin.getAutoSellConfig().isAutoSmelt()) {
+            toGive = MaterialUtils.getSmeltedFormAsItemStack(block.getType());
+        } else {
+            toGive = new ItemStack(block.getType());
+        }
+        toGive.setAmount(fortuneLevel + 1);
+        return toGive;
     }
 
     private void notifyInventoryFull(Player player) {
@@ -317,10 +326,8 @@ public class AutoSellManager {
             return false;
         }
 
-        int fortuneLevel = EnchantUtils.getItemFortuneLevel(player.getItemInHand());
 
-        ItemStack toGive = new ItemStack(this.plugin.getAutoSellConfig().isAutoSmelt() ? MaterialUtils.getSmeltedForm(block.getType()) : block.getType(), 1 + fortuneLevel);
-        Map<ItemStack, Double> itemsToSell = sellRegion.previewItemsSell(Collections.singletonList(toGive));
+        Map<ItemStack, Double> itemsToSell = sellRegion.previewItemsSell(Collections.singletonList(createItemStackToGive(player, block)));
 
         UltraPrisonAutoSellEvent event = this.callAutoSellEvent(player, sellRegion, itemsToSell);
 

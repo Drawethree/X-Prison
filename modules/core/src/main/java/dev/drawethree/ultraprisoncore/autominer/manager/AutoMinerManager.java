@@ -138,7 +138,7 @@ public class AutoMinerManager {
 		String regionName = configuration.getString("auto-miner-region.name");
 		Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world, regionName);
 
-		if (optRegion.isEmpty()) {
+		if (!optRegion.isPresent()) {
 			plugin.getCore().getLogger().warning(String.format("There is no such region named %s in world %s!  Disabling AutoMiner region.", regionName, world.getName()));
 			return;
 		}
