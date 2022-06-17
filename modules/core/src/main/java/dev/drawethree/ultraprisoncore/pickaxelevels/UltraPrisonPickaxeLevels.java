@@ -190,6 +190,10 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         return messages.get(key.toLowerCase());
     }
 
+    public PickaxeLevel getPickaxeLevel(int level) {
+        return this.pickaxeLevels.getOrDefault(level, null);
+    }
+
     public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
         if (itemStack == null || !this.getCore().isPickaxeSupported(itemStack.getType())) {
             return null;
@@ -206,7 +210,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
     public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
 
-        if (level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
+        if (level == null || level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
             return item;
         }
 
