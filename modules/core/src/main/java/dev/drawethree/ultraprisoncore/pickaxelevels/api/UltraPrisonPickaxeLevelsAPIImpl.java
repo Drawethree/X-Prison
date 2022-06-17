@@ -5,7 +5,7 @@ import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevelsAPI {
+public final class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevelsAPI {
 
 	private final UltraPrisonPickaxeLevels plugin;
 
