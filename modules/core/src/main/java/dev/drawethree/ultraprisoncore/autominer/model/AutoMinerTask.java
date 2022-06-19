@@ -91,7 +91,7 @@ public final class AutoMinerTask implements Runnable {
 
 	private boolean callAutoMineEvent(Player p) {
 		PlayerAutomineEvent event = this.region.getPlugin().getManager().callAutoMineEvent(p);
-		return event.isCancelled();
+		return !event.isCancelled();
 	}
 
 	private boolean checkPlayerItemInHand(Player p) {
