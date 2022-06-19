@@ -1,4 +1,4 @@
-package dev.drawethree.ultraprisoncore.mines.migration;
+package dev.drawethree.ultraprisoncore.mines.migration.exception;
 
 public class MinesMigrationNotSupportedException extends Throwable {
 

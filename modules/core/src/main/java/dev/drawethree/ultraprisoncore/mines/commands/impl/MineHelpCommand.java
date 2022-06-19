@@ -1,10 +1,11 @@
 package dev.drawethree.ultraprisoncore.mines.commands.impl;
 
-import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class MineHelpCommand extends MineCommand {
 
@@ -13,7 +14,7 @@ public class MineHelpCommand extends MineCommand {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+	public boolean execute(CommandSender sender, List<String> args) {
 		if (sender.hasPermission(UltraPrisonMines.MINES_ADMIN_PERM)) {
 			PlayerUtils.sendMessage(sender, "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------");
 			PlayerUtils.sendMessage(sender, "&e&lMINES ADMIN HELP MENU ");

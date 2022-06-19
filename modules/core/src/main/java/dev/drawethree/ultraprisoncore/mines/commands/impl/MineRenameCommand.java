@@ -1,10 +1,11 @@
 package dev.drawethree.ultraprisoncore.mines.commands.impl;
 
-import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class MineRenameCommand extends MineCommand {
 
@@ -13,7 +14,7 @@ public class MineRenameCommand extends MineCommand {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() != 2) {
 			return false;
 		}

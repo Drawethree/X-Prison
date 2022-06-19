@@ -12,7 +12,6 @@ public abstract class ConfirmationGui extends Gui {
 	private static final ItemStack YES_ITEM = ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&aYES").build();
 	private static final ItemStack NO_ITEM = ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name("&cNO").build();
 
-
 	public ConfirmationGui(Player player, String title) {
 		super(player, 6, title);
 	}

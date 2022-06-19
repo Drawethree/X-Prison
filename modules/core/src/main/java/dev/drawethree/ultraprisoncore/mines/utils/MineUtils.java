@@ -65,4 +65,8 @@ public class MineUtils {
 			e.printStackTrace();
 		}
 	}
+
+	private MineUtils() {
+		throw new UnsupportedOperationException("Cannot instantiate.");
+	}
 }

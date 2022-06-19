@@ -1,11 +1,12 @@
 package dev.drawethree.ultraprisoncore.mines.commands.impl;
 
-import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class MineResetCommand extends MineCommand {
 
@@ -14,7 +15,7 @@ public class MineResetCommand extends MineCommand {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+	public boolean execute(CommandSender sender, List<String> args) {
 
 		if (args.size() != 1) {
 			return false;

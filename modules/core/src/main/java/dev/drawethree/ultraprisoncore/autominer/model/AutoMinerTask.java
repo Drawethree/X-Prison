@@ -104,9 +104,11 @@ public final class AutoMinerTask implements Runnable {
 	}
 
 	private void executeCommands(Player p) {
+
 		if (this.region.getCommands().isEmpty()) {
 			return;
 		}
+
 		this.region.getCommands().forEach(c -> Schedulers.sync().run(() -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c.replace("%player%", p.getName()))));
 	}
 }

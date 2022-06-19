@@ -1,9 +1,10 @@
 package dev.drawethree.ultraprisoncore.mines.commands;
 
-import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public abstract class MineCommand {
 
@@ -19,7 +20,7 @@ public abstract class MineCommand {
 		this.aliases = aliases;
 	}
 
-	public abstract boolean execute(CommandSender sender, ImmutableList<String> args);
+	public abstract boolean execute(CommandSender sender, List<String> args);
 
 	public abstract String getUsage();
 

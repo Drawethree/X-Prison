@@ -310,12 +310,19 @@ public class MineManager {
 		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
 	}
 
-	public boolean addMineFromMigration(CommandSender sender, Mine migrated) {
-		if (!this.mines.containsKey(migrated.getName())) {
-			this.mines.put(migrated.getName(), migrated);
-			return true;
+	public boolean addMineFromMigration(Mine migrated) {
+
+		if (migrated == null) {
+			return false;
 		}
-		return false;
+
+		if (this.mines.containsKey(migrated.getName())) {
+			return false;
+		}
+
+		this.mines.put(migrated.getName(), migrated);
+
+		return true;
 	}
 
 	public void resetAllMines() {
