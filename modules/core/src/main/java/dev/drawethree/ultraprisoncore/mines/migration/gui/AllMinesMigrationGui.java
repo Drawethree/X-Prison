@@ -30,7 +30,7 @@ public final class AllMinesMigrationGui extends Gui {
 			.mask("100000001");
 
 	public AllMinesMigrationGui(Player player) {
-		super(player, 6, "Mines Migration");
+		super(player, 5, "Mines Migration");
 	}
 
 	@Override
