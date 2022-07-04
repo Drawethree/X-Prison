@@ -195,6 +195,13 @@ public class PrestigeManager {
 		return this.prestigeById.getOrDefault(prestige.getId() + 1, null);
 	}
 
+	public Prestige getPrestigeById(long id) {
+		if (this.unlimitedPrestiges) {
+			return new Prestige(id, id * increaseCostBy, this.unlimitedPrestigePrefix.replace("%prestige%", String.format("%,d", id)), this.unlimitedPrestigesRewards.getOrDefault(id, null));
+		}
+		return this.prestigeById.getOrDefault(id, null);
+	}
+
 	public synchronized Prestige getPlayerPrestige(Player p) {
 		if (this.unlimitedPrestiges) {
 			long prestige = this.onlinePlayersPrestige.getOrDefault(p.getUniqueId(), 0L);
@@ -434,14 +441,40 @@ public class PrestigeManager {
 			return;
 		}
 
-		Prestige currentPrestige = this.getPlayerPrestige(target);
+		Prestige startPrestige = this.getPlayerPrestige(target);
 
 		long maxPrestige = this.unlimitedPrestiges ? this.unlimitedPrestigeMax : this.maxPrestige.getId();
-		if (currentPrestige.getId() + amount > maxPrestige) {
+		if (startPrestige.getId() + amount > maxPrestige) {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), maxPrestige);
 		} else {
 			this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) + amount);
 		}
+
+		Prestige currentPrestige = this.getPlayerPrestige(target);
+
+		long prestigeGained = currentPrestige.getId() - startPrestige.getId();
+
+		for (int i = 0; i < prestigeGained; i++) {
+			Prestige toGive = this.getPrestigeById(currentPrestige.getId() + 1 + i);
+
+			if (toGive == null) {
+				break;
+			}
+
+			toGive.runCommands(target);
+
+			if (this.unlimitedPrestigesRewardPerPrestige != null) {
+				if (!Bukkit.isPrimaryThread()) {
+					Schedulers.sync().run(() -> this.unlimitedPrestigesRewardPerPrestige.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", target.getName()))));
+				} else {
+					this.unlimitedPrestigesRewardPerPrestige.forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", target.getName())));
+				}
+			}
+		}
+
+		PlayerPrestigeEvent event = new PlayerPrestigeEvent(target, startPrestige, currentPrestige);
+
+		Events.callSync(event);
 
 		PlayerUtils.sendMessage(sender, this.plugin.getMessage("prestige_add").replace("%player%", target.getName()).replace("%amount%", String.format("%,d", amount)));
 	}
