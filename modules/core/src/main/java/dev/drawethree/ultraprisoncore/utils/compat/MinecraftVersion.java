@@ -23,7 +23,8 @@ public final class MinecraftVersion {
 	 * The version wrapper
 	 */
 	public enum V {
-		v1_19(19, false),
+		v1_20(20, false),
+		v1_19(19),
 		v1_18(18),
 		v1_17(17),
 		v1_16(16),
@@ -79,7 +80,7 @@ public final class MinecraftVersion {
 		 * @return
 		 * @throws RuntimeException if number not found
 		 */
-		protected static V parse(int number) {
+		private static V parse(int number) {
 			for (final V v : values()) {
 				if (v.minorVersionNumber == number) {
 					return v;
@@ -179,6 +180,12 @@ public final class MinecraftVersion {
 				}
 
 				final String numericVersion = curr.substring(1, pos - 2).replace("_", ".");
+
+				int found = 0;
+
+				for (final char ch : numericVersion.toCharArray())
+					if (ch == '.')
+						found++;
 
 				current = V.parse(Integer.parseInt(numericVersion.split("\\.")[1]));
 
