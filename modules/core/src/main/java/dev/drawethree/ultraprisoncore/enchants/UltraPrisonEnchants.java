@@ -244,10 +244,14 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				.assertPlayer()
 				.assertPermission("ultraprison.value", this.getMessage("value_no_permission"))
 				.handler(c -> {
-					if (!valueCooldown.test(c.sender())) {
-						PlayerUtils.sendMessage(c.sender(), this.getMessage("value_cooldown").replace("%time%", String.valueOf(valueCooldown.remainingTime(c.sender(), TimeUnit.SECONDS))));
-						return;
+
+					if (!c.sender().isOp()) {
+						if (!valueCooldown.test(c.sender())) {
+							PlayerUtils.sendMessage(c.sender(), this.getMessage("value_cooldown").replace("%time%", String.valueOf(valueCooldown.remainingTime(c.sender(), TimeUnit.SECONDS))));
+							return;
+						}
 					}
+
 					ItemStack pickAxe = c.sender().getItemInHand();
 
 					if (pickAxe == null || !this.getCore().isPickaxeSupported(pickAxe.getType())) {
