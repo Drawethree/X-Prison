@@ -5,7 +5,7 @@
     <parent>
         <artifactId>UltraPrisonCore</artifactId>
         <groupId>me.drawethree</groupId>
-        <version>1.11.8</version>
+        <version>1.11.10</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
