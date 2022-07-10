@@ -1,6 +1,7 @@
 package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
 
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
+import dev.drawethree.ultrabackpacks.api.exception.BackpackNotFoundException;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
@@ -40,7 +41,11 @@ public final class AutoSellEnchant extends UltraPrisonEnchantment {
 
 		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 			if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
-				UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
+				try {
+					UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
+				} catch (BackpackNotFoundException ignored) {
+					this.plugin.getCore().debug("AutoSellEnchant::onBlockBreak > Player " + e.getPlayer().getName() + " does not have backpack.", this.plugin);
+				}
 			} else if (this.plugin.getCore().isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME)) {
 				this.plugin.getCore().getAutoSell().getManager().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()));
 			}
