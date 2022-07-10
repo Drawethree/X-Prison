@@ -76,7 +76,13 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 		new PrestigeFinderEnchant(UltraPrisonEnchants.getInstance()).register();
 		new BlockBoosterEnchant(UltraPrisonEnchants.getInstance()).register();
 		new KeyallsEnchant(UltraPrisonEnchants.getInstance()).register();
-		new AutoSellEnchant(UltraPrisonEnchants.getInstance()).register();
+
+		if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
+			new BackpackAutoSellEnchant(UltraPrisonEnchants.getInstance()).register();
+		} else {
+			new AutoSellEnchant(UltraPrisonEnchants.getInstance()).register();
+		}
+
 		new VoucherFinderEnchant(UltraPrisonEnchants.getInstance()).register();
 		new NukeEnchant(UltraPrisonEnchants.getInstance()).register();
 		new GemFinderEnchant(UltraPrisonEnchants.getInstance()).register();

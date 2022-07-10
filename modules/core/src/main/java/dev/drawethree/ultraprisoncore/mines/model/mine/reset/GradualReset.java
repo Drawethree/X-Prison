@@ -22,10 +22,12 @@ public class GradualReset extends ResetType {
 
 	@Override
 	public void reset(Mine paramMine, BlockPalette blockPalette) {
+
 		if (blockPalette.isEmpty()) {
 			UltraPrisonCore.getInstance().getLogger().warning("Reset for Mine " + paramMine.getName() + " aborted. Block palette is empty.");
 			return;
 		}
+
 		this.schedule(paramMine, blockPalette, paramMine.getBlocksIterator());
 	}
 
@@ -33,7 +35,7 @@ public class GradualReset extends ResetType {
 	private void schedule(final Mine mine, BlockPalette blockPalette, Iterator<Block> blocksIterator) {
 		Schedulers.sync().runLater(() -> {
 			int changes = 0;
-			RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getMaterials(), blockPalette::getPercentage);
+			RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
 			while (blocksIterator.hasNext() && changes <= CHANGES_PER_TICK) {
 				CompMaterial pick = selector.pick();
 				Block b = blocksIterator.next();

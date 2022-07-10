@@ -9,7 +9,10 @@ import dev.drawethree.ultraprisoncore.mines.gui.MinePanelGUI;
 import dev.drawethree.ultraprisoncore.mines.model.mine.HologramType;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.mines.model.mine.MineSelection;
-import dev.drawethree.ultraprisoncore.mines.utils.MineUtils;
+import dev.drawethree.ultraprisoncore.mines.model.mine.loader.MineFileLoader;
+import dev.drawethree.ultraprisoncore.mines.model.mine.loader.MineLoader;
+import dev.drawethree.ultraprisoncore.mines.model.mine.saver.MineFileSaver;
+import dev.drawethree.ultraprisoncore.mines.model.mine.saver.MineSaver;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import dev.drawethree.ultraprisoncore.utils.location.LocationUtils;
 import dev.drawethree.ultraprisoncore.utils.misc.TimeUtil;
@@ -36,8 +39,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -45,6 +46,9 @@ import java.util.stream.Collectors;
 public class MineManager {
 
 	public static final ItemStack SELECTION_TOOL = ItemStackBuilder.of(Material.STICK).enchant(Enchantment.DURABILITY).name("&eMine Selection Tool").lore("&aRight-Click &fto set &aPosition 1 &7(MIN)", "&aLeft-Click &fto set &aPosition 2 &7(MAX)").build();
+
+	private final MineLoader mineLoader;
+	private final MineSaver mineSaver;
 
 	@Getter
 	private final UltraPrisonMines plugin;
@@ -64,6 +68,8 @@ public class MineManager {
 		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
 		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
 		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
+		this.mineLoader = new MineFileLoader(this);
+		this.mineSaver = new MineFileSaver(this);
 		this.setupMinesDirectory();
 		this.loadMines();
 	}
@@ -107,28 +113,26 @@ public class MineManager {
 			if (!file.getName().endsWith(".json")) {
 				continue;
 			}
-			try (FileReader reader = new FileReader(file)) {
-				Mine mine = MineUtils.load(this, reader, file.getName());
-				if (mine == null) {
-					continue;
-				}
-				this.mines.put(mine.getName(), mine);
-				this.plugin.getCore().getLogger().info("Loaded Mine " + mine.getName());
 
-				double ratio = (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0;
+			Mine mine = this.mineLoader.load(file);
 
-				if (ratio <= mine.getResetPercentage() && !mine.isResetting()) {
-					this.resetMine(mine);
-				}
+			if (mine == null) {
+				continue;
+			}
 
-			} catch (IOException e) {
-				e.printStackTrace();
+			this.mines.put(mine.getName(), mine);
+			this.plugin.getCore().getLogger().info("Loaded Mine " + mine.getName());
+
+			double ratio = (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0;
+
+			if (ratio <= mine.getResetPercentage() && !mine.isResetting()) {
+				this.resetMine(mine);
 			}
 		}
 	}
 
 	private void saveMines() {
-		this.getMines().forEach(MineUtils::save);
+		this.getMines().forEach(this.mineSaver::save);
 	}
 
 	public void selectPosition(Player player, int position, Position pos) {
@@ -187,7 +191,7 @@ public class MineManager {
 
 		this.mines.put(mine.getName(), mine);
 
-		MineUtils.save(mine);
+		this.mineSaver.save(mine);
 
 		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_created").replace("%mine%", name));
 		return true;
@@ -491,7 +495,7 @@ public class MineManager {
 		mine.setName(newName);
 		this.mines.put(newName, mine);
 
-		MineUtils.save(mine);
+		this.mineSaver.save(mine);
 
 		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_renamed").replace("%mine%", oldMineName).replace("%new_name%", newName));
 		return true;
@@ -534,5 +538,13 @@ public class MineManager {
 
 		PlayerUtils.sendMessage(creator, this.plugin.getMessage("mine_redefined").replace("%mine%", name));
 		return true;
+	}
+
+	public MineLoader getMineLoader() {
+		return mineLoader;
+	}
+
+	public MineSaver getMineSaver() {
+		return mineSaver;
 	}
 }

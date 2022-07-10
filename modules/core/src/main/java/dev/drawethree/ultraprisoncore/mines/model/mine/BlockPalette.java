@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class BlockPalette implements GsonSerializable {
 
@@ -33,6 +34,9 @@ public class BlockPalette implements GsonSerializable {
 		for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
 			CompMaterial material = CompMaterial.valueOf(entry.getKey());
 			double percentage = entry.getValue().getAsDouble();
+			if (percentage <= 0.0) {
+				continue;
+			}
 			blocks.put(material, percentage);
 		}
 
@@ -48,7 +52,11 @@ public class BlockPalette implements GsonSerializable {
 	}
 
 	public void setPercentage(CompMaterial material, double newPercentage) {
-		this.blockPercentages.put(material, newPercentage);
+		if (newPercentage <= 0.0) {
+			this.blockPercentages.remove(material);
+		} else {
+			this.blockPercentages.put(material, newPercentage);
+		}
 	}
 
 	public void addToPalette(CompMaterial material, double percentage) {
@@ -61,6 +69,10 @@ public class BlockPalette implements GsonSerializable {
 
 	public Set<CompMaterial> getMaterials() {
 		return this.blockPercentages.keySet();
+	}
+
+	public Set<CompMaterial> getValidMaterials() {
+		return this.blockPercentages.keySet().stream().filter(material -> getPercentage(material) > 0.0).collect(Collectors.toSet());
 	}
 
 	public double getTotalPercentage() {

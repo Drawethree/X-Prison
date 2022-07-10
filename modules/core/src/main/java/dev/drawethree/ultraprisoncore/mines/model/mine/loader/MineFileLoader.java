@@ -1,4 +1,4 @@
-package dev.drawethree.ultraprisoncore.mines.utils;
+package dev.drawethree.ultraprisoncore.mines.model.mine.loader;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,16 +12,22 @@ import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Region;
 import org.bukkit.potion.PotionEffectType;
 
+import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MineUtils {
+public class MineFileLoader implements MineLoader<File> {
 
-	public static Mine load(MineManager manager, FileReader reader, String fileName) {
-		try {
+	private final MineManager manager;
+
+	public MineFileLoader(MineManager manager) {
+		this.manager = manager;
+	}
+
+	@Override
+	public Mine load(File file) {
+		try (FileReader reader = new FileReader(file)) {
 			JsonObject obj = GsonProvider.readObject(reader);
 
 			String name = obj.get("name").getAsString();
@@ -50,23 +56,11 @@ public class MineUtils {
 				}
 			}
 
-			return new Mine(manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
+			return new Mine(this.manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
 		} catch (Exception e) {
-			manager.getPlugin().getCore().getLogger().warning("Unable to load mine " + fileName + "!");
+			this.manager.getPlugin().getCore().getLogger().warning("Unable to load mine " + file.getName() + "!");
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	public static void save(Mine mine) {
-		try (FileWriter writer = new FileWriter(mine.getFile())) {
-			GsonProvider.writeObjectPretty(writer, mine.serialize().getAsJsonObject());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private MineUtils() {
-		throw new UnsupportedOperationException("Cannot instantiate.");
 	}
 }
