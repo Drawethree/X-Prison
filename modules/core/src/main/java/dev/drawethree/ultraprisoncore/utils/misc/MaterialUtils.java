@@ -1,13 +1,13 @@
 package dev.drawethree.ultraprisoncore.utils.misc;
 
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
-import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 public class MaterialUtils {
 
-	public static ItemStack getSmeltedFormAsItemStack(Material m) {
-		CompMaterial material = CompMaterial.fromMaterial(m);
+	public static ItemStack getSmeltedFormAsItemStack(Block block) {
+		CompMaterial material = CompMaterial.fromBlock(block);
 		switch (material) {
 			case STONE:
 				return CompMaterial.COBBLESTONE.toItem();

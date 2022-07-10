@@ -293,10 +293,11 @@ public class AutoSellManager {
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(player.getItemInHand());
 
         ItemStack toGive;
+
         if (this.plugin.getAutoSellConfig().isAutoSmelt()) {
-            toGive = MaterialUtils.getSmeltedFormAsItemStack(block.getType());
+            toGive = MaterialUtils.getSmeltedFormAsItemStack(block);
         } else {
-            toGive = new ItemStack(block.getType());
+            toGive = CompMaterial.fromBlock(block).toItem();
         }
         toGive.setAmount(fortuneLevel + 1);
         return toGive;

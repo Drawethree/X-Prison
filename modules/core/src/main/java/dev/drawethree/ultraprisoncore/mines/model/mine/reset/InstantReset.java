@@ -26,7 +26,7 @@ public class InstantReset extends ResetType {
 			return;
 		}
 
-		RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getMaterials(), blockPalette::getPercentage);
+		RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
 
 		Position min = mine.getMineRegion().getMin();
 		Position max = mine.getMineRegion().getMax();

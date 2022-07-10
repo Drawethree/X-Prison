@@ -303,7 +303,13 @@ public class Mine implements GsonSerializable {
 	private void subscribeEvents() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.MONITOR)
 				.filter(e -> isInMine(e.getBlock().getLocation()) && !e.isCancelled())
-				.handler(e -> this.handleBlockBreak(Arrays.asList(e.getBlock()))).bindWith(this.manager.getPlugin().getCore());
+				.handler(e -> {
+					if (isResetting()) {
+						e.setCancelled(true);
+						return;
+					}
+					this.handleBlockBreak(Arrays.asList(e.getBlock()));
+				}).bindWith(this.manager.getPlugin().getCore());
 	}
 
 	public void updateCurrentBlocks() {
