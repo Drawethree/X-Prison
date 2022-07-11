@@ -35,14 +35,14 @@ import java.util.concurrent.TimeUnit;
 public class TokensManager {
 
 
-	private UltraPrisonTokens plugin;
+	private final UltraPrisonTokens plugin;
 
 	private List<String> tokensTopFormat;
 	private List<String> blocksTopFormat;
 	private List<String> blocksTopFormatWeekly;
-	private HashMap<UUID, Long> tokensCache = new HashMap<>();
-	private HashMap<UUID, Long> blocksCache = new HashMap<>();
-	private HashMap<UUID, Long> blocksCacheWeekly = new HashMap<>();
+	private final HashMap<UUID, Long> tokensCache = new HashMap<>();
+	private final HashMap<UUID, Long> blocksCache = new HashMap<>();
+	private final HashMap<UUID, Long> blocksCacheWeekly = new HashMap<>();
 
 	private LinkedHashMap<UUID, Long> top10Tokens = new LinkedHashMap<>();
 	private LinkedHashMap<UUID, Long> top10Blocks = new LinkedHashMap<>();
@@ -61,9 +61,9 @@ public class TokensManager {
 	private ItemStack tokenItem;
 	private List<String> tokenItemLore;
 
-	private List<UUID> tokenMessageOnPlayers;
+	private final List<UUID> tokenMessageOnPlayers;
 
-	private long startingTokens;
+	private final long startingTokens;
 
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
@@ -219,7 +219,7 @@ public class TokensManager {
 
 		long finalAmount = this.callTokensReceiveEvent(cause, p, amount);
 
-		this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
+		this.plugin.getCore().debug("UltraPrison PlayerTokenReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
 
 		if (!p.isOnline()) {
 			this.plugin.getCore().getPluginDatabase().updateTokens(p, finalAmount + currentTokens);

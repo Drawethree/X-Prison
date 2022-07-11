@@ -5,6 +5,7 @@ import dev.drawethree.ultraprisoncore.autominer.utils.AutoMinerUtils;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
+import dev.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.ultraprisoncore.ranks.model.Rank;
@@ -162,6 +163,14 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 					return String.format("%.2f", 0.0);
 				} else {
 					return String.format("%.2f", (1.0 + tokenMulti.getMultiplier()));
+				}
+			}
+			case "multiplier_rank": {
+				Multiplier rankMulti = plugin.getMultipliers().getApi().getRankMultiplier(player);
+				if (rankMulti == null) {
+					return String.format("%.2f", 0.0);
+				} else {
+					return String.format("%.2f", rankMulti.getMultiplier());
 				}
 			}
 			case "multiplier_global_sell": {

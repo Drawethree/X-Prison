@@ -87,6 +87,11 @@ public class CommandManager {
                     }
                 }).registerAndBind(this.plugin.getCore(), "gemstop", "gemtop");
 
+        // /gemsmessage
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> this.plugin.getGemsManager().toggleGemsMessage(c.sender())).registerAndBind(this.plugin.getCore(), "gemmessage", "gemsmessage");
+
     }
 
     private void registerCommand(GemsCommand command) {
