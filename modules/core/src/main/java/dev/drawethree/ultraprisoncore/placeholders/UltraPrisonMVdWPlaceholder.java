@@ -12,6 +12,7 @@ import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
+import dev.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
@@ -195,6 +196,15 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_global_token", event -> {
 			GlobalMultiplier tokenMulti = plugin.getMultipliers().getApi().getGlobalTokenMultiplier();
 			return String.format("%.2f", tokenMulti.isExpired() ? 0.0 : tokenMulti.getMultiplier());
+		});
+
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_multiplier_rank", event -> {
+			Multiplier rankMulti = plugin.getMultipliers().getApi().getRankMultiplier(event.getPlayer());
+			if (rankMulti == null) {
+				return String.format("%.2f", 0.0);
+			} else {
+				return String.format("%.2f", rankMulti.getMultiplier());
+			}
 		});
 	}
 
