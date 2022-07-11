@@ -38,21 +38,27 @@ public class GemsManager {
 	private LinkedHashMap<UUID, Long> top10Gems = new LinkedHashMap<>();
 	private Task task;
 	private boolean updating;
+	private boolean displayGemsMessages;
 
 	private String gemsItemDisplayName;
 	private ItemStack gemsItem;
 	private List<String> gemsItemLore;
+	private final List<UUID> gemsMessageOnPlayers;
 
 	private long startingGems;
 
 	public GemsManager(UltraPrisonGems plugin) {
 		this.plugin = plugin;
+		this.gemsMessageOnPlayers = new ArrayList<>();
 		this.reload();
 
 		Events.subscribe(PlayerJoinEvent.class)
 				.handler(e -> {
 					this.addIntoTable(e.getPlayer());
 					this.loadPlayerData(e.getPlayer());
+					if (this.displayGemsMessages && hasOffGemsMessages(e.getPlayer())) {
+						this.gemsMessageOnPlayers.add(e.getPlayer().getUniqueId());
+					}
 				}).bindWith(plugin.getCore());
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
@@ -68,6 +74,7 @@ public class GemsManager {
 		this.SPACER_LINE = plugin.getMessage("top_spacer_line");
 		this.SPACER_LINE_BOTTOM = plugin.getMessage("top_spacer_line_bottom");
 		this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
+		this.displayGemsMessages = plugin.getConfig().get().getBoolean("display-gems-messages");
 		this.gemsItemDisplayName = plugin.getConfig().get().getString("gems.item.name");
 		this.gemsItemLore = plugin.getConfig().get().getStringList("gems.item.lore");
 		this.gemsItem = CompMaterial.fromString(plugin.getConfig().get().getString("gems.item.material")).toItem();
@@ -160,9 +167,9 @@ public class GemsManager {
 			this.plugin.getCore().getPluginDatabase().updateGems(p, finalAmount + currentGems);
 		} else {
 			gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-			if (executor != null && executor instanceof ConsoleCommandSender /*&& !this.hasOffGemsMessages(p.getPlayer())*/) {
+			if (executor != null && executor instanceof ConsoleCommandSender && !this.hasOffGemsMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), plugin.getMessage("gems_received_console").replace("%gems%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
-			} else if (cause == ReceiveCause.MINING /*&& !this.hasOffTokenMessages(p.getPlayer())*/) {
+			} else if (cause == ReceiveCause.MINING && !this.hasOffGemsMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("gems_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
 			}
 		}
@@ -344,6 +351,21 @@ public class GemsManager {
 			}
 			PlayerUtils.sendMessage(sender, SPACER_LINE_BOTTOM);
 		});
+	}
+
+
+	public void toggleGemsMessage(Player p) {
+		if (this.gemsMessageOnPlayers.contains(p.getUniqueId())) {
+			PlayerUtils.sendMessage(p, plugin.getMessage("gems_message_disabled"));
+			this.gemsMessageOnPlayers.remove(p.getUniqueId());
+		} else {
+			PlayerUtils.sendMessage(p, plugin.getMessage("gems_message_enabled"));
+			this.gemsMessageOnPlayers.add(p.getUniqueId());
+		}
+	}
+
+	public boolean hasOffGemsMessages(Player p) {
+		return !this.gemsMessageOnPlayers.contains(p.getUniqueId());
 	}
 
 	public Material getGemsItemMaterial() {
