@@ -21,6 +21,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.*;
@@ -52,6 +53,7 @@ public class GangsManager {
 
 	private boolean updating;
 	private boolean enableColorCodes;
+	private boolean gangFriendlyFire;
 	private List<Gang> topGangs;
 
 	private Task task;
@@ -60,12 +62,30 @@ public class GangsManager {
 		this.plugin = plugin;
 		this.pendingInvites = new HashMap<>(25);
 		this.gangChatEnabledPlayers = new ArrayList<>(50);
+	}
 
+	public void enable() {
 		this.reloadConfig();
-
 		this.loadGangs();
 		this.updateTop10();
+		this.subscribeEvents();
+	}
 
+	private void subscribeEvents() {
+		Events.subscribe(EntityDamageByEntityEvent.class, EventPriority.HIGHEST)
+				.filter(e -> e.getDamager() instanceof Player && e.getEntity() instanceof Player)
+				.handler(e -> {
+					if (this.gangFriendlyFire) {
+						return;
+					}
+					Player player = (Player) e.getEntity();
+					Player damager = (Player) e.getDamager();
+
+					if (this.arePlayersInSameGang(player, damager)) {
+						e.setCancelled(true);
+					}
+
+				}).bindWith(this.plugin.getCore());
 		Events.subscribe(AsyncPlayerChatEvent.class, this.gangChatPriority)
 				.filter(e -> this.hasGangChatEnabled(e.getPlayer()))
 				.handler(e -> {
@@ -88,6 +108,17 @@ public class GangsManager {
 				}).bindWith(this.plugin.getCore());
 	}
 
+	private boolean arePlayersInSameGang(Player player1, Player player2) {
+		Optional<Gang> player1Gang = this.getPlayerGang(player1);
+		Optional<Gang> player2Gang = this.getPlayerGang(player2);
+
+		if (!player1Gang.isPresent() || !player2Gang.isPresent()) {
+			return false;
+		}
+
+		return player1Gang.get().equals(player2Gang.get());
+	}
+
 	private void loadGangs() {
 		this.gangs = new HashMap<>();
 		Schedulers.async().run(() -> {
@@ -107,11 +138,12 @@ public class GangsManager {
 		this.maxGangMembers = this.plugin.getConfig().get().getInt("max-gang-members");
 		this.maxGangNameLength = this.plugin.getConfig().get().getInt("max-gang-name-length");
 		this.enableColorCodes = this.plugin.getConfig().get().getBoolean("color-codes-in-gang-name");
+		this.gangFriendlyFire = this.plugin.getConfig().get().getBoolean("gang-friendly-fire");
 		this.gangChatPriority = EventPriority.valueOf(this.plugin.getConfig().get().getString("gang-chat-priority"));
 		this.restrictedNames = this.plugin.getConfig().get().getStringList("restricted-names");
 	}
 
-	public void saveDataOnDisable() {
+	private void saveDataOnDisable() {
 		for (Gang g : this.gangs.values()) {
 			this.plugin.getCore().getPluginDatabase().updateGang(g);
 		}
@@ -608,5 +640,9 @@ public class GangsManager {
 			PlayerUtils.sendMessage(sender, "§cInvalid operation given.");
 			return false;
 		}
+	}
+
+	public void disable() {
+		this.saveDataOnDisable();
 	}
 }
