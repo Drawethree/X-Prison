@@ -8,6 +8,8 @@ max-gang-name-length: 10
 color-codes-in-gang-name: true
 # EventPriority for listening for gang chat (Do not touch if you do now know)
 gang-chat-priority: LOW
+# Can players in the same gang hit each other ?
+gang-friendly-fire: false
 # PAPI/MVdW Placeholders replacements
 placeholders:
   gang-without: '&c✗'

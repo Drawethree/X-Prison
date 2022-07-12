@@ -92,17 +92,17 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		this.loadPlaceholders();
 
 		this.gangsManager = new GangsManager(this);
+		this.gangsManager.enable();
 
 		this.api = new UltraPrisonGangsAPIImpl(this.gangsManager);
 
 		this.registerCommands();
-		this.registerEvents();
 	}
 
 
 	@Override
 	public void disable() {
-		this.gangsManager.saveDataOnDisable();
+		this.gangsManager.disable();
 		this.enabled = false;
 	}
 
