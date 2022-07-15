@@ -70,6 +70,9 @@ public class MineManager {
 		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
 		this.mineLoader = new MineFileLoader(this);
 		this.mineSaver = new MineFileSaver(this);
+	}
+
+	public void enable() {
 		this.setupMinesDirectory();
 		this.loadMines();
 	}
@@ -205,6 +208,10 @@ public class MineManager {
 			return false;
 		}
 
+		return deleteMine(sender, mine);
+	}
+
+	public boolean deleteMine(CommandSender sender, Mine mine) {
 		MineDeleteEvent event = new MineDeleteEvent(mine);
 
 		Events.call(event);
@@ -218,18 +225,9 @@ public class MineManager {
 			mine.getFile().delete();
 		}
 
+		mine.stopTicking();
+
 		this.despawnHolograms(mine);
-
-		this.mines.remove(mine.getName());
-
-		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_deleted").replace("%mine%", name));
-		return true;
-	}
-
-	public boolean deleteMine(CommandSender sender, Mine mine) {
-		if (mine.getFile() != null) {
-			mine.getFile().delete();
-		}
 
 		this.mines.remove(mine.getName());
 

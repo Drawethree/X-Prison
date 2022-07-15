@@ -13,6 +13,10 @@ levels:
     # Commands executed when reaching this level
     rewards:
       - 'eco give %player% 1000'
+# Progress bar delimiter
+progress-bar-delimiter: ":"
+# Length of progress bar
+progress-bar-length: 20
 messages:
   pickaxe-level-up: "&e&lPICKAXE &8» &7Your current pickaxe just leveled up to &eLevel %level%&7!"
   pickaxe-progress: "&e&lPICKAXE &8» &7Current progress: &c%blocks%&7/&a%blocks_required% Blocks"

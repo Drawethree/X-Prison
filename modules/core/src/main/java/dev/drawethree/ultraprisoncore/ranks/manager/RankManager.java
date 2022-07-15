@@ -27,8 +27,9 @@ public class RankManager {
 	private Map<UUID, Integer> onlinePlayersRanks = new HashMap<>();
 
 	private Rank maxRank;
-
 	private boolean useTokensCurrency;
+	private String progressBarDelimiter;
+	private int progressBarLength;
 
 	public RankManager(UltraPrisonRanks plugin) {
 		this.plugin = plugin;
@@ -86,6 +87,8 @@ public class RankManager {
 
 	public void reload() {
 		this.useTokensCurrency = plugin.getConfig().get().getBoolean("use_tokens_currency");
+		this.progressBarDelimiter = plugin.getConfig().get().getString("progress-bar-delimiter");
+		this.progressBarLength = plugin.getConfig().get().getInt("progress-bar-length");
 
 		this.plugin.getCore().getLogger().info("Using " + (useTokensCurrency ? "Tokens" : "Money") + " currency for Ranks.");
 
@@ -349,6 +352,6 @@ public class RankManager {
 			currentProgress = 100;
 		}
 
-		return ProgressBar.getProgressBar(20, ":", currentProgress, required);
+		return ProgressBar.getProgressBar(this.progressBarLength, this.progressBarDelimiter, currentProgress, required);
 	}
 }

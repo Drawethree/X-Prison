@@ -37,3 +37,11 @@ gems:
 gems-command-cooldown: 5
 # Should players receive gems messages when mining?
 display-gems-messages: true
+# Aliases for /gems command
+gems-command-aliases:
+  - gem
+  - gems
+# Aliases for /gemstop command
+gems-top-command-aliases:
+  - blocktop
+  - blockstop

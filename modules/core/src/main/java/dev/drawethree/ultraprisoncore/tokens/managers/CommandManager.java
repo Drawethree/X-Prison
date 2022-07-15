@@ -28,11 +28,16 @@ public class CommandManager {
 	private final Set<TokensCommand> commands;
 	private CooldownMap<CommandSender> tokensCommandCooldownMap;
 
+	private String[] tokensCommandAliases;
+	private String[] tokensTopCommandAliases;
+	private String[] blocksTopCommandAliases;
+
 	public CommandManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
 		this.commands = new HashSet<>();
 		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getCommandCooldown(), TimeUnit.SECONDS));
 	}
+
 
 	private boolean checkCommandCooldown(CommandSender sender) {
 		if (sender.hasPermission(TOKENS_ADMIN_PERM)) {
@@ -45,7 +50,7 @@ public class CommandManager {
 		return true;
 	}
 
-	public void registerCommands() {
+	private void registerCommands() {
 		this.commands.clear();
 
 		this.registerCommand(new TokensGiveCommand(this));
@@ -78,7 +83,7 @@ public class CommandManager {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target, true);
 					}
-				}).registerAndBind(this.plugin.getCore(), "tokens", "token");
+				}).registerAndBind(this.plugin.getCore(), this.tokensCommandAliases);
 
 		// /tokenmessage
 		Commands.create()
@@ -94,7 +99,7 @@ public class CommandManager {
 						this.plugin.getTokensManager().sendBlocksTop(c.sender());
 					}
 				})
-				.registerAndBind(this.plugin.getCore(), "blockstop", "blocktop");
+				.registerAndBind(this.plugin.getCore(), this.blocksTopCommandAliases);
 
 		// /blockstopweekly, /blockstopw
 		Commands.create()
@@ -122,7 +127,7 @@ public class CommandManager {
 						this.plugin.getTokensManager().sendTokensTop(c.sender());
 					}
 				})
-				.registerAndBind(this.plugin.getCore(), "tokenstop", "tokentop");
+				.registerAndBind(this.plugin.getCore(), this.tokensTopCommandAliases);
 
 		// /blocks
 		Commands.create()
@@ -202,5 +207,17 @@ public class CommandManager {
 		Map<CommandSender, Cooldown> cooldownMap = this.tokensCommandCooldownMap.getAll();
 		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getCommandCooldown(), TimeUnit.SECONDS));
 		cooldownMap.forEach((commandSender, cooldown) -> this.tokensCommandCooldownMap.put(commandSender, cooldown));
+		this.loadVariables();
+	}
+
+	public void enable() {
+		this.loadVariables();
+		this.registerCommands();
+	}
+
+	private void loadVariables() {
+		this.tokensCommandAliases = this.plugin.getConfig().get().getStringList("tokens-command-aliases").toArray(new String[0]);
+		this.tokensTopCommandAliases = this.plugin.getConfig().get().getStringList("tokens-top-command-aliases").toArray(new String[0]);
+		this.blocksTopCommandAliases = this.plugin.getConfig().get().getStringList("blocks-top-command-aliases").toArray(new String[0]);
 	}
 }

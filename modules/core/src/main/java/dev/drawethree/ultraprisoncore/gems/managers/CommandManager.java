@@ -26,6 +26,8 @@ public class CommandManager {
     private final UltraPrisonGems plugin;
     private final Set<GemsCommand> commands;
     private CooldownMap<CommandSender> gemsCommandCooldownMap;
+    private String[] gemsCommandAliases;
+    private String[] gemsTopCommandAliases;
 
     public CommandManager(UltraPrisonGems plugin) {
         this.plugin = plugin;
@@ -44,7 +46,7 @@ public class CommandManager {
         return true;
     }
 
-    public void registerCommands() {
+    private void registerCommands() {
 
         this.commands.clear();
 
@@ -55,10 +57,8 @@ public class CommandManager {
         this.registerCommand(new GemsWithdrawCommand(this));
         this.registerCommand(new GemsHelpCommand(this));
 
-
         Commands.create()
                 .handler(c -> {
-
                     if (c.args().size() == 0 && c.sender() instanceof Player) {
                         this.plugin.getGemsManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
                         return;
@@ -79,13 +79,13 @@ public class CommandManager {
                         this.plugin.getGemsManager().sendInfoMessage(c.sender(), target);
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), "gems");
+                .registerAndBind(this.plugin.getCore(), this.gemsCommandAliases);
         Commands.create()
                 .handler(c -> {
                     if (c.args().size() == 0) {
                         this.plugin.getGemsManager().sendGemsTop(c.sender());
                     }
-                }).registerAndBind(this.plugin.getCore(), "gemstop", "gemtop");
+                }).registerAndBind(this.plugin.getCore(), this.gemsTopCommandAliases);
 
         // /gemsmessage
         Commands.create()
@@ -118,6 +118,11 @@ public class CommandManager {
         return null;
     }
 
+    private void loadVariables() {
+        this.gemsCommandAliases = this.plugin.getConfig().get().getStringList("gems-command-aliases").toArray(new String[0]);
+        this.gemsTopCommandAliases = this.plugin.getConfig().get().getStringList("gems-top-command-aliases").toArray(new String[0]);
+    }
+
     public Set<GemsCommand> getAll() {
         return new HashSet<>(this.commands);
     }
@@ -126,5 +131,11 @@ public class CommandManager {
         Map<CommandSender, Cooldown> cooldownMap = this.gemsCommandCooldownMap.getAll();
         this.gemsCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getCommandCooldown(), TimeUnit.SECONDS));
         cooldownMap.forEach((commandSender, cooldown) -> this.gemsCommandCooldownMap.put(commandSender, cooldown));
+        this.loadVariables();
+    }
+
+    public void enable() {
+        this.loadVariables();
+        this.registerCommands();
     }
 }

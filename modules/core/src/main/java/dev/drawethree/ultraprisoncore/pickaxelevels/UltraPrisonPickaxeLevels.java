@@ -40,11 +40,13 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     private Map<String, String> messages;
     private PickaxeLevel defaultLevel;
     private PickaxeLevel maxLevel;
-    @Getter
-    private UltraPrisonPickaxeLevelsAPI api;
+	private String progressBarDelimiter;
+	@Getter
+	private UltraPrisonPickaxeLevelsAPI api;
     @Getter
     private UltraPrisonCore core;
-    private boolean enabled;
+	private boolean enabled;
+	private int progressBarLength;
 
     public UltraPrisonPickaxeLevels(UltraPrisonCore UltraPrisonCore) {
         this.core = UltraPrisonCore;
@@ -94,25 +96,28 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
     @Override
     public void reload() {
-        this.config.reload();
-        this.loadMessages();
-        this.loadPickaxeLevels();
-    }
+		this.config.reload();
+		this.progressBarDelimiter = this.getConfig().get().getString("progress-bar-delimiter");
+		this.progressBarLength = this.getConfig().get().getInt("progress-bar-length");
+		this.loadMessages();
+		this.loadPickaxeLevels();
+	}
 
     @Override
     public void enable() {
-        this.enabled = true;
+		this.enabled = true;
 
-        this.config = this.core.getFileManager().getConfig("pickaxe-levels.yml").copyDefaults(true).save();
+		this.config = this.core.getFileManager().getConfig("pickaxe-levels.yml").copyDefaults(true).save();
+		this.progressBarDelimiter = this.getConfig().get().getString("progress-bar-delimiter");
+		this.progressBarLength = this.getConfig().get().getInt("progress-bar-length");
+		this.loadPickaxeLevels();
+		this.loadMessages();
 
+		this.registerCommands();
+		this.registerListeners();
 
-        this.loadPickaxeLevels();
-        this.loadMessages();
-        this.registerCommands();
-        this.registerListeners();
-
-        this.api = new UltraPrisonPickaxeLevelsAPIImpl(this);
-    }
+		this.api = new UltraPrisonPickaxeLevelsAPIImpl(this);
+	}
 
     private void registerListeners() {
 
@@ -262,9 +267,9 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         if (nextLevel != null) {
             double required = nextLevel.getBlocksRequired() - level.getBlocksRequired();
             double current = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
-            return ProgressBar.getProgressBar(20, ":", current, required);
+			return ProgressBar.getProgressBar(this.progressBarLength, this.progressBarDelimiter, current, required);
         } else {
-            return ProgressBar.getProgressBar(20, ":", 1, 1);
+			return ProgressBar.getProgressBar(this.progressBarLength, this.progressBarDelimiter, 1, 1);
         }
 
     }

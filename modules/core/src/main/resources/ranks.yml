@@ -6,6 +6,10 @@ messages:
   rank_set: "&e&lRANKUP &8» &7You have set %player%'s rank to %rank%"
 # Should we use tokens as a currency for ranks ?
 use_tokens_currency: false
+# Delimiter on progress bar
+progress-bar-delimiter: ":"
+# Length of progress bar
+progress-bar-length: 20
 # Ranks settings
 Ranks:
   # Id of rank

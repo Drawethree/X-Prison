@@ -70,3 +70,15 @@ blocks-top-weekly-format:
   - "&e&lBLOCKS TOP WEEKLY"
   - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+# Aliases for /tokens command
+tokens-command-aliases:
+  - token
+  - tokens
+# Aliases for /tokenstop command
+tokens-top-command-aliases:
+  - tokentop
+  - tokenstop
+# Aliases for /blockstop command
+blocks-top-command-aliases:
+  - blockstop
+  - blocktop
