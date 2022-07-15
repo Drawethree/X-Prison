@@ -8,16 +8,13 @@ import dev.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPI;
 import dev.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPIImpl;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
 import dev.drawethree.ultraprisoncore.mines.commands.impl.*;
+import dev.drawethree.ultraprisoncore.mines.listener.MinesListener;
 import dev.drawethree.ultraprisoncore.mines.managers.MineManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
 import me.lucko.helper.Commands;
-import me.lucko.helper.Events;
-import me.lucko.helper.serialize.Position;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,9 +55,10 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		this.enabled = true;
 		this.config = this.core.getFileManager().getConfig("mines.yml").copyDefaults(true).save();
 		this.loadMessages();
-		this.registerCommands();
-		this.subscribeEvents();
 		this.manager = new MineManager(this);
+		this.manager.enable();
+		new MinesListener(this).register();
+		this.registerCommands();
 		this.api = new UltraPrisonMinesAPIImpl(this);
 	}
 
@@ -174,19 +172,5 @@ public class UltraPrisonMines implements UltraPrisonModule {
 		for (String alias : command.getAliases()) {
 			this.commands.put(alias, command);
 		}
-	}
-
-	private void subscribeEvents() {
-		Events.subscribe(PlayerInteractEvent.class)
-				.filter(e -> e.getItem() != null && e.getItem().isSimilar(MineManager.SELECTION_TOOL) && e.getClickedBlock() != null)
-				.handler(e -> {
-					int pos = e.getAction() == Action.LEFT_CLICK_BLOCK ? 1 : e.getAction() == Action.RIGHT_CLICK_BLOCK ? 2 : -1;
-
-					if (pos == -1) {
-						return;
-					}
-
-					this.manager.selectPosition(e.getPlayer(), pos, Position.of(e.getClickedBlock()));
-				}).bindWith(this.core);
 	}
 }

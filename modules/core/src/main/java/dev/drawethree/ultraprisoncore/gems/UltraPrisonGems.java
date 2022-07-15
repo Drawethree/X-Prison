@@ -6,21 +6,12 @@ import dev.drawethree.ultraprisoncore.config.FileManager;
 import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
-import dev.drawethree.ultraprisoncore.gems.commands.*;
 import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.gems.managers.GemsManager;
-import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
-import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
-import me.lucko.helper.cooldown.Cooldown;
-import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.reflect.MinecraftVersion;
-import me.lucko.helper.utils.Players;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -28,7 +19,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonGems implements UltraPrisonModule {
 
@@ -90,9 +80,8 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 
 		this.gemsManager = new GemsManager(this);
 		this.commandManager = new CommandManager(this);
+		this.commandManager.enable();
 		this.api = new UltraPrisonGemsAPIImpl(this.gemsManager);
-
-		this.commandManager.registerCommands();
 
 		this.registerEvents();
 	}

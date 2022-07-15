@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 
 public class TokensManager {
 
-
 	private final UltraPrisonTokens plugin;
 
 	private List<String> tokensTopFormat;

@@ -9,7 +9,6 @@ import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
-import dev.drawethree.ultraprisoncore.tokens.commands.TokensCommand;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.tokens.managers.TokensManager;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -135,9 +134,9 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 		this.tokensManager = new TokensManager(this);
 		this.commandManager = new CommandManager(this);
-		this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
+		this.commandManager.enable();
 
-		this.commandManager.registerCommands();
+		this.api = new UltraPrisonTokensAPIImpl(this.tokensManager);
 
 		this.registerEvents();
 	}

@@ -7,11 +7,11 @@ import dev.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import lombok.Getter;
 import lombok.Setter;
-import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.gson.GsonSerializable;
 import me.lucko.helper.gson.JsonBuilder;
 import me.lucko.helper.hologram.Hologram;
+import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
@@ -20,8 +20,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -94,6 +92,7 @@ public class Mine implements GsonSerializable {
 
 	@Getter
 	private final Map<PotionEffectType, Integer> mineEffects;
+	private Task mineTask;
 
 	public Mine(MineManager manager, String name, Region region) {
 		this.manager = manager;
@@ -109,7 +108,6 @@ public class Mine implements GsonSerializable {
 		this.totalBlocks = this.calculateTotalBlocks();
 		this.currentBlocks = this.calculateCurrentBlocks();
 		this.mineEffects = new HashMap<>();
-		this.subscribeEvents();
 		this.startTicking();
 	}
 
@@ -131,12 +129,11 @@ public class Mine implements GsonSerializable {
 		this.resetTime = resetTime;
 		this.nextResetDate = new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(this.resetTime));
 		this.updateHolograms();
-		this.subscribeEvents();
 		this.startTicking();
 	}
 
 	private void startTicking() {
-		Schedulers.sync().runRepeating(this::tick, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS);
+		this.mineTask = Schedulers.sync().runRepeating(this::tick, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS);
 	}
 
 	public void updateHolograms() {
@@ -171,6 +168,12 @@ public class Mine implements GsonSerializable {
 		}
 
 		this.updateHolograms();
+	}
+
+	public void stopTicking() {
+		if (this.mineTask != null) {
+			this.mineTask.stop();
+		}
 	}
 
 	public boolean isInMine(Location loc) {
@@ -298,18 +301,6 @@ public class Mine implements GsonSerializable {
 
 	public List<Player> getPlayersInMine() {
 		return Players.all().stream().filter(player -> this.isInMine(player.getLocation())).collect(Collectors.toList());
-	}
-
-	private void subscribeEvents() {
-		Events.subscribe(BlockBreakEvent.class, EventPriority.MONITOR)
-				.filter(e -> isInMine(e.getBlock().getLocation()) && !e.isCancelled())
-				.handler(e -> {
-					if (isResetting()) {
-						e.setCancelled(true);
-						return;
-					}
-					this.handleBlockBreak(Arrays.asList(e.getBlock()));
-				}).bindWith(this.manager.getPlugin().getCore());
 	}
 
 	public void updateCurrentBlocks() {
