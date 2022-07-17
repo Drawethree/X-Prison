@@ -6,7 +6,7 @@ import org.bukkit.Location;
 
 public class UltraPrisonMinesAPIImpl implements UltraPrisonMinesAPI {
 
-	private UltraPrisonMines plugin;
+	private final UltraPrisonMines plugin;
 
 	public UltraPrisonMinesAPIImpl(UltraPrisonMines plugin) {
 		this.plugin = plugin;

@@ -66,13 +66,13 @@ public class SellRegion {
         return item.getAmount() * this.sellPrices.getOrDefault(material, 0.0);
     }
 
-    public Map<ItemStack, Double> previewInventorySell(Player player) {
+    public Map<AutoSellItemStack, Double> previewInventorySell(Player player) {
         return previewItemsSell(Arrays.asList(player.getInventory().getContents()));
     }
 
-    public Map<ItemStack, Double> previewItemsSell(Collection<ItemStack> items) {
+    public Map<AutoSellItemStack, Double> previewItemsSell(Collection<ItemStack> items) {
 
-        Map<ItemStack, Double> itemsToSell = new HashMap<>();
+        Map<AutoSellItemStack, Double> itemsToSell = new HashMap<>();
 
         for (ItemStack item : items) {
 
@@ -86,7 +86,7 @@ public class SellRegion {
                 continue;
             }
 
-            itemsToSell.put(item, priceForItem);
+            itemsToSell.put(new AutoSellItemStack(item), priceForItem);
         }
 
         return itemsToSell;

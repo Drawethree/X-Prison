@@ -43,5 +43,5 @@ gems-command-aliases:
   - gems
 # Aliases for /gemstop command
 gems-top-command-aliases:
-  - blocktop
-  - blockstop
+  - gemstop
+  - gemtop
