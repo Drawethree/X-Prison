@@ -1,5 +1,6 @@
 package dev.drawethree.ultraprisoncore.autosell.api.events;
 
+import dev.drawethree.ultraprisoncore.autosell.model.AutoSellItemStack;
 import dev.drawethree.ultraprisoncore.autosell.model.SellRegion;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class UltraPrisonAutoSellEvent extends Event implements Cancellable {
     private final Player player;
     private final SellRegion region;
     @Setter
-    private Map<ItemStack, Double> itemsToSell;
+    private Map<AutoSellItemStack, Double> itemsToSell;
     @Setter
     private boolean cancelled;
 
@@ -31,7 +31,7 @@ public class UltraPrisonAutoSellEvent extends Event implements Cancellable {
      * @param reg         IWrappedRegion where block was mined
      * @param itemsToSell ItemStacks to sell with prices
      */
-    public UltraPrisonAutoSellEvent(Player player, SellRegion reg, Map<ItemStack, Double> itemsToSell) {
+    public UltraPrisonAutoSellEvent(Player player, SellRegion reg, Map<AutoSellItemStack, Double> itemsToSell) {
         this.player = player;
         this.region = reg;
         this.itemsToSell = itemsToSell;

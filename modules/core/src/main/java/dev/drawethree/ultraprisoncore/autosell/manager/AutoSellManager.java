@@ -3,6 +3,7 @@ package dev.drawethree.ultraprisoncore.autosell.manager;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.autosell.api.events.UltraPrisonAutoSellEvent;
 import dev.drawethree.ultraprisoncore.autosell.api.events.UltraPrisonSellAllEvent;
+import dev.drawethree.ultraprisoncore.autosell.model.AutoSellItemStack;
 import dev.drawethree.ultraprisoncore.autosell.model.SellRegion;
 import dev.drawethree.ultraprisoncore.autosell.utils.AutoSellContants;
 import dev.drawethree.ultraprisoncore.enchants.utils.EnchantUtils;
@@ -130,7 +131,7 @@ public class AutoSellManager {
             return;
         }
 
-        Map<ItemStack, Double> itemsToSell = sellRegion.previewInventorySell(sender);
+        Map<AutoSellItemStack, Double> itemsToSell = sellRegion.previewInventorySell(sender);
 
         UltraPrisonSellAllEvent event = this.callSellAllEvent(sender, sellRegion, itemsToSell);
 
@@ -142,14 +143,14 @@ public class AutoSellManager {
 
         double totalAmount = this.sellItems(sender, itemsToSell);
 
-        itemsToSell.keySet().forEach(item -> sender.getInventory().remove(item));
+        itemsToSell.keySet().forEach(item -> sender.getInventory().remove(item.getItemStack()));
 
         if (totalAmount > 0.0) {
             PlayerUtils.sendMessage(sender, this.plugin.getAutoSellConfig().getMessage("sell_all_complete").replace("%price%", String.format("%,.0f", totalAmount)));
         }
     }
 
-    private double sellItems(Player player, Map<ItemStack, Double> itemsToSell) {
+    private double sellItems(Player player, Map<AutoSellItemStack, Double> itemsToSell) {
 
         double totalAmount = itemsToSell.values().stream().mapToDouble(Double::doubleValue).sum();
 
@@ -161,7 +162,7 @@ public class AutoSellManager {
         return totalAmount;
     }
 
-    private UltraPrisonSellAllEvent callSellAllEvent(Player sender, SellRegion sellRegion, Map<ItemStack, Double> sellItems) {
+    private UltraPrisonSellAllEvent callSellAllEvent(Player sender, SellRegion sellRegion, Map<AutoSellItemStack, Double> sellItems) {
         UltraPrisonSellAllEvent event = new UltraPrisonSellAllEvent(sender, sellRegion, sellItems);
 
         Events.call(event);
@@ -173,7 +174,7 @@ public class AutoSellManager {
         return event;
     }
 
-    private UltraPrisonAutoSellEvent callAutoSellEvent(Player player, SellRegion sellRegion, Map<ItemStack, Double> itemsToSell) {
+    private UltraPrisonAutoSellEvent callAutoSellEvent(Player player, SellRegion sellRegion, Map<AutoSellItemStack, Double> itemsToSell) {
         UltraPrisonAutoSellEvent event = new UltraPrisonAutoSellEvent(player, sellRegion, itemsToSell);
 
         Events.call(event);
@@ -327,8 +328,7 @@ public class AutoSellManager {
             return false;
         }
 
-
-        Map<ItemStack, Double> itemsToSell = sellRegion.previewItemsSell(Collections.singletonList(createItemStackToGive(player, block)));
+        Map<AutoSellItemStack, Double> itemsToSell = sellRegion.previewItemsSell(Arrays.asList(createItemStackToGive(player, block)));
 
         UltraPrisonAutoSellEvent event = this.callAutoSellEvent(player, sellRegion, itemsToSell);
 
@@ -338,7 +338,7 @@ public class AutoSellManager {
 
         itemsToSell = event.getItemsToSell();
 
-        int amountOfItems = itemsToSell.keySet().stream().mapToInt(ItemStack::getAmount).sum();
+        int amountOfItems = itemsToSell.keySet().stream().mapToInt(item -> item.getItemStack().getAmount()).sum();
         double moneyEarned = this.sellItems(player, itemsToSell);
 
         this.updateCurrentEarningsAndLastItems(player, moneyEarned, amountOfItems);
