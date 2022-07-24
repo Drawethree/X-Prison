@@ -42,10 +42,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -56,7 +53,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	private static UltraPrisonCore instance;
 
 	private boolean debugMode;
-	private LinkedHashMap<String, UltraPrisonModule> modules;
+	private Map<String, UltraPrisonModule> modules;
 	private Database pluginDatabase;
 	private Economy economy;
 	private FileManager fileManager;
@@ -80,18 +77,11 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	private JetsPrisonMinesAPI jetsPrisonMinesAPI;
 
-	@Getter
-	private boolean ultraBackpacksEnabled;
-	@Getter
-	private boolean placeholderAPIEnabled;
-
 
 	@Override
 	protected void enable() {
 
 		instance = this;
-
-		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 		this.debugMode = this.getConfig().getBoolean("debug-mode", false);
@@ -136,8 +126,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		for (Material m : this.supportedPickaxes) {
 			this.getLogger().info("Added support for " + m);
 		}
-
-		this.ultraBackpacksEnabled = this.getServer().getPluginManager().isPluginEnabled("UltraBackpacks");
 	}
 
 	private void loadModules() {
@@ -162,7 +150,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 
 		if (this.getConfig().getBoolean("modules.autosell")) {
-			if (this.ultraBackpacksEnabled) {
+			if (isUltraBackpacksEnabled()) {
 				this.getLogger().info("Module AutoSell will not be loaded because selling system is handled by UltraBackpacks.");
 			} else {
 				this.loadModule(autoSell);
@@ -218,6 +206,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void initModules() {
+
+		this.modules = new LinkedHashMap<>();
 
 		this.tokens = new UltraPrisonTokens(this);
 		this.gems = new UltraPrisonGems(this);
@@ -336,11 +326,14 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void registerPlaceholders() {
-		if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-			this.placeholderAPIEnabled = true;
+
+		if (isMVdWPlaceholderAPIEnabled()) {
+			new UltraPrisonMVdWPlaceholder(this).register();
+		}
+
+		if (isPlaceholderAPIEnabled()) {
 			new UltraPrisonPAPIPlaceholder(this).register();
 		}
-		new UltraPrisonMVdWPlaceholder(this).register();
 	}
 
 	private void registerJetsPrisonMines() {
@@ -398,5 +391,17 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.debugMode = enabled;
 		this.getConfig().set("debug-mode", debugMode);
 		this.saveConfig();
+	}
+
+	public boolean isUltraBackpacksEnabled() {
+		return this.getServer().getPluginManager().isPluginEnabled("UltraBackpacks");
+	}
+
+	public boolean isPlaceholderAPIEnabled() {
+		return this.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
+	}
+
+	public boolean isMVdWPlaceholderAPIEnabled() {
+		return this.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI");
 	}
 }

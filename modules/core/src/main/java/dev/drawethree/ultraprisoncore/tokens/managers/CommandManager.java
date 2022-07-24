@@ -31,6 +31,7 @@ public class CommandManager {
 	private String[] tokensCommandAliases;
 	private String[] tokensTopCommandAliases;
 	private String[] blocksTopCommandAliases;
+	private String[] tokenMessageCommandAliases;
 
 	public CommandManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
@@ -90,7 +91,7 @@ public class CommandManager {
 				.assertPlayer()
 				.handler(c -> {
 					this.plugin.getTokensManager().toggleTokenMessage(c.sender());
-				}).registerAndBind(this.plugin.getCore(), "tokenmessage");
+				}).registerAndBind(this.plugin.getCore(), this.tokenMessageCommandAliases);
 
 		// /blockstop, / blocktop
 		Commands.create()
@@ -219,5 +220,6 @@ public class CommandManager {
 		this.tokensCommandAliases = this.plugin.getConfig().get().getStringList("tokens-command-aliases").toArray(new String[0]);
 		this.tokensTopCommandAliases = this.plugin.getConfig().get().getStringList("tokens-top-command-aliases").toArray(new String[0]);
 		this.blocksTopCommandAliases = this.plugin.getConfig().get().getStringList("blocks-top-command-aliases").toArray(new String[0]);
+		this.tokenMessageCommandAliases = this.plugin.getConfig().get().getStringList("token-message-command-aliases").toArray(new String[0]);
 	}
 }

@@ -82,3 +82,7 @@ tokens-top-command-aliases:
 blocks-top-command-aliases:
   - blockstop
   - blocktop
+# Aliases for /tokenmessage command
+token-message-command-aliases:
+  - tokenmessage
+  - tokenmessages

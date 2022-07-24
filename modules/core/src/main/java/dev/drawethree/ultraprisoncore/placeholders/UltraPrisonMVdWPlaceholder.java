@@ -28,17 +28,12 @@ import java.util.Optional;
 public class UltraPrisonMVdWPlaceholder {
 
 	private final UltraPrisonCore plugin;
-	private final boolean enabled;
 
 	public UltraPrisonMVdWPlaceholder(UltraPrisonCore plugin) {
 		this.plugin = plugin;
-		this.enabled = plugin.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI");
 	}
 
 	public void register() {
-		if (!this.enabled) {
-			return;
-		}
 		this.registerTokensPlaceholders();
 		this.registerEnchantsPlaceholders();
 		this.registerGemsPlaceholders();

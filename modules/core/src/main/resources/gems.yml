@@ -45,3 +45,7 @@ gems-command-aliases:
 gems-top-command-aliases:
   - gemstop
   - gemtop
+# Aliases for /gemsmessage command
+gems-message-command-aliases:
+  - gemmessage
+  - gemsmessage
