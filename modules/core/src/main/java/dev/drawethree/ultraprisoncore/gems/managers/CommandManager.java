@@ -28,6 +28,7 @@ public class CommandManager {
     private CooldownMap<CommandSender> gemsCommandCooldownMap;
     private String[] gemsCommandAliases;
     private String[] gemsTopCommandAliases;
+    private String[] gemsMessageCommandAliases;
 
     public CommandManager(UltraPrisonGems plugin) {
         this.plugin = plugin;
@@ -90,7 +91,7 @@ public class CommandManager {
         // /gemsmessage
         Commands.create()
                 .assertPlayer()
-                .handler(c -> this.plugin.getGemsManager().toggleGemsMessage(c.sender())).registerAndBind(this.plugin.getCore(), "gemmessage", "gemsmessage");
+                .handler(c -> this.plugin.getGemsManager().toggleGemsMessage(c.sender())).registerAndBind(this.plugin.getCore(), this.gemsMessageCommandAliases);
 
     }
 
@@ -121,6 +122,7 @@ public class CommandManager {
     private void loadVariables() {
         this.gemsCommandAliases = this.plugin.getConfig().get().getStringList("gems-command-aliases").toArray(new String[0]);
         this.gemsTopCommandAliases = this.plugin.getConfig().get().getStringList("gems-top-command-aliases").toArray(new String[0]);
+        this.gemsMessageCommandAliases = this.plugin.getConfig().get().getStringList("gems-message-command-aliases").toArray(new String[0]);
     }
 
     public Set<GemsCommand> getAll() {
