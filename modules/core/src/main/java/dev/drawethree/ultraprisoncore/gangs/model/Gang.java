@@ -1,9 +1,7 @@
 package dev.drawethree.ultraprisoncore.gangs.model;
 
-import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangLeaveEvent;
-import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Events;
@@ -20,11 +18,11 @@ import java.util.stream.Collectors;
 public class Gang {
 
 	@Getter
-	private UUID uuid;
+	private final UUID uuid;
 
 	@Getter
 	private UUID gangOwner;
-	private List<UUID> gangMembers;
+	private final List<UUID> gangMembers;
 
 	@Getter
 	@Setter
@@ -73,8 +71,6 @@ public class Gang {
 		}
 
 		this.gangMembers.remove(p.getUniqueId());
-		this.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, UltraPrisonGangs.getInstance().getMessage("gang-player-left").replace("%player%", p.getName())));
-		PlayerUtils.sendMessage(p, UltraPrisonGangs.getInstance().getMessage("gang-left").replace("%gang%", this.name));
 		return true;
 	}
 
@@ -92,9 +88,7 @@ public class Gang {
 			return false;
 		}
 
-		this.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, UltraPrisonGangs.getInstance().getMessage("gang-player-joined").replace("%player%", p.getName())));
 		this.gangMembers.add(p.getUniqueId());
-		PlayerUtils.sendMessage(p, UltraPrisonGangs.getInstance().getMessage("gang-joined").replace("%gang%", this.name));
 		return true;
 	}
 
@@ -127,10 +121,6 @@ public class Gang {
 		}
 
 		this.gangMembers.remove(target.getUniqueId());
-		this.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, UltraPrisonGangs.getInstance().getMessage("gang-player-kicked").replace("%player%", target.getName())));
-		if (target.isOnline()) {
-			PlayerUtils.sendMessage(target.getPlayer(), UltraPrisonGangs.getInstance().getMessage("gang-kicked").replace("%gang%", this.name));
-		}
 		return true;
 	}
 }

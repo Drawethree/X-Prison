@@ -1,8 +1,7 @@
 package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 
-import com.google.common.collect.ImmutableList;
-import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
+import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
@@ -10,12 +9,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-public class GangKickCommand extends GangCommand {
+public final class GangKickSubCommand extends GangSubCommand {
 
-	public GangKickCommand(UltraPrisonGangs plugin) {
-		super(plugin, "kick", "remove");
+	public GangKickSubCommand(GangCommand command) {
+		super(command, "kick", "remove");
 	}
 
 	@Override
@@ -24,12 +25,12 @@ public class GangKickCommand extends GangCommand {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 1 && sender instanceof Player) {
 			Player p = (Player) sender;
-			Optional<Gang> gang = this.plugin.getGangsManager().getPlayerGang(p);
+			Optional<Gang> gang = this.command.getPlugin().getGangsManager().getPlayerGang(p);
 			OfflinePlayer target = Players.getOfflineNullable(args.get(0));
-			return this.plugin.getGangsManager().removeFromGang(p, gang, target);
+			return this.command.getPlugin().getGangsManager().removeFromGang(p, gang, target);
 		}
 		return false;
 	}
@@ -38,6 +39,11 @@ public class GangKickCommand extends GangCommand {
 	@Override
 	public boolean canExecute(CommandSender sender) {
 		return true;
+	}
+
+	@Override
+	public List<String> getTabComplete() {
+		return Players.all().stream().map(Player::getName).collect(Collectors.toList());
 	}
 
 }

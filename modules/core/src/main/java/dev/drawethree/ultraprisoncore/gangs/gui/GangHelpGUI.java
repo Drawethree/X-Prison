@@ -44,7 +44,7 @@ public class GangHelpGUI extends Gui {
 				SignPromptFactory factory = Services.load(SignPromptFactory.class);
 				factory.openPrompt(this.getPlayer(), Arrays.asList("", "§e^ ^ ^", "§7Input gang name", ""), responseHandler -> {
 					if (responseHandler.get(0).isEmpty()) {
-						PlayerUtils.sendMessage(this.getPlayer(), UltraPrisonGangs.getInstance().getMessage("gang-invalid-name"));
+						PlayerUtils.sendMessage(this.getPlayer(), UltraPrisonGangs.getInstance().getConfig().getMessage("gang-invalid-name"));
 						return SignPromptFactory.Response.ACCEPTED;
 					}
 					UltraPrisonGangs.getInstance().getGangsManager().createGang(responseHandler.get(0), this.getPlayer());

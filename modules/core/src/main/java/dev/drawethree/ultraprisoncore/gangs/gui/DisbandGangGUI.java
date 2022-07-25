@@ -9,7 +9,7 @@ public class DisbandGangGUI extends ConfirmationGui {
 	private final UltraPrisonGangs plugin;
 
 	public DisbandGangGUI(UltraPrisonGangs plugin, Player player) {
-		super(player, plugin.getGangsManager().getGangDisbandGUITitle());
+		super(player, plugin.getConfig().getGangDisbandGUITitle());
 		this.plugin = plugin;
 	}
 

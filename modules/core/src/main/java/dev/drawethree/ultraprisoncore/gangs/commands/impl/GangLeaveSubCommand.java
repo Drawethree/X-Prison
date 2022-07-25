@@ -1,16 +1,18 @@
 package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 
-import com.google.common.collect.ImmutableList;
-import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
+import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class GangLeaveCommand extends GangCommand {
+import java.util.ArrayList;
+import java.util.List;
 
-	public GangLeaveCommand(UltraPrisonGangs plugin) {
-		super(plugin, "leave", "quit");
+public class GangLeaveSubCommand extends GangSubCommand {
+
+	public GangLeaveSubCommand(GangCommand command) {
+		super(command, "leave", "quit");
 	}
 
 	@Override
@@ -19,10 +21,10 @@ public class GangLeaveCommand extends GangCommand {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 0 && sender instanceof Player) {
 			Player p = (Player) sender;
-			return this.plugin.getGangsManager().leaveGang(p);
+			return this.command.getPlugin().getGangsManager().leaveGang(p);
 		}
 		return false;
 	}
@@ -31,5 +33,10 @@ public class GangLeaveCommand extends GangCommand {
 	@Override
 	public boolean canExecute(CommandSender sender) {
 		return true;
+	}
+
+	@Override
+	public List<String> getTabComplete() {
+		return new ArrayList<>();
 	}
 }

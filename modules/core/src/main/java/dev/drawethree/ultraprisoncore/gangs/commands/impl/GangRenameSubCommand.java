@@ -1,8 +1,7 @@
 package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 
-import com.google.common.collect.ImmutableList;
-import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
+import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
 import dev.drawethree.ultraprisoncore.gangs.enums.GangRenameResult;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
@@ -10,40 +9,42 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class GangRenameCommand extends GangCommand {
+public final class GangRenameSubCommand extends GangSubCommand {
 
-	public GangRenameCommand(UltraPrisonGangs plugin) {
-		super(plugin, "rename", "");
+	public GangRenameSubCommand(GangCommand command) {
+		super(command, "rename");
 	}
 
 	@Override
 	public String getUsage() {
-		return ChatColor.RED + "/gang rename";
+		return ChatColor.RED + "/gang rename [new_name]";
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, ImmutableList<String> args) {
+	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 1 && sender instanceof Player) {
 			Player p = (Player) sender;
 			String newName = args.get(0);
 
-			Optional<Gang> gangOptional = this.plugin.getGangsManager().getPlayerGang(p);
+			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getPlayerGang(p);
 
 			if (!gangOptional.isPresent()) {
-				PlayerUtils.sendMessage(p, this.plugin.getMessage("not-in-gang"));
+				PlayerUtils.sendMessage(p, this.command.getPlugin().getConfig().getMessage("not-in-gang"));
 				return false;
 			}
 
 			Gang gang = gangOptional.get();
 
 			if (!gang.isOwner(p)) {
-				PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-not-owner"));
+				PlayerUtils.sendMessage(p, this.command.getPlugin().getConfig().getMessage("gang-not-owner"));
 				return false;
 			}
 
-			return this.plugin.getGangsManager().renameGang(gang, newName, p) == GangRenameResult.SUCCESS;
+			return this.command.getPlugin().getGangsManager().renameGang(gang, newName, p) == GangRenameResult.SUCCESS;
 		}
 		return false;
 	}
@@ -52,5 +53,10 @@ public class GangRenameCommand extends GangCommand {
 	@Override
 	public boolean canExecute(CommandSender sender) {
 		return true;
+	}
+
+	@Override
+	public List<String> getTabComplete() {
+		return new ArrayList<>();
 	}
 }
