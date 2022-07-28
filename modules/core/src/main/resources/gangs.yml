@@ -24,7 +24,7 @@ messages:
   gang-cant-invite: "&e&lGANGS &8» &cThat player is already in some gang!"
   gang-invite-success: "&e&lGANGS &8» &aYou have successfully invited player %player% to join your gang!"
   gang-invite-pending: "&e&lGANGS &8» &cThat player has already some gang invite pending!"
-  gang-invite-received: "&e&lGANGS &8» &aYou have been invited to join %gang% &agang! Type &e/gang accept &ato join within next &e5 minutes&a."
+  gang-invite-received: "&e&lGANGS &8» &aYou have been invited to join %gang% &agang! Type &e/gang accept %gang% &ato join within next &e5 minutes&a."
   gang-player-left: "&e&lGANGS &8» &cPlayer %player% has left your gang."
   gang-player-joined: "&e&lGANGS &8» &aPlayer %player% has joined your gang."
   gang-joined: "&e&lGANGS &8» &aYou have joined Gang %gang%"
@@ -35,7 +35,7 @@ messages:
   gang-player-not-in-gang: "&e&lGANGS &8» &cThat player is not in gang!"
   gang-disbanded: "&e&lGANGS &8» &cYour gang has been disbanded!"
   player-not-online: "&e&lGANGS &8» &cThat player is not online!"
-  gang-no-invite-pending: "&e&lGANGS &8» &cYou have no pending gang invites!"
+  gang-no-invite-pending: "&e&lGANGS &8» &cYou have not been invited to this gang!"
   gang-create-broadcast: "&e&lGANGS &8» &a%player% has created a gang %gang%"
   gang-disband-broadcast: "&e&lGANGS &8» &c%gang% has been disbanded"
   gang-invalid-name: "&e&lGANGS &8» &cPlease provide a valid gang name."
@@ -65,7 +65,7 @@ gang-help-menu:
   - "&e/gang rename [new_gang_name]"
   - "&e/gang chat"
   - "&e/gang top"
-  - "&e/gang accept"
+  - "&e/gang accept [gang]"
   - "&e/gang leave"
   - "&e/gang disband"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
@@ -75,9 +75,9 @@ gang-admin-help-menu:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e/gang value add [gang] [value]"
   - "&e/gang value remove [gang] [value]"
-  - "&e/gang admin add [player] [gang]"
-  - "&e/gang admin remove [player] [gang]"
-  - "&e/gang admin rename [player] [new_gang_name]"
+  - "&e/gang admin join [player] [gang]"
+  - "&e/gang admin kick [player] [gang]"
+  - "&e/gang admin rename [gang] [new_gang_name]"
   - "&e/gang admin disband [gang]"
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
 gang-info-format:
@@ -97,3 +97,7 @@ gang-disband-gui-title: "Disband your gang?"
 # What words should not a gang name contain
 restricted-names:
   - shit
+# Command aliases for /gangs command
+gangs-command-aliases:
+  - gang
+  - gangs

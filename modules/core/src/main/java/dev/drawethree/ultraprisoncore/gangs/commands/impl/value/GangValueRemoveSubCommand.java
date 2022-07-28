@@ -4,6 +4,7 @@ import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gangs.utils.GangsConstants;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -27,10 +28,15 @@ public class GangValueRemoveSubCommand extends GangSubCommand {
 					gang = this.command.getPlugin().getGangsManager().getPlayerGang(Players.getOfflineNullable(args.get(0)));
 				}
 
+				if (!gang.isPresent()) {
+					PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));
+					return false;
+				}
+
 				int amount = Integer.parseInt(args.get(1));
 				String operation = "remove";
 
-				return this.command.getPlugin().getGangsManager().modifyValue(sender, gang, amount, operation);
+				return this.command.getPlugin().getGangsManager().modifyValue(sender, gang.get(), amount, operation);
 			} catch (Exception e) {
 				sender.sendMessage("§cInternal error.");
 				return false;

@@ -3,6 +3,7 @@ package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -29,8 +30,15 @@ public final class GangKickSubCommand extends GangSubCommand {
 		if (args.size() == 1 && sender instanceof Player) {
 			Player p = (Player) sender;
 			Optional<Gang> gang = this.command.getPlugin().getGangsManager().getPlayerGang(p);
+
+			if (!gang.isPresent()) {
+				PlayerUtils.sendMessage(p, this.command.getPlugin().getConfig().getMessage("not-in-gang"));
+				return false;
+			}
+
 			OfflinePlayer target = Players.getOfflineNullable(args.get(0));
-			return this.command.getPlugin().getGangsManager().removeFromGang(p, gang, target);
+
+			return this.command.getPlugin().getGangsManager().removeFromGang(p, gang.get(), target);
 		}
 		return false;
 	}

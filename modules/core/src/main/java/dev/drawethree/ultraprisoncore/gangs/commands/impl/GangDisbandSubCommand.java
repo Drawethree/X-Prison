@@ -2,7 +2,7 @@ package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
-import dev.drawethree.ultraprisoncore.gangs.gui.DisbandGangGUI;
+import dev.drawethree.ultraprisoncore.gangs.gui.panel.DisbandGangGUI;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.ChatColor;
@@ -43,7 +43,7 @@ public final class GangDisbandSubCommand extends GangSubCommand {
 				return false;
 			}
 
-			new DisbandGangGUI(this.command.getPlugin(), player).open();
+			new DisbandGangGUI(this.command.getPlugin(), player, gang).open();
 		}
 		return false;
 	}

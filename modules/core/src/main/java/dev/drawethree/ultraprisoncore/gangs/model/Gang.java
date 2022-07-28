@@ -2,8 +2,10 @@ package dev.drawethree.ultraprisoncore.gangs.model;
 
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangLeaveEvent;
-import lombok.Getter;
-import lombok.Setter;
+import dev.drawethree.ultraprisoncore.gangs.enums.GangLeaveReason;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import me.lucko.helper.Events;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
@@ -15,37 +17,24 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Gang {
 
-	@Getter
-	private final UUID uuid;
-
-	@Getter
+	private UUID uuid;
 	private UUID gangOwner;
-	private final List<UUID> gangMembers;
-
-	@Getter
-	@Setter
+	private List<UUID> gangMembers;
+	private List<GangInvitation> pendingInvites;
 	private String name;
-
-	@Getter
-	@Setter
 	private int value;
-
 
 	public Gang(String name, UUID gangOwner) {
 		this.uuid = UUID.randomUUID();
 		this.name = name;
 		this.gangOwner = gangOwner;
 		this.gangMembers = new ArrayList<>();
-	}
-
-	public Gang(UUID uuid, String gangName, UUID owner, List<UUID> members, int value) {
-		this.uuid = uuid;
-		this.name = gangName;
-		this.gangOwner = owner;
-		this.gangMembers = members;
-		this.value = value;
+		this.pendingInvites = new ArrayList<>();
 	}
 
 	public boolean containsPlayer(OfflinePlayer p) {
@@ -56,17 +45,13 @@ public class Gang {
 		return this.gangOwner.equals(p.getUniqueId());
 	}
 
-	public boolean leavePlayer(Player p) {
+	public boolean leavePlayer(OfflinePlayer p, GangLeaveReason reason) {
 
 		if (!this.gangMembers.contains(p.getUniqueId())) {
 			return false;
 		}
 
-		GangLeaveEvent event = new GangLeaveEvent(p, this);
-
-		Events.call(event);
-
-		if (event.isCancelled()) {
+		if (this.callGangLeaveEvent(p, reason)) {
 			return false;
 		}
 
@@ -74,22 +59,62 @@ public class Gang {
 		return true;
 	}
 
-	public boolean joinPlayer(Player p) {
+	public GangInvitation invitePlayer(Player invitedBy, Player player) {
+		GangInvitation invitation = getGangInvite(player);
+
+		if (invitation != null) {
+			return invitation;
+		}
+
+		invitation = new GangInvitation(this, player, invitedBy);
+		this.pendingInvites.add(invitation);
+		return invitation;
+	}
+
+	private GangInvitation getGangInvite(OfflinePlayer player) {
+		for (GangInvitation gangInvitation : this.pendingInvites) {
+			if (gangInvitation.getInvitedPlayer().getUniqueId().equals(player.getUniqueId())) {
+				return gangInvitation;
+			}
+		}
+		return null;
+	}
+
+	public boolean hasPendingInvite(Player player) {
+		return getGangInvite(player) != null;
+	}
+
+	private boolean callGangLeaveEvent(OfflinePlayer p, GangLeaveReason reason) {
+		GangLeaveEvent event = new GangLeaveEvent(p, this, reason);
+
+		Events.call(event);
+
+		return event.isCancelled();
+	}
+
+	public boolean joinPlayer(OfflinePlayer p) {
 
 		if (this.gangMembers.contains(p.getUniqueId())) {
 			return false;
 		}
 
+		if (this.callGangJoinEvent(p)) {
+			return false;
+		}
+
+		GangInvitation invitation = getGangInvite(p);
+		this.removeInvitation(invitation);
+
+		this.gangMembers.add(p.getUniqueId());
+		return true;
+	}
+
+	private boolean callGangJoinEvent(OfflinePlayer p) {
 		GangJoinEvent event = new GangJoinEvent(p, this);
 
 		Events.call(event);
 
-		if (event.isCancelled()) {
-			return false;
-		}
-
-		this.gangMembers.add(p.getUniqueId());
-		return true;
+		return event.isCancelled();
 	}
 
 
@@ -115,12 +140,31 @@ public class Gang {
 	}
 
 	public boolean kickPlayer(OfflinePlayer target) {
-
-		if (!this.gangMembers.contains(target.getUniqueId())) {
-			return false;
-		}
-
-		this.gangMembers.remove(target.getUniqueId());
+		leavePlayer(target, GangLeaveReason.KICK);
 		return true;
+	}
+
+	public List<GangInvitation> getPendingInvites() {
+		return pendingInvites;
+	}
+
+	public void removeInvitation(GangInvitation invitation) {
+		this.pendingInvites.remove(invitation);
+	}
+
+	public boolean canRenameGang(Player player) {
+		return isOwner(player);
+	}
+
+	public boolean canManageMembers(Player player) {
+		return isOwner(player);
+	}
+
+	public boolean canDisband(Player player) {
+		return isOwner(player);
+	}
+
+	public boolean canManageInvites(Player player) {
+		return isOwner(player);
 	}
 }

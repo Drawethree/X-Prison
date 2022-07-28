@@ -13,15 +13,15 @@ public final class GangAdminSubCommand extends GangSubCommand {
 
 	public GangAdminSubCommand(GangCommand command) {
 		super(command, "admin");
-		registerSubCommand(new GangAdminAddSubCommand(command));
-		registerSubCommand(new GangAdminRemoveSubCommand(command));
+		registerSubCommand(new GangAdminJoinSubCommand(command));
+		registerSubCommand(new GangAdminKickSubCommand(command));
 		registerSubCommand(new GangAdminDisbandSubCommand(command));
 		registerSubCommand(new GangAdminRenameSubCommand(command));
 	}
 
 	@Override
 	public String getUsage() {
-		return ChatColor.RED + "/gang admin <add/remove/disband/rename> <player> <gang>";
+		return ChatColor.RED + "/gang admin <add/kick/disband/rename> <player> <gang>";
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public final class GangAdminSubCommand extends GangSubCommand {
 		if (args.size() > 0) {
 			GangSubCommand subCommand = getSubCommand(args.get(0));
 			if (subCommand != null) {
-				return subCommand.execute(sender, args.subList(1, args.size() - 1));
+				return subCommand.execute(sender, args.subList(1, args.size()));
 			}
 		}
 		return false;

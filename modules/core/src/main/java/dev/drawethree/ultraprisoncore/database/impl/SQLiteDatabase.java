@@ -1,4 +1,4 @@
-package dev.drawethree.ultraprisoncore.database.implementations;
+package dev.drawethree.ultraprisoncore.database.impl;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -9,6 +9,7 @@ import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.database.SQLDatabase;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
+import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import dev.drawethree.ultraprisoncore.history.UltraPrisonHistory;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
@@ -85,42 +86,10 @@ public final class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public void createTables() {
-
         for (UltraPrisonModule module : this.plugin.getModules()) {
             for (String sql : module.getCreateTablesSQL(this.getDatabaseType())) {
                 execute(sql);
             }
-        }
-
-        //TODO: Separate module for handling this
-        execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
-
-        // v1.4.7-BETA - Added UUID column to UltraPrison_Gangs table
-        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM UltraPrison_Gangs"); ResultSet set = statement.executeQuery()) {
-            if (set.next()) {
-                try {
-                    set.findColumn("uuid");
-                } catch (SQLException e) {
-                    execute("alter table UltraPrison_Gangs add column uuid varchar(36) not null unique", null);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        // v1.5.0 - Renamed multipliers table columns
-        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonMultipliers.TABLE_NAME); ResultSet set = statement.executeQuery()) {
-            if (set.next()) {
-                try {
-                    set.findColumn("sell_multiplier");
-                } catch (Exception e) {
-                    execute("alter table UltraPrison_Multipliers rename column vote_multiplier to sell_multiplier", null);
-                    execute("alter table UltraPrison_Multipliers rename column vote_multiplier_timeleft to sell_multiplier_timeleft", null);
-                }
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -132,6 +101,7 @@ public final class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public void runSQLUpdates() {
+
     }
 
     @Override
@@ -229,23 +199,23 @@ public final class SQLiteDatabase extends SQLDatabase {
         try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.TABLE_NAME)) {
             try (ResultSet set = statement.executeQuery()) {
                 while (set.next()) {
+                    Gang gang = new Gang();
 
-                    String gangName = set.getString(GANGS_NAME_COLNAME);
                     UUID gangUUID;
-
                     try {
                         gangUUID = UUID.fromString(set.getString(GANGS_UUID_COLNAME));
                     } catch (Exception e) {
                         gangUUID = UUID.randomUUID();
-                        try (PreparedStatement statement1 = con.prepareStatement("UPDATE " + UltraPrisonGangs.TABLE_NAME + " SET " + GANGS_UUID_COLNAME + "=? WHERE " + GANGS_NAME_COLNAME + "=?")) {
-                            statement1.setString(1, gangUUID.toString());
-                            statement1.setString(2, gangName);
-                            statement1.execute();
-                        }
+                        set.updateString(GANGS_UUID_COLNAME, gangUUID.toString());
+                        set.updateRow();
                     }
 
-                    UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
+                    gang.setUuid(gangUUID);
 
+                    String gangName = set.getString(GANGS_NAME_COLNAME);
+                    gang.setName(gangName);
+                    UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
+                    gang.setGangOwner(owner);
                     List<UUID> members = new ArrayList<>();
 
                     for (String s : set.getString(GANGS_MEMBERS_COLNAME).split(",")) {
@@ -260,9 +230,14 @@ public final class SQLiteDatabase extends SQLDatabase {
                             e.printStackTrace();
                         }
                     }
+                    gang.setGangMembers(members);
 
                     int value = set.getInt(GANGS_VALUE_COLNAME);
-                    returnList.add(new Gang(gangUUID, gangName, owner, members, value));
+                    gang.setValue(value);
+                    List<GangInvitation> gangInvitations = getGangInvitations(gang);
+                    gang.setPendingInvites(gangInvitations);
+
+                    returnList.add(gang);
                 }
             }
         } catch (SQLException e) {

@@ -4,6 +4,7 @@ import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gangs.utils.GangsConstants;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,8 +23,14 @@ public final class GangAdminDisbandSubCommand extends GangSubCommand {
 	@Override
 	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 1) {
-			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(1));
-			return this.command.getPlugin().getGangsManager().forceDisband(sender, gangOptional);
+			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(0));
+
+			if (!gangOptional.isPresent()) {
+				PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));
+				return false;
+			}
+
+			return this.command.getPlugin().getGangsManager().forceDisband(sender, gangOptional.get());
 		}
 		return false;
 	}

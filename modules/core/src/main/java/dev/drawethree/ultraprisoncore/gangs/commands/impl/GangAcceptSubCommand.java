@@ -2,12 +2,15 @@ package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
+import dev.drawethree.ultraprisoncore.gangs.model.Gang;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class GangAcceptSubCommand extends GangSubCommand {
 
@@ -17,13 +20,22 @@ public final class GangAcceptSubCommand extends GangSubCommand {
 
 	@Override
 	public String getUsage() {
-		return ChatColor.RED + "/gang accept";
+		return ChatColor.RED + "/gang accept <gang>";
 	}
 
 	@Override
 	public boolean execute(CommandSender sender, List<String> args) {
-		if (sender instanceof Player && args.size() == 0) {
-			return this.command.getPlugin().getGangsManager().acceptInvite((Player) sender);
+		if (sender instanceof Player && args.size() == 1) {
+
+			String gangName = args.get(0);
+			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(gangName);
+
+			if (!gangOptional.isPresent()) {
+				PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));
+				return false;
+			}
+
+			return this.command.getPlugin().getGangsManager().acceptInvite((Player) sender, gangOptional.get());
 		}
 		return false;
 	}

@@ -2,6 +2,7 @@ package dev.drawethree.ultraprisoncore.gangs.commands.impl;
 
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
+import dev.drawethree.ultraprisoncore.gangs.enums.GangLeaveReason;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class GangLeaveSubCommand extends GangSubCommand {
 	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 0 && sender instanceof Player) {
 			Player p = (Player) sender;
-			return this.command.getPlugin().getGangsManager().leaveGang(p);
+			return this.command.getPlugin().getGangsManager().leaveGang(p, GangLeaveReason.LEAVE);
 		}
 		return false;
 	}

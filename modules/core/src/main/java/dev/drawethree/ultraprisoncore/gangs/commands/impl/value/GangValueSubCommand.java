@@ -27,7 +27,7 @@ public class GangValueSubCommand extends GangSubCommand {
 		if (args.size() > 0) {
 			GangSubCommand subCommand = getSubCommand(args.get(0));
 			if (subCommand != null) {
-				return subCommand.execute(sender, args.subList(1, args.size() - 1));
+				return subCommand.execute(sender, args.subList(1, args.size()));
 			}
 		}
 		return false;

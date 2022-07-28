@@ -42,6 +42,8 @@ public class GangsConfig {
 	private boolean enableColorCodes;
 	@Getter
 	private boolean gangFriendlyFire;
+	@Getter
+	private String[] gangsCommandAliases;
 
 
 	public GangsConfig(UltraPrisonGangs plugin) {
@@ -79,6 +81,7 @@ public class GangsConfig {
 		this.enableColorCodes = this.getYamlConfig().getBoolean("color-codes-in-gang-name");
 		this.gangFriendlyFire = this.getYamlConfig().getBoolean("gang-friendly-fire");
 		this.gangChatPriority = EventPriority.valueOf(this.getYamlConfig().getString("gang-chat-priority"));
+		this.gangsCommandAliases = this.getYamlConfig().getStringList("gangs-command-aliases").toArray(new String[0]);
 		this.restrictedNames = this.getYamlConfig().getStringList("restricted-names");
 	}
 

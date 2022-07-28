@@ -2,33 +2,43 @@ package dev.drawethree.ultraprisoncore.gangs.commands.impl.admin;
 
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangSubCommand;
+import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gangs.utils.GangsConstants;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class GangAdminRemoveSubCommand extends GangSubCommand {
+public final class GangAdminJoinSubCommand extends GangSubCommand {
 
-	public GangAdminRemoveSubCommand(GangCommand command) {
-		super(command, "remove");
+	public GangAdminJoinSubCommand(GangCommand command) {
+		super(command, "join", "add");
 	}
 
 	@Override
 	public boolean execute(CommandSender sender, List<String> args) {
-		if (args.size() == 1) {
+		if (args.size() == 2) {
 			Player target = Players.getNullable(args.get(0));
-			return this.command.getPlugin().getGangsManager().forceRemove(sender, target);
+			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(1));
+
+			if (!gangOptional.isPresent()) {
+				PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));
+				return false;
+			}
+
+			return this.command.getPlugin().getGangsManager().forceAdd(sender, target, gangOptional.get());
 		}
 		return false;
 	}
 
 	@Override
 	public String getUsage() {
-		return ChatColor.RED + "/gang admin remove <player>";
+		return ChatColor.RED + "/gang admin join <player> <gang>";
 	}
 
 	@Override

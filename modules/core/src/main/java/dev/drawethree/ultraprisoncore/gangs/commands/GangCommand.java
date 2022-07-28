@@ -4,6 +4,8 @@ import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.commands.impl.*;
 import dev.drawethree.ultraprisoncore.gangs.commands.impl.admin.GangAdminSubCommand;
 import dev.drawethree.ultraprisoncore.gangs.commands.impl.value.GangValueSubCommand;
+import dev.drawethree.ultraprisoncore.gangs.gui.panel.GangPanelGUI;
+import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import lombok.Getter;
 import me.lucko.helper.Commands;
@@ -43,7 +45,6 @@ public class GangCommand {
 	public void register() {
 		this.registerSubCommands();
 		this.registerMainCommand();
-
 	}
 
 	private void registerMainCommand() {
@@ -51,9 +52,14 @@ public class GangCommand {
 				.tabHandler(this::createTabHandler)
 				.handler(c -> {
 
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
-						this.getHelpSubCommand().execute(c.sender(), c.args());
-						return;
+					if (c.args().size() == 0) {
+
+						if (c.sender() instanceof Player) {
+							Optional<Gang> optionalGang = this.getPlugin().getGangsManager().getPlayerGang((Player) c.sender());
+							optionalGang.ifPresent(gang -> openGangPanelGui(gang, (Player) c.sender()));
+							return;
+						}
+
 					}
 
 					GangSubCommand subCommand = this.getSubCommand(Objects.requireNonNull(c.rawArg(0)));
@@ -69,7 +75,7 @@ public class GangCommand {
 					} else {
 						this.getHelpSubCommand().execute(c.sender(), c.args());
 					}
-				}).registerAndBind(this.plugin.getCore(), "gang", "gangs");
+				}).registerAndBind(this.plugin.getCore(), this.plugin.getConfig().getGangsCommandAliases());
 	}
 
 	private GangSubCommand getHelpSubCommand() {
@@ -99,5 +105,9 @@ public class GangCommand {
 
 	private GangSubCommand getSubCommand(String arg) {
 		return subCommands.get(arg.toLowerCase());
+	}
+
+	private void openGangPanelGui(Gang gang, Player player) {
+		new GangPanelGUI(this.plugin, gang, player).open();
 	}
 }

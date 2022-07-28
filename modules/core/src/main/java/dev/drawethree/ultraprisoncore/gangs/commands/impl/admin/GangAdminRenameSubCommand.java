@@ -19,9 +19,9 @@ public final class GangAdminRenameSubCommand extends GangSubCommand {
 	@Override
 	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 2) {
-			String oldName = args.get(0);
-			String newName = args.get(1);
-			return this.command.getPlugin().getGangsManager().forceRename(sender, oldName, newName);
+			String oldGangName = args.get(0);
+			String newGangName = args.get(1);
+			return this.command.getPlugin().getGangsManager().forceRename(sender, oldGangName, newGangName);
 		}
 		return false;
 	}

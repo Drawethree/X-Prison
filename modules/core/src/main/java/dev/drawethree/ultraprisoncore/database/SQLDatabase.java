@@ -4,9 +4,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
-import dev.drawethree.ultraprisoncore.database.implementations.MySQLDatabase;
+import dev.drawethree.ultraprisoncore.database.impl.MySQLDatabase;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
+import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import dev.drawethree.ultraprisoncore.history.UltraPrisonHistory;
 import dev.drawethree.ultraprisoncore.history.model.HistoryLine;
@@ -19,6 +20,7 @@ import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Log;
+import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -78,6 +80,12 @@ public abstract class SQLDatabase extends Database {
 	protected static final String GANGS_OWNER_COLNAME = "owner";
 	protected static final String GANGS_MEMBERS_COLNAME = "members";
 	protected static final String GANGS_VALUE_COLNAME = "value";
+
+	protected static final String GANG_INVITATION_UUID = "uuid";
+	protected static final String GANG_INVITATION_GANG_ID = "gang_id";
+	protected static final String GANG_INVITATION_INVITED_BY = "invited_by";
+	protected static final String GANG_INVITATION_INVITED_PLAYER = "invited_player";
+	protected static final String GANG_INVITATION_INVITE_DATE = "invite_date";
 
 	protected static final String HISTORY_UUID_COLNAME = "uuid";
 	protected static final String HISTORY_PLAYER_UUID_COLNAME = "player_uuid";
@@ -546,6 +554,7 @@ public abstract class SQLDatabase extends Database {
 		List<Gang> returnList = new ArrayList<>();
 		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.TABLE_NAME, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE); ResultSet set = statement.executeQuery()) {
 			while (set.next()) {
+				Gang gang = new Gang();
 
 				UUID gangUUID;
 				try {
@@ -556,9 +565,12 @@ public abstract class SQLDatabase extends Database {
 					set.updateRow();
 				}
 
-				String gangName = set.getString(GANGS_NAME_COLNAME);
-				UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
+				gang.setUuid(gangUUID);
 
+				String gangName = set.getString(GANGS_NAME_COLNAME);
+				gang.setName(gangName);
+				UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
+				gang.setGangOwner(owner);
 				List<UUID> members = new ArrayList<>();
 
 				for (String s : set.getString(GANGS_MEMBERS_COLNAME).split(",")) {
@@ -573,14 +585,45 @@ public abstract class SQLDatabase extends Database {
 						e.printStackTrace();
 					}
 				}
+				gang.setGangMembers(members);
 
 				int value = set.getInt(GANGS_VALUE_COLNAME);
-				returnList.add(new Gang(gangUUID, gangName, owner, members, value));
+				gang.setValue(value);
+				List<GangInvitation> gangInvitations = getGangInvitations(gang);
+				gang.setPendingInvites(gangInvitations);
+
+				returnList.add(gang);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return returnList;
+	}
+
+	@Override
+	public List<GangInvitation> getGangInvitations(Gang gang) {
+		List<GangInvitation> returnList = new ArrayList<>();
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.INVITES_TABLE_NAME + " WHERE gang_id=?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+			statement.setString(1, gang.getUuid().toString());
+			try (ResultSet set = statement.executeQuery()) {
+				while (set.next()) {
+					UUID uuid = UUID.fromString(set.getString(GANG_INVITATION_UUID));
+					OfflinePlayer invitedPlayer = Players.getOfflineNullable(UUID.fromString(set.getString(GANG_INVITATION_INVITED_PLAYER)));
+					OfflinePlayer invitedBy = Players.getOfflineNullable(UUID.fromString(set.getString(GANG_INVITATION_INVITED_BY)));
+					Date inviteDate = set.getDate(GANG_INVITATION_INVITE_DATE);
+					GangInvitation invitation = new GangInvitation(uuid, gang, invitedPlayer, invitedBy, inviteDate);
+					returnList.add(invitation);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return returnList;
+	}
+
+	@Override
+	public void deleteGangInvitation(GangInvitation gangInvitation) {
+		this.executeAsync("DELETE FROM " + UltraPrisonGangs.INVITES_TABLE_NAME + " WHERE uuid=?", gangInvitation.getUuid().toString());
 	}
 
 	@Override
@@ -595,6 +638,13 @@ public abstract class SQLDatabase extends Database {
 				g.getName(),
 				g.getValue(),
 				g.getUuid().toString());
+
+		this.execute("DELETE FROM " + UltraPrisonGangs.INVITES_TABLE_NAME + " WHERE gang_id=?", g.getUuid().toString());
+
+		for (GangInvitation gangInvitation : g.getPendingInvites()) {
+			createGangInvitation(gangInvitation);
+		}
+
 	}
 
 	@Override
@@ -603,8 +653,21 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
+	public void createGangInvitation(GangInvitation gangInvitation) {
+		this.execute("INSERT IGNORE INTO " + UltraPrisonGangs.INVITES_TABLE_NAME + "(uuid,gang_id,invited_by,invited_player,invite_date) VALUES(?,?,?,?,?)",
+				gangInvitation.getUuid().toString(),
+				gangInvitation.getGang().getUuid().toString(),
+				gangInvitation.getInvitedBy().getUniqueId().toString(),
+				gangInvitation.getInvitedPlayer().getUniqueId().toString(),
+				gangInvitation.getInviteDate());
+	}
+
+	@Override
 	public void deleteGang(Gang g) {
 		this.executeAsync("DELETE FROM " + UltraPrisonGangs.TABLE_NAME + " WHERE UUID=?", g.getUuid().toString());
+		for (GangInvitation gangInvitation : g.getPendingInvites()) {
+			this.deleteGangInvitation(gangInvitation);
+		}
 	}
 
 	@Override

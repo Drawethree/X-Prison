@@ -10,6 +10,8 @@ import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
 import dev.drawethree.ultraprisoncore.gangs.config.GangsConfig;
 import dev.drawethree.ultraprisoncore.gangs.listener.GangsListener;
 import dev.drawethree.ultraprisoncore.gangs.managers.GangsManager;
+import dev.drawethree.ultraprisoncore.gangs.model.GangTopByValueProvider;
+import dev.drawethree.ultraprisoncore.gangs.model.GangTopProvider;
 import dev.drawethree.ultraprisoncore.gangs.model.GangUpdateTopTask;
 import lombok.Getter;
 
@@ -17,6 +19,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	public static final String MODULE_NAME = "Gangs";
 	public static final String TABLE_NAME = "UltraPrison_Gangs";
+	public static final String INVITES_TABLE_NAME = "UltraPrison_Gang_Invites";
 
 	@Getter
 	private static UltraPrisonGangs instance;
@@ -30,6 +33,10 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	@Getter
 	private GangsManager gangsManager;
 
+	@Getter
+	private GangTopProvider gangTopProvider;
+
+	@Getter
 	private GangUpdateTopTask gangUpdateTopTask;
 
 	@Getter
@@ -63,10 +70,12 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		this.gangsManager = new GangsManager(this);
 		this.gangsManager.enable();
 
+		this.gangTopProvider = new GangTopByValueProvider(this.gangsManager);
+
 		GangsListener gangsListener = new GangsListener(this);
 		gangsListener.register();
 
-		this.gangUpdateTopTask = new GangUpdateTopTask(this);
+		this.gangUpdateTopTask = new GangUpdateTopTask(this, this.gangTopProvider);
 		this.gangUpdateTopTask.start();
 
 
@@ -98,7 +107,10 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		switch (type) {
 			case SQLITE:
 			case MYSQL: {
-				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))"};
+				return new String[]{
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))",
+						"CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))",
+				};
 			}
 			default:
 				throw new IllegalStateException("Unsupported Database type: " + type);

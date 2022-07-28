@@ -8,18 +8,19 @@ import java.util.concurrent.TimeUnit;
 
 public final class GangUpdateTopTask implements Runnable {
 
-
 	private final UltraPrisonGangs plugin;
+	private final GangTopProvider gangTopProvider;
 
 	private Task task;
 
-	public GangUpdateTopTask(UltraPrisonGangs plugin) {
+	public GangUpdateTopTask(UltraPrisonGangs plugin, GangTopProvider gangTopProvider) {
 		this.plugin = plugin;
+		this.gangTopProvider = gangTopProvider;
 	}
 
 	@Override
 	public void run() {
-		this.plugin.getGangsManager().updateGangTop();
+		this.plugin.getGangsManager().updateGangTop(gangTopProvider);
 	}
 
 	public void start() {
