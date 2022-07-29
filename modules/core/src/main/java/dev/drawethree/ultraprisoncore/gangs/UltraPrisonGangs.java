@@ -3,29 +3,23 @@ package dev.drawethree.ultraprisoncore.gangs;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.config.FileManager;
 import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
-import dev.drawethree.ultraprisoncore.gangs.commands.impl.*;
+import dev.drawethree.ultraprisoncore.gangs.config.GangsConfig;
+import dev.drawethree.ultraprisoncore.gangs.listener.GangsListener;
 import dev.drawethree.ultraprisoncore.gangs.managers.GangsManager;
-import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
+import dev.drawethree.ultraprisoncore.gangs.model.GangTopByValueProvider;
+import dev.drawethree.ultraprisoncore.gangs.model.GangTopProvider;
+import dev.drawethree.ultraprisoncore.gangs.model.GangUpdateTopTask;
 import lombok.Getter;
-import me.lucko.helper.Commands;
-import org.bukkit.entity.Player;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	public static final String MODULE_NAME = "Gangs";
 	public static final String TABLE_NAME = "UltraPrison_Gangs";
-	public static final String GANGS_ADMIN_PERM = "ultraprison.gangs.admin";
-	public static final String GANGS_CREATE_PERM = "ultraprison.gangs.create";
+	public static final String INVITES_TABLE_NAME = "UltraPrison_Gang_Invites";
 
 	@Getter
 	private static UltraPrisonGangs instance;
@@ -34,17 +28,19 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	private UltraPrisonGangsAPI api;
 
 	@Getter
-	private FileManager.Config config;
+	private GangsConfig config;
 
 	@Getter
 	private GangsManager gangsManager;
 
 	@Getter
-	private UltraPrisonCore core;
+	private GangTopProvider gangTopProvider;
 
-	private Map<String, String> messages;
-	private Map<String, GangCommand> commands;
-	private Map<String, String> placeholders;
+	@Getter
+	private GangUpdateTopTask gangUpdateTopTask;
+
+	@Getter
+	private final UltraPrisonCore core;
 
 	private boolean enabled;
 
@@ -53,7 +49,6 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		this.core = prisonCore;
 	}
 
-
 	@Override
 	public boolean isEnabled() {
 		return enabled;
@@ -61,48 +56,39 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	@Override
 	public void reload() {
-
 		this.config.reload();
-
-		this.loadMessages();
-
-		this.loadPlaceholders();
-
-		this.gangsManager.reloadConfig();
 	}
-
-	private void loadPlaceholders() {
-		this.placeholders = new HashMap<>();
-
-		for (String key : this.config.get().getConfigurationSection("placeholders").getKeys(false)) {
-			this.placeholders.put(key.toLowerCase(), TextUtils.applyColor(this.config.get().getString("placeholders." + key)));
-		}
-
-	}
-
 
 	@Override
 	public void enable() {
+		this.config = new GangsConfig(this);
+		this.config.load();
 
-		this.enabled = true;
-		this.config = this.core.getFileManager().getConfig("gangs.yml").copyDefaults(true).save();
-
-		this.loadMessages();
-
-		this.loadPlaceholders();
+		GangCommand gangCommand = new GangCommand(this);
+		gangCommand.register();
 
 		this.gangsManager = new GangsManager(this);
 		this.gangsManager.enable();
 
+		this.gangTopProvider = new GangTopByValueProvider(this.gangsManager);
+
+		GangsListener gangsListener = new GangsListener(this);
+		gangsListener.register();
+
+		this.gangUpdateTopTask = new GangUpdateTopTask(this, this.gangTopProvider);
+		this.gangUpdateTopTask.start();
+
+
 		this.api = new UltraPrisonGangsAPIImpl(this.gangsManager);
 
-		this.registerCommands();
+		this.enabled = true;
 	}
 
 
 	@Override
 	public void disable() {
 		this.gangsManager.disable();
+		this.gangUpdateTopTask.stop();
 		this.enabled = false;
 	}
 
@@ -121,7 +107,10 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 		switch (type) {
 			case SQLITE:
 			case MYSQL: {
-				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))"};
+				return new String[]{
+						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))",
+						"CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))",
+				};
 			}
 			default:
 				throw new IllegalStateException("Unsupported Database type: " + type);
@@ -131,76 +120,5 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	@Override
 	public boolean isHistoryEnabled() {
 		return true;
-	}
-
-	private void registerEvents() {
-	}
-
-	private void registerCommands() {
-		this.commands = new HashMap<>();
-
-		registerCommand(new GangHelpCommand(this));
-		registerCommand(new GangInfoCommand(this));
-		registerCommand(new GangCreateCommand(this));
-		registerCommand(new GangInviteCommand(this));
-		registerCommand(new GangAcceptCommand(this));
-		registerCommand(new GangLeaveCommand(this));
-		registerCommand(new GangDisbandCommand(this));
-		registerCommand(new GangKickCommand(this));
-		registerCommand(new GangTopCommand(this));
-		registerCommand(new GangAdminCommand(this));
-		registerCommand(new GangValueCommand(this));
-		registerCommand(new GangRenameCommand(this));
-		registerCommand(new GangChatCommand(this));
-
-		Commands.create()
-				.handler(c -> {
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
-						this.getCommand("help").execute(c.sender(), c.args());
-						//new GangHelpGUI((Player) c.sender()).open();
-						return;
-					}
-					GangCommand subCommand = this.getCommand(Objects.requireNonNull(c.rawArg(0)));
-					if (subCommand != null) {
-						if (!subCommand.canExecute(c.sender())) {
-							PlayerUtils.sendMessage(c.sender(), this.getMessage("no-permission"));
-							return;
-						}
-						subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
-					} else {
-						this.getCommand("help").execute(c.sender(), c.args());
-					}
-				}).registerAndBind(core, "gang", "gangs");
-	}
-
-	private void loadMessages() {
-		messages = new HashMap<>();
-		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
-		}
-	}
-
-	public String getMessage(String key) {
-		return messages.get(key);
-	}
-
-	private void registerCommand(GangCommand command) {
-		this.commands.put(command.getName(), command);
-
-		if (command.getAliases() == null || command.getAliases().length == 0) {
-			return;
-		}
-
-		for (String alias : command.getAliases()) {
-			this.commands.put(alias, command);
-		}
-	}
-
-	private GangCommand getCommand(String arg) {
-		return commands.get(arg.toLowerCase());
-	}
-
-	public String getPlaceholder(String name) {
-		return this.placeholders.get(name.toLowerCase());
 	}
 }

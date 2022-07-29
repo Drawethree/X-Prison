@@ -4,11 +4,12 @@ import dev.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public class UltraPrisonGangsAPIImpl implements UltraPrisonGangsAPI {
 
-	private GangsManager gangsManager;
+	private final GangsManager gangsManager;
 
 	public UltraPrisonGangsAPIImpl(GangsManager gangsManager) {
 		this.gangsManager = gangsManager;
@@ -22,5 +23,10 @@ public class UltraPrisonGangsAPIImpl implements UltraPrisonGangsAPI {
 	@Override
 	public Optional<Gang> getByName(String name) {
 		return this.gangsManager.getGangWithName(name);
+	}
+
+	@Override
+	public Collection<Gang> getAllGangs() {
+		return this.gangsManager.getAllGangs();
 	}
 }

@@ -1,8 +1,9 @@
 package dev.drawethree.ultraprisoncore.gangs.api.events;
 
+import dev.drawethree.ultraprisoncore.gangs.enums.GangLeaveReason;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import lombok.Getter;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,20 +15,25 @@ public class GangLeaveEvent extends Event implements Cancellable {
 	private boolean cancelled;
 
 	@Getter
-	private Player player;
+	private final OfflinePlayer player;
 
 	@Getter
-	private Gang gang;
+	private final Gang gang;
+
+	@Getter
+	private final GangLeaveReason leaveReason;
 
 	/**
-	 * Called when player leave gang
+	 * Called when player leaves a gang
 	 *
-	 * @param player Player
-	 * @param gang   Gang
+	 * @param player      Player
+	 * @param gang        Gang
+	 * @param leaveReason GangLeaveReason
 	 */
-	public GangLeaveEvent(Player player, Gang gang) {
+	public GangLeaveEvent(OfflinePlayer player, Gang gang, GangLeaveReason leaveReason) {
 		this.player = player;
 		this.gang = gang;
+		this.leaveReason = leaveReason;
 	}
 
 	public static HandlerList getHandlerList() {

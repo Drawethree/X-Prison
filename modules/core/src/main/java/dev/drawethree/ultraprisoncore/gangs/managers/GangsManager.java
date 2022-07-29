@@ -4,111 +4,46 @@ import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
 import dev.drawethree.ultraprisoncore.gangs.enums.GangCreateResult;
+import dev.drawethree.ultraprisoncore.gangs.enums.GangLeaveReason;
 import dev.drawethree.ultraprisoncore.gangs.enums.GangNameCheckResult;
 import dev.drawethree.ultraprisoncore.gangs.enums.GangRenameResult;
-import dev.drawethree.ultraprisoncore.gangs.gui.DisbandGangAdminGUI;
+import dev.drawethree.ultraprisoncore.gangs.gui.admin.DisbandGangAdminGUI;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
+import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
+import dev.drawethree.ultraprisoncore.gangs.model.GangTopProvider;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
-import lombok.Getter;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class GangsManager {
 
-	private int maxGangMembers = 5;
-	private int gangUpdateDelay = 1;
-	private int maxGangNameLength = 10;
-
-	private UltraPrisonGangs plugin;
-
-	private Map<UUID, Gang> gangs;
-	private Map<UUID, Gang> pendingInvites;
-	private List<UUID> gangChatEnabledPlayers;
-
-	@Getter
-	private String gangDisbandGUITitle;
-
-	private List<String> gangInfoFormat;
-	private List<String> gangTopFormat;
-	private List<String> gangAdminHelpMenu;
-	private List<String> gangHelpMenu;
-	private List<String> restrictedNames;
-
-	private EventPriority gangChatPriority;
-
-	private boolean updating;
-	private boolean enableColorCodes;
-	private boolean gangFriendlyFire;
+	private final UltraPrisonGangs plugin;
+	private final Map<UUID, Gang> gangs;
+	private final List<UUID> gangChatEnabledPlayers;
 	private List<Gang> topGangs;
-
-	private Task task;
 
 	public GangsManager(UltraPrisonGangs plugin) {
 		this.plugin = plugin;
-		this.pendingInvites = new HashMap<>(25);
-		this.gangChatEnabledPlayers = new ArrayList<>(50);
+		this.gangChatEnabledPlayers = new ArrayList<>();
+		this.gangs = new HashMap<>();
+		this.topGangs = new ArrayList<>();
 	}
 
 	public void enable() {
-		this.reloadConfig();
 		this.loadGangs();
-		this.updateTop10();
-		this.subscribeEvents();
 	}
 
-	private void subscribeEvents() {
-		Events.subscribe(EntityDamageByEntityEvent.class, EventPriority.HIGHEST)
-				.filter(e -> e.getDamager() instanceof Player && e.getEntity() instanceof Player)
-				.handler(e -> {
-					if (this.gangFriendlyFire) {
-						return;
-					}
-					Player player = (Player) e.getEntity();
-					Player damager = (Player) e.getDamager();
-
-					if (this.arePlayersInSameGang(player, damager)) {
-						e.setCancelled(true);
-					}
-
-				}).bindWith(this.plugin.getCore());
-		Events.subscribe(AsyncPlayerChatEvent.class, this.gangChatPriority)
-				.filter(e -> this.hasGangChatEnabled(e.getPlayer()))
-				.handler(e -> {
-
-					Optional<Gang> gangOptional = this.getPlayerGang(e.getPlayer());
-
-					if (!gangOptional.isPresent()) {
-						this.gangChatEnabledPlayers.remove(e.getPlayer().getUniqueId());
-						return;
-					}
-
-					e.setCancelled(true);
-					e.getRecipients().clear();
-
-					Gang gang = gangOptional.get();
-
-					for (Player p : gang.getOnlinePlayers()) {
-						PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-chat-format").replace("%player%", e.getPlayer().getName()).replace("%message%", e.getMessage()).replace("%gang%", gang.getName()));
-					}
-				}).bindWith(this.plugin.getCore());
-	}
-
-	private boolean arePlayersInSameGang(Player player1, Player player2) {
+	public boolean arePlayersInSameGang(Player player1, Player player2) {
 		Optional<Gang> player1Gang = this.getPlayerGang(player1);
 		Optional<Gang> player2Gang = this.getPlayerGang(player2);
 
@@ -120,27 +55,12 @@ public class GangsManager {
 	}
 
 	private void loadGangs() {
-		this.gangs = new HashMap<>();
+		this.gangs.clear();
 		Schedulers.async().run(() -> {
 			for (Gang g : this.plugin.getCore().getPluginDatabase().getAllGangs()) {
 				this.gangs.put(g.getUuid(), g);
 			}
 		});
-	}
-
-	public void reloadConfig() {
-		this.gangInfoFormat = this.plugin.getConfig().get().getStringList("gang-info-format");
-		this.gangHelpMenu = this.plugin.getConfig().get().getStringList("gang-help-menu");
-		this.gangDisbandGUITitle = this.plugin.getConfig().get().getString("gang-disband-gui-title");
-		this.gangAdminHelpMenu = this.plugin.getConfig().get().getStringList("gang-admin-help-menu");
-		this.gangTopFormat = this.plugin.getConfig().get().getStringList("gang-top-format");
-		this.gangUpdateDelay = this.plugin.getConfig().get().getInt("gang-top-update");
-		this.maxGangMembers = this.plugin.getConfig().get().getInt("max-gang-members");
-		this.maxGangNameLength = this.plugin.getConfig().get().getInt("max-gang-name-length");
-		this.enableColorCodes = this.plugin.getConfig().get().getBoolean("color-codes-in-gang-name");
-		this.gangFriendlyFire = this.plugin.getConfig().get().getBoolean("gang-friendly-fire");
-		this.gangChatPriority = EventPriority.valueOf(this.plugin.getConfig().get().getString("gang-chat-priority"));
-		this.restrictedNames = this.plugin.getConfig().get().getStringList("restricted-names");
 	}
 
 	private void saveDataOnDisable() {
@@ -166,14 +86,14 @@ public class GangsManager {
 
 		gang.setName(newName);
 
-		PlayerUtils.sendMessage(whoRenamed, this.plugin.getMessage("gang-rename").replace("%gang%", TextUtils.applyColor(gang.getName())));
+		PlayerUtils.sendMessage(whoRenamed, this.plugin.getConfig().getMessage("gang-rename").replace("%gang%", TextUtils.applyColor(gang.getName())));
 		return GangRenameResult.SUCCESS;
 	}
 
 	public GangCreateResult createGang(String name, Player creator) {
 
 		if (this.getPlayerGang(creator).isPresent()) {
-			PlayerUtils.sendMessage(creator, this.plugin.getMessage("gang-cant-create"));
+			PlayerUtils.sendMessage(creator, this.plugin.getConfig().getMessage("gang-cant-create"));
 			return GangCreateResult.PLAYER_HAS_GANG;
 		}
 
@@ -198,10 +118,10 @@ public class GangsManager {
 
 		this.gangs.put(g.getUuid(), g);
 
-		PlayerUtils.sendMessage(creator, this.plugin.getMessage("gang-created").replace("%name%", TextUtils.applyColor(name)));
+		PlayerUtils.sendMessage(creator, this.plugin.getConfig().getMessage("gang-created").replace("%name%", TextUtils.applyColor(name)));
 
 		this.plugin.getCore().getPluginDatabase().createGang(g);
-		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getMessage("gang-create-broadcast").replace("%gang%", TextUtils.applyColor(g.getName())).replace("%player%", creator.getName())));
+		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getConfig().getMessage("gang-create-broadcast").replace("%gang%", TextUtils.applyColor(g.getName())).replace("%player%", creator.getName())));
 		return GangCreateResult.SUCCESS;
 	}
 
@@ -209,15 +129,15 @@ public class GangsManager {
 		GangNameCheckResult nameCheck = checkGangName(name);
 
 		if (nameCheck == GangNameCheckResult.NAME_TOO_LONG) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-name-long"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-name-long"));
 		} else if (nameCheck == GangNameCheckResult.NAME_CONTAINS_COLORS) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-name-colors"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-name-colors"));
 		} else if (nameCheck == GangNameCheckResult.NAME_TAKEN) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-already-exists").replace("%name%", TextUtils.applyColor(name)));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-already-exists").replace("%name%", TextUtils.applyColor(name)));
 		} else if (nameCheck == GangNameCheckResult.NAME_EMPTY) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-invalid-name"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-invalid-name"));
 		} else if (nameCheck == GangNameCheckResult.NAME_RESTRICTED) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-name-restricted"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-name-restricted"));
 		}
 
 		return nameCheck;
@@ -229,20 +149,15 @@ public class GangsManager {
 			return GangNameCheckResult.NAME_EMPTY;
 		}
 
-		for (String s : this.restrictedNames) {
+		for (String s : this.plugin.getConfig().getRestrictedNames()) {
 			if (name.contains(s)) {
 				return GangNameCheckResult.NAME_RESTRICTED;
 			}
 		}
 
-		if (this.enableColorCodes) {
-			if (ChatColor.stripColor(TextUtils.applyColor(name)).length() > this.maxGangNameLength) {
+		if (this.plugin.getConfig().isEnableColorCodes()) {
+			if (ChatColor.stripColor(TextUtils.applyColor(name)).length() > this.plugin.getConfig().getMaxGangNameLength()) {
 				return GangNameCheckResult.NAME_TOO_LONG;
-			}
-			if (!this.getGangWithName(name).isPresent()) {
-				return GangNameCheckResult.SUCCESS;
-			} else {
-				return GangNameCheckResult.NAME_TAKEN;
 			}
 		} else {
 
@@ -250,95 +165,106 @@ public class GangsManager {
 				return GangNameCheckResult.NAME_CONTAINS_COLORS;
 			}
 
-			if (name.length() > this.maxGangNameLength) {
+			if (name.length() > this.plugin.getConfig().getMaxGangNameLength()) {
 				return GangNameCheckResult.NAME_TOO_LONG;
 			}
 
-			if (!this.getGangWithName(name).isPresent()) {
-				return GangNameCheckResult.SUCCESS;
-			} else {
-				return GangNameCheckResult.NAME_TAKEN;
-			}
+		}
+		if (!this.getGangWithName(name).isPresent()) {
+			return GangNameCheckResult.SUCCESS;
+		} else {
+			return GangNameCheckResult.NAME_TAKEN;
 		}
 	}
 
 	public boolean invitePlayer(Player invitedBy, Player invited) {
 
 		if (invited == null || !invited.isOnline()) {
-			PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("player-not-online"));
+			PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("player-not-online"));
 			return false;
 		}
 
 		Optional<Gang> gangOptional = this.getPlayerGang(invitedBy);
 
 		if (!gangOptional.isPresent()) {
-			PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("not-in-gang"));
+			PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("not-in-gang"));
 			return false;
 		}
 
 		Gang gang = gangOptional.get();
 
 		if (!gang.isOwner(invitedBy)) {
-			PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("gang-not-owner"));
+			PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("gang-not-owner"));
 			return false;
 		}
 
-		if (gang.getMembersOffline().size() >= maxGangMembers) {
-			PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("gang-full"));
+		if (gang.getMembersOffline().size() >= this.plugin.getConfig().getMaxGangMembers()) {
+			PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("gang-full"));
 			return false;
 		}
 
 		Optional<Gang> gang1 = this.getPlayerGang(invited);
 
 		if (gang1.isPresent()) {
-			PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("gang-cant-invite"));
+			PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("gang-cant-invite"));
 			return false;
 		}
 
-		if (this.pendingInvites.containsKey(invited.getUniqueId())) {
-			PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("gang-invite-pending"));
+		if (gang.hasPendingInvite(invited)) {
+			PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("gang-invite-pending"));
 			return false;
 		}
 
-		this.pendingInvites.put(invited.getUniqueId(), gang);
+		GangInvitation invitation = gang.invitePlayer(invitedBy, invited);
 
-		PlayerUtils.sendMessage(invitedBy, this.plugin.getMessage("gang-invite-success").replace("%player%", invited.getName()));
-		PlayerUtils.sendMessage(invited, this.plugin.getMessage("gang-invite-received").replace("%gang%", gang.getName()));
+		PlayerUtils.sendMessage(invitedBy, this.plugin.getConfig().getMessage("gang-invite-success").replace("%player%", invited.getName()));
+		PlayerUtils.sendMessage(invited, this.plugin.getConfig().getMessage("gang-invite-received").replace("%gang%", gang.getName()));
 
-		Schedulers.sync().runLater(() -> this.pendingInvites.remove(invited.getUniqueId()), 5, TimeUnit.MINUTES);
+		Schedulers.sync().runLater(() -> gang.removeInvitation(invitation), 5, TimeUnit.MINUTES);
 		return true;
 	}
 
-	public boolean leaveGang(Player player) {
+	public boolean leaveGang(Player player, GangLeaveReason reason) {
 
 		Optional<Gang> optGang = this.getPlayerGang(player);
+
 		if (!optGang.isPresent()) {
-			PlayerUtils.sendMessage(player, this.plugin.getMessage("not-in-gang"));
+			PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("not-in-gang"));
 			return false;
 		}
 
 		Gang gang = optGang.get();
 
 		if (gang.isOwner(player)) {
-			PlayerUtils.sendMessage(player, this.plugin.getMessage("gang-please-disband"));
+			PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("gang-please-disband"));
 			return false;
 		}
 
-		return gang.leavePlayer(player);
+		if (gang.leavePlayer(player, reason)) {
+			gang.getOnlinePlayers().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getConfig().getMessage("gang-player-left").replace("%player%", player.getName())));
+			PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("gang-left").replace("%gang%", gang.getName()));
+			return true;
+		}
+
+		return false;
 	}
 
-	public boolean joinGang(Player player, Gang gang) {
+	public boolean joinGang(OfflinePlayer player, Gang gang) {
 
 		Optional<Gang> optGang = this.getPlayerGang(player);
 
 		if (optGang.isPresent()) {
-			PlayerUtils.sendMessage(player, this.plugin.getMessage("gang-cant-join"));
+			if (player.isOnline()) {
+				PlayerUtils.sendMessage(player.getPlayer(), this.plugin.getConfig().getMessage("gang-cant-join"));
+			}
 			return false;
 		}
 
-
 		if (gang.joinPlayer(player)) {
-			this.pendingInvites.remove(player.getUniqueId());
+			if (player.isOnline()) {
+				PlayerUtils.sendMessage(player.getPlayer(), this.plugin.getConfig().getMessage("gang-joined").replace("%gang%", gang.getName()));
+			}
+			gang.getOnlinePlayers().stream().filter(player1 -> player1 != player).forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getConfig().getMessage("gang-player-joined").replace("%player%", player.getName())));
 			return true;
 		} else {
 			return false;
@@ -346,9 +272,10 @@ public class GangsManager {
 	}
 
 	private List<String> getGangInfoFormat(Gang g) {
-		List<String> returnList = new ArrayList<>(this.gangInfoFormat.size());
+		List<String> originalFormat = this.plugin.getConfig().getGangInfoFormat();
+		List<String> returnList = new ArrayList<>();
 
-		for (String s : this.gangInfoFormat) {
+		for (String s : originalFormat) {
 			returnList.add(s
 					.replace("%gang_top%", String.format("%,d", this.getGangTopPosition(g)))
 					.replace("%gang_value%", String.format("%,d", g.getValue()))
@@ -363,7 +290,7 @@ public class GangsManager {
 		Optional<Gang> targetGang = this.getPlayerGang(target);
 
 		if (!targetGang.isPresent()) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-player-not-in-gang"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-player-not-in-gang"));
 			return true;
 		}
 
@@ -377,7 +304,7 @@ public class GangsManager {
 		Optional<Gang> targetGang = this.getGangWithName(gangName);
 
 		if (!targetGang.isPresent()) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-not-exists"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-not-exists"));
 			return true;
 		}
 
@@ -391,29 +318,11 @@ public class GangsManager {
 		return this.gangChatEnabledPlayers.contains(p.getUniqueId());
 	}
 
-	public boolean disbandGang(CommandSender sender, Gang gang) {
-
-		gang.disband();
-		this.gangs.remove(gang.getUuid());
-		this.plugin.getCore().getPluginDatabase().deleteGang(gang);
-
-		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getMessage("gang-disband-broadcast").replace("%gang%", gang.getName()).replace("%player%", sender.getName())));
-		return true;
-	}
-
-	public boolean disbandGang(Player player) {
-		Optional<Gang> gangOptional = this.getPlayerGang(player);
-
-		if (!gangOptional.isPresent()) {
-			PlayerUtils.sendMessage(player, this.plugin.getMessage("not-in-gang"));
-			return false;
-		}
-
-		Gang gang = gangOptional.get();
+	public void disbandGang(Player player, Gang gang) {
 
 		if (!gang.isOwner(player)) {
-			PlayerUtils.sendMessage(player, this.plugin.getMessage("gang-not-owner"));
-			return false;
+			PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("gang-not-owner"));
+			return;
 		}
 
 		GangDisbandEvent gangDisbandEvent = new GangDisbandEvent(gang);
@@ -424,7 +333,7 @@ public class GangsManager {
 
 		if (gangDisbandEvent.isCancelled()) {
 			this.plugin.getCore().debug("GangDisbandEvent for gang " + gang.getName() + " was cancelled.", this.plugin);
-			return true;
+			return;
 		}
 
 		gang.disband();
@@ -432,30 +341,28 @@ public class GangsManager {
 		this.gangs.remove(gang.getUuid());
 		this.plugin.getCore().getPluginDatabase().deleteGang(gang);
 
-		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getMessage("gang-disband-broadcast").replace("%gang%", gang.getName()).replace("%player%", player.getName())));
-		return true;
+		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getConfig().getMessage("gang-disband-broadcast").replace("%gang%", gang.getName()).replace("%player%", player.getName())));
 	}
 
-	public boolean acceptInvite(Player player) {
+	public boolean acceptInvite(Player player, Gang gang) {
 
-		Gang gangToJoin = this.pendingInvites.get(player.getUniqueId());
-
-		if (gangToJoin == null) {
-			PlayerUtils.sendMessage(player, this.plugin.getMessage("gang-no-invite-pending"));
+		if (!gang.hasPendingInvite(player)) {
+			PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("gang-no-invite-pending"));
 			return false;
 		}
 
-		return joinGang(player, gangToJoin);
+		return joinGang(player, gang);
 	}
 
 	public void sendHelpMenu(CommandSender sender) {
-		this.gangHelpMenu.forEach(s -> PlayerUtils.sendMessage(sender, s));
+		List<String> gangHelpMenu = this.plugin.getConfig().getGangHelpMenu();
+		gangHelpMenu.forEach(s -> PlayerUtils.sendMessage(sender, s));
 	}
 
 	public void sendAdminHelpMenu(CommandSender sender) {
-		this.gangAdminHelpMenu.forEach(s -> PlayerUtils.sendMessage(sender, s));
+		List<String> gangAdminHelpMenu = this.plugin.getConfig().getGangHelpMenu();
+		gangAdminHelpMenu.forEach(s -> PlayerUtils.sendMessage(sender, s));
 	}
-
 
 	public int getGangTopPosition(Gang gang) {
 		if (!this.topGangs.contains(gang)) {
@@ -464,46 +371,34 @@ public class GangsManager {
 		return this.topGangs.indexOf(gang) + 1;
 	}
 
-	private void updateTop10() {
-		this.updating = true;
-		task = Schedulers.async().runRepeating(() -> {
-			this.updating = true;
-			this.topGangs = this.gangs.values().stream().sorted(Comparator.comparingInt(Gang::getValue).reversed()).collect(Collectors.toList());
-			this.updating = false;
-		}, this.gangUpdateDelay, TimeUnit.MINUTES, this.gangUpdateDelay, TimeUnit.MINUTES);
-	}
-
-	public boolean removeFromGang(Player p, Optional<Gang> gangOpt, OfflinePlayer target) {
-
-		if (!gangOpt.isPresent()) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("not-in-gang"));
-			return false;
-		}
-
-		Gang gang = gangOpt.get();
+	public boolean removeFromGang(Player p, Gang gang, OfflinePlayer target) {
 
 		if (!gang.isOwner(p)) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-not-owner"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-not-owner"));
 			return false;
 		}
 
 		if (target == null) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("player-not-online"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("player-not-online"));
 			return false;
 		}
 
-		gang.kickPlayer(target);
+		this.kickPlayerFromGang(gang, target);
 		return true;
 	}
 
-	public boolean sendGangTop(CommandSender sender) {
-
-		if (this.updating) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-top-updating"));
-			return true;
+	public void kickPlayerFromGang(Gang gang, OfflinePlayer target) {
+		if (gang.kickPlayer(target)) {
+			gang.getOnlinePlayers().forEach(player -> PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("gang-player-kicked").replace("%player%", target.getName())));
+			if (target.isOnline()) {
+				PlayerUtils.sendMessage(target.getPlayer(), this.plugin.getConfig().getMessage("gang-kicked").replace("%gang%", gang.getName()));
+			}
 		}
+	}
 
-		for (String s : this.gangTopFormat) {
+	public boolean sendGangTop(CommandSender sender) {
+		List<String> gangTopFormat = this.plugin.getConfig().getGangTopFormat();
+		for (String s : gangTopFormat) {
 			if (s.startsWith("{FOR_EACH_GANG}")) {
 				String rawContent = s.replace("{FOR_EACH_GANG} ", "");
 				for (int i = 0; i < 10; i++) {
@@ -521,120 +416,97 @@ public class GangsManager {
 		return true;
 	}
 
-	public boolean forceAdd(CommandSender sender, Player target, Optional<Gang> gangOptional) {
+	public boolean forceAdd(CommandSender sender, Player target, Gang gang) {
 
 		if (target == null) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("player-not-online"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("player-not-online"));
 			return false;
 		}
-
-		if (!gangOptional.isPresent()) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-not-exists"));
-			return false;
-		}
-
-		Gang targetGang = gangOptional.get();
 
 		Optional<Gang> currentGang = this.getPlayerGang(target);
 
 		if (currentGang.isPresent()) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-cant-invite"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-cant-invite"));
 			return false;
 		}
 
-		return joinGang(target, targetGang);
+		return joinGang(target, gang);
 	}
 
 	public boolean forceRemove(CommandSender sender, Player target) {
 
 		if (target == null) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("player-not-online"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("player-not-online"));
 			return false;
 		}
 
 		Optional<Gang> currentGang = this.getPlayerGang(target);
 
 		if (!currentGang.isPresent()) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-player-not-in-gang"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-player-not-in-gang"));
 			return false;
 		}
 
-		return leaveGang(target);
+		return leaveGang(target, GangLeaveReason.ADMIN);
 	}
 
-	public boolean forceDisband(CommandSender sender, Optional<Gang> gangOptional) {
-
-		if (!gangOptional.isPresent()) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-not-exists"));
-			return false;
-		}
+	public boolean forceDisband(CommandSender sender, Gang gang) {
 
 		if (sender instanceof Player) {
-			new DisbandGangAdminGUI(this.plugin, (Player) sender, gangOptional.get()).open();
+			new DisbandGangAdminGUI(this.plugin, (Player) sender, gang).open();
 		} else {
 			PlayerUtils.sendMessage(sender, "§cOnly for players.");
 		}
 		return true;
 	}
 
-	public boolean forceRename(CommandSender sender, Player target, String newName) {
+	public boolean forceRename(CommandSender sender, String oldName, String newName) {
 
-		if (target == null) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("player-not-online"));
-			return false;
+		Optional<Gang> targetGang = this.getGangWithName(oldName);
+
+		if (!targetGang.isPresent()) {
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-not-exists"));
+			return true;
 		}
 
-		Optional<Gang> currentGang = this.getPlayerGang(target);
+		Gang gang = targetGang.get();
 
-		if (!currentGang.isPresent()) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-player-not-in-gang"));
-			return false;
-		}
-
-		Gang gang = currentGang.get();
 		gang.setName(newName);
-
-		PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-force-rename").replace("%player%", target.getName()).replace("%gang%", gang.getName()));
-
+		PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-force-rename").replace("%old_gang%", oldName).replace("%gang%", gang.getName()));
 		return true;
 	}
 
 	public boolean toggleGangChat(Player p) {
 
 		if (!getPlayerGang(p).isPresent()) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("not-in-gang"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("not-in-gang"));
 			return false;
 		}
 
 		if (this.gangChatEnabledPlayers.contains(p.getUniqueId())) {
 			this.gangChatEnabledPlayers.remove(p.getUniqueId());
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-chat-off"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-chat-off"));
 		} else {
 			this.gangChatEnabledPlayers.add(p.getUniqueId());
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("gang-chat-on"));
+			PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-chat-on"));
 		}
 		return true;
 	}
 
-	public boolean modifyValue(CommandSender sender, Optional<Gang> gang, int amount, String operation) {
-
-		if (!gang.isPresent()) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-not-exists"));
-			return false;
-		}
+	public boolean modifyValue(CommandSender sender, Gang gang, int amount, String operation) {
 
 		if (amount <= 0) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("invalid-value"));
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("invalid-value"));
 			return false;
 		}
 
 		if (operation.equalsIgnoreCase("add")) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-value-add").replace("%value%", String.valueOf(amount)).replace("%gang%", gang.get().getName()));
-			gang.get().setValue(gang.get().getValue() + amount);
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-value-add").replace("%value%", String.valueOf(amount)).replace("%gang%", gang.getName()));
+			gang.setValue(gang.getValue() + amount);
 			return true;
 		} else if (operation.equalsIgnoreCase("remove")) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("gang-value-remove").replace("%value%", String.valueOf(amount)).replace("%gang%", gang.get().getName()));
-			gang.get().setValue(gang.get().getValue() - amount);
+			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("gang-value-remove").replace("%value%", String.valueOf(amount)).replace("%gang%", gang.getName()));
+			gang.setValue(gang.getValue() - amount);
 			return true;
 		} else {
 			PlayerUtils.sendMessage(sender, "§cInvalid operation given.");
@@ -642,7 +514,19 @@ public class GangsManager {
 		}
 	}
 
+	public Collection<Gang> getAllGangs() {
+		return this.gangs.values();
+	}
+
 	public void disable() {
 		this.saveDataOnDisable();
+	}
+
+	public void disableGangChat(Player player) {
+		this.gangChatEnabledPlayers.remove(player.getUniqueId());
+	}
+
+	public void updateGangTop(GangTopProvider provider) {
+		this.topGangs = provider.provide();
 	}
 }

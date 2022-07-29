@@ -101,12 +101,12 @@ public class UltraPrisonMVdWPlaceholder {
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_name", event -> {
 			Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
-			return optionalGang.map(gang -> this.plugin.getGangs().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getPlaceholder("gang-without"));
+			return optionalGang.map(gang -> this.plugin.getGangs().getConfig().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getConfig().getPlaceholder("gang-without"));
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang", event -> {
 			Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
-			return optionalGang.map(gang -> this.plugin.getGangs().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getPlaceholder("gang-without"));
+			return optionalGang.map(gang -> this.plugin.getGangs().getConfig().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getConfig().getPlaceholder("gang-without"));
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_gang_value", event -> {

@@ -3,6 +3,7 @@ package dev.drawethree.ultraprisoncore.database;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
+import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
 import dev.drawethree.ultraprisoncore.history.model.HistoryLine;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.OfflinePlayer;
@@ -88,6 +89,12 @@ public abstract class Database {
 	public abstract void addIntoPrestiges(OfflinePlayer player);
 
 	public abstract List<Gang> getAllGangs();
+
+	public abstract List<GangInvitation> getGangInvitations(Gang gang);
+
+	public abstract void createGangInvitation(GangInvitation gangInvitation);
+
+	public abstract void deleteGangInvitation(GangInvitation gangInvitation);
 
 	public abstract void updateGang(Gang g);
 

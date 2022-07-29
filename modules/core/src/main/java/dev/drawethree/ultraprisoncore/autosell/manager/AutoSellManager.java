@@ -39,6 +39,7 @@ public class AutoSellManager {
     private final Map<UUID, Long> lastItems;
     private final Map<String, SellRegion> regionsAutoSell;
     private final List<UUID> enabledAutoSellPlayers;
+    private final Map<String, Set<String>> notLoadedSellRegions;
 
     public AutoSellManager(UltraPrisonAutoSell plugin) {
         this.plugin = plugin;
@@ -46,6 +47,7 @@ public class AutoSellManager {
         this.lastEarnings = new HashMap<>();
         this.lastItems = new HashMap<>();
         this.regionsAutoSell = new HashMap<>();
+        this.notLoadedSellRegions = new HashMap<>();
     }
 
 
@@ -65,7 +67,7 @@ public class AutoSellManager {
         }
     }
 
-    private void loadSellRegionFromConfig(YamlConfiguration config, String regionName) {
+    private boolean loadSellRegionFromConfig(YamlConfiguration config, String regionName) {
 
         String worldName = config.getString("regions." + regionName + ".world");
 
@@ -73,23 +75,33 @@ public class AutoSellManager {
 
         if (world == null) {
             this.plugin.getCore().getLogger().warning("There is no such World named " + worldName + "! Perhaps its no loaded yet?");
-            return;
+            this.plugin.getCore().getLogger().warning("Postponing loading of region " + regionName + ".");
+            this.postponeLoadingOfSellRegion(worldName, regionName);
+            return false;
         }
 
         IWrappedRegion region = this.validateWrappedRegion(regionName, world);
 
         if (region == null) {
             this.plugin.getCore().getLogger().warning("There is no such WorldGuard region named " + regionName + " in world " + world.getName());
-            return;
+            return false;
         }
 
         String permRequired = config.getString("regions." + regionName + ".permission");
 
         Map<CompMaterial, Double> sellPrices = this.loadSellPricesForRegion(config, regionName);
 
-        this.regionsAutoSell.put(regionName, new SellRegion(region, world, permRequired, sellPrices));
+        SellRegion sellRegion = new SellRegion(region, world, permRequired, sellPrices);
+        this.regionsAutoSell.put(regionName, sellRegion);
 
         this.plugin.getCore().getLogger().info("Loaded auto-sell region named " + regionName);
+        return true;
+    }
+
+    private void postponeLoadingOfSellRegion(String worldName, String regionName) {
+        Set<String> currentlyPostponed = this.notLoadedSellRegions.getOrDefault(worldName, new HashSet<>());
+        currentlyPostponed.add(regionName);
+        this.notLoadedSellRegions.put(worldName, currentlyPostponed);
     }
 
     private IWrappedRegion validateWrappedRegion(String regionName, World world) {
@@ -368,5 +380,12 @@ public class AutoSellManager {
             return region.getSellPriceForMaterial(material);
         }
         return 0.0;
+    }
+
+    public void loadPostponedAutoSellRegions(World world) {
+        YamlConfiguration configuration = this.plugin.getAutoSellConfig().getYamlConfig();
+        Set<String> regionNames = this.notLoadedSellRegions.getOrDefault(world.getName(), new HashSet<>());
+        regionNames.removeIf(regionName -> this.loadSellRegionFromConfig(configuration, regionName));
+        this.notLoadedSellRegions.put(world.getName(), regionNames);
     }
 }

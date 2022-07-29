@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 
 public class AutoSellListener {
 
@@ -22,6 +23,12 @@ public class AutoSellListener {
     public void subscribeToEvents() {
         this.subscribeToPlayerJoinEvent();
         this.subscribeToBlockBreakEvent();
+        this.subscribeToWorldLoadEvent();
+    }
+
+    private void subscribeToWorldLoadEvent() {
+        Events.subscribe(WorldLoadEvent.class)
+                .handler(e -> this.plugin.getManager().loadPostponedAutoSellRegions(e.getWorld())).bindWith(this.plugin.getCore());
     }
 
     private void subscribeToPlayerJoinEvent() {

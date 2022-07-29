@@ -14,10 +14,10 @@ public class GangCreateEvent extends Event implements Cancellable {
 	private boolean cancelled;
 
 	@Getter
-	private CommandSender creator;
+	private final CommandSender creator;
 
 	@Getter
-	private Gang gang;
+	private final Gang gang;
 
 	/**
 	 * Fired when gang is created

@@ -31,8 +31,12 @@ public class AutoSellConfig {
         this.config = this.plugin.getCore().getFileManager().getConfig("autosell.yml").copyDefaults(true).save();
     }
 
-    public void load() {
+    public void reload() {
         this.getConfig().reload();
+        this.load();
+    }
+
+    public void load() {
         this.loadVariables();
     }
 

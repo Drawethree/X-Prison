@@ -20,7 +20,7 @@ import java.util.Optional;
  * This class will be registered through the register-method in the
  * plugins onEnable-method.
  */
-public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
+public final class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 
 	private final UltraPrisonCore plugin;
 
@@ -233,7 +233,7 @@ public class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "gang_name":
 			case "gang": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
-				return optionalGang.map(gang -> this.plugin.getGangs().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getPlaceholder("gang-without"));
+				return optionalGang.map(gang -> this.plugin.getGangs().getConfig().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getConfig().getPlaceholder("gang-without"));
 			}
 			case "gang_value": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
