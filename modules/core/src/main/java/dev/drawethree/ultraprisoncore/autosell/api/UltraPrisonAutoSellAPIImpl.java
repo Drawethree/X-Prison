@@ -3,6 +3,7 @@ package dev.drawethree.ultraprisoncore.autosell.api;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.autosell.model.SellRegion;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,6 +25,11 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 	@Override
 	public double getPriceForItem(String regionName, ItemStack item) {
 		return plugin.getManager().getPriceForItem(regionName, item);
+	}
+
+	@Override
+	public double getPriceForBlock(Block block) {
+		return plugin.getManager().getPriceForBlock(block);
 	}
 
 	@Override

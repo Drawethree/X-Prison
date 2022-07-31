@@ -382,6 +382,15 @@ public class AutoSellManager {
         return 0.0;
     }
 
+    public double getPriceForBlock(Block block) {
+        CompMaterial material = CompMaterial.fromBlock(block);
+        SellRegion region = getAutoSellRegion(block.getLocation());
+        if (region != null) {
+            return region.getSellPriceForMaterial(material);
+        }
+        return 0.0;
+    }
+
     public void loadPostponedAutoSellRegions(World world) {
         YamlConfiguration configuration = this.plugin.getAutoSellConfig().getYamlConfig();
         Set<String> regionNames = this.notLoadedSellRegions.getOrDefault(world.getName(), new HashSet<>());

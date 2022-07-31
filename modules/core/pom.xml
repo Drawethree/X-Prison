@@ -5,7 +5,7 @@
     <parent>
         <artifactId>UltraPrisonCore</artifactId>
         <groupId>me.drawethree</groupId>
-        <version>1.11.19</version>
+        <version>1.11.20</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -134,6 +134,12 @@
             <groupId>com.github.Drawethree</groupId>
             <artifactId>UltraBackpacksAPI</artifactId>
             <version>v1.2.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.lucko</groupId>
+            <artifactId>helper</artifactId>
+            <version>5.6.10</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
