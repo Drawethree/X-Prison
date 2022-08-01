@@ -397,4 +397,8 @@ public class AutoSellManager {
         regionNames.removeIf(regionName -> this.loadSellRegionFromConfig(configuration, regionName));
         this.notLoadedSellRegions.put(world.getName(), regionNames);
     }
+
+    public SellRegion getSellRegionByName(String name) {
+        return regionsAutoSell.get(name);
+    }
 }
