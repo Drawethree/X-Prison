@@ -50,6 +50,7 @@ public final class MySQLDatabase extends SQLDatabase {
 
     @Override
     public void createTables() {
+        execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
         for (UltraPrisonModule module : this.plugin.getModules()) {
             for (String sql : module.getCreateTablesSQL(this.getDatabaseType())) {
                 execute(sql);

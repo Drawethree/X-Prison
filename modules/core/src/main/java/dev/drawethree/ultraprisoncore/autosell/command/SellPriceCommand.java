@@ -52,17 +52,17 @@ public class SellPriceCommand {
                         return;
                     }
 
-                    IWrappedRegion region = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
+                    IWrappedRegion wrappedRegion = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
 
-                    if (!validateRegion(region)) {
-                        PlayerUtils.sendMessage(c.sender(), "&cYou must be standing in a region!");
+                    if (!validateRegion(wrappedRegion)) {
+                        PlayerUtils.sendMessage(c.sender(), "&cYou must be standing in a region / specify a valid region!");
                         return;
                     }
 
-                    SellRegion sellRegion = this.getSellRegionFromWrappedRegion(region);
+                    SellRegion sellRegion = this.getSellRegionFromWrappedRegion(wrappedRegion);
 
                     if (sellRegion == null) {
-                        sellRegion = new SellRegion(region, c.sender().getWorld());
+                        sellRegion = new SellRegion(wrappedRegion, c.sender().getWorld());
                     }
 
                     sellRegion.addSellPrice(type, price);
@@ -70,7 +70,7 @@ public class SellPriceCommand {
                     this.plugin.getManager().updateSellRegion(sellRegion);
                     this.plugin.getAutoSellConfig().saveSellRegion(sellRegion);
 
-                    PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId()));
+                    PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, wrappedRegion.getId()));
 
                 }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);
     }
@@ -81,6 +81,10 @@ public class SellPriceCommand {
 
     private boolean isEditorCommand(CommandContext<Player> c) {
         return "editor".equalsIgnoreCase(c.rawArg(0));
+    }
+
+    private SellRegion getSellRegionByName(String name) {
+        return this.plugin.getManager().getSellRegionByName(name);
     }
 
     private SellRegion getSellRegionFromWrappedRegion(IWrappedRegion region) {
@@ -107,7 +111,7 @@ public class SellPriceCommand {
     }
 
     private boolean validateContext(CommandContext<Player> context) {
-        return context.args().size() == 1 || context.args().size() == 2;
+        return context.args().size() == 1 || context.args().size() == 2 || context.args().size() == 3;
     }
 
     private CompMaterial parseMaterialFromCommandContext(CommandContext<Player> c) {

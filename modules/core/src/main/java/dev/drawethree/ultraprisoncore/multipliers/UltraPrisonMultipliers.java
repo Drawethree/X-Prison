@@ -1,5 +1,6 @@
 package dev.drawethree.ultraprisoncore.multipliers;
 
+import dev.drawethree.ultrabackpacks.api.event.BackpackSellEvent;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
@@ -34,6 +35,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -53,11 +55,14 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	private UltraPrisonMultipliersAPI api;
 	private GlobalMultiplier globalSellMultiplier;
 	private GlobalMultiplier globalTokenMultiplier;
-	private HashMap<UUID, Multiplier> rankMultipliers;
-	private HashMap<UUID, PlayerMultiplier> sellMultipliers;
-	private HashMap<UUID, PlayerMultiplier> tokenMultipliers;
-	private HashMap<String, String> messages;
-	private LinkedHashMap<String, Double> permissionToMultiplier;
+
+	private Map<UUID, Multiplier> rankMultipliers;
+	private Map<UUID, PlayerMultiplier> sellMultipliers;
+	private Map<UUID, PlayerMultiplier> tokenMultipliers;
+
+	private Map<String, String> messages;
+	private Map<String, Double> permissionToMultiplier;
+
 	private boolean enabled;
 
 	private Task rankUpdateTask;
@@ -177,6 +182,18 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 						e.setAmount((long) this.getApi().getTotalToDeposit((Player) p, e.getAmount(), MultiplierType.TOKENS));
 					}
 				}).bindWith(core);
+
+		if (this.core.isUltraBackpacksEnabled()) {
+			Events.subscribe(BackpackSellEvent.class, EventPriority.NORMAL)
+					.handler(e -> {
+						double currentAmount = e.getMoneyToDeposit();
+						this.core.debug("BackpacksSellEvent >> Original Amount: " + currentAmount, this);
+						double newAmount = this.getApi().getTotalToDeposit(e.getPlayer(), currentAmount, MultiplierType.SELL);
+						this.core.debug("BackpacksSellEvent >> New Amount: " + newAmount, this);
+						e.setMoneyToDeposit(newAmount);
+					}).bindWith(core);
+		}
+
 	}
 
 	private void saveSellMultiplier(Player player, boolean async) {
