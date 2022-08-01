@@ -41,7 +41,6 @@ public class SellPriceCommand {
 
                     CompMaterial type = this.parseMaterialFromCommandContext(c);
                     double price = this.parsePriceFromCommandContext(c);
-                    SellRegion region = this.parseSellRegionFromCommandContext(c);
 
                     if (!validateMaterial(type)) {
                         PlayerUtils.sendMessage(c.sender(), "&cInvalid item in hand / specified item!");
@@ -53,17 +52,17 @@ public class SellPriceCommand {
                         return;
                     }
 
-                    IWrappedRegion wrappedRegion = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
+                    IWrappedRegion region = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
 
-                    if (!validateRegion(wrappedRegion) && region == null) {
-                        PlayerUtils.sendMessage(c.sender(), "&cYou must be standing in a region / specify a valid region!");
+                    if (!validateRegion(region)) {
+                        PlayerUtils.sendMessage(c.sender(), "&cYou must be standing in a region!");
                         return;
                     }
 
-                    SellRegion sellRegion = region == null ? this.getSellRegionFromWrappedRegion(wrappedRegion) : region;
+                    SellRegion sellRegion = this.getSellRegionFromWrappedRegion(region);
 
                     if (sellRegion == null) {
-                        sellRegion = new SellRegion(wrappedRegion, c.sender().getWorld());
+                        sellRegion = new SellRegion(region, c.sender().getWorld());
                     }
 
                     sellRegion.addSellPrice(type, price);
@@ -71,18 +70,9 @@ public class SellPriceCommand {
                     this.plugin.getManager().updateSellRegion(sellRegion);
                     this.plugin.getAutoSellConfig().saveSellRegion(sellRegion);
 
-                    PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, wrappedRegion.getId()));
+                    PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, region.getId()));
 
                 }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);
-    }
-
-    private SellRegion parseSellRegionFromCommandContext(CommandContext<Player> c) {
-        if (c.args().size() == 2) {
-            return getSellRegionByName(c.rawArg(1));
-        } else if (c.args().size() == 3) {
-            return getSellRegionByName(c.rawArg(2));
-        }
-        return null;
     }
 
     private void openEditorGui(Player sender) {
@@ -91,10 +81,6 @@ public class SellPriceCommand {
 
     private boolean isEditorCommand(CommandContext<Player> c) {
         return "editor".equalsIgnoreCase(c.rawArg(0));
-    }
-
-    private SellRegion getSellRegionByName(String name) {
-        return this.plugin.getManager().getSellRegionByName(name);
     }
 
     private SellRegion getSellRegionFromWrappedRegion(IWrappedRegion region) {
@@ -116,12 +102,12 @@ public class SellPriceCommand {
     private void sendInvalidUsage(Player player) {
         PlayerUtils.sendMessage(player, "&cInvalid usage!");
         PlayerUtils.sendMessage(player, "&c/sellprice editor - Opens Editor GUI for sell prices");
-        PlayerUtils.sendMessage(player, "&c/sellprice <material> <price> [region] - Sets the sell price of specified material. Region is optional");
-        PlayerUtils.sendMessage(player, "&c/sellprice <price> [region] - Sets the sell price of item material you have in your hand. Region is optional");
+        PlayerUtils.sendMessage(player, "&c/sellprice <material> <price> - Sets the sell price of specified material.");
+        PlayerUtils.sendMessage(player, "&c/sellprice <price> - Sets the sell price of item material you have in your hand.");
     }
 
     private boolean validateContext(CommandContext<Player> context) {
-        return context.args().size() == 1 || context.args().size() == 2 || context.args().size() == 3;
+        return context.args().size() == 1 || context.args().size() == 2;
     }
 
     private CompMaterial parseMaterialFromCommandContext(CommandContext<Player> c) {
