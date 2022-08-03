@@ -5,6 +5,7 @@ import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -26,13 +27,27 @@ public class GangsListener {
 
 	private void subscribeToEntityDamageByEntityEvent() {
 		Events.subscribe(EntityDamageByEntityEvent.class, EventPriority.HIGHEST)
-				.filter(e -> e.getDamager() instanceof Player && e.getEntity() instanceof Player)
+				.filter(e -> e.getDamager() instanceof Player && (e.getEntity() instanceof Player || e.getEntity() instanceof Projectile))
 				.handler(e -> {
+
 					if (this.plugin.getConfig().isGangFriendlyFire()) {
 						return;
 					}
+
 					Player player = (Player) e.getEntity();
-					Player damager = (Player) e.getDamager();
+					Player damager = null;
+					if (e.getDamager() instanceof Player) {
+						damager = (Player) e.getDamager();
+					} else if (e.getDamager() instanceof Projectile) {
+						Projectile projectile = (Projectile) e.getDamager();
+						if (projectile.getShooter() instanceof Player) {
+							damager = (Player) projectile.getShooter();
+						}
+					}
+
+					if (damager == null) {
+						return;
+					}
 
 					if (this.plugin.getGangsManager().arePlayersInSameGang(player, damager)) {
 						e.setCancelled(true);
