@@ -11,6 +11,7 @@ import lombok.Getter;
 import me.lucko.helper.Commands;
 import me.lucko.helper.command.context.CommandContext;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -57,6 +58,9 @@ public class GangCommand {
 						if (c.sender() instanceof Player) {
 							Optional<Gang> optionalGang = this.getPlugin().getGangsManager().getPlayerGang((Player) c.sender());
 							optionalGang.ifPresent(gang -> openGangPanelGui(gang, (Player) c.sender()));
+							return;
+						} else if (c.sender() instanceof ConsoleCommandSender) {
+							this.getHelpSubCommand().execute(c.sender(), c.args());
 							return;
 						}
 
