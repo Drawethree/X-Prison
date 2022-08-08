@@ -1,15 +1,15 @@
 package dev.drawethree.ultraprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
-import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
+import dev.drawethree.ultraprisoncore.tokens.utils.TokensConstants;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TokensPayCommand extends TokensCommand {
+public final class TokensPayCommand extends TokensCommand {
 
 	private static final String COMMAND_NAME = "pay";
 	private static final String[] COMMAND_ALIASES = {"send"};
@@ -33,19 +33,19 @@ public class TokensPayCommand extends TokensCommand {
 				OfflinePlayer target = Players.getOfflineNullable(args.get(0));
 
 				if (!target.isOnline()) {
-					PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("player_not_online").replace("%player%", target.getName()));
+					PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("player_not_online").replace("%player%", target.getName()));
 					return true;
 				}
 
 				if (target.getUniqueId().equals(p.getUniqueId())) {
-					PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("tokens_cant_send_to_yourself"));
+					PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("tokens_cant_send_to_yourself"));
 					return true;
 				}
 
 				commandManager.getPlugin().getTokensManager().payTokens(p, amount, target);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
 			}
 		}
 		return false;
@@ -53,7 +53,7 @@ public class TokensPayCommand extends TokensCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(UltraPrisonTokens.TOKENS_ADMIN_PERM) || sender.hasPermission(this.getRequiredPermission());
+		return sender.hasPermission(TokensConstants.TOKENS_ADMIN_PERM) || sender.hasPermission(this.getRequiredPermission());
 	}
 
 	@Override

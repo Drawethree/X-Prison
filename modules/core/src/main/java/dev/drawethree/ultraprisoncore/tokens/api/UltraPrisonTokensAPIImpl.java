@@ -5,9 +5,9 @@ import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.tokens.managers.TokensManager;
 import org.bukkit.OfflinePlayer;
 
-public class UltraPrisonTokensAPIImpl implements UltraPrisonTokensAPI {
+public final class UltraPrisonTokensAPIImpl implements UltraPrisonTokensAPI {
 
-	private TokensManager manager;
+	private final TokensManager manager;
 
 	public UltraPrisonTokensAPIImpl(TokensManager manager) {
 

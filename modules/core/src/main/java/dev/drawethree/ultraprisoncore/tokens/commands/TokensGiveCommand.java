@@ -2,14 +2,14 @@ package dev.drawethree.ultraprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
-import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
+import dev.drawethree.ultraprisoncore.tokens.utils.TokensConstants;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-public class TokensGiveCommand extends TokensCommand {
+public final class TokensGiveCommand extends TokensCommand {
 
 	private static final String COMMAND_NAME = "give";
 
@@ -26,7 +26,7 @@ public class TokensGiveCommand extends TokensCommand {
 				commandManager.getPlugin().getTokensManager().giveTokens(target, amount, sender, ReceiveCause.GIVE);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
 			}
 		}
 		return false;
@@ -34,7 +34,7 @@ public class TokensGiveCommand extends TokensCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(UltraPrisonTokens.TOKENS_ADMIN_PERM) || sender.hasPermission(getRequiredPermission());
+		return sender.hasPermission(TokensConstants.TOKENS_ADMIN_PERM) || sender.hasPermission(getRequiredPermission());
 	}
 
 	@Override

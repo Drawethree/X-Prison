@@ -68,13 +68,13 @@ public abstract class Database {
 
 	public abstract Map<UUID, Integer> getTop10Prestiges();
 
-	public abstract Map<UUID, Long> getTop10Gems();
+	public abstract Map<UUID, Long> getTopGems(int amountOfRecords);
 
-	public abstract Map<UUID, Long> getTop10BlocksWeekly();
+	public abstract Map<UUID, Long> getTopBlocksWeekly(int amountOfRecords);
 
-	public abstract Map<UUID, Long> getTop10Tokens();
+	public abstract Map<UUID, Long> getTopTokens(int amountOfRecords);
 
-	public abstract Map<UUID, Long> getTop10Blocks();
+	public abstract Map<UUID, Long> getTopBlocks(int amountOfRecords);
 
 	public abstract void addIntoTokens(OfflinePlayer player, long startingTokens);
 

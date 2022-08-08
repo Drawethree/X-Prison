@@ -55,6 +55,8 @@ top_update_interval: 10
 # Cooldown in seconds to check other player's tokens balances (/tokens <player>)
 # Applies also for /blocks <player>
 tokens-command-cooldown: 5
+# Amount of players displayed in top lists
+top_players_amount: 10
 tokens-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lTOKENS TOP"

@@ -320,8 +320,7 @@ public class GemsManager {
 	private void updateGemsTop() {
 		top10Gems = new LinkedHashMap<>();
 		this.plugin.getCore().getLogger().info("Starting updating GemsTop");
-
-		this.top10Gems = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Gems();
+		this.top10Gems = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTopGems(10);
 		this.plugin.getCore().getLogger().info("GemsTop updated!");
 	}
 

@@ -20,16 +20,17 @@ public class BlockReward {
     public void giveTo(Player p) {
 
         if (!Bukkit.isPrimaryThread()) {
-            Schedulers.sync().run(() -> {
-                for (String s : this.commandsToRun) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
-                }
-            });
+            Schedulers.sync().run(() -> executeCommands(p));
         } else {
-            for (String s : this.commandsToRun) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
-            }
+            executeCommands(p);
         }
+
         PlayerUtils.sendMessage(p, this.message);
+    }
+
+    private void executeCommands(Player p) {
+        for (String s : this.commandsToRun) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+        }
     }
 }

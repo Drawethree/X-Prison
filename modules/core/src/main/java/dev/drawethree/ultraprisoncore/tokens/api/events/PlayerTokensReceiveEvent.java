@@ -8,7 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class PlayerTokensReceiveEvent extends UltraPrisonPlayerEvent implements Cancellable {
+public final class PlayerTokensReceiveEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 
 	private static final HandlerList handlers = new HandlerList();

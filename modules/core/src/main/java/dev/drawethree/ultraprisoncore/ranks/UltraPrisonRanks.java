@@ -33,7 +33,7 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	private HashMap<String, String> messages;
 
 	@Getter
-	private UltraPrisonCore core;
+	private final UltraPrisonCore core;
 	private boolean enabled;
 
 	public UltraPrisonRanks(UltraPrisonCore UltraPrisonCore) {

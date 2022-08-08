@@ -2,6 +2,7 @@ package dev.drawethree.ultraprisoncore.tokens.managers;
 
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.commands.*;
+import dev.drawethree.ultraprisoncore.tokens.utils.TokensConstants;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import lombok.Getter;
 import me.lucko.helper.Commands;
@@ -19,8 +20,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens.TOKENS_ADMIN_PERM;
-
 public class CommandManager {
 
 	@Getter
@@ -28,24 +27,19 @@ public class CommandManager {
 	private final Set<TokensCommand> commands;
 	private CooldownMap<CommandSender> tokensCommandCooldownMap;
 
-	private String[] tokensCommandAliases;
-	private String[] tokensTopCommandAliases;
-	private String[] blocksTopCommandAliases;
-	private String[] tokenMessageCommandAliases;
-
 	public CommandManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
 		this.commands = new HashSet<>();
-		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getCommandCooldown(), TimeUnit.SECONDS));
+		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getTokensConfig().getCommandCooldown(), TimeUnit.SECONDS));
 	}
 
 
 	private boolean checkCommandCooldown(CommandSender sender) {
-		if (sender.hasPermission(TOKENS_ADMIN_PERM)) {
+		if (sender.hasPermission(TokensConstants.TOKENS_ADMIN_PERM)) {
 			return true;
 		}
 		if (!tokensCommandCooldownMap.test(sender)) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("cooldown").replace("%time%", String.format("%,d", this.tokensCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
+			PlayerUtils.sendMessage(sender, this.plugin.getTokensConfig().getMessage("cooldown").replace("%time%", String.format("%,d", this.tokensCommandCooldownMap.remainingTime(sender, TimeUnit.SECONDS))));
 			return false;
 		}
 		return true;
@@ -75,7 +69,7 @@ public class CommandManager {
 						if (subCommand.canExecute(c.sender())) {
 							subCommand.execute(c.sender(), c.args().subList(1, c.args().size()));
 						} else {
-							PlayerUtils.sendMessage(c.sender(), this.plugin.getMessage("no_permission"));
+							PlayerUtils.sendMessage(c.sender(), this.plugin.getTokensConfig().getMessage("no_permission"));
 						}
 					} else {
 						if (!checkCommandCooldown(c.sender())) {
@@ -84,14 +78,14 @@ public class CommandManager {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target, true);
 					}
-				}).registerAndBind(this.plugin.getCore(), this.tokensCommandAliases);
+				}).registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getTokensCommandAliases());
 
 		// /tokenmessage
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
 					this.plugin.getTokensManager().toggleTokenMessage(c.sender());
-				}).registerAndBind(this.plugin.getCore(), this.tokenMessageCommandAliases);
+				}).registerAndBind(this.plugin.getCore(), "tokenmessage");
 
 		// /blockstop, / blocktop
 		Commands.create()
@@ -100,7 +94,7 @@ public class CommandManager {
 						this.plugin.getTokensManager().sendBlocksTop(c.sender());
 					}
 				})
-				.registerAndBind(this.plugin.getCore(), this.blocksTopCommandAliases);
+				.registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getBlocksTopCommandAliases());
 
 		// /blockstopweekly, /blockstopw
 		Commands.create()
@@ -113,7 +107,7 @@ public class CommandManager {
 
 		// /blockstopweeklyreset
 		Commands.create()
-				.assertPermission(TOKENS_ADMIN_PERM, this.plugin.getMessage("no_permission"))
+				.assertPermission(TokensConstants.TOKENS_ADMIN_PERM, this.plugin.getTokensConfig().getMessage("no_permission"))
 				.handler(c -> {
 					if (c.args().size() == 0) {
 						this.plugin.getTokensManager().resetBlocksTopWeekly(c.sender());
@@ -128,7 +122,7 @@ public class CommandManager {
 						this.plugin.getTokensManager().sendTokensTop(c.sender());
 					}
 				})
-				.registerAndBind(this.plugin.getCore(), this.tokensTopCommandAliases);
+				.registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getTokensTopCommandAliases());
 
 		// /blocks
 		Commands.create()
@@ -147,8 +141,8 @@ public class CommandManager {
 
 		// /blocksadmin, /blocksa
 		Commands.create()
-				.tabHandler(c -> Arrays.asList("add","remove","set"))
-				.assertPermission(TOKENS_ADMIN_PERM, this.plugin.getMessage("no_permission"))
+				.tabHandler(c -> Arrays.asList("add", "remove", "set"))
+				.assertPermission(TokensConstants.TOKENS_ADMIN_PERM, this.plugin.getTokensConfig().getMessage("no_permission"))
 				.handler(c -> {
 					if (c.args().size() == 3) {
 
@@ -206,20 +200,11 @@ public class CommandManager {
 
 	public void reload() {
 		Map<CommandSender, Cooldown> cooldownMap = this.tokensCommandCooldownMap.getAll();
-		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getCommandCooldown(), TimeUnit.SECONDS));
+		this.tokensCommandCooldownMap = CooldownMap.create(Cooldown.of(plugin.getTokensConfig().getCommandCooldown(), TimeUnit.SECONDS));
 		cooldownMap.forEach((commandSender, cooldown) -> this.tokensCommandCooldownMap.put(commandSender, cooldown));
-		this.loadVariables();
 	}
 
 	public void enable() {
-		this.loadVariables();
 		this.registerCommands();
-	}
-
-	private void loadVariables() {
-		this.tokensCommandAliases = this.plugin.getConfig().get().getStringList("tokens-command-aliases").toArray(new String[0]);
-		this.tokensTopCommandAliases = this.plugin.getConfig().get().getStringList("tokens-top-command-aliases").toArray(new String[0]);
-		this.blocksTopCommandAliases = this.plugin.getConfig().get().getStringList("blocks-top-command-aliases").toArray(new String[0]);
-		this.tokenMessageCommandAliases = this.plugin.getConfig().get().getStringList("token-message-command-aliases").toArray(new String[0]);
 	}
 }

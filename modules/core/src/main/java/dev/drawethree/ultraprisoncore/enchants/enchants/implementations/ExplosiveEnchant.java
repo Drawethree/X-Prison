@@ -124,7 +124,7 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
 				}
 
-				plugin.getCore().getTokens().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+				plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
 
 				if (plugin.getCore().isUltraBackpacksEnabled()) {
 					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);

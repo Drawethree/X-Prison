@@ -1,13 +1,13 @@
 package dev.drawethree.ultraprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
-import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
+import dev.drawethree.ultraprisoncore.tokens.utils.TokensConstants;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class TokensWithdrawCommand extends TokensCommand {
+public final class TokensWithdrawCommand extends TokensCommand {
 
 	private static final String COMMAND_NAME = "withdraw";
 
@@ -30,7 +30,7 @@ public class TokensWithdrawCommand extends TokensCommand {
 				commandManager.getPlugin().getTokensManager().withdrawTokens(p, amount, value);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("not_a_number").replace("%input%", args.get(0) + " or " + args.get(1)));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", args.get(0) + " or " + args.get(1)));
 			}
 		} else if (args.size() == 1 && sender instanceof Player) {
 			Player p = (Player) sender;
@@ -43,7 +43,7 @@ public class TokensWithdrawCommand extends TokensCommand {
 				commandManager.getPlugin().getTokensManager().withdrawTokens(p, amount, value);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("not_a_number").replace("%input%", args.get(0) + " or " + args.get(1)));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", args.get(0) + " or " + args.get(1)));
 			}
 		}
 		return false;
@@ -51,7 +51,7 @@ public class TokensWithdrawCommand extends TokensCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(UltraPrisonTokens.TOKENS_ADMIN_PERM) || sender.hasPermission(getRequiredPermission());
+		return sender.hasPermission(TokensConstants.TOKENS_ADMIN_PERM) || sender.hasPermission(getRequiredPermission());
 	}
 
 	@Override

@@ -3,20 +3,19 @@ package dev.drawethree.ultraprisoncore.tokens.managers;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.ultraprisoncore.api.enums.LostCause;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
+import dev.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
 import dev.drawethree.ultraprisoncore.tokens.model.BlockReward;
-import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -24,110 +23,39 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public class TokensManager {
 
 	private final UltraPrisonTokens plugin;
 
-	private List<String> tokensTopFormat;
-	private List<String> blocksTopFormat;
-	private List<String> blocksTopFormatWeekly;
-	private final HashMap<UUID, Long> tokensCache = new HashMap<>();
-	private final HashMap<UUID, Long> blocksCache = new HashMap<>();
-	private final HashMap<UUID, Long> blocksCacheWeekly = new HashMap<>();
-
-	private LinkedHashMap<UUID, Long> top10Tokens = new LinkedHashMap<>();
-	private LinkedHashMap<UUID, Long> top10Blocks = new LinkedHashMap<>();
-	private LinkedHashMap<UUID, Long> top10BlocksWeekly = new LinkedHashMap<>();
-
-	private LinkedHashMap<Long, BlockReward> blockRewards = new LinkedHashMap<>();
-
-	private int topUpdateInterval;
-	private Task task;
-
-	private boolean updating;
-	private boolean displayTokenMessages;
-	private long nextResetWeekly;
-
-	private String tokenItemDisplayName;
-	private ItemStack tokenItem;
-	private List<String> tokenItemLore;
-
+	private final Map<UUID, Long> tokensCache;
+	private final Map<UUID, Long> blocksCache;
+	private final Map<UUID, Long> blocksCacheWeekly;
 	private final List<UUID> tokenMessageOnPlayers;
 
-	private final long startingTokens;
+
+	private Map<UUID, Long> topTokens;
+	private Map<UUID, Long> topBlocks;
+	private Map<UUID, Long> topBlocksWeekly;
 
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
-		this.tokensTopFormat = this.plugin.getConfig().get().getStringList("tokens-top-format");
-		this.blocksTopFormat = this.plugin.getConfig().get().getStringList("blocks-top-format");
-		this.blocksTopFormatWeekly = this.plugin.getConfig().get().getStringList("blocks-top-weekly-format");
-		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
-		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
-		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
-		this.tokenItemDisplayName = plugin.getConfig().get().getString("tokens.item.name");
-		this.tokenItemLore = plugin.getConfig().get().getStringList("tokens.item.lore");
-		this.tokenItem = CompMaterial.fromString(plugin.getConfig().get().getString("tokens.item.material")).toItem();
-		this.startingTokens = plugin.getConfig().get().getLong("starting-tokens");
 		this.tokenMessageOnPlayers = new ArrayList<>();
-
-		Events.subscribe(PlayerJoinEvent.class)
-				.handler(e -> {
-					this.addIntoTable(e.getPlayer());
-					this.loadPlayerData(e.getPlayer());
-
-					if (this.displayTokenMessages && hasOffTokenMessages(e.getPlayer())) {
-						this.tokenMessageOnPlayers.add(e.getPlayer().getUniqueId());
-					}
-
-				}).bindWith(plugin.getCore());
-		Events.subscribe(PlayerQuitEvent.class)
-				.handler(e -> {
-					this.savePlayerData(e.getPlayer(), true, true);
-					e.getPlayer().getActivePotionEffects().forEach(effect -> e.getPlayer().removePotionEffect(effect.getType()));
-				}).bindWith(plugin.getCore());
-
-		this.loadPlayerDataOnEnable();
-		this.loadBlockRewards();
-		this.updateTop10();
+		this.topTokens = new LinkedHashMap<>();
+		this.topBlocks = new LinkedHashMap<>();
+		this.topBlocksWeekly = new LinkedHashMap<>();
+		this.tokensCache = new HashMap<>();
+		this.blocksCache = new HashMap<>();
+		this.blocksCacheWeekly = new HashMap<>();
 	}
 
-	private void loadBlockRewards() {
-		this.blockRewards = new LinkedHashMap<>();
-		for (String key : this.plugin.getBlockRewardsConfig().get().getConfigurationSection("block-rewards").getKeys(false)) {
-			long blocksNeeded = Long.parseLong(key);
-			String message = TextUtils.applyColor(this.plugin.getBlockRewardsConfig().get().getString("block-rewards." + key + ".message"));
-			List<String> commands = this.plugin.getBlockRewardsConfig().get().getStringList("block-rewards." + key + ".commands");
-			this.blockRewards.put(blocksNeeded, new BlockReward(blocksNeeded, commands, message));
-		}
-		this.plugin.getCore().getLogger().info("Loaded " + this.blockRewards.keySet().size() + " Block Rewards!");
-	}
-
-	public void stopUpdating() {
-		this.plugin.getCore().getLogger().info("Stopping updating Top 10");
-		task.close();
-	}
-
-	private void updateTop10() {
-		this.updating = true;
-		task = Schedulers.async().runRepeating(() -> {
-			this.updating = true;
-			Players.all().forEach(p -> savePlayerData(p, false, false));
-			this.updateBlocksTop();
-			this.updateBlocksTopWeekly();
-			this.updateTokensTop();
-			this.updating = false;
-		}, 30, TimeUnit.SECONDS, this.topUpdateInterval, TimeUnit.MINUTES);
-	}
-
-	private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
+	public void savePlayerData(Player player, boolean removeFromCache, boolean async) {
 		if (async) {
 			Schedulers.async().run(() -> {
 				this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
@@ -172,9 +100,9 @@ public class TokensManager {
 		});
 	}
 
-	private void addIntoTable(Player player) {
+	public void addIntoTable(Player player) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoTokens(player, this.startingTokens);
+			this.plugin.getCore().getPluginDatabase().addIntoTokens(player, this.plugin.getTokensConfig().getStartingTokens());
 			this.plugin.getCore().getPluginDatabase().addIntoBlocks(player);
 			this.plugin.getCore().getPluginDatabase().addIntoBlocksWeekly(player);
 		});
@@ -184,7 +112,7 @@ public class TokensManager {
 		Players.all().forEach(p -> loadPlayerData(p));
 	}
 
-	private void loadPlayerData(Player player) {
+	public void loadPlayerData(Player player) {
 		Schedulers.async().run(() -> {
 
 			long playerTokens = this.plugin.getCore().getPluginDatabase().getPlayerTokens(player);
@@ -207,7 +135,7 @@ public class TokensManager {
 			} else {
 				tokensCache.put(p.getUniqueId(), newAmount);
 			}
-			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", newAmount)));
+			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("admin_set_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", newAmount)));
 		});
 	}
 
@@ -225,18 +153,18 @@ public class TokensManager {
 		} else {
 			tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
 			if (executor != null && executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), plugin.getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
+				PlayerUtils.sendMessage(p.getPlayer(), plugin.getTokensConfig().getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 			} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
 			} else if (cause == ReceiveCause.LUCKY_BLOCK && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
 			}
 		}
 
 		this.plugin.getCore().debug("UltraPrisonPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L), this.plugin);
 
 		if (executor != null && !(executor instanceof ConsoleCommandSender)) {
-			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
+			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
 		}
 	}
 
@@ -264,7 +192,7 @@ public class TokensManager {
 					p.setItemInHand(null);
 				}
 				this.giveTokens(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
-				PlayerUtils.sendMessage(p, plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
+				PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
 			} else {
 				this.giveTokens(p, tokenAmount, null, ReceiveCause.REDEEM);
 				if (item.getAmount() == 1) {
@@ -276,10 +204,10 @@ public class TokensManager {
 				} else {
 					item.setAmount(item.getAmount() - 1);
 				}
-				PlayerUtils.sendMessage(p, plugin.getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
+				PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
 			}
 		} else {
-			PlayerUtils.sendMessage(p, plugin.getMessage("not_token_item"));
+			PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("not_token_item"));
 		}
 	}
 
@@ -288,12 +216,12 @@ public class TokensManager {
 			if (getPlayerTokens(executor) >= amount) {
 				this.removeTokens(executor, amount, null, LostCause.PAY);
 				this.giveTokens(target, amount, null, ReceiveCause.PAY);
-				PlayerUtils.sendMessage(executor, plugin.getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
+				PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("tokens_send").replace("%player%", target.getName()).replace("%tokens%", String.format("%,d", amount)));
 				if (target.isOnline()) {
-					PlayerUtils.sendMessage((CommandSender) target, plugin.getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.format("%,d", amount)));
+					PlayerUtils.sendMessage((CommandSender) target, plugin.getTokensConfig().getMessage("tokens_received").replace("%player%", executor.getName()).replace("%tokens%", String.format("%,d", amount)));
 				}
 			} else {
-				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_tokens"));
+				PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("not_enough_tokens"));
 			}
 		});
 	}
@@ -303,7 +231,7 @@ public class TokensManager {
 			long totalAmount = amount * value;
 
 			if (this.getPlayerTokens(executor) < totalAmount) {
-				PlayerUtils.sendMessage(executor, plugin.getMessage("not_enough_tokens"));
+				PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("not_enough_tokens"));
 				return;
 			}
 
@@ -318,7 +246,7 @@ public class TokensManager {
 				});
 			}
 
-			PlayerUtils.sendMessage(executor, plugin.getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
+			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("withdraw_successful").replace("%amount%", String.format("%,d", amount)).replace("%value%", String.format("%,d", value)));
 		});
 	}
 
@@ -362,7 +290,7 @@ public class TokensManager {
 			tokensCache.put(p.getUniqueId(), finalTokens);
 		}
 		if (executor != null) {
-			PlayerUtils.sendMessage(executor, plugin.getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
+			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
 		}
 	}
 
@@ -372,7 +300,14 @@ public class TokensManager {
 	}
 
 	private ItemStack createTokenItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(this.tokenItem.clone()).amount(value).name(this.tokenItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.tokenItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+		ItemStack item = ItemStackBuilder.of(
+						this.plugin.getTokensConfig().getTokenItem().clone())
+				.amount(value)
+				.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
+				.lore(this.plugin.getTokensConfig().getTokenItemLore())
+				.enchant(Enchantment.PROTECTION_ENVIRONMENTAL)
+				.flag(ItemFlag.HIDE_ENCHANTS)
+				.build();
 		NBTItem nbt = new NBTItem(item);
 		nbt.setLong("token-amount", amount);
 		return nbt.getItem();
@@ -382,15 +317,15 @@ public class TokensManager {
 		Schedulers.async().run(() -> {
 			if (sender == target) {
 				if (tokens) {
-					PlayerUtils.sendMessage(sender, plugin.getMessage("your_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))));
+					PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("your_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))));
 				} else {
-					PlayerUtils.sendMessage(sender, plugin.getMessage("your_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))));
+					PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("your_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))));
 				}
 			} else {
 				if (tokens) {
-					PlayerUtils.sendMessage(sender, plugin.getMessage("other_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))).replace("%player%", target.getName()));
+					PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("other_tokens").replace("%tokens%", String.format("%,d", this.getPlayerTokens(target))).replace("%player%", target.getName()));
 				} else {
-					PlayerUtils.sendMessage(sender, plugin.getMessage("other_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
+					PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("other_blocks").replace("%blocks%", String.format("%,d", this.getPlayerBrokenBlocks(target))).replace("%player%", target.getName()));
 				}
 			}
 		});
@@ -429,7 +364,7 @@ public class TokensManager {
 			}
 
 			if (sender != null && !(sender instanceof ConsoleCommandSender)) {
-				PlayerUtils.sendMessage(sender, plugin.getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("admin_give_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", finalAmount)));
 			}
 		});
 	}
@@ -474,9 +409,9 @@ public class TokensManager {
 
 	private BlockReward getNextBlockReward(BlockReward oldReward) {
 		boolean next = false;
-		for (long l : blockRewards.keySet()) {
+		for (long l : this.plugin.getBlockRewardsConfig().getBlockRewards().keySet()) {
 			if (next) {
-				return blockRewards.get(l);
+				return this.plugin.getBlockRewardsConfig().getBlockRewards().get(l);
 			}
 			if (l == oldReward.getBlocksRequired()) {
 				next = true;
@@ -506,7 +441,7 @@ public class TokensManager {
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly - amount);
 			}
 
-			PlayerUtils.sendMessage(sender, plugin.getMessage("admin_remove_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+			PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("admin_remove_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
 
 		});
 	}
@@ -535,44 +470,33 @@ public class TokensManager {
 				}
 			}
 
-			PlayerUtils.sendMessage(sender, plugin.getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
+			PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
 
 		});
 	}
 
-	private void updateTokensTop() {
-		top10Tokens = new LinkedHashMap<>();
-		this.plugin.getCore().debug("Starting updating TokensTop", this.plugin);
-		this.top10Tokens = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Tokens();
-		this.plugin.getCore().debug("TokensTop updated!", this.plugin);
+	public void updateTokensTop(Map<UUID, Long> topTokens) {
+		this.topTokens = topTokens;
 	}
 
-	private void updateBlocksTop() {
-		top10Blocks = new LinkedHashMap<>();
-		this.plugin.getCore().debug("Starting updating BlocksTop", this.plugin);
-		this.top10Blocks = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10Blocks();
-		this.plugin.getCore().debug("BlocksTop updated!", this.plugin);
+	public void updateBlocksTop(Map<UUID, Long> topBlocks) {
+		this.topBlocks = topBlocks;
 	}
 
-	private void updateBlocksTopWeekly() {
-		top10BlocksWeekly = new LinkedHashMap<>();
-		this.plugin.getCore().debug("Starting updating BlocksTop - Weekly", this.plugin);
-		this.top10BlocksWeekly = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTop10BlocksWeekly();
-		this.plugin.getCore().debug("BlocksTop updated!", this.plugin);
+	public void updateBlocksTopWeekly(Map<UUID, Long> topBlocksWeekly) {
+		this.topBlocksWeekly = topBlocksWeekly;
 	}
 
 	public void sendTokensTop(CommandSender sender) {
-		if (this.updating) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
-			return;
-		}
 
-		for (String s : this.tokensTopFormat) {
+		List<String> format = this.plugin.getTokensConfig().getTokensTopFormat();
+
+		for (String s : format) {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
 				String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
 				for (int i = 0; i < 10; i++) {
 					try {
-						UUID uuid = (UUID) top10Tokens.keySet().toArray()[i];
+						UUID uuid = (UUID) topTokens.keySet().toArray()[i];
 						OfflinePlayer player = Players.getOfflineNullable(uuid);
 						String name;
 						if (player.getName() == null) {
@@ -580,7 +504,7 @@ public class TokensManager {
 						} else {
 							name = player.getName();
 						}
-						long tokens = top10Tokens.get(uuid);
+						long tokens = topTokens.get(uuid);
 						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens)));
 					} catch (Exception e) {
 						break;
@@ -593,21 +517,17 @@ public class TokensManager {
 	}
 
 	public void sendBlocksTop(CommandSender sender) {
-		if (this.updating) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
-			return;
-		}
-
-		for (String s : this.blocksTopFormat) {
+		List<String> format = this.plugin.getTokensConfig().getBlocksTopFormat();
+		for (String s : format) {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
-				sendBlocksTop(sender, s, top10Blocks);
+				sendBlocksTop(sender, s, topBlocks);
 			} else {
 				PlayerUtils.sendMessage(sender, s);
 			}
 		}
 	}
 
-	private void sendBlocksTop(CommandSender sender, String s, LinkedHashMap<UUID, Long> top) {
+	private void sendBlocksTop(CommandSender sender, String s, Map<UUID, Long> top) {
 		String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
 		for (int i = 0; i < 10; i++) {
 			try {
@@ -628,37 +548,21 @@ public class TokensManager {
 	}
 
 	public void sendBlocksTopWeekly(CommandSender sender) {
-		if (this.updating) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("top_updating"));
-			return;
-		}
-
-		for (String s : this.blocksTopFormatWeekly) {
+		List<String> format = this.plugin.getTokensConfig().getBlocksTopFormatWeekly();
+		for (String s : format) {
 			if (s.startsWith("{FOR_EACH_PLAYER}")) {
-				sendBlocksTop(sender, s, top10BlocksWeekly);
+				sendBlocksTop(sender, s, topBlocksWeekly);
 			} else {
 				PlayerUtils.sendMessage(sender, s);
 			}
 		}
 	}
 
-
-	public int getBlocksTopWeeklyPosition(Player p) {
-		for (int i = 0; i < top10BlocksWeekly.keySet().size(); i++) {
-			UUID uuid = (UUID) top10BlocksWeekly.keySet().toArray()[i];
-			if (uuid.equals(p.getUniqueId())) {
-				return i + 1;
-			}
-		}
-		return -1;
-	}
-
 	public BlockReward getNextBlockReward(OfflinePlayer p) {
 		long blocksBroken = this.getPlayerBrokenBlocks(p);
-
-		for (long l : this.blockRewards.keySet()) {
+		for (long l : this.plugin.getBlockRewardsConfig().getBlockRewards().keySet()) {
 			if (l > blocksBroken) {
-				return this.blockRewards.get(l);
+				return this.plugin.getBlockRewardsConfig().getBlockRewards().get(l);
 			}
 		}
 		return null;
@@ -667,72 +571,82 @@ public class TokensManager {
 	public void resetBlocksTopWeekly(CommandSender sender) {
 		Schedulers.async().run(() -> {
 			PlayerUtils.sendMessage(sender, "&7&oStarting to reset BlocksTop - Weekly. This may take a while...");
-			this.top10BlocksWeekly.clear();
-			this.nextResetWeekly = Time.nowMillis() + TimeUnit.DAYS.toMillis(7);
+			this.topBlocksWeekly.clear();
+			this.plugin.getTokensConfig().setNextResetWeekly(Time.nowMillis() + TimeUnit.DAYS.toMillis(7));
 			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
 			PlayerUtils.sendMessage(sender, "&aBlocksTop - Weekly - Resetted!");
 		});
 	}
 
-	private String getTimeLeftUntilWeeklyReset() {
-
-		if (System.currentTimeMillis() > nextResetWeekly) {
-			return "RESET SOON";
-		}
-
-
-		long timeLeft = nextResetWeekly - System.currentTimeMillis();
-
-		long days = timeLeft / (24 * 60 * 60 * 1000);
-		timeLeft -= days * (24 * 60 * 60 * 1000);
-
-		long hours = timeLeft / (60 * 60 * 1000);
-		timeLeft -= hours * (60 * 60 * 1000);
-
-		long minutes = timeLeft / (60 * 1000);
-		timeLeft -= minutes * (60 * 1000);
-
-		long seconds = timeLeft / (1000);
-
-		timeLeft -= seconds * 1000;
-
-		return days + "d " + hours + "h " + minutes + "m " + seconds + "s";
-	}
-
-	public void saveWeeklyReset() {
-		this.plugin.getConfig().set("next-reset-weekly", this.nextResetWeekly).save();
-
-	}
-
-	public void reloadConfig() {
-		this.tokensTopFormat = this.plugin.getConfig().get().getStringList("tokens-top-format");
-		this.blocksTopFormat = this.plugin.getConfig().get().getStringList("blocks-top-format");
-		this.blocksTopFormatWeekly = this.plugin.getConfig().get().getStringList("blocks-top-weekly-format");
-
-		this.nextResetWeekly = plugin.getConfig().get().getLong("next-reset-weekly");
-		this.displayTokenMessages = plugin.getConfig().get().getBoolean("display-token-messages");
-		this.topUpdateInterval = plugin.getConfig().get().getInt("top_update_interval");
-		this.tokenItemDisplayName = plugin.getConfig().get().getString("tokens.item.name");
-		this.tokenItemLore = plugin.getConfig().get().getStringList("tokens.item.lore");
-		this.tokenItem = CompMaterial.fromString(plugin.getConfig().get().getString("tokens.item.material")).toItem();
-		this.loadBlockRewards();
+	private void saveWeeklyReset() {
+		this.plugin.getTokensConfig().getYamlConfig().set("next-reset-weekly", this.plugin.getTokensConfig().getNextResetWeekly());
+		this.plugin.getTokensConfig().save();
 	}
 
 	public void toggleTokenMessage(Player p) {
 		if (this.tokenMessageOnPlayers.contains(p.getUniqueId())) {
-			PlayerUtils.sendMessage(p, plugin.getMessage("token_message_disabled"));
+			PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("token_message_disabled"));
 			this.tokenMessageOnPlayers.remove(p.getUniqueId());
 		} else {
-			PlayerUtils.sendMessage(p, plugin.getMessage("token_message_enabled"));
+			PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("token_message_enabled"));
 			this.tokenMessageOnPlayers.add(p.getUniqueId());
 		}
+	}
+
+	public void reload() {
+
+	}
+
+	public void addPlayerIntoTokenMessageOnPlayers(Player player) {
+		this.tokenMessageOnPlayers.add(player.getUniqueId());
 	}
 
 	public boolean hasOffTokenMessages(Player p) {
 		return !this.tokenMessageOnPlayers.contains(p.getUniqueId());
 	}
 
-	public Material getTokenItemMaterial() {
-		return this.tokenItem.getType();
+	public void disable() {
+		this.saveWeeklyReset();
+		this.savePlayerDataOnDisable();
+	}
+
+
+	public void handleBlockBreak(Player p, List<Block> blocks, boolean countBlocksBroken) {
+		long startTime = System.currentTimeMillis();
+		//Remove AIR blocks.
+		blocks.removeIf(block -> block.getType() == Material.AIR);
+
+		if (countBlocksBroken) {
+			this.addBlocksBroken(p, blocks);
+		}
+
+		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p.getPlayer());
+
+		//Lucky block check
+		blocks.forEach(block -> {
+			List<String> rewards = this.plugin.getTokensConfig().getLuckyBlockReward(block.getType());
+			for (String s : rewards) {
+				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
+			}
+		});
+
+		long totalAmount = 0;
+		for (int i = 0; i < blocks.size(); i++) {
+			double random = ThreadLocalRandom.current().nextDouble(100);
+
+			if (this.plugin.getTokensConfig().getChance() >= random) {
+				long randAmount = this.plugin.getTokensConfig().getMinAmount() == this.plugin.getTokensConfig().getMaxAmount() ? this.plugin.getTokensConfig().getMinAmount() : ThreadLocalRandom.current().nextLong(this.plugin.getTokensConfig().getMinAmount(), this.plugin.getTokensConfig().getMaxAmount());
+				randAmount = luckyBooster ? randAmount * 2 : randAmount;
+				totalAmount += randAmount;
+			}
+		}
+		if (totalAmount > 0) {
+			this.giveTokens(p, totalAmount, null, ReceiveCause.MINING);
+		}
+		this.plugin.getCore().debug("UltraPrisonTokens::handleBlockBreak >> Took " + (System.currentTimeMillis() - startTime) + " ms.", this.plugin);
+	}
+
+	public void enable() {
+		this.loadPlayerDataOnEnable();
 	}
 }
