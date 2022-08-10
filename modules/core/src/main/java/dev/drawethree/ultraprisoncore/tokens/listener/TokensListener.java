@@ -4,7 +4,6 @@ import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.reflect.MinecraftVersion;
-import org.bukkit.GameMode;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -37,7 +36,7 @@ public class TokensListener {
 		Events.subscribe(BlockBreakEvent.class)
 				.filter(EventFilters.ignoreCancelled())
 				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
-				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.handler(e -> this.plugin.getTokensManager().handleBlockBreak(e.getPlayer(), Arrays.asList(e.getBlock()), true)).bindWith(plugin.getCore());
 	}
 

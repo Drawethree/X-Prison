@@ -25,7 +25,6 @@ import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -322,13 +321,13 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 				}).bindWith(core);
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(EventFilters.ignoreCancelled())
-				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.handler(e -> {
 					boolean inMineRegion = WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine"));
 					enchantsManager.handleBlockBreak(e, e.getPlayer().getItemInHand(), inMineRegion);
 				}).bindWith(core);
 		Events.subscribe(BlockBreakEvent.class, EventPriority.LOWEST)
-				.filter(e -> e.getPlayer().getGameMode() == GameMode.SURVIVAL && !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().noneMatch(region -> region.getId().toLowerCase().startsWith("mine")))
 				.filter(e -> this.enchantsManager.hasEnchants(e.getPlayer().getItemInHand()))
 				.handler(e -> e.setCancelled(true)).bindWith(core);

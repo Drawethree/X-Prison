@@ -37,6 +37,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -290,13 +291,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		String[] commandAliasesArray = commandAliases.toArray(new String[commandAliases.size()]);
 
 		Commands.create()
-				.assertPermission("ultraprisoncore.mainmenu")
-				.assertPlayer()
+				.assertPermission("ultraprisoncore.admin")
 				.handler(c -> {
-					if (c.args().size() == 0) {
-						new MainMenu(this, c.sender()).open();
-					} else if (c.args().size() == 1 && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
-						new HelpGui(c.sender()).open();
+					if (c.args().size() == 0 && c.sender() instanceof Player) {
+						new MainMenu(this, (Player) c.sender()).open();
+					} else if (c.args().size() == 1 && c.sender() instanceof Player && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
+						new HelpGui((Player) c.sender()).open();
 					}
 				}).registerAndBind(this, commandAliasesArray);
 	}
