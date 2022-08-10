@@ -2,14 +2,14 @@ package dev.drawethree.ultraprisoncore.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
 import dev.drawethree.ultraprisoncore.api.enums.LostCause;
-import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
+import dev.drawethree.ultraprisoncore.tokens.utils.TokensConstants;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
-public class TokensRemoveCommand extends TokensCommand {
+public final class TokensRemoveCommand extends TokensCommand {
 
 	private static final String COMMAND_NAME = "remove";
 	private static final String[] COMMAND_ALIASES = {"subtract", "delete"};
@@ -28,7 +28,7 @@ public class TokensRemoveCommand extends TokensCommand {
 				commandManager.getPlugin().getTokensManager().removeTokens(target, amount, sender, LostCause.ADMIN);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
 			}
 		}
 		return false;
@@ -36,7 +36,7 @@ public class TokensRemoveCommand extends TokensCommand {
 
 	@Override
 	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(UltraPrisonTokens.TOKENS_ADMIN_PERM) || sender.hasPermission(getRequiredPermission());
+		return sender.hasPermission(TokensConstants.TOKENS_ADMIN_PERM) || sender.hasPermission(getRequiredPermission());
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerTokensLostEvent extends UltraPrisonPlayerEvent {
+public final class PlayerTokensLostEvent extends UltraPrisonPlayerEvent {
 
 
 	private static final HandlerList handlers = new HandlerList();

@@ -5,9 +5,7 @@ import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
-import java.util.Set;
-
-public class TokensHelpCommand extends TokensCommand {
+public final class TokensHelpCommand extends TokensCommand {
 
 	private static final String COMMAND_NAME = "help";
 	private static final String[] COMMAND_ALIASES = {"?"};

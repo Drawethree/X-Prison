@@ -468,35 +468,35 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public Map<UUID, Long> getTop10Gems() {
-		Map<UUID, Long> top10Gems = new LinkedHashMap<>();
-		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.GEMS_UUID_COLNAME + "," + MySQLDatabase.GEMS_GEMS_COLNAME + " FROM " + UltraPrisonGems.TABLE_NAME + " ORDER BY " + MySQLDatabase.GEMS_GEMS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+	public Map<UUID, Long> getTopGems(int amountOfRecords) {
+		Map<UUID, Long> topGems = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.GEMS_UUID_COLNAME + "," + MySQLDatabase.GEMS_GEMS_COLNAME + " FROM " + UltraPrisonGems.TABLE_NAME + " ORDER BY " + MySQLDatabase.GEMS_GEMS_COLNAME + " DESC LIMIT " + amountOfRecords).executeQuery()) {
 			while (set.next()) {
-				top10Gems.put(UUID.fromString(set.getString(MySQLDatabase.GEMS_UUID_COLNAME)), set.getLong(MySQLDatabase.GEMS_GEMS_COLNAME));
+				topGems.put(UUID.fromString(set.getString(MySQLDatabase.GEMS_UUID_COLNAME)), set.getLong(MySQLDatabase.GEMS_GEMS_COLNAME));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return top10Gems;
+		return topGems;
 	}
 
 	@Override
-	public Map<UUID, Long> getTop10BlocksWeekly() {
-		Map<UUID, Long> top10BlocksWeekly = new LinkedHashMap<>();
-		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + UltraPrisonTokens.TABLE_NAME_BLOCKS_WEEKLY + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC").executeQuery()) {
+	public Map<UUID, Long> getTopBlocksWeekly(int amountOfRecords) {
+		Map<UUID, Long> topBlocksWeekly = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + UltraPrisonTokens.TABLE_NAME_BLOCKS_WEEKLY + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC LIMIT " + amountOfRecords).executeQuery()) {
 			while (set.next()) {
-				top10BlocksWeekly.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
+				topBlocksWeekly.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return top10BlocksWeekly;
+		return topBlocksWeekly;
 	}
 
 	@Override
-	public Map<UUID, Long> getTop10Tokens() {
+	public Map<UUID, Long> getTopTokens(int amountOfRecords) {
 		Map<UUID, Long> top10Tokens = new LinkedHashMap<>();
-		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + " FROM " + UltraPrisonTokens.TABLE_NAME_TOKENS + " ORDER BY " + MySQLDatabase.TOKENS_TOKENS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.TOKENS_UUID_COLNAME + "," + MySQLDatabase.TOKENS_TOKENS_COLNAME + " FROM " + UltraPrisonTokens.TABLE_NAME_TOKENS + " ORDER BY " + MySQLDatabase.TOKENS_TOKENS_COLNAME + " DESC LIMIT " + amountOfRecords).executeQuery()) {
 			while (set.next()) {
 				top10Tokens.put(UUID.fromString(set.getString(MySQLDatabase.TOKENS_UUID_COLNAME)), set.getLong(MySQLDatabase.TOKENS_TOKENS_COLNAME));
 			}
@@ -507,16 +507,16 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public Map<UUID, Long> getTop10Blocks() {
-		Map<UUID, Long> top10Blocks = new LinkedHashMap<>();
-		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + UltraPrisonTokens.TABLE_NAME_BLOCKS + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC LIMIT 10").executeQuery()) {
+	public Map<UUID, Long> getTopBlocks(int amountOfRecords) {
+		Map<UUID, Long> topBlocks = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.BLOCKS_UUID_COLNAME + "," + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " FROM " + UltraPrisonTokens.TABLE_NAME_BLOCKS + " ORDER BY " + MySQLDatabase.BLOCKS_BLOCKS_COLNAME + " DESC LIMIT " + amountOfRecords).executeQuery()) {
 			while (set.next()) {
-				top10Blocks.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
+				topBlocks.put(UUID.fromString(set.getString(MySQLDatabase.BLOCKS_UUID_COLNAME)), set.getLong(MySQLDatabase.BLOCKS_BLOCKS_COLNAME));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return top10Blocks;
+		return topBlocks;
 	}
 
 	@Override

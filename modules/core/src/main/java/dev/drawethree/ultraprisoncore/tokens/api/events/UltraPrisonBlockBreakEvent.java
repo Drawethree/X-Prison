@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UltraPrisonBlockBreakEvent extends Event implements Cancellable {
+public final class UltraPrisonBlockBreakEvent extends Event implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
