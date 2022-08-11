@@ -31,18 +31,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class SQLDatabase extends Database {
 
 	protected static final AtomicInteger POOL_COUNTER = new AtomicInteger(0);
-	protected static final int MAXIMUM_POOL_SIZE = (Runtime.getRuntime().availableProcessors() * 2) + 1;
-	protected static final int MINIMUM_IDLE = Math.min(MAXIMUM_POOL_SIZE, 10);
-
-	protected static final long MAX_LIFETIME = TimeUnit.MINUTES.toMillis(30); // 30 Minutes
-	protected static final long CONNECTION_TIMEOUT = TimeUnit.SECONDS.toMillis(60); // 60 seconds
-	protected static final long LEAK_DETECTION_THRESHOLD = TimeUnit.SECONDS.toMillis(5); // 5 seconds
 
 	protected static final String UUID_PLAYERNAME_TABLE_NAME = "UltraPrison_Nicknames";
 
@@ -107,10 +100,6 @@ public abstract class SQLDatabase extends Database {
 	public void createIndexes() {
 		this.executeAsync(String.format("CREATE INDEX %s ON %s (%s)", INDEX_HISTORY_PLAYER, UltraPrisonHistory.TABLE_NAME, HISTORY_PLAYER_UUID_COLNAME));
 	}
-
-	public abstract void connect();
-
-	public abstract void runSQLUpdates();
 
 	public synchronized void execute(String sql, Object... replacements) {
 

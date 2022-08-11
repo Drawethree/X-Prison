@@ -4,7 +4,7 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPI;
 import dev.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPIImpl;
 import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;

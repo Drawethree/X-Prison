@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.gems;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
 import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;

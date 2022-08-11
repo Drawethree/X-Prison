@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.tokens;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
 import dev.drawethree.ultraprisoncore.tokens.config.BlockRewardsConfig;

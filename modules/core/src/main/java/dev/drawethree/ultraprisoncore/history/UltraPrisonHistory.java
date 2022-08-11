@@ -4,7 +4,7 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeReceiveEvent;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;

@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.gangs;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;

@@ -5,7 +5,7 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import dev.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
 import dev.drawethree.ultraprisoncore.multipliers.api.events.PlayerMultiplierReceiveEvent;

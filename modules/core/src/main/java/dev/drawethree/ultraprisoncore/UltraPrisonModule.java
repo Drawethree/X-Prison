@@ -1,6 +1,6 @@
 package dev.drawethree.ultraprisoncore;
 
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 
 public interface UltraPrisonModule {
 

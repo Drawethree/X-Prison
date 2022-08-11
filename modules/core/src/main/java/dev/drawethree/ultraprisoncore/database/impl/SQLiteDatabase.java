@@ -5,8 +5,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.database.SQLDatabase;
+import dev.drawethree.ultraprisoncore.database.model.ConnectionProperties;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
@@ -36,17 +37,12 @@ public final class SQLiteDatabase extends SQLDatabase {
 
     private static final String FILE_NAME = "playerdata.db";
     private final String filePath;
+    private final ConnectionProperties connectionProperties;
 
-    public SQLiteDatabase(UltraPrisonCore plugin) {
+    public SQLiteDatabase(UltraPrisonCore plugin, ConnectionProperties connectionProperties) {
         super(plugin);
-
-        this.plugin.getLogger().info("Using SQLite (local) database.");
-
+        this.connectionProperties = connectionProperties;
         this.filePath = this.plugin.getDataFolder().getPath() + File.separator + FILE_NAME;
-        this.plugin.getLogger().info(String.format("Path to SQLite Database %s is %s", FILE_NAME, this.filePath));
-        this.createDBFile();
-
-        this.connect();
     }
 
     @Override
@@ -57,27 +53,31 @@ public final class SQLiteDatabase extends SQLDatabase {
     @Override
     public void connect() {
 
+        this.createDBFile();
+
         final HikariConfig hikari = new HikariConfig();
 
         hikari.setPoolName("ultraprison-" + POOL_COUNTER.getAndIncrement());
 
         hikari.setDriverClassName("org.sqlite.JDBC");
         hikari.setJdbcUrl("jdbc:sqlite:" + this.filePath);
-        hikari.setConnectionTestQuery("SELECT 1");
 
-        hikari.setMinimumIdle(MINIMUM_IDLE);
-        hikari.setMaxLifetime(MAX_LIFETIME);
-        hikari.setConnectionTimeout(0);
-        hikari.setMaximumPoolSize(1);
-        hikari.setLeakDetectionThreshold(0);
+        hikari.setConnectionTimeout(connectionProperties.getConnectionTimeout());
+        hikari.setIdleTimeout(connectionProperties.getIdleTimeout());
+        hikari.setKeepaliveTime(connectionProperties.getKeepAliveTime());
+        hikari.setMaxLifetime(connectionProperties.getMaxLifetime());
+        hikari.setMinimumIdle(connectionProperties.getMinimumIdle());
+        hikari.setMaximumPoolSize(connectionProperties.getMaximumPoolSize());
+        hikari.setLeakDetectionThreshold(connectionProperties.getLeakDetectionThreshold());
+        hikari.setConnectionTestQuery(connectionProperties.getTestQuery());
 
         this.hikari = new HikariDataSource(hikari);
     }
 
     private void createDBFile() {
-        File yourFile = new File(this.filePath);
+        File dbFile = new File(this.filePath);
         try {
-            yourFile.createNewFile();
+            dbFile.createNewFile();
         } catch (IOException e) {
             this.plugin.getLogger().warning(String.format("Unable to create %s", FILE_NAME));
             e.printStackTrace();
@@ -97,12 +97,6 @@ public final class SQLiteDatabase extends SQLDatabase {
     @Override
     public void createIndexes() {
         this.executeAsync(String.format("CREATE INDEX IF NOT EXISTS %s ON %s (%s)", INDEX_HISTORY_PLAYER, UltraPrisonHistory.TABLE_NAME, HISTORY_PLAYER_UUID_COLNAME));
-    }
-
-
-    @Override
-    public void runSQLUpdates() {
-
     }
 
     @Override
@@ -252,7 +246,6 @@ public final class SQLiteDatabase extends SQLDatabase {
         Schedulers.async().run(() -> {
             for (String table : module.getTables()) {
                 execute("DELETE FROM " + table);
-
             }
         });
         return true;
