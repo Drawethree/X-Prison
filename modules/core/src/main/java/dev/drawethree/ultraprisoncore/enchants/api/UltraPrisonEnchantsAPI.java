@@ -15,46 +15,44 @@ public interface UltraPrisonEnchantsAPI {
 	 * @param itemStack ItemStack
 	 * @return
 	 */
-	Map<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack itemStack);
+	Map<UltraPrisonEnchantment, Integer> getEnchants(ItemStack itemStack);
 
 	/**
-	 * Method to check if player has specific enchant on his current item in hand
+	 * Method to check if item has specific enchant
 	 *
-	 * @param p  Player
-	 * @param id Enchant ID
-	 * @return true if player has specified enchant
+	 * @param item        {@link ItemStack}
+	 * @param enchantment {@link UltraPrisonEnchantment}
+	 * @return true if item has enchant
 	 */
-	boolean hasEnchant(Player p, int id);
+	boolean hasEnchant(ItemStack item, UltraPrisonEnchantment enchantment);
 
 	/**
 	 * Method to get enchant level of specific ItemStack
 	 *
-	 * @param item ItemStack
-	 * @param id   Enchant ID
+	 * @param item        ItemStack
+	 * @param enchantment {@link UltraPrisonEnchantment}
 	 * @return 0 if enchant was not found, otherwise level of enchant
 	 */
-	int getEnchantLevel(ItemStack item, int id);
+	int getEnchantLevel(ItemStack item, UltraPrisonEnchantment enchantment);
 
 	/**
-	 * Method to set enchant with specific level to player's pickaxe
+	 * Method to set enchant with specific level to pickaxe
 	 *
-	 * @param player Owner of pickaxe
-	 * @param item   pickaxe
-	 * @param id     Enchant ID
-	 * @param level  Enchant Level
+	 * @param item        pickaxe
+	 * @param enchantment {@link UltraPrisonEnchantment}
+	 * @param level       Enchant Level
 	 * @return modified ItemStack
 	 */
-	ItemStack setEnchantLevel(Player player, ItemStack item, int id, int level);
+	ItemStack setEnchantLevel(Player player, ItemStack item, UltraPrisonEnchantment enchantment, int level);
 
 	/**
-	 * Method to remove custom enchant from player's pickaxe
+	 * Method to remove enchant from pickaxe
 	 *
-	 * @param player Owner of pickaxe
-	 * @param item   ItemStack pickaxe
-	 * @param id     Enchant ID
+	 * @param item        ItemStack pickaxe
+	 * @param enchantment {@link UltraPrisonEnchantment}
 	 * @return modified ItemStack
 	 */
-	ItemStack removeEnchant(Player player, ItemStack item, int id);
+	ItemStack removeEnchant(Player player, ItemStack item, UltraPrisonEnchantment enchantment);
 
 	/**
 	 * Method to get Enchant by ID

@@ -4,6 +4,7 @@ import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.Events;
 import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.reflect.MinecraftVersion;
+import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -12,9 +13,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TokensListener {
 
@@ -33,11 +34,14 @@ public class TokensListener {
 	}
 
 	private void subscribeToBlockBreakEvent() {
-		Events.subscribe(BlockBreakEvent.class)
+		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(EventFilters.ignoreCancelled())
-				.filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
 				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
-				.handler(e -> this.plugin.getTokensManager().handleBlockBreak(e.getPlayer(), Arrays.asList(e.getBlock()), true)).bindWith(plugin.getCore());
+				.handler(e -> {
+					List<Block> blocks = new ArrayList<>();
+					blocks.add(e.getBlock());
+					this.plugin.getTokensManager().handleBlockBreak(e.getPlayer(), blocks, true);
+				}).bindWith(plugin.getCore());
 	}
 
 	private void subscribeToPlayerInteractEvent() {

@@ -4,10 +4,11 @@ import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.config.FileManager;
 import dev.drawethree.ultraprisoncore.database.Database;
-import dev.drawethree.ultraprisoncore.database.DatabaseCredentials;
 import dev.drawethree.ultraprisoncore.database.SQLDatabase;
 import dev.drawethree.ultraprisoncore.database.impl.MySQLDatabase;
 import dev.drawethree.ultraprisoncore.database.impl.SQLiteDatabase;
+import dev.drawethree.ultraprisoncore.database.model.ConnectionProperties;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseCredentials;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
@@ -42,6 +43,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
+import org.codemc.worldguardwrapper.flag.WrappedState;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -80,9 +83,15 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 
 	@Override
+	protected void load() {
+		registerWGFlag();
+	}
+
+	@Override
 	protected void enable() {
 
 		instance = this;
+		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 		this.debugMode = this.getConfig().getBoolean("debug-mode", false);
@@ -186,17 +195,22 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	private boolean initDatabase() {
 		try {
 			String databaseType = this.getConfig().getString("database_type");
+			ConnectionProperties connectionProperties = ConnectionProperties.fromConfig(this.getConfig());
 
-			if (databaseType.equalsIgnoreCase("sqlite")) {
-				this.pluginDatabase = new SQLiteDatabase(this);
-			} else if (databaseType.equalsIgnoreCase("mysql")) {
-				this.pluginDatabase = new MySQLDatabase(this, DatabaseCredentials.fromConfig(this.getConfig()));
+			if ("sqlite".equalsIgnoreCase(databaseType)) {
+				this.pluginDatabase = new SQLiteDatabase(this, connectionProperties);
+				this.getLogger().info("Using SQLite (local) database.");
+			} else if ("mysql".equalsIgnoreCase(databaseType)) {
+				DatabaseCredentials credentials = DatabaseCredentials.fromConfig(this.getConfig());
+				this.pluginDatabase = new MySQLDatabase(this, credentials, connectionProperties);
+				this.getLogger().info("Using MySQL (remote) database.");
 			} else {
 				this.getLogger().warning(String.format("Error! Unknown database type: %s. Disabling plugin.", databaseType));
 				this.getServer().getPluginManager().disablePlugin(this);
 				return false;
 			}
 
+			this.pluginDatabase.connect();
 		} catch (Exception e) {
 			this.getLogger().warning("Could not maintain Database Connection. Disabling plugin.");
 			e.printStackTrace();
@@ -207,9 +221,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private void initModules() {
-
-		this.modules = new LinkedHashMap<>();
-
 		this.tokens = new UltraPrisonTokens(this);
 		this.gems = new UltraPrisonGems(this);
 		this.ranks = new UltraPrisonRanks(this);
@@ -403,5 +414,23 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	public boolean isMVdWPlaceholderAPIEnabled() {
 		return this.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI");
+	}
+
+	private void registerWGFlag() {
+
+		if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) {
+			return;
+		}
+
+		try {
+			getWorldGuardWrapper().registerFlag(Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.class, WrappedState.DENY);
+		} catch (IllegalStateException e) {
+			// This happens during plugin reloads. Flag cannot be registered as WG was already loaded,
+			// so we can safely ignore this exception.
+		}
+	}
+
+	public WorldGuardWrapper getWorldGuardWrapper() {
+		return WorldGuardWrapper.getInstance();
 	}
 }

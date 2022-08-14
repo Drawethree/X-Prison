@@ -1,4 +1,4 @@
-package dev.drawethree.ultraprisoncore.database;
+package dev.drawethree.ultraprisoncore.database.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,11 +14,13 @@ public class DatabaseCredentials {
 
 	public static DatabaseCredentials fromConfig(FileConfiguration config) {
 
-		String host = config.getString("mysql.host");
-		String dbName = config.getString("mysql.database");
-		String userName = config.getString("mysql.username");
-		String password = config.getString("mysql.password");
-		int port = config.getInt("mysql.port");
+		String rootPath = "mysql.";
+
+		String host = config.getString(rootPath + "host");
+		String dbName = config.getString(rootPath + "database");
+		String userName = config.getString(rootPath + "username");
+		String password = config.getString(rootPath + "password");
+		int port = config.getInt(rootPath + "port");
 
 		Validate.notNull(host);
 		Validate.notNull(dbName);

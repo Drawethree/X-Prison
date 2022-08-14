@@ -4,7 +4,7 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import dev.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
@@ -21,7 +21,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.*;
 
@@ -122,11 +121,9 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(EventFilters.ignoreCancelled())
-                .filter(e -> WorldGuardWrapper.getInstance().getRegions(e.getBlock().getLocation()).stream().anyMatch(region -> region.getId().toLowerCase().startsWith("mine")))
                 .filter(e -> e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
                     //Check for next level progression
-
                     long currentBlocks = this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand());
 
                     PickaxeLevel currentLevel = this.getPickaxeLevel(e.getPlayer().getItemInHand());
@@ -232,7 +229,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
         }
 
         item = builder.build();
-        this.core.getEnchants().getEnchantsManager().updatePickaxe(p, item);
+        item = this.core.getEnchants().getEnchantsManager().updatePickaxe(p, item);
         return item;
     }
 

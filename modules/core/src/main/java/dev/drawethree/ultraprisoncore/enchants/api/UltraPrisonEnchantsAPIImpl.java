@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 
-public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
+public final class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
 
 	private final EnchantsManager enchantsManager;
 
@@ -17,28 +17,28 @@ public class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
 	}
 
 	@Override
-	public Map<UltraPrisonEnchantment, Integer> getPlayerEnchants(ItemStack pickAxe) {
+	public Map<UltraPrisonEnchantment, Integer> getEnchants(ItemStack pickAxe) {
 		return this.enchantsManager.getItemEnchants(pickAxe);
 	}
 
 	@Override
-	public boolean hasEnchant(Player p, int id) {
-		return this.enchantsManager.hasEnchant(p, id);
+	public boolean hasEnchant(ItemStack item, UltraPrisonEnchantment enchant) {
+		return getEnchantLevel(item, enchant) != 0;
 	}
 
 	@Override
-	public int getEnchantLevel(ItemStack item, int id) {
-		return this.enchantsManager.getEnchantLevel(item, id);
+	public int getEnchantLevel(ItemStack item, UltraPrisonEnchantment enchantment) {
+		return this.enchantsManager.getEnchantLevel(item, enchantment);
 	}
 
 	@Override
-	public ItemStack setEnchantLevel(Player player, ItemStack item, int id, int level) {
-		return this.enchantsManager.setEnchantLevel(player, item, id, level);
+	public ItemStack setEnchantLevel(Player player, ItemStack item, UltraPrisonEnchantment enchantment, int level) {
+		return this.enchantsManager.setEnchantLevel(player, item, enchantment, level);
 	}
 
 	@Override
-	public ItemStack removeEnchant(Player player, ItemStack item, int id) {
-		return this.enchantsManager.removeEnchant(player, item, id);
+	public ItemStack removeEnchant(Player player, ItemStack item, UltraPrisonEnchantment enchantment) {
+		return this.enchantsManager.removeEnchant(player, item, enchantment);
 	}
 
 	@Override

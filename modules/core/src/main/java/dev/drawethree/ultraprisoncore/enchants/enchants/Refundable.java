@@ -4,5 +4,7 @@ public interface Refundable {
 
 	boolean isRefundEnabled();
 
-	int refundGuiSlot();
+	int getRefundGuiSlot();
+
+	double getRefundPercentage();
 }

@@ -1,0 +1,103 @@
+package dev.drawethree.ultraprisoncore.enchants.config;
+
+import dev.drawethree.ultraprisoncore.config.FileManager;
+import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
+import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
+import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class EnchantsConfig {
+
+	private final UltraPrisonEnchants plugin;
+	private final FileManager.Config config;
+
+	private Map<String, String> messages;
+
+	private List<String> pickaxeLore;
+	private boolean openEnchantMenuOnRightClickBlock;
+	private boolean allowEnchantsOutside;
+	private boolean firstJoinPickaxeEnabled;
+	private CompMaterial firstJoinPickaxeMaterial;
+	private List<String> firstJoinPickaxeEnchants;
+	private String firstJoinPickaxeName;
+	private boolean keepPickaxesOnDeath;
+
+	public EnchantsConfig(UltraPrisonEnchants plugin) {
+		this.plugin = plugin;
+		this.config = plugin.getCore().getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
+	}
+
+	public void reload() {
+		this.getConfig().reload();
+		this.load();
+	}
+
+	public void load() {
+		this.loadVariables();
+		this.loadMessages();
+	}
+
+	private void loadVariables() {
+		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
+		this.openEnchantMenuOnRightClickBlock = getYamlConfig().getBoolean("open-menu-on-right-click-block");
+		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
+		this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
+		this.firstJoinPickaxeMaterial = CompMaterial.fromString(getYamlConfig().getString("first-join-pickaxe.material"));
+		this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");
+		this.firstJoinPickaxeName = getYamlConfig().getString("first-join-pickaxe.name");
+		this.keepPickaxesOnDeath = getYamlConfig().getBoolean("keep-pickaxes-on-death");
+	}
+
+	private void loadMessages() {
+		this.messages = new HashMap<>();
+		for (String key : getYamlConfig().getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key, TextUtils.applyColor(getConfig().get().getString("messages." + key)));
+		}
+	}
+
+
+	private FileManager.Config getConfig() {
+		return this.config;
+	}
+
+	public YamlConfiguration getYamlConfig() {
+		return this.config.get();
+	}
+
+	public String getMessage(String key) {
+		return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
+	}
+
+
+	public List<String> getPickaxeLore() {
+		return pickaxeLore;
+	}
+
+	public boolean isOpenEnchantMenuOnRightClickBlock() {
+		return openEnchantMenuOnRightClickBlock;
+	}
+
+	public boolean isFirstJoinPickaxeEnabled() {
+		return firstJoinPickaxeEnabled;
+	}
+
+	public CompMaterial getFirstJoinPickaxeMaterial() {
+		return firstJoinPickaxeMaterial;
+	}
+
+	public List<String> getFirstJoinPickaxeEnchants() {
+		return firstJoinPickaxeEnchants;
+	}
+
+	public String getFirstJoinPickaxeName() {
+		return firstJoinPickaxeName;
+	}
+
+	public boolean isKeepPickaxesOnDeath() {
+		return keepPickaxesOnDeath;
+	}
+}

@@ -19,6 +19,9 @@ public final class CharityEnchant extends UltraPrisonEnchantment {
 
 	public CharityEnchant(UltraPrisonEnchants instance) {
 		super(instance, 11);
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Money");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Money");
 	}
 
 	@Override
@@ -53,9 +56,9 @@ public final class CharityEnchant extends UltraPrisonEnchantment {
 				}
 
 				if (p.equals(e.getPlayer())) {
-					PlayerUtils.sendMessage(p, plugin.getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
+					PlayerUtils.sendMessage(p, plugin.getEnchantsConfig().getMessage("charity_your").replace("%amount%", String.format("%,d", randAmount)));
 				} else {
-					PlayerUtils.sendMessage(p, plugin.getMessage("charity_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
+					PlayerUtils.sendMessage(p, plugin.getEnchantsConfig().getMessage("charity_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
 				}
 			}
 		}
@@ -63,8 +66,8 @@ public final class CharityEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-		this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Money");
-		this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Money");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Money");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Money");
 	}
 }

@@ -11,7 +11,7 @@ import dev.drawethree.ultraprisoncore.autosell.config.AutoSellConfig;
 import dev.drawethree.ultraprisoncore.autosell.listener.AutoSellListener;
 import dev.drawethree.ultraprisoncore.autosell.manager.AutoSellManager;
 import dev.drawethree.ultraprisoncore.autosell.model.AutoSellBroadcastTask;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import lombok.Getter;
 

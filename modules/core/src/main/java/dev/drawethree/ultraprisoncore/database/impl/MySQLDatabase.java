@@ -4,22 +4,21 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.DatabaseCredentials;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
 import dev.drawethree.ultraprisoncore.database.SQLDatabase;
+import dev.drawethree.ultraprisoncore.database.model.ConnectionProperties;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseCredentials;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 
 
 public final class MySQLDatabase extends SQLDatabase {
 
     private final DatabaseCredentials credentials;
+    private final ConnectionProperties connectionProperties;
 
-    public MySQLDatabase(UltraPrisonCore parent, DatabaseCredentials credentials) {
+    public MySQLDatabase(UltraPrisonCore parent, DatabaseCredentials credentials, ConnectionProperties connectionProperties) {
         super(parent);
-
-        this.plugin.getLogger().info("Using MySQL (remote) database.");
-
+        this.connectionProperties = connectionProperties;
         this.credentials = credentials;
-        this.connect();
     }
 
 
@@ -29,23 +28,32 @@ public final class MySQLDatabase extends SQLDatabase {
 
         hikari.setPoolName("ultraprison-" + POOL_COUNTER.getAndIncrement());
         hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName());
-        hikari.setConnectionTestQuery("SELECT 1");
 
         hikari.setUsername(credentials.getUserName());
         hikari.setPassword(credentials.getPassword());
 
-        hikari.setMinimumIdle(MINIMUM_IDLE);
-        hikari.setMaxLifetime(MAX_LIFETIME);
-        hikari.setConnectionTimeout(CONNECTION_TIMEOUT);
-        hikari.setMaximumPoolSize(MAXIMUM_POOL_SIZE);
-        hikari.setLeakDetectionThreshold(LEAK_DETECTION_THRESHOLD);
+        hikari.setConnectionTimeout(connectionProperties.getConnectionTimeout());
+        hikari.setIdleTimeout(connectionProperties.getIdleTimeout());
+        hikari.setKeepaliveTime(connectionProperties.getKeepAliveTime());
+        hikari.setMaxLifetime(connectionProperties.getMaxLifetime());
+        hikari.setMinimumIdle(connectionProperties.getMinimumIdle());
+        hikari.setMaximumPoolSize(connectionProperties.getMaximumPoolSize());
+        hikari.setLeakDetectionThreshold(connectionProperties.getLeakDetectionThreshold());
+        hikari.setConnectionTestQuery(connectionProperties.getTestQuery());
+
+        hikari.addDataSourceProperty("cachePrepStmts", true);
+        hikari.addDataSourceProperty("prepStmtCacheSize", 250);
+        hikari.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+        hikari.addDataSourceProperty("useServerPrepStmts", true);
+        hikari.addDataSourceProperty("useLocalSessionState", true);
+        hikari.addDataSourceProperty("rewriteBatchedStatements", true);
+        hikari.addDataSourceProperty("cacheResultSetMetadata", true);
+        hikari.addDataSourceProperty("cacheServerConfiguration", true);
+        hikari.addDataSourceProperty("elideSetAutoCommits", true);
+        hikari.addDataSourceProperty("maintainTimeStats", false);
 
         this.hikari = new HikariDataSource(hikari);
-    }
 
-
-    @Override
-    public void runSQLUpdates() {
     }
 
     @Override

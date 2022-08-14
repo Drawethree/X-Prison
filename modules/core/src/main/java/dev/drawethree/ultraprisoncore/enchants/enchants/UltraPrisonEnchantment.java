@@ -3,6 +3,7 @@ package dev.drawethree.ultraprisoncore.enchants.enchants;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.enchants.implementations.*;
+import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 	private long increaseCost;
 	private int requiredPickaxeLevel;
 	private boolean messagesEnabled;
+	private boolean refundEnabled;
+	private int refundGuiSlot;
+	private double refundPercentage;
 
 	public UltraPrisonEnchantment(UltraPrisonEnchants plugin, int id) {
 		this.plugin = plugin;
@@ -100,18 +104,22 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 	}
 
 	private void reloadDefaultAttributes() {
-		this.rawName = this.plugin.getConfig().get().getString("enchants." + id + ".RawName");
-		this.name = TextUtils.applyColor(this.plugin.getConfig().get().getString("enchants." + id + ".Name"));
-		this.material = CompMaterial.fromString(this.plugin.getConfig().get().getString("enchants." + id + ".Material")).toMaterial();
-		this.description = TextUtils.applyColor(this.plugin.getConfig().get().getStringList("enchants." + id + ".Description"));
-		this.enabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Enabled");
-		this.guiSlot = this.plugin.getConfig().get().getInt("enchants." + id + ".InGuiSlot");
-		this.maxLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Max");
-		this.cost = this.plugin.getConfig().get().getLong("enchants." + id + ".Cost");
-		this.increaseCost = this.plugin.getConfig().get().getLong("enchants." + id + ".Increase-Cost-by");
-		this.requiredPickaxeLevel = this.plugin.getConfig().get().getInt("enchants." + id + ".Pickaxe-Level-Required");
-		this.messagesEnabled = this.plugin.getConfig().get().getBoolean("enchants." + id + ".Messages-Enabled", true);
-		this.base64 = this.plugin.getConfig().get().getString("enchants." + id + ".Base64", null);
+		this.rawName = this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".RawName");
+		this.name = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Name"));
+		this.material = CompMaterial.fromString(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Material")).toMaterial();
+		this.description = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Description"));
+		this.enabled = this.plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Enabled");
+		this.guiSlot = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".InGuiSlot");
+		this.maxLevel = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max");
+		this.cost = this.plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Cost");
+		this.increaseCost = this.plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Increase-Cost-by");
+		this.requiredPickaxeLevel = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Pickaxe-Level-Required");
+		this.messagesEnabled = this.plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Messages-Enabled", true);
+		this.base64 = this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Base64", null);
+		this.refundEnabled = this.plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + this.id + ".Refund.Enabled", true);
+		this.refundGuiSlot = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + this.id + ".Refund.InGuiSlot");
+		this.refundPercentage = this.plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + this.id + ".Refund.Percentage", 100.0d);
+
 	}
 
 	public abstract String getAuthor();
@@ -128,14 +136,23 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 		return (this.cost + (this.increaseCost * (level - 1)));
 	}
 
-	@Override
-	public boolean isRefundEnabled() {
-		return this.plugin.getConfig().get().getBoolean("enchants." + this.id + ".Refund.Enabled");
+	public long getRefundForLevel(int level) {
+		return (long) (this.getCostOfLevel(level) * (this.getRefundPercentage() / 100.0));
 	}
 
 	@Override
-	public int refundGuiSlot() {
-		return this.plugin.getConfig().get().getInt("enchants." + this.id + ".Refund.InGuiSlot");
+	public boolean isRefundEnabled() {
+		return refundEnabled;
+	}
+
+	@Override
+	public double getRefundPercentage() {
+		return refundPercentage;
+	}
+
+	@Override
+	public int getRefundGuiSlot() {
+		return refundGuiSlot;
 	}
 
 	public void register() {
@@ -171,7 +188,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 	}
 
 	public boolean canBeBought(ItemStack pickAxe) {
-		if (!this.plugin.getCore().isModuleEnabled("Pickaxe Levels")) {
+		if (!this.plugin.getCore().isModuleEnabled(UltraPrisonPickaxeLevels.MODULE_NAME)) {
 			return true;
 		}
 		return this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(pickAxe).getLevel() >= this.requiredPickaxeLevel;

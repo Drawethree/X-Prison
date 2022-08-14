@@ -60,10 +60,16 @@ public class CommandManager {
 		Commands.create()
 				.tabHandler(c -> this.commands.stream().map(TokensCommand::getName).collect(Collectors.toList()))
 				.handler(c -> {
+
+					if (!checkCommandCooldown(c.sender())) {
+						return;
+					}
+
 					if (c.args().size() == 0 && c.sender() instanceof Player) {
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
 						return;
 					}
+
 					TokensCommand subCommand = this.getCommand(c.rawArg(0));
 					if (subCommand != null) {
 						if (subCommand.canExecute(c.sender())) {
@@ -72,9 +78,6 @@ public class CommandManager {
 							PlayerUtils.sendMessage(c.sender(), this.plugin.getTokensConfig().getMessage("no_permission"));
 						}
 					} else {
-						if (!checkCommandCooldown(c.sender())) {
-							return;
-						}
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target, true);
 					}
@@ -127,12 +130,13 @@ public class CommandManager {
 		// /blocks
 		Commands.create()
 				.handler(c -> {
+					if (!checkCommandCooldown(c.sender())) {
+						return;
+					}
+
 					if (c.args().size() == 0) {
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
 					} else if (c.args().size() == 1) {
-						if (!checkCommandCooldown(c.sender())) {
-							return;
-						}
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target, false);
 					}

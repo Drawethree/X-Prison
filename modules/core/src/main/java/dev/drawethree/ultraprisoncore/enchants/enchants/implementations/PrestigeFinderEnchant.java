@@ -19,6 +19,10 @@ public final class PrestigeFinderEnchant extends UltraPrisonEnchantment {
 
 	public PrestigeFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 16);
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.minLevels = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Min-Levels");
+		this.maxLevels = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max-Levels");
+		this.commandToExecute = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Command");
 	}
 
 	@Override
@@ -41,11 +45,10 @@ public final class PrestigeFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-		this.minLevels = plugin.getConfig().get().getInt("enchants." + id + ".Min-Levels");
-		this.maxLevels = plugin.getConfig().get().getInt("enchants." + id + ".Max-Levels");
-		this.commandToExecute = plugin.getConfig().get().getString("enchants." + id + ".Command");
-
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.minLevels = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Min-Levels");
+		this.maxLevels = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max-Levels");
+		this.commandToExecute = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Command");
 	}
 
 	@Override

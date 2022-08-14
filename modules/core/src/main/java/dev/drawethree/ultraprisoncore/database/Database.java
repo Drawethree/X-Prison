@@ -2,6 +2,7 @@ package dev.drawethree.ultraprisoncore.database;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
 import dev.drawethree.ultraprisoncore.history.model.HistoryLine;
@@ -27,6 +28,8 @@ public abstract class Database {
 	public abstract void createTables();
 
 	public abstract void createIndexes();
+
+	public abstract void connect();
 
 	public abstract long getPlayerTokens(OfflinePlayer player);
 

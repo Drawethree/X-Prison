@@ -612,6 +612,7 @@ public class TokensManager {
 
 
 	public void handleBlockBreak(Player p, List<Block> blocks, boolean countBlocksBroken) {
+
 		long startTime = System.currentTimeMillis();
 		//Remove AIR blocks.
 		blocks.removeIf(block -> block.getType() == Material.AIR);
@@ -620,7 +621,7 @@ public class TokensManager {
 			this.addBlocksBroken(p, blocks);
 		}
 
-		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p.getPlayer());
+		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p);
 
 		//Lucky block check
 		blocks.forEach(block -> {

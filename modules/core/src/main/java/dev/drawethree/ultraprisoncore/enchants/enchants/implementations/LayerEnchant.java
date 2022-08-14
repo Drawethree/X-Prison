@@ -4,6 +4,7 @@ import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.api.events.LayerTriggerEvent;
 import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.utils.EnchantUtils;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
@@ -29,6 +30,8 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 
 	public LayerEnchant(UltraPrisonEnchants instance) {
 		super(instance, 10);
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 	}
 
 	@Override
@@ -43,22 +46,19 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (plugin.hasLayerDisabled(e.getPlayer())) {
-			return;
-		}
-
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 
 			long startTime = Time.nowMillis();
 			Block b = e.getBlock();
-			IWrappedRegion region = RegionUtils.getMineRegionWithHighestPriority(b.getLocation());
+
+			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), this.plugin.getEnchantsWGFlag());
 			if (region != null) {
 
 				Player p = e.getPlayer();
 				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
 				List<Block> blocksAffected = new ArrayList<>();
 
-				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModule() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
+				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
 				for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
 					for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
@@ -78,7 +78,7 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 				}
 
 				double totalDeposit = 0;
-				int fortuneLevel = plugin.getApi().getEnchantLevel(p.getItemInHand(), 3);
+				int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
 				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
 
 				blocksAffected = event.getBlocksAffected();
@@ -100,7 +100,7 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 					plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
 				}
 
-				if (this.plugin.isMinesModule()) {
+				if (this.plugin.isMinesModuleEnabled()) {
 					Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
 					if (mine != null) {
 						mine.handleBlockBreak(blocksAffected);
@@ -127,12 +127,12 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 	private void giveEconomyRewardsToPlayer(Player p, double totalDeposit) {
 		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p);
 
-		double total = this.plugin.isMultipliersModule() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+		double total = this.plugin.isMultipliersModuleEnabled() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
 		total = luckyBooster ? total * 2 : total;
 
 		plugin.getCore().getEconomy().depositPlayer(p, total);
 
-		if (plugin.isAutoSellModule()) {
+		if (plugin.isAutoSellModuleEnabled()) {
 			plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
 		}
 	}
@@ -146,9 +146,8 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-		this.countBlocksBroken = plugin.getConfig().get().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 	}
 
 	@Override

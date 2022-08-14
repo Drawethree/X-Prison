@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.prestiges;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.prestiges.api.UltraPrisonPrestigesAPI;
 import dev.drawethree.ultraprisoncore.prestiges.api.UltraPrisonPrestigesAPIImpl;
 import dev.drawethree.ultraprisoncore.prestiges.manager.PrestigeManager;

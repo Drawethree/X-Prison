@@ -9,7 +9,7 @@ import dev.drawethree.ultraprisoncore.autominer.command.AutoMinerCommand;
 import dev.drawethree.ultraprisoncore.autominer.config.AutoMinerConfig;
 import dev.drawethree.ultraprisoncore.autominer.listener.AutoMinerListener;
 import dev.drawethree.ultraprisoncore.autominer.manager.AutoMinerManager;
-import dev.drawethree.ultraprisoncore.database.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import lombok.Getter;
 
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {

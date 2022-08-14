@@ -9,9 +9,9 @@
     <packaging>jar</packaging>
 
     <parent>
-        <groupId>me.drawethree</groupId>
+        <groupId>dev.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.11.24</version>
+        <version>1.12.0</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <build>
@@ -35,7 +35,7 @@
             <systemPath>${project.basedir}/../../libs/spigot/spigot-1.12.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>me.drawethree</groupId>
+            <groupId>dev.drawethree</groupId>
             <artifactId>ultraprisoncore-core</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>
