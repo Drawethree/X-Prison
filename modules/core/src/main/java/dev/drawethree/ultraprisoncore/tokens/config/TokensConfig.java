@@ -24,7 +24,7 @@ public class TokensConfig {
 	private long commandCooldown;
 	private long nextResetWeekly;
 	private long startingTokens;
-	private int topUpdateInterval;
+	private int savePlayerDataInterval;
 	private boolean displayTokenMessages;
 	private Map<String, String> messages;
 	private Map<Material, List<String>> luckyBlockRewards;
@@ -79,7 +79,7 @@ public class TokensConfig {
 		this.blocksTopFormatWeekly = configuration.getStringList("blocks-top-weekly-format");
 		this.nextResetWeekly = configuration.getLong("next-reset-weekly");
 		this.displayTokenMessages = configuration.getBoolean("display-token-messages");
-		this.topUpdateInterval = configuration.getInt("top_update_interval");
+		this.savePlayerDataInterval = configuration.getInt("player_data_save_interval");
 		this.tokenItemDisplayName = configuration.getString("tokens.item.name");
 		this.tokenItemLore = configuration.getStringList("tokens.item.lore");
 		this.tokenItem = CompMaterial.fromString(configuration.getString("tokens.item.material")).toItem();
@@ -148,14 +148,6 @@ public class TokensConfig {
 		return this.luckyBlockRewards.getOrDefault(m, new ArrayList<>());
 	}
 
-	public int getTopUpdateInterval() {
-		return topUpdateInterval;
-	}
-
-	public void setTopUpdateInterval(int topUpdateInterval) {
-		this.topUpdateInterval = topUpdateInterval;
-	}
-
 	public double getChance() {
 		return chance;
 	}
@@ -203,5 +195,9 @@ public class TokensConfig {
 	public void setNextResetWeekly(long time) {
 		this.nextResetWeekly = time;
 
+	}
+
+	public int getSavePlayerDataInterval() {
+		return savePlayerDataInterval;
 	}
 }

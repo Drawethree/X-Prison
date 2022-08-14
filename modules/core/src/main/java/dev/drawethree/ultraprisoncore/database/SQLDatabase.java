@@ -182,7 +182,7 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void updateTokens(OfflinePlayer p, long amount) {
-		this.executeAsync("UPDATE " + UltraPrisonTokens.TABLE_NAME_TOKENS + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", amount, p.getUniqueId().toString());
+		this.execute("UPDATE " + UltraPrisonTokens.TABLE_NAME_TOKENS + " SET " + MySQLDatabase.TOKENS_TOKENS_COLNAME + "=? WHERE " + MySQLDatabase.TOKENS_UUID_COLNAME + "=?", amount, p.getUniqueId().toString());
 	}
 
 	@Override
@@ -592,7 +592,7 @@ public abstract class SQLDatabase extends Database {
 	@Override
 	public List<GangInvitation> getGangInvitations(Gang gang) {
 		List<GangInvitation> returnList = new ArrayList<>();
-		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.INVITES_TABLE_NAME + " WHERE gang_id=?", ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+		try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.INVITES_TABLE_NAME + " WHERE gang_id=?")) {
 			statement.setString(1, gang.getUuid().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				while (set.next()) {

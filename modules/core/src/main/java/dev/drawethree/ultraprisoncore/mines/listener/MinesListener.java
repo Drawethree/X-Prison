@@ -26,7 +26,7 @@ public class MinesListener {
 	}
 
 	private void subscribeToBlockBreakEvent() {
-		Events.subscribe(BlockBreakEvent.class, EventPriority.MONITOR)
+		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(e -> !e.isCancelled())
 				.handler(e -> {
 					Mine mine = this.plugin.getManager().getMineAtLocation(e.getBlock().getLocation());

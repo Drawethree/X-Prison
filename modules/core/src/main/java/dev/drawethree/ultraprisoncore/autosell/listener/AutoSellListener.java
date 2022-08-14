@@ -5,7 +5,6 @@ import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.event.filter.EventFilters;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -48,7 +47,6 @@ public class AutoSellListener {
     private void subscribeToBlockBreakEvent() {
 
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(EventFilters.ignoreCancelled())
                 .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
 

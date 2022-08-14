@@ -2,7 +2,6 @@ package dev.drawethree.ultraprisoncore.tokens.listener;
 
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import me.lucko.helper.Events;
-import me.lucko.helper.event.filter.EventFilters;
 import me.lucko.helper.reflect.MinecraftVersion;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
@@ -35,7 +34,7 @@ public class TokensListener {
 
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-				.filter(EventFilters.ignoreCancelled())
+				.filter(e -> !e.isCancelled())
 				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.handler(e -> {
 					List<Block> blocks = new ArrayList<>();

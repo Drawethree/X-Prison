@@ -50,8 +50,8 @@ lucky-blocks:
 next-reset-weekly: 0
 # Should players receive token messages when mining?
 display-token-messages: true
-# Interval in minutes for updating /tokens top
-top_update_interval: 10
+# Interval in minutes for saving player data into database
+player_data_save_interval: 10
 # Cooldown in seconds to check other player's tokens balances (/tokens <player>)
 # Applies also for /blocks <player>
 tokens-command-cooldown: 5
