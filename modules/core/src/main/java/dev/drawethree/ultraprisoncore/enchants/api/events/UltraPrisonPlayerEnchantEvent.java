@@ -7,13 +7,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class UltraPrisonPlayerEnchantEvent extends UltraPrisonPlayerEvent implements Cancellable {
+public final class UltraPrisonPlayerEnchantEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
 	@Getter
 	@Setter
-	private final long tokenCost;
+	private long tokenCost;
 	@Getter
 	private final int level;
 	@Getter

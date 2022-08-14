@@ -16,6 +16,9 @@ public final class SalaryEnchant extends UltraPrisonEnchantment {
 
 	public SalaryEnchant(UltraPrisonEnchants instance) {
 		super(instance, 12);
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Money");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Money");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override
@@ -37,7 +40,7 @@ public final class SalaryEnchant extends UltraPrisonEnchantment {
 			boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
 
 			plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
-			if (this.plugin.isAutoSellModule()) {
+			if (this.plugin.isAutoSellModuleEnabled()) {
 				plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
 			}
 		}
@@ -46,9 +49,9 @@ public final class SalaryEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Money");
-		this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Money");
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Money");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Money");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override

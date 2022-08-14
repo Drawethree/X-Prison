@@ -18,6 +18,9 @@ public final class GangValueFinderEnchant extends UltraPrisonEnchantment {
 
 	public GangValueFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 23);
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Min-Value");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max-Value");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override
@@ -43,9 +46,9 @@ public final class GangValueFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.minAmount = plugin.getConfig().get().getInt("enchants." + id + ".Min-Value");
-		this.maxAmount = plugin.getConfig().get().getInt("enchants." + id + ".Max-Value");
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Min-Value");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max-Value");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override

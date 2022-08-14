@@ -21,16 +21,8 @@ public final class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
 	public VoucherFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 20);
-	}
-
-	private List<CommandWithChance> loadCommands() {
-		List<CommandWithChance> returnList = new ArrayList<>();
-		for (String key : this.plugin.getConfig().get().getConfigurationSection("enchants." + id + ".Commands").getKeys(false)) {
-			String cmd = this.plugin.getConfig().get().getString("enchants." + id + ".Commands." + key + ".command");
-			double chance = this.plugin.getConfig().get().getDouble("enchants." + id + ".Commands." + key + ".chance");
-			returnList.add(new CommandWithChance(cmd, chance));
-		}
-		return returnList;
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.commandsToExecute = this.loadCommands();
 	}
 
 	@Override
@@ -53,8 +45,18 @@ public final class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.commandsToExecute = this.loadCommands();
+	}
+
+	private List<CommandWithChance> loadCommands() {
+		List<CommandWithChance> returnList = new ArrayList<>();
+		for (String key : this.plugin.getEnchantsConfig().getYamlConfig().getConfigurationSection("enchants." + id + ".Commands").getKeys(false)) {
+			String cmd = this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Commands." + key + ".command");
+			double chance = this.plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Commands." + key + ".chance");
+			returnList.add(new CommandWithChance(cmd, chance));
+		}
+		return returnList;
 	}
 
 	@Override

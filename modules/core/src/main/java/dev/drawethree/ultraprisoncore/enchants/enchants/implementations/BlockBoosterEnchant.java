@@ -19,16 +19,16 @@ import java.util.concurrent.TimeUnit;
 
 public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 
-	private static final Map<UUID, Long> boostedPlayers = new HashMap<>();
+	private static final Map<UUID, Long> BOOSTED_PLAYERS = new HashMap<>();
 	private double chance;
 
 	public BlockBoosterEnchant(UltraPrisonEnchants instance) {
 		super(instance, 17);
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 
 		Events.subscribe(UltraPrisonBlockBreakEvent.class)
 				.handler(e -> {
-					if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
+					if (BOOSTED_PLAYERS.containsKey(e.getPlayer().getUniqueId())) {
 						List<Block> blocks = new ArrayList<>();
 						for (Block b : e.getBlocks()) {
 							blocks.add(b);
@@ -40,16 +40,16 @@ public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 	}
 
 	public static boolean hasBlockBoosterRunning(Player p) {
-		return boostedPlayers.containsKey(p.getUniqueId());
+		return BOOSTED_PLAYERS.containsKey(p.getUniqueId());
 	}
 
 	public static String getTimeLeft(Player p) {
 
-		if (!boostedPlayers.containsKey(p.getUniqueId())) {
+		if (!BOOSTED_PLAYERS.containsKey(p.getUniqueId())) {
 			return "";
 		}
 
-		long endTime = boostedPlayers.get(p.getUniqueId());
+		long endTime = BOOSTED_PLAYERS.get(p.getUniqueId());
 
 		if (System.currentTimeMillis() > endTime) {
 			return "";
@@ -88,19 +88,19 @@ public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
 
-			if (boostedPlayers.containsKey(e.getPlayer().getUniqueId())) {
+			if (BOOSTED_PLAYERS.containsKey(e.getPlayer().getUniqueId())) {
 				return;
 			}
 
-			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getMessage("block_booster_on"));
+			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_on"));
 
-			boostedPlayers.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(1));
+			BOOSTED_PLAYERS.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(1));
 
 			Schedulers.async().runLater(() -> {
 				if (e.getPlayer().isOnline()) {
-					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getMessage("block_booster_off"));
+					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_off"));
 				}
-				boostedPlayers.remove(e.getPlayer().getUniqueId());
+				BOOSTED_PLAYERS.remove(e.getPlayer().getUniqueId());
 			}, 5, TimeUnit.MINUTES);
 		}
 
@@ -108,7 +108,7 @@ public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override

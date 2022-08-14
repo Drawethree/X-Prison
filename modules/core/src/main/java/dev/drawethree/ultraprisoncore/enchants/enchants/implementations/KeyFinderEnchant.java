@@ -17,6 +17,8 @@ public final class KeyFinderEnchant extends UltraPrisonEnchantment {
 
 	public KeyFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 15);
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
 	}
 
 	@Override
@@ -39,8 +41,8 @@ public final class KeyFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
-		this.commandsToExecute = plugin.getConfig().get().getStringList("enchants." + id + ".Commands");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
 	}
 
 	@Override

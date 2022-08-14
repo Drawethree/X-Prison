@@ -19,6 +19,9 @@ public final class TokenatorEnchant extends UltraPrisonEnchantment {
 
 	public TokenatorEnchant(UltraPrisonEnchants instance) {
 		super(instance, 14);
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override
@@ -44,9 +47,9 @@ public final class TokenatorEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Tokens");
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override

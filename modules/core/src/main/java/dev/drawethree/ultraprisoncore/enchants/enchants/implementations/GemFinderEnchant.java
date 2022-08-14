@@ -16,9 +16,11 @@ public final class GemFinderEnchant extends UltraPrisonEnchantment {
 	private long minAmount;
 	private double chance;
 
-
 	public GemFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 22);
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Gems");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Gems");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override
@@ -44,9 +46,9 @@ public final class GemFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-		this.minAmount = plugin.getConfig().get().getLong("enchants." + id + ".Min-Gems");
-		this.maxAmount = plugin.getConfig().get().getLong("enchants." + id + ".Max-Gems");
-		this.chance = plugin.getConfig().get().getDouble("enchants." + id + ".Chance");
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Gems");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Gems");
+		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
 	@Override

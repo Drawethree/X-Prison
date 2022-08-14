@@ -2,10 +2,6 @@
 keep-pickaxes-on-death: true
 # Should players be able to open enchanting menu on right clicking a block ?
 open-menu-on-right-click-block: false
-# Should UPC Enchants be enabled also outside of mine regions ?
-allow-enchants-outside-mine-regions: false
-# Refund percentage for disenchanting
-refund-percentage: 50.0
 # Enchant Menu Settings
 enchant_menu:
   # GUI Name
@@ -166,6 +162,8 @@ enchants:
       Enabled: true
       # Disenchant GUI slot
       InGuiSlot: 27
+      # Refund percentage
+      Percentage: 50.0
   '2':
     RawName: "unbreaking"
     Name: '&bUnbreaking'
@@ -180,6 +178,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 28
+      Percentage: 50.0
   '3':
     RawName: "fortune"
     Name: '&cFortune'
@@ -195,6 +194,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 29
+      Percentage: 50.0
   '4':
     RawName: "haste"
     Name: '&dHaste'
@@ -209,6 +209,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 30
+      Percentage: 50.0
   '5':
     RawName: "speed"
     Name: '&aSpeed'
@@ -223,6 +224,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 31
+      Percentage: 50.0
   '6':
     RawName: "jumpboost"
     Name: '&bJump Boost'
@@ -237,6 +239,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 32
+      Percentage: 50.0
   '7':
     RawName: "nightvision"
     Name: '&cNight Vision'
@@ -251,6 +254,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 33
+      Percentage: 50.0
   '8':
     RawName: "luckybooster"
     Name: '&cLucky Booster'
@@ -266,6 +270,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 34
+      Percentage: 50.0
   '9':
     RawName: "explosive"
     Name: '&aExplosive'
@@ -284,6 +289,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 35
+      Percentage: 50.0
   '10':
     RawName: "layer"
     Name: '&bLayer'
@@ -300,6 +306,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 36
+      Percentage: 50.0
   '11':
     RawName: "charity"
     Name: '&cCharity'
@@ -318,6 +325,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 37
+      Percentage: 50.0
   '12':
     RawName: "salary"
     Name: '&dSalary'
@@ -335,6 +343,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 38
+      Percentage: 50.0
   '13':
     RawName: "blessing"
     Name: '&eBlessing'
@@ -353,6 +362,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 39
+      Percentage: 50.0
   '14':
     RawName: "tokenator"
     Name: '&aTokenator'
@@ -370,6 +380,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 40
+      Percentage: 50.0
   '15':
     RawName: "keyfinder"
     Name: '&bKey Finder'
@@ -393,6 +404,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 41
+      Percentage: 50.0
   '16':
     RawName: "prestigefinder"
     Name: '&aPrestige Finder'
@@ -410,6 +422,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 42
+      Percentage: 50.0
     Chance: 4.0E-7
   '17':
     RawName: "blockbooster"
@@ -426,6 +439,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 43
+      Percentage: 50.0
   '18':
     RawName: "keyalls"
     Name: '&cKeyalls'
@@ -448,6 +462,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 44
+      Percentage: 50.0
   '19':
     RawName: "autosell"
     Name: '&eAutosell'
@@ -465,6 +480,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 45
+      Percentage: 50.0
   '20':
     RawName: "voucher"
     Name: '&bVoucher Finder'
@@ -481,6 +497,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 46
+      Percentage: 50.0
     Commands:
       '1':
         command: 'voucher give %player% 5$'
@@ -514,6 +531,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 47
+      Percentage: 50.0
   '22':
     RawName: "gemfinder"
     Name: '&aGem Finder'
@@ -531,6 +549,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 48
+      Percentage: 50.0
   '23':
     RawName: "gang-value-finder"
     Name: '&eGang Value Finder'
@@ -548,6 +567,7 @@ enchants:
     Refund:
       Enabled: true
       InGuiSlot: 49
+      Percentage: 50.0
 # Format of every pickaxe that has UPC Enchants on it
 # %Enchant-X% represents the name + level of specific enchant (X = id)
 Pickaxe:
