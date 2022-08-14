@@ -14,7 +14,6 @@ import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
-import me.lucko.helper.event.filter.EventFilters;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
@@ -120,7 +119,7 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     private void registerListeners() {
 
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(EventFilters.ignoreCancelled())
+                .filter(e -> !e.isCancelled())
                 .filter(e -> e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
                     //Check for next level progression

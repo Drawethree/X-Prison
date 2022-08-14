@@ -11,9 +11,7 @@ import dev.drawethree.ultraprisoncore.tokens.config.TokensConfig;
 import dev.drawethree.ultraprisoncore.tokens.listener.TokensListener;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.tokens.managers.TokensManager;
-import dev.drawethree.ultraprisoncore.tokens.task.UpdateTopBlocksTask;
-import dev.drawethree.ultraprisoncore.tokens.task.UpdateTopBlocksWeeklyTask;
-import dev.drawethree.ultraprisoncore.tokens.task.UpdateTopTokensTask;
+import dev.drawethree.ultraprisoncore.tokens.task.SavePlayerDataTask;
 import lombok.Getter;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
@@ -44,11 +42,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	@Getter
 	private final UltraPrisonCore core;
 
-	private UpdateTopTokensTask updateTopTokensTask;
-
-	private UpdateTopBlocksTask updateTopBlocksTask;
-
-	private UpdateTopBlocksWeeklyTask updateTopBlocksWeeklyTask;
+	private SavePlayerDataTask savePlayerDataTask;
 
 	private boolean enabled;
 
@@ -88,14 +82,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 		this.commandManager = new CommandManager(this);
 		this.commandManager.enable();
 
-		this.updateTopTokensTask = new UpdateTopTokensTask(this);
-		this.updateTopTokensTask.start();
-
-		this.updateTopBlocksTask = new UpdateTopBlocksTask(this);
-		this.updateTopBlocksTask.start();
-
-		this.updateTopBlocksWeeklyTask = new UpdateTopBlocksWeeklyTask(this);
-		this.updateTopBlocksWeeklyTask.start();
+		this.savePlayerDataTask = new SavePlayerDataTask(this);
+		this.savePlayerDataTask.start();
 
 		this.registerListeners();
 
@@ -115,9 +103,7 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	public void disable() {
 		this.tokensManager.disable();
 
-		this.updateTopTokensTask.stop();
-		this.updateTopBlocksTask.stop();
-		this.updateTopBlocksWeeklyTask.stop();
+		this.savePlayerDataTask.stop();
 
 		this.enabled = false;
 	}

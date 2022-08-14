@@ -6,7 +6,6 @@ import dev.drawethree.ultraprisoncore.utils.Constants;
 import dev.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
 import dev.drawethree.ultraprisoncore.utils.inventory.InventoryUtils;
 import me.lucko.helper.Events;
-import me.lucko.helper.event.filter.EventFilters;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -44,7 +43,7 @@ public class EnchantsListener {
 
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-				.filter(EventFilters.ignoreCancelled())
+				.filter(e -> !e.isCancelled())
 				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin.getCore());
 	}

@@ -39,17 +39,9 @@ public class TokensManager {
 	private final Map<UUID, Long> blocksCacheWeekly;
 	private final List<UUID> tokenMessageOnPlayers;
 
-
-	private Map<UUID, Long> topTokens;
-	private Map<UUID, Long> topBlocks;
-	private Map<UUID, Long> topBlocksWeekly;
-
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
 		this.tokenMessageOnPlayers = new ArrayList<>();
-		this.topTokens = new LinkedHashMap<>();
-		this.topBlocks = new LinkedHashMap<>();
-		this.topBlocksWeekly = new LinkedHashMap<>();
 		this.tokensCache = new HashMap<>();
 		this.blocksCache = new HashMap<>();
 		this.blocksCacheWeekly = new HashMap<>();
@@ -57,28 +49,22 @@ public class TokensManager {
 
 	public void savePlayerData(Player player, boolean removeFromCache, boolean async) {
 		if (async) {
-			Schedulers.async().run(() -> {
-				this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
-				this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
-				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
-				if (removeFromCache) {
-					tokensCache.remove(player.getUniqueId());
-					blocksCache.remove(player.getUniqueId());
-					blocksCacheWeekly.remove(player.getUniqueId());
-				}
-				this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
-			});
+			Schedulers.async().run(() -> savePlayerDataLogic(player, removeFromCache));
 		} else {
-			this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
-			this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
-			this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
-			if (removeFromCache) {
-				tokensCache.remove(player.getUniqueId());
-				blocksCache.remove(player.getUniqueId());
-				blocksCacheWeekly.remove(player.getUniqueId());
-			}
-			this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
+			savePlayerDataLogic(player, removeFromCache);
 		}
+	}
+
+	private void savePlayerDataLogic(Player player, boolean removeFromCache) {
+		this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
+		this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
+		this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
+		if (removeFromCache) {
+			tokensCache.remove(player.getUniqueId());
+			blocksCache.remove(player.getUniqueId());
+			blocksCacheWeekly.remove(player.getUniqueId());
+		}
+		this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
 	}
 
 	public void savePlayerDataOnDisable() {
@@ -475,56 +461,51 @@ public class TokensManager {
 		});
 	}
 
-	public void updateTokensTop(Map<UUID, Long> topTokens) {
-		this.topTokens = topTokens;
-	}
-
-	public void updateBlocksTop(Map<UUID, Long> topBlocks) {
-		this.topBlocks = topBlocks;
-	}
-
-	public void updateBlocksTopWeekly(Map<UUID, Long> topBlocksWeekly) {
-		this.topBlocksWeekly = topBlocksWeekly;
-	}
-
 	public void sendTokensTop(CommandSender sender) {
 
 		List<String> format = this.plugin.getTokensConfig().getTokensTopFormat();
 
-		for (String s : format) {
-			if (s.startsWith("{FOR_EACH_PLAYER}")) {
-				String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
-				for (int i = 0; i < 10; i++) {
-					try {
-						UUID uuid = (UUID) topTokens.keySet().toArray()[i];
-						OfflinePlayer player = Players.getOfflineNullable(uuid);
-						String name;
-						if (player.getName() == null) {
-							name = "Unknown Player";
-						} else {
-							name = player.getName();
+
+		Schedulers.async().run(() -> {
+			Map<UUID, Long> topTokens = this.plugin.getCore().getPluginDatabase().getTopTokens(this.plugin.getTokensConfig().getTopPlayersAmount());
+			for (String s : format) {
+				if (s.startsWith("{FOR_EACH_PLAYER}")) {
+					String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
+					for (int i = 0; i < 10; i++) {
+						try {
+							UUID uuid = (UUID) topTokens.keySet().toArray()[i];
+							OfflinePlayer player = Players.getOfflineNullable(uuid);
+							String name;
+							if (player.getName() == null) {
+								name = "Unknown Player";
+							} else {
+								name = player.getName();
+							}
+							long tokens = topTokens.get(uuid);
+							PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens)));
+						} catch (Exception e) {
+							break;
 						}
-						long tokens = topTokens.get(uuid);
-						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens)));
-					} catch (Exception e) {
-						break;
 					}
+				} else {
+					PlayerUtils.sendMessage(sender, s);
 				}
-			} else {
-				PlayerUtils.sendMessage(sender, s);
 			}
-		}
+		});
 	}
 
 	public void sendBlocksTop(CommandSender sender) {
 		List<String> format = this.plugin.getTokensConfig().getBlocksTopFormat();
-		for (String s : format) {
-			if (s.startsWith("{FOR_EACH_PLAYER}")) {
-				sendBlocksTop(sender, s, topBlocks);
-			} else {
-				PlayerUtils.sendMessage(sender, s);
+		Schedulers.async().run(() -> {
+			Map<UUID, Long> topBlocks = this.plugin.getCore().getPluginDatabase().getTopBlocks(this.plugin.getTokensConfig().getTopPlayersAmount());
+			for (String s : format) {
+				if (s.startsWith("{FOR_EACH_PLAYER}")) {
+					sendBlocksTop(sender, s, topBlocks);
+				} else {
+					PlayerUtils.sendMessage(sender, s);
+				}
 			}
-		}
+		});
 	}
 
 	private void sendBlocksTop(CommandSender sender, String s, Map<UUID, Long> top) {
@@ -549,13 +530,17 @@ public class TokensManager {
 
 	public void sendBlocksTopWeekly(CommandSender sender) {
 		List<String> format = this.plugin.getTokensConfig().getBlocksTopFormatWeekly();
-		for (String s : format) {
-			if (s.startsWith("{FOR_EACH_PLAYER}")) {
-				sendBlocksTop(sender, s, topBlocksWeekly);
-			} else {
-				PlayerUtils.sendMessage(sender, s);
+
+		Schedulers.async().run(() -> {
+			Map<UUID, Long> topBlocksWeekly = this.plugin.getCore().getPluginDatabase().getTopBlocksWeekly(this.plugin.getTokensConfig().getTopPlayersAmount());
+			for (String s : format) {
+				if (s.startsWith("{FOR_EACH_PLAYER}")) {
+					sendBlocksTop(sender, s, topBlocksWeekly);
+				} else {
+					PlayerUtils.sendMessage(sender, s);
+				}
 			}
-		}
+		});
 	}
 
 	public BlockReward getNextBlockReward(OfflinePlayer p) {
@@ -571,7 +556,6 @@ public class TokensManager {
 	public void resetBlocksTopWeekly(CommandSender sender) {
 		Schedulers.async().run(() -> {
 			PlayerUtils.sendMessage(sender, "&7&oStarting to reset BlocksTop - Weekly. This may take a while...");
-			this.topBlocksWeekly.clear();
 			this.plugin.getTokensConfig().setNextResetWeekly(Time.nowMillis() + TimeUnit.DAYS.toMillis(7));
 			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
 			PlayerUtils.sendMessage(sender, "&aBlocksTop - Weekly - Resetted!");
