@@ -1,4 +1,5 @@
 messages:
+  no_permission: "&c&l(!) &fYou do not have a permission to do that!"
   rank_up: '&e&lRANKUP &8» &7Congratulations, you ranked up from %Rank-1% &7to %Rank-2%&7.'
   not_enough_money: '&e&lRANKUP &8» &7You don''t have enough money to rankup. You need $%cost%'
   not_enough_tokens: '&e&lRANKUP &8» &7You don''t have enough tokens to rankup. You need %cost% Tokens.'

@@ -121,6 +121,7 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 					}
 				}).registerAndBind(core, "prestige");
 		Commands.create()
+				.assertPermission("ultraprison.prestiges.maxprestige", this.getMessage("no_permission"))
 				.assertPlayer()
 				.handler(c -> {
 					if (c.args().size() == 0) {

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.List;
 
 public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 
@@ -30,6 +31,11 @@ public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 	@Override
 	public double getPriceForBlock(Block block) {
 		return plugin.getManager().getPriceForBlock(block);
+	}
+
+	@Override
+	public void sellBlocks(Player player, List<Block> blocks) {
+		plugin.getManager().sellBlocks(player, blocks);
 	}
 
 	@Override

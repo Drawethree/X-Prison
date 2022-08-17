@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface UltraPrisonAutoSellAPI {
 
@@ -34,6 +35,14 @@ public interface UltraPrisonAutoSellAPI {
 	 * @return Price for block
 	 */
 	double getPriceForBlock(Block block);
+
+	/**
+	 * Sells the given blocks
+	 *
+	 * @param player Player
+	 * @param blocks List of blocks
+	 */
+	void sellBlocks(Player player, List<Block> blocks);
 
 	/**
 	 * Method to get if player has autosell enabled

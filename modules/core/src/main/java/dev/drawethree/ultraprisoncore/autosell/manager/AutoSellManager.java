@@ -401,4 +401,8 @@ public class AutoSellManager {
     public SellRegion getSellRegionByName(String name) {
         return regionsAutoSell.get(name);
     }
+
+    public void sellBlocks(Player player, List<Block> blocks) {
+        blocks.forEach(block -> autoSellBlock(player, block));
+    }
 }
