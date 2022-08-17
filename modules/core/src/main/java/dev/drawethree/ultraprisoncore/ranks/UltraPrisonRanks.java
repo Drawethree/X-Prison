@@ -137,6 +137,7 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 				}).registerAndBind(core, "setrank");
 
 		Commands.create()
+				.assertPermission("ultraprison.ranks.maxrankup", this.getMessage("no_permission"))
 				.assertPlayer()
 				.handler(c -> {
 					if (c.args().size() == 0) {
