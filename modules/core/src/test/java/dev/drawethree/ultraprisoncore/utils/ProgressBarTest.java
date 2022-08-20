@@ -1,11 +1,11 @@
 package dev.drawethree.ultraprisoncore.utils;
 
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static dev.drawethree.ultraprisoncore.utils.misc.ProgressBar.getProgressBar;
 import static dev.drawethree.ultraprisoncore.utils.text.TextUtils.applyColor;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProgressBarTest {
 

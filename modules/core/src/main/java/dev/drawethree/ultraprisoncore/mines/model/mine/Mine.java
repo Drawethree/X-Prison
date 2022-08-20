@@ -369,7 +369,18 @@ public class Mine implements GsonSerializable {
 		private int timedReset;
 
 		public Builder() {
-
+			this.name = "";
+			this.mineRegion = null;
+			this.teleportLocation = null;
+			this.blockPalette = new BlockPalette();
+			this.resetPercentage = 50;
+			this.resetType = ResetType.GRADUAL;
+			this.broadcastReset = true;
+			this.blocksMinedHologram = null;
+			this.blocksLeftHologram = null;
+			this.timedResetHologram = null;
+			this.mineEffects = new HashMap<>();
+			this.timedReset = 10;
 		}
 
 		public Builder name(String name) {

@@ -2,15 +2,16 @@ package dev.drawethree.ultraprisoncore.utils;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import static dev.drawethree.ultraprisoncore.utils.location.LocationUtils.INVALID_LOCATION;
 import static dev.drawethree.ultraprisoncore.utils.location.LocationUtils.toXYZW;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 
 public class LocationUtilsTest {
 
@@ -21,7 +22,7 @@ public class LocationUtilsTest {
 	@Mock
 	private World mockWorld;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 
 	}
@@ -42,7 +43,7 @@ public class LocationUtilsTest {
 
 		String actual = toXYZW(mockLocation);
 
-		Assert.assertEquals(expected, actual);
+		assertEquals(expected, actual);
 
 	}
 
@@ -53,7 +54,7 @@ public class LocationUtilsTest {
 
 		String actual = toXYZW(mockLocation);
 
-		Assert.assertEquals(INVALID_LOCATION, actual);
+		assertEquals(INVALID_LOCATION, actual);
 
 	}
 }

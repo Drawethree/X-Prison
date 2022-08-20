@@ -5,15 +5,12 @@ import com.koletar.jj.mineresetlite.MineResetLite;
 import com.koletar.jj.mineresetlite.SerializableBlock;
 import dev.drawethree.ultraprisoncore.mines.migration.model.MinesMigration;
 import dev.drawethree.ultraprisoncore.mines.model.mine.BlockPalette;
-import dev.drawethree.ultraprisoncore.mines.model.mine.reset.ResetType;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
 import org.bukkit.Bukkit;
-import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,27 +63,6 @@ public final class MineResetLiteMigration extends MinesMigration<Mine> {
 		}
 
 		builder.blockPalette(blockPalette);
-
-		//Reset percentage
-		int resetPercentage = 50;
-		builder.resetPercentage(resetPercentage);
-
-		//Reset time (minutes)
-		int resetTime = 10;
-		builder.timedReset(resetTime);
-
-		//Reset messages
-		boolean broadcastReset = true;
-		builder.broadcastReset(broadcastReset);
-
-		//Reset type
-		ResetType resetType = ResetType.GRADUAL;
-		builder.resetType(resetType);
-
-		//Mine effects
-		Map<PotionEffectType, Integer> mineEffects = new HashMap<>();
-		builder.mineEffects(mineEffects);
-
 		return builder.build();
 	}
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>UltraPrisonCore</artifactId>
         <groupId>dev.drawethree</groupId>
-        <version>1.12.2</version>
+        <version>1.12.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -22,8 +22,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -60,6 +60,10 @@
             <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>enginehub-maven</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -83,6 +87,13 @@
             <version>LATEST</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../../libs/MineResetLite.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>catamines</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../../libs/CataMines-2.5.7.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>internal</groupId>
@@ -116,7 +127,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>4.0.3</version>
+            <version>5.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
@@ -141,6 +152,26 @@
             <artifactId>helper</artifactId>
             <version>5.6.10</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Core</artifactId>
+            <version>2.4.3</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
+            <version>2.4.3</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>FastAsyncWorldEdit-Core</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
