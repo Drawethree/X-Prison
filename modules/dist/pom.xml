@@ -41,6 +41,14 @@
                         <configuration>
                             <relocations>
                                 <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.hikari</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
                                     <shadedPattern>dev.drawethree.ultraprisoncore.libs.nbtapi</shadedPattern>
                                 </relocation>
