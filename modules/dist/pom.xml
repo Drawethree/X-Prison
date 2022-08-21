@@ -15,7 +15,7 @@
         <release.status>RELEASE</release.status>
     </properties>
     <build>
-        <directory>../../target</directory>
+        <directory>../../out</directory>
         <finalName>UltraPrisonCore-${project.version}-${release.status}</finalName>
         <defaultGoal>clean install</defaultGoal>
         <plugins>

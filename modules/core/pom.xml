@@ -79,28 +79,33 @@
             <artifactId>jets</artifactId>
             <version>LATEST</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../../libs/JetsPrisonMines-3.3.1_1.jar</systemPath>
+            <systemPath>${project.basedir}/../../libs/plugins/JetsPrisonMines-3.3.1_1.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>internal</groupId>
             <artifactId>mrl</artifactId>
             <version>LATEST</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../../libs/MineResetLite.jar</systemPath>
+            <systemPath>${project.basedir}/../../libs/plugins/MineResetLite.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>internal</groupId>
             <artifactId>catamines</artifactId>
             <version>LATEST</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../../libs/CataMines-2.5.7.jar</systemPath>
+            <systemPath>${project.basedir}/../../libs/plugins/CataMines-2.5.7.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>internal</groupId>
+            <groupId>be.maximvdw</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../libs/MVdWPlaceholderAPI.jar</systemPath>
+            <version>3.1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.spigotmc</groupId>
+                    <artifactId>spigot</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>de.tr7zw</groupId>
