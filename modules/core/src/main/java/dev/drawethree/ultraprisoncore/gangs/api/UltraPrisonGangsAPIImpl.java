@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.Collection;
 import java.util.Optional;
 
-public class UltraPrisonGangsAPIImpl implements UltraPrisonGangsAPI {
+public final class UltraPrisonGangsAPIImpl implements UltraPrisonGangsAPI {
 
 	private final GangsManager gangsManager;
 

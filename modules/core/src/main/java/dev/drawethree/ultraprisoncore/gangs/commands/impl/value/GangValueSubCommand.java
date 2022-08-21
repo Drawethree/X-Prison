@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GangValueSubCommand extends GangSubCommand {
+public final class GangValueSubCommand extends GangSubCommand {
 
 	public GangValueSubCommand(GangCommand command) {
 		super(command, "value");

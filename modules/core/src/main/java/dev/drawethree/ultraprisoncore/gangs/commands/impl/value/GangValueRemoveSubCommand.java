@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class GangValueRemoveSubCommand extends GangSubCommand {
+public final class GangValueRemoveSubCommand extends GangSubCommand {
 	public GangValueRemoveSubCommand(GangCommand command) {
 		super(command, "remove");
 	}

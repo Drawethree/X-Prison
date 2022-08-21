@@ -29,7 +29,6 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 	private boolean countBlocksBroken;
 	private boolean soundsEnabled;
 
-
 	public ExplosiveEnchant(UltraPrisonEnchants instance) {
 		super(instance, 9);
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
@@ -63,6 +62,7 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), this.plugin.getEnchantsWGFlag());
 
 			if (region != null) {
+				this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
 				Player p = e.getPlayer();
 				int radius = this.calculateRadius(enchantLevel);
 				List<Block> blocksAffected = new ArrayList<>();
