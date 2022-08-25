@@ -4,6 +4,7 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.enchants.implementations.*;
 import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
+import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 public abstract class UltraPrisonEnchantment implements Refundable {
@@ -191,6 +193,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 		if (!this.plugin.getCore().isModuleEnabled(UltraPrisonPickaxeLevels.MODULE_NAME)) {
 			return true;
 		}
-		return this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(pickAxe).getLevel() >= this.requiredPickaxeLevel;
+		Optional<PickaxeLevel> pickaxeLevelOptional = this.plugin.getCore().getPickaxeLevels().getApi().getPickaxeLevel(pickAxe);
+		return pickaxeLevelOptional.map(level -> level.getLevel() >= this.requiredPickaxeLevel).orElse(true);
 	}
 }

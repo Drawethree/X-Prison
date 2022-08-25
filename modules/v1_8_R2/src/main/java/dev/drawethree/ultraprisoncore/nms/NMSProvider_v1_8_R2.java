@@ -9,7 +9,7 @@ import org.bukkit.craftbukkit.v1_8_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class NMSProvider_v1_8_R2 extends NMSProvider {
+public final class NMSProvider_v1_8_R2 extends NMSProvider {
 
 	@Override
 	public void setBlockInNativeDataPalette(World world, int x, int y, int z, int blockId, byte data, boolean applyPhysics) {

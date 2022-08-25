@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GangLeaveSubCommand extends GangSubCommand {
+public final class GangLeaveSubCommand extends GangSubCommand {
 
 	public GangLeaveSubCommand(GangCommand command) {
 		super(command, "leave", "quit");

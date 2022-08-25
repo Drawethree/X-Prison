@@ -4,6 +4,8 @@ import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Optional;
+
 public interface UltraPrisonPickaxeLevelsAPI {
 
 	/**
@@ -12,7 +14,7 @@ public interface UltraPrisonPickaxeLevelsAPI {
 	 * @param item ItemStack
 	 * @return instance of PickaxeLevel
 	 */
-	PickaxeLevel getPickaxeLevel(ItemStack item);
+	Optional<PickaxeLevel> getPickaxeLevel(ItemStack item);
 
 	/**
 	 * Method to get PickaxeLevel of Player
@@ -20,7 +22,7 @@ public interface UltraPrisonPickaxeLevelsAPI {
 	 * @param player Player
 	 * @return instance of PickaxeLevel
 	 */
-	PickaxeLevel getPickaxeLevel(Player player);
+	Optional<PickaxeLevel> getPickaxeLevel(Player player);
 
 	/**
 	 * Method to get PickaxeLevel by specific level
@@ -28,7 +30,7 @@ public interface UltraPrisonPickaxeLevelsAPI {
 	 * @param level level
 	 * @return instance of PickaxeLevel
 	 */
-	PickaxeLevel getPickaxeLevel(int level);
+	Optional<PickaxeLevel> getPickaxeLevel(int level);
 
 	/**
 	 * Method to set PickaxeLevel of itemstack
@@ -47,4 +49,12 @@ public interface UltraPrisonPickaxeLevelsAPI {
 	 * @param level  level to set
 	 */
 	void setPickaxeLevel(Player player, ItemStack item, int level);
+
+	/**
+	 * Method to get progress bar of PickaxeLevel progress for given player
+	 *
+	 * @param player Player
+	 */
+	String getProgressBar(Player player);
+
 }

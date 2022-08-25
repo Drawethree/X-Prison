@@ -187,7 +187,6 @@ enchants:
     InGuiSlot: 29
     Increase-Cost-by: 75
     Max: -1
-    Chance: 100
     Cost: 75
     Description:
       - '&7&o(( Ability to receive more blocks while mining ))'
@@ -262,8 +261,8 @@ enchants:
     Enabled: true
     InGuiSlot: 34
     Increase-Cost-by: 350
-    Max: 250
-    Chance: 9.0E-5
+    Max: 500
+    Chance: 0.2
     Cost: 350
     Description:
       - '&7&o(( Ability to receive x2 Tokens And Money for short time ))'
@@ -295,7 +294,7 @@ enchants:
     Name: '&bLayer'
     Material: BOOK
     Enabled: true
-    Chance: 9.0E-5
+    Chance: 0.2
     InGuiSlot: 36
     Increase-Cost-by: 200
     Max: 500
@@ -314,8 +313,8 @@ enchants:
     Enabled: true
     InGuiSlot: 37
     Increase-Cost-by: 25
-    Max: 750
-    Chance: 6.66E-5
+    Max: 500
+    Chance: 0.2
     Max-Money: 5000000000000
     Min-Money: 1000000000000
     Cost: 25
@@ -334,7 +333,7 @@ enchants:
     InGuiSlot: 38
     Increase-Cost-by: 35
     Max: 500
-    Chance: 7.5E-4
+    Chance: 0.2
     Max-Money: 5000000000000
     Min-Money: 2500000000000
     Cost: 35
@@ -351,8 +350,8 @@ enchants:
     Enabled: true
     InGuiSlot: 39
     Increase-Cost-by: 25
-    Max: 750
-    Chance: 6.66E-5
+    Max: 500
+    Chance: 0.2
     Max-Tokens: 15000
     Min-Tokens: 5000
     Cost: 25
@@ -370,8 +369,8 @@ enchants:
     Enabled: true
     InGuiSlot: 40
     Increase-Cost-by: 6
-    Max: 1500
-    Chance: 0.06666
+    Max: 500
+    Chance: 0.2
     Max-Tokens: 75
     Min-Tokens: 35
     Cost: 12
@@ -388,8 +387,8 @@ enchants:
     Enabled: true
     InGuiSlot: 41
     Increase-Cost-by: 350
-    Max: 250
-    Chance: 9.0E-5
+    Max: 500
+    Chance: 0.2
     Cost: 350
     Description:
       - '&7&o(( Ability to find crate keys while mining ))'
@@ -415,6 +414,7 @@ enchants:
     InGuiSlot: 42
     Increase-Cost-by: 175
     Max: 500
+    Chance: 0.2
     Cost: 175
     Command: "prestigeadmin add %player% %amount%"
     Description:
@@ -423,7 +423,6 @@ enchants:
       Enabled: true
       InGuiSlot: 42
       Percentage: 50.0
-    Chance: 4.0E-7
   '17':
     RawName: "blockbooster"
     Name: '&dBlock Booster'
@@ -431,9 +430,9 @@ enchants:
     Enabled: true
     InGuiSlot: 43
     Increase-Cost-by: 225
-    Max: 750
-    Chance: 5.0E-6
-    Cost: 225
+    Max: 500
+    Chance: 0.2
+    Cost: 500
     Description:
       - '&7&o(( Ability to receive x2 Blocks for 1 Minute while mining))'
     Refund:
@@ -447,8 +446,8 @@ enchants:
     Enabled: true
     InGuiSlot: 44
     Increase-Cost-by: 350
-    Max: 250
-    Chance: 9.0E-5
+    Max: 500
+    Chance: 0.2
     Cost: 350
     Description:
       - '&7&o(( Ability to give everyone crate keys while mining ))'
@@ -471,7 +470,7 @@ enchants:
     InGuiSlot: 45
     Increase-Cost-by: 0
     Max: 1
-    Chance: 1.0
+    Chance: 25.0
     Cost: 1000
     Description:
       - '&7&o(( Ability to sell all items while mining ))'
@@ -488,8 +487,8 @@ enchants:
     Enabled: true
     InGuiSlot: 46
     Increase-Cost-by: 5000
-    Max: 250
-    Chance: 9.0E-5
+    Max: 500
+    Chance: 0.2
     Cost: 5000
     Description:
       - '&7&o(( Ability to find store vouchers while mining ))'
@@ -521,8 +520,8 @@ enchants:
     Enabled: true
     InGuiSlot: 47
     Increase-Cost-by: 0
-    Max: 100
-    Chance: 0.001
+    Max: 500
+    Chance: 0.2
     Cost: 1000
     Description:
       - '&7&o(( Ability to break whole mine while mining ))'
@@ -539,8 +538,8 @@ enchants:
     Enabled: true
     InGuiSlot: 48
     Increase-Cost-by: 6
-    Max: 1500
-    Chance: 0.06666
+    Max: 500
+    Chance: 0.2
     Max-Gems: 75
     Min-Gems: 35
     Cost: 12
@@ -557,8 +556,8 @@ enchants:
     Enabled: true
     InGuiSlot: 49
     Increase-Cost-by: 6
-    Max: 1500
-    Chance: 0.06666
+    Max: 500
+    Chance: 0.2
     Max-Value: 5
     Min-Value: 1
     Cost: 12

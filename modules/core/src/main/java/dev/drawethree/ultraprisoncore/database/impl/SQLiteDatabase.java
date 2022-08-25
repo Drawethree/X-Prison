@@ -36,6 +36,7 @@ import java.util.UUID;
 public final class SQLiteDatabase extends SQLDatabase {
 
     private static final String FILE_NAME = "playerdata.db";
+
     private final String filePath;
     private final ConnectionProperties connectionProperties;
 

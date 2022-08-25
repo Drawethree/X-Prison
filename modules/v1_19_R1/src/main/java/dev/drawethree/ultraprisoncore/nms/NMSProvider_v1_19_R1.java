@@ -6,7 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class NMSProvider_v1_19_R1 extends NMSProvider {
+public final class NMSProvider_v1_19_R1 extends NMSProvider {
 
 	@Override
 	public void setBlockInNativeDataPalette(World world, int x, int y, int z, int blockId, byte data, boolean applyPhysics) {

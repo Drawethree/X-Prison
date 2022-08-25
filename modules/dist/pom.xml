@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.12.2</version>
+        <version>1.12.3</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
         <release.status>RELEASE</release.status>
     </properties>
     <build>
-        <directory>../../target</directory>
+        <directory>../../out</directory>
         <finalName>UltraPrisonCore-${project.version}-${release.status}</finalName>
         <defaultGoal>clean install</defaultGoal>
         <plugins>
@@ -24,14 +24,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -40,6 +40,14 @@
                         </goals>
                         <configuration>
                             <relocations>
+                                <relocation>
+                                    <pattern>com.zaxxer.hikari</pattern>
+                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.hikari</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.slf4j</shadedPattern>
+                                </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
                                     <shadedPattern>dev.drawethree.ultraprisoncore.libs.nbtapi</shadedPattern>

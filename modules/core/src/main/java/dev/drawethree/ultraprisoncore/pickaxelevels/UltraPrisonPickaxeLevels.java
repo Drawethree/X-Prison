@@ -1,89 +1,33 @@
 package dev.drawethree.ultraprisoncore.pickaxelevels;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.config.FileManager;
 import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import dev.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
-import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
-import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
-import dev.drawethree.ultraprisoncore.utils.misc.ProgressBar;
-import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
+import dev.drawethree.ultraprisoncore.pickaxelevels.config.PickaxeLevelsConfig;
+import dev.drawethree.ultraprisoncore.pickaxelevels.listener.PickaxeLevelsListener;
+import dev.drawethree.ultraprisoncore.pickaxelevels.manager.PickaxeLevelsManager;
 import lombok.Getter;
-import me.lucko.helper.Events;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.*;
 
 public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
     public static final String MODULE_NAME = "Pickaxe Levels";
 
-    private static final String ADMIN_PERMISSION = "ultraprison.pickaxe.admin";
-    private static final String NBT_TAG_INDETIFIER = "ultra-prison-pickaxe-level";
+    @Getter
+    private PickaxeLevelsConfig pickaxeLevelsConfig;
+    @Getter
+    private PickaxeLevelsManager pickaxeLevelsManager;
+    @Getter
+    private UltraPrisonPickaxeLevelsAPI api;
 
     @Getter
-    private FileManager.Config config;
+    private final UltraPrisonCore core;
 
-    private Map<Integer, PickaxeLevel> pickaxeLevels;
-    private Map<String, String> messages;
-    private PickaxeLevel defaultLevel;
-    private PickaxeLevel maxLevel;
-	private String progressBarDelimiter;
-	@Getter
-	private UltraPrisonPickaxeLevelsAPI api;
-    @Getter
-    private UltraPrisonCore core;
-	private boolean enabled;
-	private int progressBarLength;
+    private boolean enabled;
 
-    public UltraPrisonPickaxeLevels(UltraPrisonCore UltraPrisonCore) {
-        this.core = UltraPrisonCore;
-    }
-
-    private void loadMessages() {
-        messages = new HashMap<>();
-        for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key.toLowerCase(), TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
-        }
-    }
-
-    private void loadPickaxeLevels() {
-        pickaxeLevels = new LinkedHashMap<>();
-
-        ConfigurationSection section = this.getConfig().get().getConfigurationSection("levels");
-        if (section == null) {
-            return;
-        }
-
-        for (String level : section.getKeys(false)) {
-
-            int levelId = Integer.parseInt(level);
-
-            String displayName = TextUtils.applyColor(this.getConfig().get().getString("levels." + level + ".display_name"));
-            long blocksRequire = this.getConfig().get().getLong("levels." + level + ".blocks_required");
-            List<String> rewards = this.getConfig().get().getStringList("levels." + level + ".rewards");
-
-
-            PickaxeLevel pickaxeLevel = new PickaxeLevel(levelId, blocksRequire, displayName, rewards);
-
-            if (levelId == 1) {
-                this.defaultLevel = pickaxeLevel;
-            }
-
-            this.pickaxeLevels.put(levelId, pickaxeLevel);
-            this.maxLevel = pickaxeLevel;
-
-            this.core.getLogger().info("Loaded Pickaxe Level " + levelId);
-        }
+    public UltraPrisonPickaxeLevels(UltraPrisonCore core) {
+        this.core = core;
     }
 
     @Override
@@ -93,67 +37,23 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
 
     @Override
     public void reload() {
-		this.config.reload();
-		this.progressBarDelimiter = this.getConfig().get().getString("progress-bar-delimiter");
-		this.progressBarLength = this.getConfig().get().getInt("progress-bar-length");
-		this.loadMessages();
-		this.loadPickaxeLevels();
+        this.pickaxeLevelsConfig.reload();
 	}
 
     @Override
     public void enable() {
-		this.enabled = true;
+        this.pickaxeLevelsConfig = new PickaxeLevelsConfig(this);
+        this.pickaxeLevelsConfig.load();
+        this.pickaxeLevelsManager = new PickaxeLevelsManager(this);
 
-		this.config = this.core.getFileManager().getConfig("pickaxe-levels.yml").copyDefaults(true).save();
-		this.progressBarDelimiter = this.getConfig().get().getString("progress-bar-delimiter");
-		this.progressBarLength = this.getConfig().get().getInt("progress-bar-length");
-		this.loadPickaxeLevels();
-		this.loadMessages();
+        this.registerListeners();
 
-		this.registerCommands();
-		this.registerListeners();
-
-		this.api = new UltraPrisonPickaxeLevelsAPIImpl(this);
-	}
-
-    private void registerListeners() {
-
-        Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(e -> !e.isCancelled())
-                .filter(e -> e.getPlayer().getItemInHand() != null && this.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
-                .handler(e -> {
-                    //Check for next level progression
-                    long currentBlocks = this.core.getEnchants().getEnchantsManager().getBlocksBroken(e.getPlayer().getItemInHand());
-
-                    PickaxeLevel currentLevel = this.getPickaxeLevel(e.getPlayer().getItemInHand());
-                    PickaxeLevel nextLevel = this.getNextPickaxeLevel(currentLevel);
-                    List<PickaxeLevel> toGive = new ArrayList<>();
-
-                    while (nextLevel != null && currentBlocks >= nextLevel.getBlocksRequired()) {
-                        toGive.add(nextLevel);
-                        nextLevel = this.getNextPickaxeLevel(nextLevel);
-                    }
-
-                    if (!toGive.isEmpty()) {
-                        toGive.forEach(pickaxeLevel -> pickaxeLevel.giveRewards(e.getPlayer()));
-                        e.getPlayer().setItemInHand(this.setPickaxeLevel(e.getPlayer().getItemInHand(), toGive.get(toGive.size() - 1), e.getPlayer()));
-                        PlayerUtils.sendMessage(e.getPlayer(), this.getMessage("pickaxe-level-up").replace("%level%", String.valueOf(toGive.get(toGive.size() - 1).getLevel())));
-                    }
-                }).bindWith(core);
-        Events.subscribe(PlayerItemHeldEvent.class)
-                .handler(e -> {
-                    ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
-                    if (item != null && this.getCore().isPickaxeSupported(item.getType()) && this.getPickaxeLevel(item) == null) {
-                        e.getPlayer().getInventory().setItem(e.getNewSlot(), this.addDefaultPickaxeLevel(item, e.getPlayer()));
-                    }
-                }).bindWith(core);
+        this.api = new UltraPrisonPickaxeLevelsAPIImpl(this.pickaxeLevelsManager);
+        this.enabled = true;
     }
 
-    public PickaxeLevel getNextPickaxeLevel(PickaxeLevel currentLevel) {
-        if (currentLevel == null || currentLevel == maxLevel) {
-            return null;
-        }
-        return this.pickaxeLevels.get(currentLevel.getLevel() + 1);
+    private void registerListeners() {
+        new PickaxeLevelsListener(this).register();
     }
 
     @Override
@@ -179,93 +79,5 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     @Override
     public boolean isHistoryEnabled() {
         return false;
-    }
-
-    private void registerCommands() {
-
-    }
-
-
-    public String getMessage(String key) {
-        return messages.get(key.toLowerCase());
-    }
-
-    public PickaxeLevel getPickaxeLevel(int level) {
-        return this.pickaxeLevels.getOrDefault(level, null);
-    }
-
-    public PickaxeLevel getPickaxeLevel(ItemStack itemStack) {
-        if (itemStack == null || !this.getCore().isPickaxeSupported(itemStack.getType())) {
-            return null;
-        }
-
-        NBTItem nbtItem = new NBTItem(itemStack);
-
-        if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-            return defaultLevel;
-        }
-
-        return this.pickaxeLevels.get(nbtItem.getInteger(NBT_TAG_INDETIFIER));
-    }
-
-    public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
-
-        if (level == null || level.getLevel() <= 0 || level.getLevel() > this.maxLevel.getLevel()) {
-            return item;
-        }
-
-        NBTItem nbtItem = new NBTItem(item);
-
-        if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-            nbtItem.setInteger(NBT_TAG_INDETIFIER, 0);
-        }
-
-        nbtItem.setInteger(NBT_TAG_INDETIFIER, level.getLevel());
-
-        ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
-        if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
-            builder = builder.name(level.getDisplayName(p));
-        }
-
-        item = builder.build();
-        item = this.core.getEnchants().getEnchantsManager().updatePickaxe(p, item);
-        return item;
-    }
-
-    private ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
-        return setPickaxeLevel(item, this.defaultLevel, p);
-    }
-
-
-    public ItemStack findPickaxe(Player p) {
-        for (ItemStack i : p.getInventory()) {
-            if (i == null) {
-                continue;
-            }
-            if (this.getCore().isPickaxeSupported(i.getType())) {
-                return i;
-            }
-        }
-        return null;
-    }
-
-    public String getProgressBar(Player player) {
-        ItemStack pickaxe = findPickaxe(player);
-        return this.getProgressBar(pickaxe);
-    }
-
-    public String getProgressBar(ItemStack item) {
-
-        PickaxeLevel level = this.getPickaxeLevel(item);
-        PickaxeLevel nextLevel = this.getNextPickaxeLevel(level);
-
-        if (nextLevel != null) {
-            double required = nextLevel.getBlocksRequired() - level.getBlocksRequired();
-            double current = this.core.getEnchants().getEnchantsManager().getBlocksBroken(item) - level.getBlocksRequired();
-			return ProgressBar.getProgressBar(this.progressBarLength, this.progressBarDelimiter, current, required);
-        } else {
-			return ProgressBar.getProgressBar(this.progressBarLength, this.progressBarDelimiter, 1, 1);
-        }
-
     }
 }

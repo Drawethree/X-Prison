@@ -1,6 +1,5 @@
 package dev.drawethree.ultraprisoncore.nms;
 
-
 import net.minecraft.server.v1_8_R1.BlockPosition;
 import net.minecraft.server.v1_8_R1.ChatSerializer;
 import net.minecraft.server.v1_8_R1.IBlockData;
@@ -10,7 +9,7 @@ import org.bukkit.craftbukkit.v1_8_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class NMSProvider_v1_8_R1 extends NMSProvider {
+public final class NMSProvider_v1_8_R1 extends NMSProvider {
 
 	@Override
 	public void setBlockInNativeDataPalette(World world, int x, int y, int z, int blockId, byte data, boolean applyPhysics) {

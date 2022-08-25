@@ -10,8 +10,10 @@ import dev.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import dev.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.ultraprisoncore.utils.Constants;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -87,9 +89,9 @@ public class EnchantsManager {
 		String pickaxeProgressBar = "";
 
 		if (pickaxeLevels) {
-			currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevel(item);
-			nextLevel = this.plugin.getCore().getPickaxeLevels().getNextPickaxeLevel(currentLevel);
-			pickaxeProgressBar = this.plugin.getCore().getPickaxeLevels().getProgressBar(item);
+			currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevelsManager().getPickaxeLevel(item).orElse(null);
+			nextLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevelsManager().getNextPickaxeLevel(currentLevel).orElse(null);
+			pickaxeProgressBar = this.plugin.getCore().getPickaxeLevels().getPickaxeLevelsManager().getProgressBar(item);
 		}
 
 		long blocksBroken = getBlocksBroken(item);
@@ -207,9 +209,7 @@ public class EnchantsManager {
 
 	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
 
-		Optional<WrappedState> optional = this.plugin.getCore().getWorldGuardWrapper().queryFlag(e.getPlayer(), e.getBlock().getLocation(), this.plugin.getEnchantsWGFlag());
-
-		if (!optional.isPresent() || optional.get() == WrappedState.DENY) {
+		if (RegionUtils.getRegionWithHighestPriorityAndFlag(e.getBlock().getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW) == null) {
 			this.plugin.getCore().debug("EnchantsManager::handleBlockBreak >> No region with flag upc-enchants found. Enchants will not be triggered.", this.plugin);
 			return;
 		}

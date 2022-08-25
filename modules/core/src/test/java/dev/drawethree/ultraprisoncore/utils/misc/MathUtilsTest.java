@@ -1,19 +1,20 @@
 package dev.drawethree.ultraprisoncore.utils.misc;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static dev.drawethree.ultraprisoncore.utils.misc.MathUtils.formatNumber;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MathUtilsTest {
 
 	private Map<Double, String> numbersToTest;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		this.numbersToTest = new HashMap<>();
 

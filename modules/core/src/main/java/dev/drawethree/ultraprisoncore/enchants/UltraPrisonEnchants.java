@@ -17,12 +17,9 @@ import dev.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import dev.drawethree.ultraprisoncore.enchants.managers.RespawnManager;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
-import dev.drawethree.ultraprisoncore.utils.Constants;
 import lombok.Getter;
 import me.lucko.helper.utils.Players;
 import org.bukkit.entity.Player;
-import org.codemc.worldguardwrapper.flag.IWrappedFlag;
-import org.codemc.worldguardwrapper.flag.WrappedState;
 
 public final class UltraPrisonEnchants implements UltraPrisonModule {
 
@@ -49,9 +46,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 
 	@Getter
 	private final UltraPrisonCore core;
-
-	@Getter
-	private IWrappedFlag<WrappedState> enchantsWGFlag;
 
 	private boolean enabled;
 
@@ -99,8 +93,6 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		DisenchantGUI.init();
 
 		UltraPrisonEnchantment.loadDefaultEnchantments();
-
-		this.enchantsWGFlag = this.core.getWorldGuardWrapper().getFlag(Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.class).orElseGet(null);
 
 		this.enabled = true;
 	}
