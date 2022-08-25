@@ -7,6 +7,7 @@ import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.utils.EnchantUtils;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import dev.drawethree.ultraprisoncore.utils.Constants;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
@@ -17,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.ArrayList;
@@ -59,9 +61,10 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 			long timeStart = Time.nowMillis();
 			Block b = e.getBlock();
 
-			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), this.plugin.getEnchantsWGFlag());
+			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW);
 
 			if (region != null) {
+				this.plugin.getCore().debug("Found region: " + region.getId(), this.plugin);
 				this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
 				Player p = e.getPlayer();
 				int radius = this.calculateRadius(enchantLevel);

@@ -3,10 +3,9 @@ package dev.drawethree.ultraprisoncore.utils.misc;
 import org.bukkit.Location;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.IWrappedFlag;
-import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 public class RegionUtils {
@@ -23,19 +22,18 @@ public class RegionUtils {
 		return highestPrioRegion;
 	}
 
-	public static IWrappedRegion getRegionWithHighestPriorityAndFlag(Location loc, IWrappedFlag<WrappedState> flag) {
-		Optional<WrappedState> optional = WorldGuardWrapper.getInstance().queryFlag(null, loc, flag);
-
-		if (!optional.isPresent() || optional.get() == WrappedState.DENY) {
-			return null;
-		}
-
+	public static IWrappedRegion getRegionWithHighestPriorityAndFlag(Location loc, String flagName, Object flagValue) {
 		Set<IWrappedRegion> regions = WorldGuardWrapper.getInstance().getRegions(loc);
 
 		IWrappedRegion highestPrioRegion = null;
+
 		for (IWrappedRegion region : regions) {
-			if (highestPrioRegion == null || region.getPriority() > highestPrioRegion.getPriority()) {
-				highestPrioRegion = region;
+			for (Map.Entry<IWrappedFlag<?>, Object> flag : region.getFlags().entrySet()) {
+				if (flag.getKey().getName().equalsIgnoreCase(flagName) && flag.getValue().equals(flagValue)) {
+					if (highestPrioRegion == null || region.getPriority() > highestPrioRegion.getPriority()) {
+						highestPrioRegion = region;
+					}
+				}
 			}
 		}
 		return highestPrioRegion;

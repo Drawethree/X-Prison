@@ -82,15 +82,11 @@ public class UltraPrisonMVdWPlaceholder {
 		}
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_pickaxe_level", event -> {
-			PickaxeLevel level = plugin.getPickaxeLevels().getApi().getPickaxeLevel(event.getPlayer());
-			if (level != null) {
-				return String.valueOf(level.getLevel());
-			} else {
-				return "0";
-			}
+			Optional<PickaxeLevel> levelOptional = plugin.getPickaxeLevels().getApi().getPickaxeLevel(event.getPlayer());
+			return levelOptional.map(level -> String.valueOf(level.getLevel())).orElse("0");
 		});
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_pickaxe_progress", event -> plugin.getPickaxeLevels().getProgressBar(event.getPlayer()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_pickaxe_progress", event -> plugin.getPickaxeLevels().getApi().getProgressBar(event.getPlayer()));
 	}
 
 	private void registerGangsPlaceholders() {

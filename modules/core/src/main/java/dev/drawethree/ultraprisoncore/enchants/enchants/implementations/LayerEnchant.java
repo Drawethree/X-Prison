@@ -7,6 +7,7 @@ import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.utils.EnchantUtils;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
+import dev.drawethree.ultraprisoncore.utils.Constants;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
@@ -16,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 
@@ -51,9 +53,10 @@ public final class LayerEnchant extends UltraPrisonEnchantment {
 			long startTime = Time.nowMillis();
 			Block b = e.getBlock();
 
-			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), this.plugin.getEnchantsWGFlag());
-			if (region != null) {
+			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW);
 
+			if (region != null) {
+				this.plugin.getCore().debug("Found region: " + region.getId(), this.plugin);
 				Player p = e.getPlayer();
 				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
 				List<Block> blocksAffected = new ArrayList<>();

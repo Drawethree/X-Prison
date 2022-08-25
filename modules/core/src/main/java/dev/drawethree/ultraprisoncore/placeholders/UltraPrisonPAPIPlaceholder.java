@@ -220,16 +220,11 @@ public final class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "gems_1":
 				return String.valueOf(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "pickaxe_level": {
-				PickaxeLevel level = plugin.getPickaxeLevels().getApi().getPickaxeLevel(player);
-
-				if (level != null) {
-					return String.valueOf(level.getLevel());
-				} else {
-					return "0";
-				}
+				Optional<PickaxeLevel> levelOptional = plugin.getPickaxeLevels().getApi().getPickaxeLevel(player);
+				return levelOptional.map(level -> String.valueOf(level.getLevel())).orElse("0");
 			}
 			case "pickaxe_progress":
-				return this.plugin.getPickaxeLevels().getProgressBar(player);
+				return this.plugin.getPickaxeLevels().getApi().getProgressBar(player);
 			case "gang_name":
 			case "gang": {
 				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);

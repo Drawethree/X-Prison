@@ -1,43 +1,48 @@
 package dev.drawethree.ultraprisoncore.pickaxelevels.api;
 
-import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
+import dev.drawethree.ultraprisoncore.pickaxelevels.manager.PickaxeLevelsManager;
 import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Optional;
+
 public final class UltraPrisonPickaxeLevelsAPIImpl implements UltraPrisonPickaxeLevelsAPI {
 
-	private final UltraPrisonPickaxeLevels plugin;
+	private final PickaxeLevelsManager manager;
 
-	public UltraPrisonPickaxeLevelsAPIImpl(UltraPrisonPickaxeLevels plugin) {
-		this.plugin = plugin;
+	public UltraPrisonPickaxeLevelsAPIImpl(PickaxeLevelsManager manager) {
+		this.manager = manager;
 	}
 
 	@Override
-	public PickaxeLevel getPickaxeLevel(ItemStack item) {
-		return this.plugin.getPickaxeLevel(item);
+	public Optional<PickaxeLevel> getPickaxeLevel(ItemStack item) {
+		return this.manager.getPickaxeLevel(item);
 	}
 
 	@Override
-	public PickaxeLevel getPickaxeLevel(Player player) {
-		ItemStack item = this.plugin.findPickaxe(player);
-		return this.getPickaxeLevel(item);
+	public Optional<PickaxeLevel> getPickaxeLevel(Player player) {
+		return this.manager.getPickaxeLevel(player);
 	}
 
 	@Override
-	public PickaxeLevel getPickaxeLevel(int level) {
-		return plugin.getPickaxeLevel(level);
+	public Optional<PickaxeLevel> getPickaxeLevel(int level) {
+		return this.manager.getPickaxeLevel(level);
 	}
 
 	@Override
 	public void setPickaxeLevel(Player player, ItemStack item, PickaxeLevel level) {
-		this.plugin.setPickaxeLevel(item, level, player);
+		this.manager.setPickaxeLevel(item, level, player);
 	}
 
 	@Override
 	public void setPickaxeLevel(Player player, ItemStack item, int level) {
-		PickaxeLevel pickaxeLevel = getPickaxeLevel(level);
-		this.plugin.setPickaxeLevel(item, pickaxeLevel, player);
+		Optional<PickaxeLevel> pickaxeLevelOptional = getPickaxeLevel(level);
+		pickaxeLevelOptional.ifPresent(pickaxeLevel -> this.manager.setPickaxeLevel(item, pickaxeLevel, player));
+	}
 
+	@Override
+	public String getProgressBar(Player player) {
+		return this.manager.getProgressBar(player);
 	}
 }
