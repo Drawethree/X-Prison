@@ -4,6 +4,8 @@ package dev.drawethree.ultraprisoncore.ranks.api;
 import dev.drawethree.ultraprisoncore.ranks.model.Rank;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
+
 public interface UltraPrisonRanksAPI {
 
 	/**
@@ -20,7 +22,7 @@ public interface UltraPrisonRanksAPI {
 	 * @param player Player
 	 * @return null if he has max rank, otherwise next Rank
 	 */
-	Rank getNextPlayerRank(Player player);
+	Optional<Rank> getNextPlayerRank(Player player);
 
 	/**
 	 * Method to get player's rankup progress

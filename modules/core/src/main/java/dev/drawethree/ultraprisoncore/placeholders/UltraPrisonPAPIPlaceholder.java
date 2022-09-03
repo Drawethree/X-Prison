@@ -184,15 +184,15 @@ public final class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "rank":
 				return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
 			case "next_rank": {
-				Rank nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
-				return nextRank == null ? "" : nextRank.getPrefix();
+				Optional<Rank> nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
+				return nextRank.isEmpty() ? "" : nextRank.get().getPrefix();
 			}
 			case "next_rank_cost_raw":
-				return String.valueOf(plugin.getRanks().getRankManager().getNextRankCost(player));
+				return String.valueOf(plugin.getRanks().getRanksManager().getNextRankCost(player));
 			case "next_rank_cost":
-				return String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(player));
+				return String.format("%,.2f", plugin.getRanks().getRanksManager().getNextRankCost(player));
 			case "next_rank_cost_formatted":
-				return MathUtils.formatNumber(plugin.getRanks().getRankManager().getNextRankCost(player));
+				return MathUtils.formatNumber(plugin.getRanks().getRanksManager().getNextRankCost(player));
 			case "prestige":
 				return plugin.getPrestiges().getApi().getPlayerPrestige(player).getPrefix();
 			case "prestige_id":
@@ -208,9 +208,9 @@ public final class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "gems_3":
 				return MathUtils.formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "rankup_progress":
-				return String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(player));
+				return String.format("%d%%", plugin.getRanks().getRanksManager().getRankupProgress(player));
 			case "rankup_progress_bar":
-				return plugin.getRanks().getRankManager().getRankupProgressBar(player);
+				return plugin.getRanks().getRanksManager().getRankupProgressBar(player);
 			case "tokens_1":
 				return String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(player));
 			case "blocks_1":

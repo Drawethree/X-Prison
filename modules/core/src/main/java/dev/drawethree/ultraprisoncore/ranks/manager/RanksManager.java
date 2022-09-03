@@ -9,64 +9,42 @@ import dev.drawethree.ultraprisoncore.ranks.api.events.PlayerRankUpEvent;
 import dev.drawethree.ultraprisoncore.ranks.model.Rank;
 import dev.drawethree.ultraprisoncore.utils.misc.ProgressBar;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
-public class RankManager {
+public class RanksManager {
 
-	private UltraPrisonRanks plugin;
-	private Map<Integer, Rank> ranksById;
-	private Map<UUID, Integer> onlinePlayersRanks = new HashMap<>();
+	private final UltraPrisonRanks plugin;
+	private final Map<UUID, Integer> onlinePlayersRanks;
 
-	private Rank maxRank;
-	private boolean useTokensCurrency;
-	private String progressBarDelimiter;
-	private int progressBarLength;
-
-	public RankManager(UltraPrisonRanks plugin) {
+	public RanksManager(UltraPrisonRanks plugin) {
 		this.plugin = plugin;
-		this.reload();
-
-		Events.subscribe(PlayerJoinEvent.class)
-				.handler(e -> {
-					this.addIntoTable(e.getPlayer());
-					loadPlayerRank(e.getPlayer());
-				}).bindWith(plugin.getCore());
-		Events.subscribe(PlayerQuitEvent.class)
-				.handler(e -> {
-					savePlayerRank(e.getPlayer());
-				}).bindWith(plugin.getCore());
-
+		this.onlinePlayersRanks = new HashMap<>();
 	}
 
-	private void addIntoTable(Player player) {
-		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoRanks(player);
-		});
-	}
-
-	public void saveAllDataSync() {
+	private void saveAllDataSync() {
 		for (UUID uuid : this.onlinePlayersRanks.keySet()) {
 			this.plugin.getCore().getPluginDatabase().updateRank(Players.getOfflineNullable(uuid), onlinePlayersRanks.get(uuid));
 		}
 		this.plugin.getCore().getLogger().info("Saved players ranks.");
 	}
 
-	public void loadAllData() {
+	private void loadAllData() {
 		for (Player p : Players.all()) {
 			loadPlayerRank(p);
 		}
 	}
 
-	private void savePlayerRank(Player player) {
+	public void savePlayerRank(Player player) {
 		Schedulers.async().run(() -> {
 			this.plugin.getCore().getPluginDatabase().updateRank(player, this.getPlayerRank(player).getId());
 			this.onlinePlayersRanks.remove(player.getUniqueId());
@@ -74,75 +52,46 @@ public class RankManager {
 		});
 	}
 
-	private void loadPlayerRank(Player player) {
+	public void loadPlayerRank(Player player) {
 		Schedulers.async().run(() -> {
-
+			this.plugin.getCore().getPluginDatabase().addIntoRanks(player);
 			int rank = this.plugin.getCore().getPluginDatabase().getPlayerRank(player);
-
 			this.onlinePlayersRanks.put(player.getUniqueId(), rank);
 			this.plugin.getCore().getLogger().info("Loaded " + player.getName() + "'s rank.");
-
 		});
 	}
 
-	public void reload() {
-		this.useTokensCurrency = plugin.getConfig().get().getBoolean("use_tokens_currency");
-		this.progressBarDelimiter = plugin.getConfig().get().getString("progress-bar-delimiter");
-		this.progressBarLength = plugin.getConfig().get().getInt("progress-bar-length");
-
-		this.plugin.getCore().getLogger().info("Using " + (useTokensCurrency ? "Tokens" : "Money") + " currency for Ranks.");
-
-		this.loadRanks();
+	public Optional<Rank> getNextRank(int id) {
+		return this.getRankById(id + 1);
 	}
 
-	private void loadRanks() {
-		this.ranksById = new LinkedHashMap<>();
-		for (String key : plugin.getConfig().get().getConfigurationSection("Ranks").getKeys(false)) {
-			int id = Integer.parseInt(key);
-			String prefix = TextUtils.applyColor(plugin.getConfig().get().getString("Ranks." + key + ".Prefix"));
-			long cost = plugin.getConfig().get().getLong("Ranks." + key + ".Cost");
-			List<String> commands = plugin.getConfig().get().getStringList("Ranks." + key + ".CMD");
-
-			Rank rank = new Rank(id, cost, prefix, commands);
-			this.ranksById.put(id, rank);
-			this.maxRank = rank;
-		}
-		this.plugin.getCore().getLogger().info(String.format("Loaded %d ranks!", ranksById.keySet().size()));
-	}
-
-	public Rank getNextRank(int id) {
-		return this.ranksById.getOrDefault(id + 1, null);
-	}
-
-	public Rank getPreviousRank(int id) {
-		return this.ranksById.getOrDefault(id - 1, null);
-	}
-
-	public synchronized Rank getPlayerRank(Player p) {
-		return this.ranksById.getOrDefault(this.onlinePlayersRanks.get(p.getUniqueId()), this.ranksById.get(1));
+	public Rank getPlayerRank(Player p) {
+		int rankId = this.onlinePlayersRanks.get(p.getUniqueId());
+		return this.getRankById(rankId).orElse(null);
 	}
 
 	public boolean isMaxRank(Player p) {
-		return this.getPlayerRank(p).getId() == this.maxRank.getId();
-	}
-
-	public Rank getRankById(int id) {
-		return this.ranksById.get(id);
+		return this.getPlayerRank(p).getId() == getMaxRank().getId();
 	}
 
 	public boolean buyMaxRank(Player p) {
 
 		if (isMaxRank(p)) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_needed"));
+			PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("prestige_needed"));
 			return false;
 		}
 
+		Rank maxRank = getMaxRank();
 		Rank currentRank = this.getPlayerRank(p);
 
 		int finalRankId = currentRank.getId();
 
 		for (int i = currentRank.getId(); i < maxRank.getId(); i++) {
-			double cost = this.getRankById(i + 1).getCost();
+			Optional<Rank> rank = this.getRankById(i + 1);
+			if (rank.isEmpty()) {
+				break;
+			}
+			double cost = rank.get().getCost();
 			if (!this.isTransactionAllowed(p, cost)) {
 				break;
 			}
@@ -152,12 +101,20 @@ public class RankManager {
 			finalRankId = i + 1;
 		}
 
-		if (finalRankId == currentRank.getId()) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", this.getNextRank(currentRank.getId()).getCost())));
+		Optional<Rank> nextRankOptional = this.getNextRank(currentRank.getId());
+
+		if (finalRankId == currentRank.getId() && nextRankOptional.isPresent()) {
+			PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", nextRankOptional.get().getCost())));
 			return false;
 		}
 
-		Rank finalRank = this.getRankById(finalRankId);
+		Optional<Rank> finalRankOptional = this.getRankById(finalRankId);
+
+		if (finalRankOptional.isEmpty()) {
+			return false;
+		}
+
+		Rank finalRank = finalRankOptional.get();
 
 		PlayerRankUpEvent event = new PlayerRankUpEvent(p, currentRank, finalRank);
 
@@ -169,34 +126,40 @@ public class RankManager {
 		}
 
 		for (int i = currentRank.getId() + 1; i <= finalRank.getId(); i++) {
-			this.ranksById.get(i).runCommands(p);
+			this.getRankById(i).ifPresent(r -> runCommands(r, p));
 		}
 
 		this.onlinePlayersRanks.put(p.getUniqueId(), finalRank.getId());
-		PlayerUtils.sendMessage(p, this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", finalRank.getPrefix()));
+		PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", finalRank.getPrefix()));
 		return true;
+	}
+
+	private Rank getMaxRank() {
+		return this.plugin.getRanksConfig().getMaxRank();
 	}
 
 	public boolean buyNextRank(Player p) {
 
 		if (isMaxRank(p)) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_needed"));
+			PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("prestige_needed"));
 			return false;
 		}
 
 		Rank currentRank = this.getPlayerRank(p);
-		Rank toBuy = getNextRank(currentRank.getId());
+		Optional<Rank> toBuyOptional = getNextRank(currentRank.getId());
 
-		if (toBuy == null) {
-			PlayerUtils.sendMessage(p, this.plugin.getMessage("prestige_needed"));
+		if (toBuyOptional.isEmpty()) {
+			PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("prestige_needed"));
 			return false;
 		}
 
+		Rank toBuy = toBuyOptional.get();
+
 		if (!this.isTransactionAllowed(p, toBuy.getCost())) {
-			if (this.useTokensCurrency) {
-				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_tokens").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+			if (this.plugin.getRanksConfig().isUseTokensCurrency()) {
+				PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("not_enough_tokens").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
 			} else {
-				PlayerUtils.sendMessage(p, this.plugin.getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
+				PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("not_enough_money").replace("%cost%", String.format("%,.0f", toBuy.getCost())));
 			}
 			return false;
 		}
@@ -214,16 +177,16 @@ public class RankManager {
 			return false;
 		}
 
-		toBuy.runCommands(p);
+		runCommands(toBuy, p);
 
 		this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
 
-		PlayerUtils.sendMessage(p, this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
+		PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
 		return true;
 	}
 
 	private boolean completeTransaction(Player p, double cost) {
-		if (this.useTokensCurrency) {
+		if (this.plugin.getRanksConfig().isUseTokensCurrency()) {
 			this.plugin.getCore().getTokens().getApi().removeTokens(p, (long) cost, LostCause.RANKUP);
 			return true;
 		} else {
@@ -232,22 +195,15 @@ public class RankManager {
 	}
 
 	private boolean isTransactionAllowed(Player p, double cost) {
-		if (this.useTokensCurrency) {
-			if (!this.plugin.getCore().getTokens().getApi().hasEnough(p, (long) cost)) {
-				return false;
-			}
-			return true;
+		if (this.plugin.getRanksConfig().isUseTokensCurrency()) {
+			return this.plugin.getCore().getTokens().getApi().hasEnough(p, (long) cost);
 		} else {
-			if (!this.plugin.getCore().getEconomy().has(p, cost)) {
-				return false;
-			}
-			return true;
+			return this.plugin.getCore().getEconomy().has(p, cost);
 		}
-
 	}
 
 
-	public boolean setRank(Player target, Rank rank, CommandSender sender) {
+	public void setRank(Player target, Rank rank, CommandSender sender) {
 
 		Rank currentRank = this.getPlayerRank(target);
 
@@ -257,19 +213,18 @@ public class RankManager {
 
 		if (event.isCancelled()) {
 			this.plugin.getCore().debug("PlayerRankUpEvent was cancelled.", this.plugin);
-			return false;
+			return;
 		}
 
-		rank.runCommands(target);
+		this.runCommands(rank, target);
 
 		this.onlinePlayersRanks.put(target.getUniqueId(), rank.getId());
 
 		if (sender != null) {
-			PlayerUtils.sendMessage(sender, this.plugin.getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
-			PlayerUtils.sendMessage(target, this.plugin.getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
+			PlayerUtils.sendMessage(sender, this.plugin.getRanksConfig().getMessage("rank_set").replace("%rank%", rank.getPrefix()).replace("%player%", target.getName()));
+			PlayerUtils.sendMessage(target, this.plugin.getRanksConfig().getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", rank.getPrefix()));
 		}
 
-		return true;
 	}
 
 	public int getRankupProgress(Player player) {
@@ -282,9 +237,16 @@ public class RankManager {
 		}
 
 		Rank current = this.getPlayerRank(player);
-		Rank next = this.getNextRank(current.getId());
+		Optional<Rank> nextRankOptional = this.getNextRank(current.getId());
 
-		double currentBalance = this.useTokensCurrency ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
+		if (nextRankOptional.isEmpty()) {
+			return 100;
+		}
+
+		Rank next = nextRankOptional.get();
+
+		double currentBalance = this.plugin.getRanksConfig().isUseTokensCurrency() ?
+				this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
 
 		int progress = (int) ((currentBalance / next.getCost()) * 100);
 
@@ -315,7 +277,8 @@ public class RankManager {
 		}
 
 		Rank current = this.getPlayerRank(player);
-		return this.getNextRank(current.getId()).getCost();
+		Optional<Rank> nextRankOptional = this.getNextRank(current.getId());
+		return nextRankOptional.map(Rank::getCost).orElse(0.0);
 	}
 
 	public void resetPlayerRank(Player p) {
@@ -335,7 +298,7 @@ public class RankManager {
 
 	public String getRankupProgressBar(Player player) {
 
-		double currentProgress, required = 100;
+		double currentProgress = 0, required = 100;
 		if (this.isMaxRank(player)) {
 			currentProgress = 100;
 			if (arePrestigesEnabled()) {
@@ -343,15 +306,48 @@ public class RankManager {
 			}
 		} else {
 			Rank current = this.getPlayerRank(player);
-			Rank next = this.getNextRank(current.getId());
-			double currentBalance = this.useTokensCurrency ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
-			currentProgress = (currentBalance / next.getCost()) * 100;
+			Optional<Rank> next = this.getNextRank(current.getId());
+			if (next.isPresent()) {
+				double currentBalance = this.plugin.getRanksConfig().isUseTokensCurrency() ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
+				currentProgress = (currentBalance / next.get().getCost()) * 100;
+			}
 		}
 
 		if (currentProgress > 100) {
 			currentProgress = 100;
 		}
 
-		return ProgressBar.getProgressBar(this.progressBarLength, this.progressBarDelimiter, currentProgress, required);
+		return ProgressBar.getProgressBar(this.plugin.getRanksConfig().getProgressBarLength(), this.plugin.getRanksConfig().getProgressBarDelimiter(), currentProgress, required);
+	}
+
+	public void runCommands(Rank rank, Player p) {
+		if (rank.getCommandsToExecute() != null) {
+
+			if (!Bukkit.isPrimaryThread()) {
+				Schedulers.async().run(() -> {
+					executeCommands(rank, p);
+				});
+			} else {
+				executeCommands(rank, p);
+			}
+		}
+	}
+
+	public Optional<Rank> getRankById(int id) {
+		return Optional.ofNullable(this.plugin.getRanksConfig().getRankById(id));
+	}
+
+	private void executeCommands(Rank rank, Player p) {
+		for (String cmd : rank.getCommandsToExecute()) {
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Rank%", rank.getPrefix()));
+		}
+	}
+
+	public void disable() {
+		this.saveAllDataSync();
+	}
+
+	public void enable() {
+		this.loadAllData();
 	}
 }

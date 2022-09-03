@@ -2,19 +2,16 @@ package dev.drawethree.ultraprisoncore.ranks;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.config.FileManager;
 import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPI;
 import dev.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPIImpl;
-import dev.drawethree.ultraprisoncore.ranks.manager.RankManager;
-import dev.drawethree.ultraprisoncore.ranks.model.Rank;
-import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
+import dev.drawethree.ultraprisoncore.ranks.commands.MaxRankupCommand;
+import dev.drawethree.ultraprisoncore.ranks.commands.RankupCommand;
+import dev.drawethree.ultraprisoncore.ranks.commands.SetRankCommand;
+import dev.drawethree.ultraprisoncore.ranks.config.RanksConfig;
+import dev.drawethree.ultraprisoncore.ranks.listener.RanksListener;
+import dev.drawethree.ultraprisoncore.ranks.manager.RanksManager;
 import lombok.Getter;
-import me.lucko.helper.Commands;
-import org.bukkit.entity.Player;
-
-import java.util.HashMap;
 
 @Getter
 public final class UltraPrisonRanks implements UltraPrisonModule {
@@ -23,21 +20,18 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	public static final String MODULE_NAME = "Ranks";
 
 	@Getter
-	private FileManager.Config config;
-
-	private RankManager rankManager;
-
+	private RanksConfig ranksConfig;
+	@Getter
+	private RanksManager ranksManager;
 	@Getter
 	private UltraPrisonRanksAPI api;
-
-	private HashMap<String, String> messages;
-
 	@Getter
 	private final UltraPrisonCore core;
+
 	private boolean enabled;
 
-	public UltraPrisonRanks(UltraPrisonCore UltraPrisonCore) {
-		this.core = UltraPrisonCore;
+	public UltraPrisonRanks(UltraPrisonCore core) {
+		this.core = core;
 	}
 
 	@Override
@@ -47,39 +41,28 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 
 	@Override
 	public void reload() {
-		this.config.reload();
-		this.loadMessages();
-		this.rankManager.reload();
+		this.ranksConfig.reload();
 	}
 
 	@Override
 	public void enable() {
 		this.enabled = true;
-
-		this.config = this.core.getFileManager().getConfig("ranks.yml").copyDefaults(true).save();
-
-		this.loadMessages();
-		this.rankManager = new RankManager(this);
-		api = new UltraPrisonRanksAPIImpl(this);
+		this.ranksConfig = new RanksConfig(this);
+		this.ranksConfig.load();
+		this.ranksManager = new RanksManager(this);
+		this.ranksManager.enable();
+		this.api = new UltraPrisonRanksAPIImpl(this.ranksManager);
 		this.registerCommands();
-		this.rankManager.loadAllData();
+		this.registerListeners();
 	}
 
-	private void loadMessages() {
-		messages = new HashMap<>();
-		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
-		}
+	private void registerListeners() {
+		new RanksListener(this).register();
 	}
-
-	public String getMessage(String key) {
-		return messages.getOrDefault(key.toLowerCase(), TextUtils.applyColor("&cMessage " + key + " not found."));
-	}
-
 
 	@Override
 	public void disable() {
-		this.rankManager.saveAllDataSync();
+		this.ranksManager.disable();
 		this.enabled = false;
 	}
 
@@ -113,36 +96,8 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	}
 
 	private void registerCommands() {
-		Commands.create()
-				.assertPlayer()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.rankManager.buyNextRank(c.sender());
-					}
-				}).registerAndBind(core, "rankup");
-		Commands.create()
-				.assertPermission("ultraprison.ranks.admin")
-				.handler(c -> {
-					if (c.args().size() == 2) {
-						Player target = c.arg(0).parseOrFail(Player.class);
-						Rank rank = this.getRankManager().getRankById(c.arg(1).parseOrFail(Integer.class));
-
-						if (rank == null) {
-							PlayerUtils.sendMessage(c.sender(), "&cInvalid rank id provided.");
-							return;
-						}
-
-						this.rankManager.setRank(target, rank, c.sender());
-					}
-				}).registerAndBind(core, "setrank");
-
-		Commands.create()
-				.assertPermission("ultraprison.ranks.maxrankup", this.getMessage("no_permission"))
-				.assertPlayer()
-				.handler(c -> {
-					if (c.args().size() == 0) {
-						this.rankManager.buyMaxRank(c.sender());
-					}
-				}).registerAndBind(core, "maxrankup", "mru");
+		new RankupCommand(this).register();
+		new MaxRankupCommand(this).register();
+		new SetRankCommand(this).register();
 	}
 }

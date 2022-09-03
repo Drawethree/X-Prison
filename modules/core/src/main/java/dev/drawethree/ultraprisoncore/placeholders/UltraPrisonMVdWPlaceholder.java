@@ -146,15 +146,19 @@ public class UltraPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rank", event -> plugin.getRanks().getApi().getPlayerRank(event.getPlayer()).getPrefix());
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank", event -> {
-			Rank nextRank = plugin.getRanks().getApi().getNextPlayerRank(event.getPlayer());
-			return nextRank == null ? "" : nextRank.getPrefix();
+			Optional<Rank> nextRank = plugin.getRanks().getApi().getNextPlayerRank(event.getPlayer());
+			if (nextRank.isEmpty()) {
+				return "";
+			} else {
+				return nextRank.get().getPrefix();
+			}
 		});
 
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress", event -> String.format("%d%%", plugin.getRanks().getRankManager().getRankupProgress(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress_bar", event -> plugin.getRanks().getRankManager().getRankupProgressBar(event.getPlayer()));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_raw", event -> String.valueOf(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost", event -> String.format("%,.2f", plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_formatted", event -> MathUtils.formatNumber(plugin.getRanks().getRankManager().getNextRankCost(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress", event -> String.format("%d%%", plugin.getRanks().getRanksManager().getRankupProgress(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_rankup_progress_bar", event -> plugin.getRanks().getRanksManager().getRankupProgressBar(event.getPlayer()));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_raw", event -> String.valueOf(plugin.getRanks().getRanksManager().getNextRankCost(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost", event -> String.format("%,.2f", plugin.getRanks().getRanksManager().getNextRankCost(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank_cost_formatted", event -> MathUtils.formatNumber(plugin.getRanks().getRanksManager().getNextRankCost(event.getPlayer())));
 	}
 
 	private void registerMultipliersPlaceholders() {
