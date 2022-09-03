@@ -1,34 +1,36 @@
 package dev.drawethree.ultraprisoncore.ranks.api;
 
-import dev.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
+import dev.drawethree.ultraprisoncore.ranks.manager.RanksManager;
 import dev.drawethree.ultraprisoncore.ranks.model.Rank;
 import org.bukkit.entity.Player;
 
-public class UltraPrisonRanksAPIImpl implements UltraPrisonRanksAPI {
+import java.util.Optional;
 
-	private UltraPrisonRanks plugin;
+public final class UltraPrisonRanksAPIImpl implements UltraPrisonRanksAPI {
 
-	public UltraPrisonRanksAPIImpl(UltraPrisonRanks plugin) {
-		this.plugin = plugin;
+	private final RanksManager manager;
+
+	public UltraPrisonRanksAPIImpl(RanksManager manager) {
+		this.manager = manager;
 	}
 
 	@Override
 	public Rank getPlayerRank(Player p) {
-		return plugin.getRankManager().getPlayerRank(p);
+		return manager.getPlayerRank(p);
 	}
 
 	@Override
-	public Rank getNextPlayerRank(Player player) {
-		return plugin.getRankManager().getNextRank(this.getPlayerRank(player).getId());
+	public Optional<Rank> getNextPlayerRank(Player player) {
+		return manager.getNextRank(this.getPlayerRank(player).getId());
 	}
 
 	@Override
 	public int getRankupProgress(Player player) {
-		return plugin.getRankManager().getRankupProgress(player);
+		return manager.getRankupProgress(player);
 	}
 
 	@Override
 	public void setPlayerRank(Player player, Rank rank) {
-		plugin.getRankManager().setRank(player, rank, null);
+		manager.setRank(player, rank, null);
 	}
 }

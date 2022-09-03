@@ -15,6 +15,10 @@ public class ProgressBar {
 			delimeter = DEFAULT_DELIMITER;
 		}
 
+		if (current > required) {
+			current = required;
+		}
+
 		double treshold = required / amountOfDelimeters;
 		int numberOfGreens = (int) (current / treshold);
 

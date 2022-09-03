@@ -8,13 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class PlayerRankUpEvent extends UltraPrisonPlayerEvent implements Cancellable {
-
+public final class PlayerRankUpEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
 	@Getter
-	private Rank oldRank;
+	private final Rank oldRank;
 
 	@Getter
 	@Setter

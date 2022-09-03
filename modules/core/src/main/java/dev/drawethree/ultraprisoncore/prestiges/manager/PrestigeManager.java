@@ -5,7 +5,7 @@ import dev.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import dev.drawethree.ultraprisoncore.prestiges.api.events.PlayerPrestigeEvent;
 import dev.drawethree.ultraprisoncore.prestiges.model.Prestige;
 import dev.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
-import dev.drawethree.ultraprisoncore.ranks.manager.RankManager;
+import dev.drawethree.ultraprisoncore.ranks.manager.RanksManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import me.lucko.helper.Events;
@@ -539,11 +539,11 @@ public class PrestigeManager {
 		return this.plugin.getCore().isModuleEnabled(UltraPrisonRanks.MODULE_NAME);
 	}
 
-	private RankManager getRankManager() {
+	private RanksManager getRankManager() {
 		if (!areRanksEnabled()) {
 			throw new IllegalStateException("Ranks module is not enabled");
 		}
-		return this.plugin.getCore().getRanks().getRankManager();
+		return this.plugin.getCore().getRanks().getRanksManager();
 	}
 
 	public boolean isPrestiging(Player sender) {
