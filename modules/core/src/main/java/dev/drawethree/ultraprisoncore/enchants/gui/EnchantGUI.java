@@ -7,6 +7,7 @@ import dev.drawethree.ultraprisoncore.enchants.utils.GuiUtils;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import dev.drawethree.ultraprisoncore.utils.misc.SkullUtils;
+import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -114,6 +115,7 @@ public final class EnchantGUI extends Gui {
 
 		return builder.buildItem().bind(handler -> {
 			if (!enchantment.canBeBought(gui.getPickAxe())) {
+				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
 				return;
 			}
 			if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
