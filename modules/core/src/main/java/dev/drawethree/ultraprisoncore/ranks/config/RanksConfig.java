@@ -17,6 +17,7 @@ public class RanksConfig {
 	private final FileManager.Config config;
 	private final Map<Integer, Rank> ranksById;
 	private Map<String, String> messages;
+	private Rank defaultRank;
 	private Rank maxRank;
 	private boolean useTokensCurrency;
 	private String progressBarDelimiter;
@@ -48,6 +49,7 @@ public class RanksConfig {
 		this.ranksById.clear();
 		ConfigurationSection section = configuration.getConfigurationSection("Ranks");
 
+		boolean defaultSet = false;
 		if (section != null) {
 			for (String key : section.getKeys(false)) {
 				String rootPath = "Ranks." + key + ".";
@@ -57,6 +59,12 @@ public class RanksConfig {
 				List<String> commands = configuration.getStringList(rootPath + "CMD");
 				Rank rank = new Rank(id, cost, prefix, commands);
 				this.ranksById.put(id, rank);
+
+				if (!defaultSet) {
+					this.defaultRank = rank;
+					defaultSet = true;
+				}
+
 				this.maxRank = rank;
 			}
 		}
@@ -89,6 +97,10 @@ public class RanksConfig {
 
 	public Rank getMaxRank() {
 		return maxRank;
+	}
+
+	public Rank getDefaultRank() {
+		return defaultRank;
 	}
 
 	public String getProgressBarDelimiter() {
