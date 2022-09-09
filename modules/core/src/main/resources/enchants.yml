@@ -131,6 +131,7 @@ messages:
   pickaxe_inventory_full: "&e&lENCHANT &8» &e%player% &chas full inventory!"
   prestige_finder: "&e&lPRESTIGE FINDER &8» &7You've just found a &fX%prestige% Prestige Level &7while mining."
   transaction_in_progress: "&e&lENCHANT &8» &cPlease wait for your other transaction to complete."
+  pickaxe_level_required: "&e&lENCHANT &8» &cYou need to have at least &ePickaxe Level %pickaxe_level%&c in order to enchant this!"
 # All available UPC  Enchants settings.
 enchants:
   # Enchant ID

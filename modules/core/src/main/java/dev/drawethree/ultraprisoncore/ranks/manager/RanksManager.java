@@ -67,7 +67,11 @@ public class RanksManager {
 
 	public Rank getPlayerRank(Player p) {
 		int rankId = this.onlinePlayersRanks.get(p.getUniqueId());
-		return this.getRankById(rankId).orElse(null);
+		return this.getRankById(rankId).orElse(this.getDefaultRank());
+	}
+
+	private Rank getDefaultRank() {
+		return this.plugin.getRanksConfig().getDefaultRank();
 	}
 
 	public boolean isMaxRank(Player p) {
