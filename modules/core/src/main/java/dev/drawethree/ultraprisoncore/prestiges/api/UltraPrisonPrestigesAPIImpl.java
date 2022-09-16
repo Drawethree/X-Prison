@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public class UltraPrisonPrestigesAPIImpl implements UltraPrisonPrestigesAPI {
 
-	private UltraPrisonPrestiges plugin;
+	private final UltraPrisonPrestiges plugin;
 
 	public UltraPrisonPrestigesAPIImpl(UltraPrisonPrestiges plugin) {
 		this.plugin = plugin;

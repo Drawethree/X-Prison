@@ -11,12 +11,14 @@ messages:
   prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
   max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
   max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
-# Update interval in minutes for /prestige top
-prestige_top_update_interval: 10
+# Interval in minutes for saving player data into database
+player_data_save_interval: 10
 # Should we use tokens as a currency for prestiges ?
 use_tokens_currency: false
 # Should we reset player rank after he prestiges ?
 reset_rank_after_prestige: false
+# Amount of players displayed in top lists
+top_players_amount: 10
 prestige-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lPRESTIGE TOP"

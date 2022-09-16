@@ -50,12 +50,14 @@ public class AutoSellListener {
                 .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
 
-                    boolean success;
+                    boolean success = false;
 
-                    if (!this.plugin.getManager().hasAutoSellEnabled(e.getPlayer())) {
-                        success = this.plugin.getManager().givePlayerItem(e.getPlayer(), e.getBlock());
-                    } else {
+                    if (this.plugin.getManager().hasAutoSellEnabled(e.getPlayer())) {
                         success = this.plugin.getManager().autoSellBlock(e.getPlayer(), e.getBlock());
+                    }
+
+                    if (!success) {
+                        success = this.plugin.getManager().givePlayerItem(e.getPlayer(), e.getBlock());
                     }
 
                     if (success) {
