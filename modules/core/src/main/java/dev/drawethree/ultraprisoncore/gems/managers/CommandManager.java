@@ -5,6 +5,7 @@ import dev.drawethree.ultraprisoncore.gems.commands.*;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import lombok.Getter;
 import me.lucko.helper.Commands;
+import me.lucko.helper.command.context.CommandContext;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.utils.Players;
@@ -13,9 +14,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static dev.drawethree.ultraprisoncore.gems.UltraPrisonGems.GEMS_ADMIN_PERM;
 
@@ -59,6 +62,7 @@ public class CommandManager {
         this.registerCommand(new GemsHelpCommand(this));
 
         Commands.create()
+                .tabHandler(this::createTabHandler)
                 .handler(c -> {
                     if (c.args().size() == 0 && c.sender() instanceof Player) {
                         this.plugin.getGemsManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
@@ -93,6 +97,18 @@ public class CommandManager {
                 .assertPlayer()
                 .handler(c -> this.plugin.getGemsManager().toggleGemsMessage(c.sender())).registerAndBind(this.plugin.getCore(), this.gemsMessageCommandAliases);
 
+    }
+
+    private List<String> createTabHandler(CommandContext<CommandSender> context) {
+        List<String> returnList = this.commands.stream().map(GemsCommand::getName).collect(Collectors.toList());
+
+        GemsCommand subCommand = this.getCommand(context.rawArg(0));
+
+        if (subCommand != null) {
+            return subCommand.getTabComplete(context.args().subList(1, context.args().size()));
+        }
+
+        return returnList;
     }
 
     private void registerCommand(GemsCommand command) {

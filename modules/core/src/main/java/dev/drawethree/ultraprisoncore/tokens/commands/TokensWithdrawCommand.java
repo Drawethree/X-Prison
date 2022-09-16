@@ -7,6 +7,9 @@ import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class TokensWithdrawCommand extends TokensCommand {
 
 	private static final String COMMAND_NAME = "withdraw";
@@ -57,5 +60,10 @@ public final class TokensWithdrawCommand extends TokensCommand {
 	@Override
 	public String getUsage() {
 		return "/tokens withdraw [amount] [value] - Withdraw tokens to physical item.";
+	}
+
+	@Override
+	public List<String> getTabComplete(List<String> args) {
+		return new ArrayList<>();
 	}
 }

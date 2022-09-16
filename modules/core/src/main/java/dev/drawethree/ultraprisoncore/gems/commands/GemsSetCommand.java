@@ -7,6 +7,11 @@ import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class GemsSetCommand extends GemsCommand {
 
@@ -40,5 +45,16 @@ public class GemsSetCommand extends GemsCommand {
 	@Override
 	public String getUsage() {
 		return "/gems set [player] [amount] - Sets player gems.";
+	}
+
+	@Override
+	public List<String> getTabComplete(List<String> args) {
+		List<String> list = new ArrayList<>();
+
+		if (args.size() == 1) {
+			list = Players.all().stream().map(Player::getName).collect(Collectors.toList());
+		}
+
+		return list;
 	}
 }

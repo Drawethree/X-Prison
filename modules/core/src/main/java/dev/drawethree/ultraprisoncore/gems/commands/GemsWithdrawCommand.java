@@ -7,6 +7,9 @@ import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GemsWithdrawCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "withdraw";
@@ -55,5 +58,10 @@ public class GemsWithdrawCommand extends GemsCommand {
 	@Override
 	public String getUsage() {
 		return "/gems withdraw [amount] [value] - Withdraw gems to physical item.";
+	}
+
+	@Override
+	public List<String> getTabComplete(List<String> args) {
+		return new ArrayList<>();
 	}
 }

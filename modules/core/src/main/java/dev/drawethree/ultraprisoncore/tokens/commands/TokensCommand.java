@@ -6,6 +6,8 @@ import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
+import java.util.List;
+
 public abstract class TokensCommand implements Permissionable {
 
 	protected static final String PERMISSION_ROOT = "ultraprison.tokens.command.";
@@ -32,4 +34,8 @@ public abstract class TokensCommand implements Permissionable {
 	public String getRequiredPermission() {
 		return PERMISSION_ROOT + this.name;
 	}
+
+	public abstract List<String> getTabComplete(List<String> args);
+
+
 }

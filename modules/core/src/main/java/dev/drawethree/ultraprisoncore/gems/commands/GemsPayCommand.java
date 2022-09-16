@@ -9,6 +9,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class GemsPayCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "pay";
@@ -58,5 +62,16 @@ public class GemsPayCommand extends GemsCommand {
 	@Override
 	public String getUsage() {
 		return "/gems pay [player] [amount] - Send gems to a player.";
+	}
+
+	@Override
+	public List<String> getTabComplete(List<String> args) {
+		List<String> list = new ArrayList<>();
+
+		if (args.size() == 1) {
+			list = Players.all().stream().map(Player::getName).collect(Collectors.toList());
+		}
+
+		return list;
 	}
 }

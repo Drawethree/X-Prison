@@ -6,6 +6,7 @@ import dev.drawethree.ultraprisoncore.tokens.utils.TokensConstants;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import lombok.Getter;
 import me.lucko.helper.Commands;
+import me.lucko.helper.command.context.CommandContext;
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
 import me.lucko.helper.utils.Players;
@@ -13,10 +14,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -58,7 +56,7 @@ public class CommandManager {
 
 		// /tokens, /token
 		Commands.create()
-				.tabHandler(c -> this.commands.stream().map(TokensCommand::getName).collect(Collectors.toList()))
+				.tabHandler(this::createTabHandler)
 				.handler(c -> {
 
 					if (!checkCommandCooldown(c.sender())) {
@@ -172,6 +170,18 @@ public class CommandManager {
 					}
 				})
 				.registerAndBind(this.plugin.getCore(), "blocksadmin", "blocksa");
+	}
+
+	private List<String> createTabHandler(CommandContext<CommandSender> context) {
+		List<String> returnList = this.commands.stream().map(TokensCommand::getName).collect(Collectors.toList());
+
+		TokensCommand subCommand = this.getCommand(context.rawArg(0));
+
+		if (subCommand != null) {
+			return subCommand.getTabComplete(context.args().subList(1, context.args().size()));
+		}
+
+		return returnList;
 	}
 
 	private void registerCommand(TokensCommand command) {

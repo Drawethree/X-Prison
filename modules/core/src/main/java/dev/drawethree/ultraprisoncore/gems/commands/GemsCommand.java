@@ -6,6 +6,8 @@ import dev.drawethree.ultraprisoncore.interfaces.Permissionable;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 
+import java.util.List;
+
 public abstract class GemsCommand implements Permissionable {
 
     protected static final String PERMISSION_ROOT = "ultraprison.gems.command.";
@@ -32,4 +34,6 @@ public abstract class GemsCommand implements Permissionable {
     public String getRequiredPermission() {
         return PERMISSION_ROOT + this.name;
     }
+
+    public abstract List<String> getTabComplete(List<String> args);
 }
