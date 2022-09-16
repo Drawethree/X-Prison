@@ -5,6 +5,9 @@ import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GemsHelpCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "help";
@@ -39,5 +42,10 @@ public class GemsHelpCommand extends GemsCommand {
 	@Override
 	public String getUsage() {
 		return "/gems help - Displays all available commands.";
+	}
+
+	@Override
+	public List<String> getTabComplete(List<String> args) {
+		return new ArrayList<>();
 	}
 }
