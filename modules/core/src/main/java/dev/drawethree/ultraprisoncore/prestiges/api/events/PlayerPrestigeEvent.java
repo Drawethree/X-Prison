@@ -8,13 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class PlayerPrestigeEvent extends UltraPrisonPlayerEvent implements Cancellable {
+public final class PlayerPrestigeEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 
 	private static final HandlerList handlers = new HandlerList();
 
 	@Getter
-	private Prestige oldPrestige;
+	private final Prestige oldPrestige;
 
 	@Getter
 	@Setter

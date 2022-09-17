@@ -444,11 +444,11 @@ public abstract class SQLDatabase extends Database {
 	}
 
 	@Override
-	public Map<UUID, Integer> getTop10Prestiges() {
-		Map<UUID, Integer> top10Prestige = new LinkedHashMap<>();
-		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.PRESTIGES_UUID_COLNAME + "," + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + " FROM " + UltraPrisonPrestiges.TABLE_NAME + " ORDER BY " + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + " DESC LIMIT 10").executeQuery()) {
+	public Map<UUID, Long> getTopPrestiges(int amountOfRecords) {
+		Map<UUID, Long> top10Prestige = new LinkedHashMap<>();
+		try (Connection con = this.hikari.getConnection(); ResultSet set = con.prepareStatement("SELECT " + MySQLDatabase.PRESTIGES_UUID_COLNAME + "," + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + " FROM " + UltraPrisonPrestiges.TABLE_NAME + " ORDER BY " + MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME + " DESC LIMIT " + amountOfRecords).executeQuery()) {
 			while (set.next()) {
-				top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.PRESTIGES_UUID_COLNAME)), set.getInt(MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME));
+				top10Prestige.put(UUID.fromString(set.getString(MySQLDatabase.PRESTIGES_UUID_COLNAME)), set.getLong(MySQLDatabase.PRESTIGES_PRESTIGE_COLNAME));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -465,7 +465,6 @@ public class TokensManager {
 
 		List<String> format = this.plugin.getTokensConfig().getTokensTopFormat();
 
-
 		Schedulers.async().run(() -> {
 			Map<UUID, Long> topTokens = this.plugin.getCore().getPluginDatabase().getTopTokens(this.plugin.getTokensConfig().getTopPlayersAmount());
 			for (String s : format) {

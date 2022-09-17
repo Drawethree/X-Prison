@@ -69,7 +69,7 @@ public abstract class Database {
 
 	public abstract void saveAutoMiner(Player p, int timeLeft);
 
-	public abstract Map<UUID, Integer> getTop10Prestiges();
+	public abstract Map<UUID, Long> getTopPrestiges(int amountOfRecords);
 
 	public abstract Map<UUID, Long> getTopGems(int amountOfRecords);
 
