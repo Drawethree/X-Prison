@@ -185,7 +185,7 @@ public final class UltraPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
 			case "next_rank": {
 				Optional<Rank> nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
-				return nextRank.isEmpty() ? "" : nextRank.get().getPrefix();
+				return !nextRank.isPresent() ? "" : nextRank.get().getPrefix();
 			}
 			case "next_rank_cost_raw":
 				return String.valueOf(plugin.getRanks().getRanksManager().getNextRankCost(player));

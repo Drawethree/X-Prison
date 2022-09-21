@@ -18,7 +18,6 @@ import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import dev.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import dev.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
-import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Log;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -244,11 +243,9 @@ public final class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public boolean resetData(UltraPrisonModule module) {
-        Schedulers.async().run(() -> {
             for (String table : module.getTables()) {
-                execute("DELETE FROM " + table);
+                executeAsync("DELETE FROM " + table);
             }
-        });
         return true;
     }
 

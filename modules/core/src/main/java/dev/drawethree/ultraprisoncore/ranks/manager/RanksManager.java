@@ -16,10 +16,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RanksManager {
 
@@ -28,7 +29,7 @@ public class RanksManager {
 
 	public RanksManager(UltraPrisonRanks plugin) {
 		this.plugin = plugin;
-		this.onlinePlayersRanks = new HashMap<>();
+		this.onlinePlayersRanks = new ConcurrentHashMap<>();
 	}
 
 	private void saveAllDataSync() {
@@ -39,9 +40,7 @@ public class RanksManager {
 	}
 
 	private void loadAllData() {
-		for (Player p : Players.all()) {
-			loadPlayerRank(p);
-		}
+		loadPlayerRank(Players.all());
 	}
 
 	public void savePlayerRank(Player player) {
@@ -52,12 +51,14 @@ public class RanksManager {
 		});
 	}
 
-	public void loadPlayerRank(Player player) {
+	public void loadPlayerRank(Collection<Player> players) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoRanks(player);
-			int rank = this.plugin.getCore().getPluginDatabase().getPlayerRank(player);
-			this.onlinePlayersRanks.put(player.getUniqueId(), rank);
-			this.plugin.getCore().getLogger().info("Loaded " + player.getName() + "'s rank.");
+			for (Player player : players) {
+				this.plugin.getCore().getPluginDatabase().addIntoRanks(player);
+				int rank = this.plugin.getCore().getPluginDatabase().getPlayerRank(player);
+				this.onlinePlayersRanks.put(player.getUniqueId(), rank);
+				this.plugin.getCore().getLogger().info("Loaded " + player.getName() + "'s rank.");
+			}
 		});
 	}
 
@@ -92,7 +93,7 @@ public class RanksManager {
 
 		for (int i = currentRank.getId(); i < maxRank.getId(); i++) {
 			Optional<Rank> rank = this.getRankById(i + 1);
-			if (rank.isEmpty()) {
+			if (!rank.isPresent()) {
 				break;
 			}
 			double cost = rank.get().getCost();
@@ -114,7 +115,7 @@ public class RanksManager {
 
 		Optional<Rank> finalRankOptional = this.getRankById(finalRankId);
 
-		if (finalRankOptional.isEmpty()) {
+		if (!finalRankOptional.isPresent()) {
 			return false;
 		}
 
@@ -152,7 +153,7 @@ public class RanksManager {
 		Rank currentRank = this.getPlayerRank(p);
 		Optional<Rank> toBuyOptional = getNextRank(currentRank.getId());
 
-		if (toBuyOptional.isEmpty()) {
+		if (!toBuyOptional.isPresent()) {
 			PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("prestige_needed"));
 			return false;
 		}
@@ -243,7 +244,7 @@ public class RanksManager {
 		Rank current = this.getPlayerRank(player);
 		Optional<Rank> nextRankOptional = this.getNextRank(current.getId());
 
-		if (nextRankOptional.isEmpty()) {
+		if (!nextRankOptional.isPresent()) {
 			return 100;
 		}
 

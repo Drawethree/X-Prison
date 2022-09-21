@@ -179,7 +179,7 @@ public class PickaxeLevelsManager {
 
 		Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(pickaxe);
 
-		if (currentLevelOptional.isEmpty()) {
+		if (!currentLevelOptional.isPresent()) {
 			return;
 		}
 

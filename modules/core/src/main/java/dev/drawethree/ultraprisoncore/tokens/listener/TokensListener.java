@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TokensListener {
@@ -66,7 +67,7 @@ public class TokensListener {
 	private void subscribeToPlayerQuitEvent() {
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
-					this.plugin.getTokensManager().savePlayerData(e.getPlayer(), true, true);
+					this.plugin.getTokensManager().savePlayerData(Collections.singletonList(e.getPlayer()), true, true);
 					e.getPlayer().getActivePotionEffects().forEach(effect -> e.getPlayer().removePotionEffect(effect.getType()));
 				}).bindWith(plugin.getCore());
 	}
@@ -74,9 +75,7 @@ public class TokensListener {
 	private void subscribeToPlayerJoinEvent() {
 		Events.subscribe(PlayerJoinEvent.class)
 				.handler(e -> {
-
-					this.plugin.getTokensManager().addIntoTable(e.getPlayer());
-					this.plugin.getTokensManager().loadPlayerData(e.getPlayer());
+					this.plugin.getTokensManager().loadPlayerData(Collections.singleton(e.getPlayer()));
 
 					if (this.plugin.getTokensConfig().isDisplayTokenMessages() && this.plugin.getTokensManager().hasOffTokenMessages(e.getPlayer())) {
 						this.plugin.getTokensManager().addPlayerIntoTokenMessageOnPlayers(e.getPlayer());

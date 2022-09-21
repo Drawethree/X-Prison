@@ -27,6 +27,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -42,75 +43,75 @@ public class TokensManager {
 	public TokensManager(UltraPrisonTokens plugin) {
 		this.plugin = plugin;
 		this.tokenMessageOnPlayers = new ArrayList<>();
-		this.tokensCache = new HashMap<>();
-		this.blocksCache = new HashMap<>();
-		this.blocksCacheWeekly = new HashMap<>();
+		this.tokensCache = new ConcurrentHashMap<>();
+		this.blocksCache = new ConcurrentHashMap<>();
+		this.blocksCacheWeekly = new ConcurrentHashMap<>();
 	}
 
-	public void savePlayerData(Player player, boolean removeFromCache, boolean async) {
+	public void savePlayerData(Collection<Player> players, boolean removeFromCache, boolean async) {
 		if (async) {
-			Schedulers.async().run(() -> savePlayerDataLogic(player, removeFromCache));
+			Schedulers.async().run(() -> savePlayerDataLogic(players, removeFromCache));
 		} else {
-			savePlayerDataLogic(player, removeFromCache);
+			savePlayerDataLogic(players, removeFromCache);
 		}
 	}
 
-	private void savePlayerDataLogic(Player player, boolean removeFromCache) {
-		this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
-		this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
-		this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
-		if (removeFromCache) {
-			tokensCache.remove(player.getUniqueId());
-			blocksCache.remove(player.getUniqueId());
-			blocksCacheWeekly.remove(player.getUniqueId());
+	private void savePlayerDataLogic(Collection<Player> players, boolean removeFromCache) {
+		for (Player player : players) {
+			this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
+
+			if (removeFromCache) {
+				this.tokensCache.remove(player.getUniqueId());
+				this.blocksCache.remove(player.getUniqueId());
+				this.blocksCacheWeekly.remove(player.getUniqueId());
+			}
+
+			this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
 		}
-		this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
 	}
 
 	public void savePlayerDataOnDisable() {
 		this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saving all player data");
-		Schedulers.sync().run(() -> {
-			for (UUID uuid : blocksCache.keySet()) {
-				this.plugin.getCore().getPluginDatabase().updateBlocks(Players.getOfflineNullable(uuid), blocksCache.get(uuid));
-			}
-			for (UUID uuid : tokensCache.keySet()) {
-				this.plugin.getCore().getPluginDatabase().updateTokens(Players.getOfflineNullable(uuid), tokensCache.get(uuid));
-			}
-			for (UUID uuid : blocksCache.keySet()) {
-				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(Players.getOfflineNullable(uuid), blocksCacheWeekly.get(uuid));
-			}
-			tokensCache.clear();
-			blocksCache.clear();
-			blocksCacheWeekly.clear();
-			this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database");
-		});
-	}
+		for (UUID uuid : blocksCache.keySet()) {
+			this.plugin.getCore().getPluginDatabase().updateBlocks(Players.getOfflineNullable(uuid), blocksCache.get(uuid));
+		}
+		for (UUID uuid : tokensCache.keySet()) {
+			this.plugin.getCore().getPluginDatabase().updateTokens(Players.getOfflineNullable(uuid), tokensCache.get(uuid));
+		}
+		for (UUID uuid : blocksCache.keySet()) {
+			this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(Players.getOfflineNullable(uuid), blocksCacheWeekly.get(uuid));
+		}
+		tokensCache.clear();
+		blocksCache.clear();
+		blocksCacheWeekly.clear();
+		this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database");
 
-	public void addIntoTable(Player player) {
-		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoTokens(player, this.plugin.getTokensConfig().getStartingTokens());
-			this.plugin.getCore().getPluginDatabase().addIntoBlocks(player);
-			this.plugin.getCore().getPluginDatabase().addIntoBlocksWeekly(player);
-		});
 	}
 
 	private void loadPlayerDataOnEnable() {
-		Players.all().forEach(p -> loadPlayerData(p));
+		loadPlayerData(Players.all());
 	}
 
-	public void loadPlayerData(Player player) {
+	public void loadPlayerData(Collection<Player> players) {
 		Schedulers.async().run(() -> {
+			for (Player player : players) {
 
-			long playerTokens = this.plugin.getCore().getPluginDatabase().getPlayerTokens(player);
-			long playerBlocks = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocks(player);
-			long playerBlocksWeekly = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocksWeekly(player);
+				this.plugin.getCore().getPluginDatabase().addIntoTokens(player, this.plugin.getTokensConfig().getStartingTokens());
+				this.plugin.getCore().getPluginDatabase().addIntoBlocks(player);
+				this.plugin.getCore().getPluginDatabase().addIntoBlocksWeekly(player);
 
-			this.tokensCache.put(player.getUniqueId(), playerTokens);
-			this.blocksCache.put(player.getUniqueId(), playerBlocks);
-			this.blocksCacheWeekly.put(player.getUniqueId(), playerBlocksWeekly);
+				long playerTokens = this.plugin.getCore().getPluginDatabase().getPlayerTokens(player);
+				long playerBlocks = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocks(player);
+				long playerBlocksWeekly = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocksWeekly(player);
 
-			this.plugin.getCore().getLogger().info(String.format("Loaded tokens and blocks broken of player %s from database", player.getName()));
+				this.tokensCache.put(player.getUniqueId(), playerTokens);
+				this.blocksCache.put(player.getUniqueId(), playerBlocks);
+				this.blocksCacheWeekly.put(player.getUniqueId(), playerBlocksWeekly);
 
+				this.plugin.getCore().getLogger().info(String.format("Loaded tokens and blocks broken of player %s from database", player.getName()));
+			}
 		});
 	}
 
@@ -440,10 +441,10 @@ public class TokensManager {
 		}
 
 		Schedulers.async().run(() -> {
-
 			BlockReward nextReward = this.getNextBlockReward(player);
 
 			if (!player.isOnline()) {
+
 				this.plugin.getCore().getPluginDatabase().updateBlocks(player, amount);
 				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, amount);
 			} else {
@@ -457,7 +458,6 @@ public class TokensManager {
 			}
 
 			PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
-
 		});
 	}
 
@@ -553,12 +553,10 @@ public class TokensManager {
 	}
 
 	public void resetBlocksTopWeekly(CommandSender sender) {
-		Schedulers.async().run(() -> {
 			PlayerUtils.sendMessage(sender, "&7&oStarting to reset BlocksTop - Weekly. This may take a while...");
 			this.plugin.getTokensConfig().setNextResetWeekly(Time.nowMillis() + TimeUnit.DAYS.toMillis(7));
 			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
 			PlayerUtils.sendMessage(sender, "&aBlocksTop - Weekly - Resetted!");
-		});
 	}
 
 	private void saveWeeklyReset() {

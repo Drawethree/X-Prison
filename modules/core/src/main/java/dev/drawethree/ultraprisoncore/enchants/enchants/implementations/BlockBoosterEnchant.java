@@ -96,7 +96,7 @@ public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 
 			BOOSTED_PLAYERS.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(1));
 
-			Schedulers.async().runLater(() -> {
+			Schedulers.sync().runLater(() -> {
 				if (e.getPlayer().isOnline()) {
 					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_off"));
 				}

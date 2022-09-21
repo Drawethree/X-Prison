@@ -19,7 +19,7 @@ public final class SavePlayerDataTask implements Runnable {
 
 	@Override
 	public void run() {
-		Players.all().forEach(p -> this.plugin.getTokensManager().savePlayerData(p, false, true));
+		this.plugin.getTokensManager().savePlayerData(Players.all(), false, true);
 	}
 
 	public void start() {

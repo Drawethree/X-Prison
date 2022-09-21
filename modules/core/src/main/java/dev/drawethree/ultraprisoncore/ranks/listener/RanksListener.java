@@ -5,6 +5,8 @@ import me.lucko.helper.Events;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.Collections;
+
 public class RanksListener {
 
 	private final UltraPrisonRanks plugin;
@@ -25,6 +27,6 @@ public class RanksListener {
 
 	private void subscribePlayerJoinEvent() {
 		Events.subscribe(PlayerJoinEvent.class)
-				.handler(e -> this.plugin.getRanksManager().loadPlayerRank(e.getPlayer())).bindWith(plugin.getCore());
+				.handler(e -> this.plugin.getRanksManager().loadPlayerRank(Collections.singleton(e.getPlayer()))).bindWith(plugin.getCore());
 	}
 }

@@ -25,6 +25,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class GemsManager {
@@ -34,8 +35,8 @@ public class GemsManager {
 	private String SPACER_LINE;
 	private String SPACER_LINE_BOTTOM;
 	private String TOP_FORMAT_GEMS;
-	private final HashMap<UUID, Long> gemsCache = new HashMap<>();
-	private LinkedHashMap<UUID, Long> top10Gems = new LinkedHashMap<>();
+	private final Map<UUID, Long> gemsCache = new ConcurrentHashMap<>();
+	private Map<UUID, Long> top10Gems = new LinkedHashMap<>();
 	private Task task;
 	private boolean updating;
 	private boolean displayGemsMessages;
@@ -116,13 +117,11 @@ public class GemsManager {
 
 	public void savePlayerDataOnDisable() {
 		this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saving all player data - gems");
-		Schedulers.sync().run(() -> {
 			for (UUID uuid : gemsCache.keySet()) {
 				this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
 			}
 			gemsCache.clear();
 			this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database - gems");
-		});
 	}
 
 	private void addIntoTable(Player player) {

@@ -147,7 +147,7 @@ public class UltraPrisonMVdWPlaceholder {
 
 		PlaceholderAPI.registerPlaceholder(plugin, "ultraprison_next_rank", event -> {
 			Optional<Rank> nextRank = plugin.getRanks().getApi().getNextPlayerRank(event.getPlayer());
-			if (nextRank.isEmpty()) {
+			if (!nextRank.isPresent()) {
 				return "";
 			} else {
 				return nextRank.get().getPrefix();

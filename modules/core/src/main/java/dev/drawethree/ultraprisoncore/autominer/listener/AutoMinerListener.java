@@ -7,7 +7,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class AutoMinerListener {
 
-
 	private final UltraPrisonAutoMiner plugin;
 
 	public AutoMinerListener(UltraPrisonAutoMiner plugin) {

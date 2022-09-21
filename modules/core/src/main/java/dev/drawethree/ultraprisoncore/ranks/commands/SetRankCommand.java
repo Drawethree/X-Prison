@@ -27,7 +27,7 @@ public class SetRankCommand {
 						Player target = c.arg(0).parseOrFail(Player.class);
 						Optional<Rank> rankOptional = this.plugin.getRanksManager().getRankById(c.arg(1).parseOrFail(Integer.class));
 
-						if (rankOptional.isEmpty()) {
+						if (!rankOptional.isPresent()) {
 							PlayerUtils.sendMessage(c.sender(), "&cInvalid rank id provided.");
 							return;
 						}

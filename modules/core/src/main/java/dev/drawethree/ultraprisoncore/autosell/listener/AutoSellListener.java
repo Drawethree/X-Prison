@@ -31,17 +31,17 @@ public class AutoSellListener {
 
     private void subscribeToPlayerJoinEvent() {
         Events.subscribe(PlayerJoinEvent.class)
-                .handler(e -> Schedulers.async().runLater(() -> {
+				.handler(e -> Schedulers.sync().runLater(() -> {
 
-                    if (this.plugin.getManager().hasAutoSellEnabled(e.getPlayer())) {
-                        PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getAutoSellConfig().getMessage("autosell_enable"));
-                        return;
-                    }
+					if (this.plugin.getManager().hasAutoSellEnabled(e.getPlayer())) {
+						PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getAutoSellConfig().getMessage("autosell_enable"));
+						return;
+					}
 
-                    if (this.plugin.getManager().canPlayerEnableAutosellOnJoin(e.getPlayer())) {
-                        this.plugin.getManager().toggleAutoSell(e.getPlayer());
-                    }
-                }, 20)).bindWith(this.plugin.getCore());
+					if (this.plugin.getManager().canPlayerEnableAutosellOnJoin(e.getPlayer())) {
+						this.plugin.getManager().toggleAutoSell(e.getPlayer());
+					}
+				}, 20)).bindWith(this.plugin.getCore());
     }
 
     private void subscribeToBlockBreakEvent() {

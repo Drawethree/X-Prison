@@ -25,7 +25,7 @@ public final class PickaxeLevelsListener {
 		Events.subscribe(PlayerItemHeldEvent.class)
 				.handler(e -> {
 					ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
-					if (item != null && this.plugin.getCore().isPickaxeSupported(item.getType()) && this.plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isEmpty()) {
+					if (item != null && this.plugin.getCore().isPickaxeSupported(item.getType()) && !this.plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
 						e.getPlayer().getInventory().setItem(e.getNewSlot(), this.plugin.getPickaxeLevelsManager().addDefaultPickaxeLevel(item, e.getPlayer()));
 					}
 				}).bindWith(this.plugin.getCore());

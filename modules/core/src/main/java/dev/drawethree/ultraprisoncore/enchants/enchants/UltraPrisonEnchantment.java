@@ -14,16 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 public abstract class UltraPrisonEnchantment implements Refundable {
 
-	private static HashMap<Integer, UltraPrisonEnchantment> allEnchantmentsById = new HashMap<>();
-	private static HashMap<String, UltraPrisonEnchantment> allEnchantmentsByName = new HashMap<>();
+	private static Map<Integer, UltraPrisonEnchantment> allEnchantmentsById = new HashMap<>();
+	private static Map<String, UltraPrisonEnchantment> allEnchantmentsByName = new HashMap<>();
 
 	protected final UltraPrisonEnchants plugin;
 
