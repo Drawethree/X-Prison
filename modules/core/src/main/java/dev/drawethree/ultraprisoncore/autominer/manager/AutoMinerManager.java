@@ -17,6 +17,7 @@ import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class AutoMinerManager {
@@ -29,12 +30,19 @@ public class AutoMinerManager {
 
 	public AutoMinerManager(UltraPrisonAutoMiner plugin) {
 		this.plugin = plugin;
-		this.autoMinerTimes = new HashMap<>();
+		this.autoMinerTimes = new ConcurrentHashMap<>();
 	}
 
 	private void loadAllPlayersAutoMinerData() {
-		Players.all().forEach(this::loadPlayerAutoMinerData);
+		Schedulers.async().run(() -> {
+			for (Player p : Players.all()) {
+				int timeLeft = this.plugin.getCore().getPluginDatabase().getPlayerAutoMinerTime(p);
+				this.autoMinerTimes.put(p.getUniqueId(), timeLeft);
+				this.plugin.getCore().getLogger().info(String.format("Loaded %s's AutoMiner Time.", p.getName()));
+			}
+		});
 	}
+
 
 	public void loadPlayerAutoMinerData(Player p) {
 		Schedulers.async().run(() -> {

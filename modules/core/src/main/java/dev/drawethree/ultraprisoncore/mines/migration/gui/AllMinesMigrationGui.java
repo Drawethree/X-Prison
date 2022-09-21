@@ -1,7 +1,6 @@
 package dev.drawethree.ultraprisoncore.mines.migration.gui;
 
 import dev.drawethree.ultraprisoncore.mines.migration.model.MinesMigration;
-import dev.drawethree.ultraprisoncore.mines.migration.model.impl.CataMinesMigration;
 import dev.drawethree.ultraprisoncore.mines.migration.model.impl.JetsPrisonMinesMigration;
 import dev.drawethree.ultraprisoncore.mines.migration.model.impl.MineResetLiteMigration;
 import dev.drawethree.ultraprisoncore.mines.migration.utils.MinesMigrationUtils;
@@ -51,12 +50,6 @@ public final class AllMinesMigrationGui extends Gui {
 		}
 		try {
 			MinesMigration migration = new MineResetLiteMigration();
-			this.addItem(createItemForMigration(migration));
-		} catch (NoClassDefFoundError e) {
-
-		}
-		try {
-			MinesMigration migration = new CataMinesMigration();
 			this.addItem(createItemForMigration(migration));
 		} catch (NoClassDefFoundError e) {
 

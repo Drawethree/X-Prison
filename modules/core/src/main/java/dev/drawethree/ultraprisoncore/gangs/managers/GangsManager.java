@@ -23,6 +23,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class GangsManager {
@@ -35,7 +36,7 @@ public class GangsManager {
 	public GangsManager(UltraPrisonGangs plugin) {
 		this.plugin = plugin;
 		this.gangChatEnabledPlayers = new ArrayList<>();
-		this.gangs = new HashMap<>();
+		this.gangs = new ConcurrentHashMap<>();
 		this.topGangs = new ArrayList<>();
 	}
 

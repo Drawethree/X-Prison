@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
@@ -130,9 +131,9 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		this.enabled = true;
 		this.config = this.core.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
 
-		this.rankMultipliers = new HashMap<>();
-		this.sellMultipliers = new HashMap<>();
-		this.tokenMultipliers = new HashMap<>();
+		this.rankMultipliers = new ConcurrentHashMap<>();
+		this.sellMultipliers = new ConcurrentHashMap<>();
+		this.tokenMultipliers = new ConcurrentHashMap<>();
 
 		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time", 5);
 		this.globalSellMultiMax = this.getConfig().get().getDouble("global-multiplier.sell.max", 10.0);

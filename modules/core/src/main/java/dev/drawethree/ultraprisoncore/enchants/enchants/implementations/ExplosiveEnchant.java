@@ -8,11 +8,13 @@ import dev.drawethree.ultraprisoncore.enchants.utils.EnchantUtils;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import dev.drawethree.ultraprisoncore.utils.Constants;
+import dev.drawethree.ultraprisoncore.utils.block.CuboidExplosionBlockProvider;
+import dev.drawethree.ultraprisoncore.utils.block.ExplosionBlockProvider;
+import dev.drawethree.ultraprisoncore.utils.block.SpheroidExplosionBlockProvider;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -21,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -30,12 +31,26 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 	private double chance;
 	private boolean countBlocksBroken;
 	private boolean soundsEnabled;
+	private ExplosionBlockProvider blockProvider;
 
 	public ExplosiveEnchant(UltraPrisonEnchants instance) {
 		super(instance, 9);
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 		this.soundsEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sounds");
+		this.blockProvider = this.loadBlockProvider();
+	}
+
+	private ExplosionBlockProvider loadBlockProvider() {
+		String explosionType = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Explosion-Type", "CUBE");
+
+		if ("CUBE".equalsIgnoreCase(explosionType)) {
+			return CuboidExplosionBlockProvider.instance();
+		} else if ("SPHERE".equalsIgnoreCase(explosionType)) {
+			return SpheroidExplosionBlockProvider.instance();
+		} else {
+			return CuboidExplosionBlockProvider.instance();
+		}
 	}
 
 	@Override
@@ -68,20 +83,9 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 				this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
 				Player p = e.getPlayer();
 				int radius = this.calculateRadius(enchantLevel);
-				List<Block> blocksAffected = new ArrayList<>();
-				final Location startLocation = b.getLocation();
 
-				for (int x = startLocation.getBlockX() - (radius == 4 ? 0 : (radius / 2)); x <= startLocation.getBlockX() + (radius == 4 ? radius - 1 : (radius / 2)); x++) {
-					for (int z = startLocation.getBlockZ() - (radius == 4 ? 0 : (radius / 2)); z <= startLocation.getBlockZ() + (radius == 4 ? radius - 1 : (radius / 2)); z++) {
-						for (int y = startLocation.getBlockY() - (radius == 4 ? 3 : (radius / 2)); y <= startLocation.getBlockY() + (radius == 4 ? 0 : (radius / 2)); y++) {
-							Block b1 = b.getWorld().getBlockAt(x, y, z);
-							if (!region.contains(b1.getLocation()) || b1.getType() == Material.AIR) {
-								continue;
-							}
-							blocksAffected.add(b1);
-						}
-					}
-				}
+				List<Block> blocksAffected = this.blockProvider.provide(b, radius);
+				blocksAffected.removeIf(block -> !region.contains(block.getLocation()) || block.getType() == Material.AIR);
 
 				ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
@@ -173,5 +177,6 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 		this.soundsEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sounds");
+		this.blockProvider = this.loadBlockProvider();
 	}
 }

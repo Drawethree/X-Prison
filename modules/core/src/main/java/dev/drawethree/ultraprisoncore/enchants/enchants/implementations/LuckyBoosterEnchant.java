@@ -83,7 +83,7 @@ public final class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("lucky_booster_on"));
 
 			BOOSTED_PLAYERS.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(5));
-			Schedulers.async().runLater(() -> {
+			Schedulers.sync().runLater(() -> {
 				if (e.getPlayer().isOnline()) {
 					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("lucky_booster_off"));
 				}

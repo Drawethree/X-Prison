@@ -99,6 +99,7 @@ public class TokensConfig {
 	}
 
 	public void reload() {
+		this.config.reload();
 		YamlConfiguration configuration = getYamlConfig();
 		this.loadVariables(configuration);
 		this.loadMessages(configuration);

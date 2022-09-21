@@ -16,7 +16,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PrestigeManager {
 
@@ -27,7 +31,7 @@ public class PrestigeManager {
 
     public PrestigeManager(UltraPrisonPrestiges plugin) {
         this.plugin = plugin;
-        this.onlinePlayersPrestige = new HashMap<>();
+        this.onlinePlayersPrestige = new ConcurrentHashMap<>();
         this.prestigingPlayers = new ArrayList<>(10);
     }
 

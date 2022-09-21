@@ -141,22 +141,17 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public boolean resetAllData() {
-		Schedulers.async().run(() -> {
 			for (UltraPrisonModule module : this.plugin.getModules()) {
 				this.resetData(module);
 			}
-		});
 		return true;
 	}
 
 	@Override
 	public boolean resetData(UltraPrisonModule module) {
-		Schedulers.async().run(() -> {
 			for (String table : module.getTables()) {
-				execute("TRUNCATE TABLE " + table);
-
+				executeAsync("TRUNCATE TABLE " + table);
 			}
-		});
 		return true;
 	}
 
@@ -187,7 +182,7 @@ public abstract class SQLDatabase extends Database {
 
 	@Override
 	public void resetBlocksWeekly(CommandSender sender) {
-		this.execute("DELETE FROM " + UltraPrisonTokens.TABLE_NAME_BLOCKS_WEEKLY);
+		this.executeAsync("DELETE FROM " + UltraPrisonTokens.TABLE_NAME_BLOCKS_WEEKLY);
 	}
 
 	@Override

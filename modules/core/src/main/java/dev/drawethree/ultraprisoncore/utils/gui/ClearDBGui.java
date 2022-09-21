@@ -3,7 +3,6 @@ package dev.drawethree.ultraprisoncore.utils.gui;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.database.Database;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import me.lucko.helper.Schedulers;
 import org.bukkit.entity.Player;
 
 public class ClearDBGui extends ConfirmationGui {
@@ -20,7 +19,6 @@ public class ClearDBGui extends ConfirmationGui {
 	@Override
 	public void confirm(boolean confirm) {
 		if (confirm) {
-			Schedulers.async().run(() -> {
 				if (this.module == null) {
 					if (this.database.resetAllData()) {
 						PlayerUtils.sendMessage(this.getPlayer(), "&aUltraPrisonCore - All Modules Data have been reset.");
@@ -30,7 +28,6 @@ public class ClearDBGui extends ConfirmationGui {
 				} else {
 					this.database.resetData(module);
 				}
-			});
 		}
 		this.close();
 	}

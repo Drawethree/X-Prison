@@ -285,6 +285,7 @@ enchants:
     Description:
       - '&7&o(( Explodes nearby blocks while mining ))'
     Count-Blocks-Broken: true
+    Explosion-Type: CUBE
     Sounds: true
     Refund:
       Enabled: true
