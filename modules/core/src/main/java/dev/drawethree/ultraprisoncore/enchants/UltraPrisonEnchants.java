@@ -8,13 +8,13 @@ import dev.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPI;
 import dev.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPIImpl;
 import dev.drawethree.ultraprisoncore.enchants.command.*;
 import dev.drawethree.ultraprisoncore.enchants.config.EnchantsConfig;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import dev.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
 import dev.drawethree.ultraprisoncore.enchants.listener.EnchantsListener;
 import dev.drawethree.ultraprisoncore.enchants.managers.CooldownManager;
 import dev.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
 import dev.drawethree.ultraprisoncore.enchants.managers.RespawnManager;
+import dev.drawethree.ultraprisoncore.enchants.repo.EnchantsRepository;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import lombok.Getter;
@@ -45,6 +45,9 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	private EnchantsConfig enchantsConfig;
 
 	@Getter
+	private EnchantsRepository enchantsRepository;
+
+	@Getter
 	private final UltraPrisonCore core;
 
 	private boolean enabled;
@@ -63,11 +66,11 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	public void reload() {
 
 		this.enchantsConfig.reload();
+		this.enchantsRepository.reload();
 
 		EnchantGUI.init();
 		DisenchantGUI.init();
 
-		UltraPrisonEnchantment.reloadAll();
 	}
 
 	@Override
@@ -82,17 +85,19 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 		this.enchantsManager = new EnchantsManager(this);
 		this.enchantsManager.enable();
 
-		this.api = new UltraPrisonEnchantsAPIImpl(enchantsManager);
-
 		EnchantsListener listener = new EnchantsListener(this);
 		listener.register();
 
 		this.registerCommands();
 
+		this.enchantsRepository = new EnchantsRepository(this);
+		this.enchantsRepository.loadDefaultEnchantments();
+
 		EnchantGUI.init();
 		DisenchantGUI.init();
 
-		UltraPrisonEnchantment.loadDefaultEnchantments();
+		this.api = new UltraPrisonEnchantsAPIImpl(this.enchantsManager, this.enchantsRepository);
+
 
 		this.enabled = true;
 	}

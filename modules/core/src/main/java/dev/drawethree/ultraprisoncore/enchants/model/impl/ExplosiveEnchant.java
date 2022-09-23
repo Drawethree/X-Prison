@@ -1,9 +1,9 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.api.events.ExplosionTriggerEvent;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.utils.EnchantUtils;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
@@ -174,6 +174,7 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
 		this.soundsEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sounds");

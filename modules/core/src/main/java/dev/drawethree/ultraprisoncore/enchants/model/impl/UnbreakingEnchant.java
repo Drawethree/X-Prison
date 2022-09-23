@@ -1,22 +1,23 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public final class EfficiencyEnchant extends UltraPrisonEnchantment {
-	public EfficiencyEnchant(UltraPrisonEnchants instance) {
-		super(instance, 1);
+public final class UnbreakingEnchant extends UltraPrisonEnchantment {
+
+	public UnbreakingEnchant(UltraPrisonEnchants instance) {
+		super(instance, 2);
 	}
 
 	@Override
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		ItemMeta meta = pickAxe.getItemMeta();
-		meta.addEnchant(Enchantment.DIG_SPEED, level, true);
+		meta.addEnchant(Enchantment.DURABILITY, level, true);
 		pickAxe.setItemMeta(meta);
 	}
 
@@ -32,7 +33,7 @@ public final class EfficiencyEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
-
+		super.reload();
 	}
 
 	@Override

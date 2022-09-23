@@ -1,7 +1,7 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -49,6 +49,7 @@ public final class SalaryEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Money");
 		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Money");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");

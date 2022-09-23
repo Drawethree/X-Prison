@@ -1,7 +1,7 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -10,13 +10,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class KeyFinderEnchant extends UltraPrisonEnchantment {
+public final class KeyallsEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 	private List<String> commandsToExecute;
 
-	public KeyFinderEnchant(UltraPrisonEnchants instance) {
-		super(instance, 15);
+	public KeyallsEnchant(UltraPrisonEnchants instance) {
+		super(instance, 18);
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
 	}
@@ -33,7 +33,7 @@ public final class KeyFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		if (chance * enchantLevel > ThreadLocalRandom.current().nextDouble(100)) {
 			String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
 		}
@@ -41,6 +41,7 @@ public final class KeyFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
 	}

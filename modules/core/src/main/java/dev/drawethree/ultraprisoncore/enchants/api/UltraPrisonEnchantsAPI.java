@@ -1,6 +1,6 @@
 package dev.drawethree.ultraprisoncore.enchants.api;
 
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -69,5 +69,21 @@ public interface UltraPrisonEnchantsAPI {
 	 * @return UltraPrisonEnchantment
 	 */
 	UltraPrisonEnchantment getByName(String rawName);
+
+	/**
+	 * Registers a specific {@link UltraPrisonEnchantment}
+	 *
+	 * @param enchantment
+	 * @return
+	 */
+	boolean registerEnchant(UltraPrisonEnchantment enchantment);
+
+	/**
+	 * Unregisters a specific {@link UltraPrisonEnchantment}
+	 *
+	 * @param enchantment
+	 * @return
+	 */
+	boolean unregisterEnchant(UltraPrisonEnchantment enchantment);
 
 }

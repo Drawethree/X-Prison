@@ -1,7 +1,8 @@
 package dev.drawethree.ultraprisoncore.enchants.command;
 
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.repo.EnchantsRepository;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
 import org.apache.commons.lang.StringUtils;
@@ -57,9 +58,9 @@ public class GivePickaxeCommand {
 			String[] enchantData = s.split("=");
 
 			try {
-				UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantByName(enchantData[0]);
+				UltraPrisonEnchantment enchantment = getEnchantsRepository().getEnchantByName(enchantData[0]);
 				if (enchantment == null) {
-					enchantment = UltraPrisonEnchantment.getEnchantById(Integer.parseInt(enchantData[0]));
+					enchantment = getEnchantsRepository().getEnchantById(Integer.parseInt(enchantData[0]));
 				}
 
 				if (enchantment == null) {
@@ -73,5 +74,9 @@ public class GivePickaxeCommand {
 			}
 		}
 		return enchants;
+	}
+
+	private EnchantsRepository getEnchantsRepository() {
+		return this.plugin.getEnchantsRepository();
 	}
 }

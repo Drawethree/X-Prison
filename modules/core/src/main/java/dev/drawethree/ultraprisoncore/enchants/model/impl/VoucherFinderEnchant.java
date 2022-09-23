@@ -1,7 +1,7 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lucko.helper.random.RandomSelector;
@@ -45,6 +45,7 @@ public final class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 		this.commandsToExecute = this.loadCommands();
 	}

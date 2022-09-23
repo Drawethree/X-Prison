@@ -1,7 +1,8 @@
 package dev.drawethree.ultraprisoncore.enchants.api;
 
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.managers.EnchantsManager;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.repo.EnchantsRepository;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,10 +11,11 @@ import java.util.Map;
 public final class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI {
 
 	private final EnchantsManager enchantsManager;
+	private final EnchantsRepository enchantsRepository;
 
-	public UltraPrisonEnchantsAPIImpl(EnchantsManager enchantsManager) {
-
+	public UltraPrisonEnchantsAPIImpl(EnchantsManager enchantsManager, EnchantsRepository enchantsRepository) {
 		this.enchantsManager = enchantsManager;
+		this.enchantsRepository = enchantsRepository;
 	}
 
 	@Override
@@ -43,11 +45,21 @@ public final class UltraPrisonEnchantsAPIImpl implements UltraPrisonEnchantsAPI 
 
 	@Override
 	public UltraPrisonEnchantment getById(int id) {
-		return UltraPrisonEnchantment.getEnchantById(id);
+		return this.enchantsRepository.getEnchantById(id);
 	}
 
 	@Override
 	public UltraPrisonEnchantment getByName(String rawName) {
-		return UltraPrisonEnchantment.getEnchantByName(rawName);
+		return this.enchantsRepository.getEnchantByName(rawName);
+	}
+
+	@Override
+	public boolean registerEnchant(UltraPrisonEnchantment enchantment) {
+		return this.enchantsRepository.register(enchantment);
+	}
+
+	@Override
+	public boolean unregisterEnchant(UltraPrisonEnchantment enchantment) {
+		return this.enchantsRepository.unregister(enchantment);
 	}
 }

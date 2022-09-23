@@ -49,7 +49,6 @@ import org.codemc.worldguardwrapper.flag.WrappedState;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Getter
 public final class UltraPrisonCore extends ExtendedJavaPlugin {
 

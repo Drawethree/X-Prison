@@ -2,7 +2,7 @@ package dev.drawethree.ultraprisoncore.enchants.gui;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.utils.GuiUtils;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collection;
 import java.util.List;
 
 public final class EnchantGUI extends Gui {
@@ -93,7 +94,8 @@ public final class EnchantGUI extends Gui {
 			this.setItem(PICKAXE_ITEM_SLOT, Item.builder(this.pickAxe).build());
 		}
 
-		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
+		Collection<UltraPrisonEnchantment> allEnchants = this.plugin.getEnchantsRepository().getAll();
+		for (UltraPrisonEnchantment enchantment : allEnchants) {
 			if (!enchantment.isEnabled()) {
 				continue;
 			}

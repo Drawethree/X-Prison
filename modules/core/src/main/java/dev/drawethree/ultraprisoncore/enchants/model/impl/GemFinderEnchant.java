@@ -1,26 +1,25 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
-import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class TokenatorEnchant extends UltraPrisonEnchantment {
+public final class GemFinderEnchant extends UltraPrisonEnchantment {
 
 	private long maxAmount;
 	private long minAmount;
 	private double chance;
 
-
-	public TokenatorEnchant(UltraPrisonEnchants instance) {
-		super(instance, 14);
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
+	public GemFinderEnchant(UltraPrisonEnchants instance) {
+		super(instance, 22);
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Gems");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Gems");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
@@ -37,18 +36,19 @@ public final class TokenatorEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonTokens.MODULE_NAME)) {
+			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonGems.MODULE_NAME)) {
 				return;
 			}
 			long randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-			plugin.getCore().getTokens().getTokensManager().giveTokens(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
+			plugin.getCore().getGems().getGemsManager().giveGems(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
 		}
 	}
 
 	@Override
 	public void reload() {
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
+		super.reload();
+		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Gems");
+		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Gems");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 

@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.tokens.managers;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.ultraprisoncore.api.enums.LostCause;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
-import dev.drawethree.ultraprisoncore.enchants.enchants.implementations.LuckyBoosterEnchant;
+import dev.drawethree.ultraprisoncore.enchants.model.impl.LuckyBoosterEnchant;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;

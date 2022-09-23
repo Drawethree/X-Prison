@@ -1,6 +1,6 @@
 package dev.drawethree.ultraprisoncore.enchants.utils;
 
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 
 import java.util.ArrayList;
 import java.util.List;
