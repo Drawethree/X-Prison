@@ -1,20 +1,21 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
-import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
+import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
+import dev.drawethree.ultrabackpacks.api.exception.BackpackNotFoundException;
+import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
-import dev.drawethree.ultraprisoncore.utils.misc.RegionUtils;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class AutoSellEnchant extends UltraPrisonEnchantment {
+public final class BackpackAutoSellEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
 
-	public AutoSellEnchant(UltraPrisonEnchants instance) {
+	public BackpackAutoSellEnchant(UltraPrisonEnchants instance) {
 		super(instance, 19);
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
@@ -38,8 +39,12 @@ public final class AutoSellEnchant extends UltraPrisonEnchantment {
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
 		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
-			if (this.plugin.getCore().isModuleEnabled(UltraPrisonAutoSell.MODULE_NAME)) {
-				this.plugin.getCore().getAutoSell().getManager().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()));
+			if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
+				try {
+					UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
+				} catch (BackpackNotFoundException ignored) {
+					this.plugin.getCore().debug("AutoSellEnchant::onBlockBreak > Player " + e.getPlayer().getName() + " does not have backpack.", this.plugin);
+				}
 			}
 		}
 
@@ -47,6 +52,7 @@ public final class AutoSellEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 }

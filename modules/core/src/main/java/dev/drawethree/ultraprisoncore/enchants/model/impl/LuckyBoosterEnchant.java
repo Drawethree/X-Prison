@@ -1,45 +1,33 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants.implementations;
+package dev.drawethree.ultraprisoncore.enchants.model.impl;
 
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
-import dev.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
-import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import org.bukkit.ChatColor;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
+public final class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 
 	private static final Map<UUID, Long> BOOSTED_PLAYERS = new HashMap<>();
+
 	private double chance;
 
-	public BlockBoosterEnchant(UltraPrisonEnchants instance) {
-		super(instance, 17);
+	public LuckyBoosterEnchant(UltraPrisonEnchants instance) {
+		super(instance, 8);
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-
-		Events.subscribe(UltraPrisonBlockBreakEvent.class)
-				.handler(e -> {
-					if (BOOSTED_PLAYERS.containsKey(e.getPlayer().getUniqueId())) {
-						List<Block> blocks = new ArrayList<>();
-						for (Block b : e.getBlocks()) {
-							blocks.add(b);
-							blocks.add(b);
-						}
-						e.setBlocks(blocks);
-					}
-				}).bindWith(instance.getCore());
 	}
 
-	public static boolean hasBlockBoosterRunning(Player p) {
+	public static boolean hasLuckyBoosterRunning(Player p) {
 		return BOOSTED_PLAYERS.containsKey(p.getUniqueId());
 	}
 
@@ -92,22 +80,21 @@ public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 				return;
 			}
 
-			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_on"));
+			PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("lucky_booster_on"));
 
-			BOOSTED_PLAYERS.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(1));
-
+			BOOSTED_PLAYERS.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(5));
 			Schedulers.sync().runLater(() -> {
 				if (e.getPlayer().isOnline()) {
-					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_off"));
+					PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("lucky_booster_off"));
 				}
 				BOOSTED_PLAYERS.remove(e.getPlayer().getUniqueId());
 			}, 5, TimeUnit.MINUTES);
 		}
-
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 

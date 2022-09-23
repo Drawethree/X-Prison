@@ -1,4 +1,4 @@
-package dev.drawethree.ultraprisoncore.enchants.enchants;
+package dev.drawethree.ultraprisoncore.enchants.model;
 
 public interface Refundable {
 

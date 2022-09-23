@@ -5,9 +5,10 @@ import dev.drawethree.ultraprisoncore.api.enums.LostCause;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.api.events.UltraPrisonPlayerEnchantEvent;
-import dev.drawethree.ultraprisoncore.enchants.enchants.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.enchants.gui.DisenchantGUI;
 import dev.drawethree.ultraprisoncore.enchants.gui.EnchantGUI;
+import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
+import dev.drawethree.ultraprisoncore.enchants.repo.EnchantsRepository;
 import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import dev.drawethree.ultraprisoncore.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.ultraprisoncore.utils.Constants;
@@ -43,7 +44,7 @@ public class EnchantsManager {
 
 	public EnchantsManager(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
-		this.lockedPlayers = new ArrayList<>();
+		this.lockedPlayers = Collections.synchronizedList(new ArrayList<>());
 	}
 
 	public Map<UltraPrisonEnchantment, Integer> getItemEnchants(ItemStack itemStack) {
@@ -56,10 +57,8 @@ public class EnchantsManager {
 
 		NBTItem nbtItem = new NBTItem(itemStack);
 
-		for (UltraPrisonEnchantment enchantment : UltraPrisonEnchantment.all()) {
-			if (!nbtItem.hasKey(NBT_TAG_IDENTIFIER + enchantment.getId())) {
-				returnMap.put(enchantment, 0);
-			} else {
+		for (UltraPrisonEnchantment enchantment : getEnchantsRepository().getAll()) {
+			if (nbtItem.hasKey(NBT_TAG_IDENTIFIER + enchantment.getId())) {
 				int level = nbtItem.getInteger(NBT_TAG_IDENTIFIER + enchantment.getId());
 				returnMap.put(enchantment, Math.min(level, enchantment.getMaxLevel()));
 			}
@@ -112,10 +111,10 @@ public class EnchantsManager {
 
 			if (matcher.find()) {
 				int enchId = Integer.parseInt(matcher.group().replaceAll("\\D", ""));
-				UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantById(enchId);
+				UltraPrisonEnchantment enchantment = getEnchantsRepository().getEnchantById(enchId);
 
 				if (enchantment != null) {
-					int enchLvl = enchants.get(enchantment);
+					int enchLvl = enchants.getOrDefault(enchantment, 0);
 					if (enchLvl > 0) {
 						s = s.replace(matcher.group(), enchantment.getName() + " " + enchLvl);
 					} else {
@@ -137,6 +136,10 @@ public class EnchantsManager {
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		item.setItemMeta(meta);
 		return item;
+	}
+
+	private EnchantsRepository getEnchantsRepository() {
+		return this.plugin.getEnchantsRepository();
 	}
 
 	public long getBlocksBroken(ItemStack item) {
@@ -219,12 +222,9 @@ public class EnchantsManager {
 		Map<UltraPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
 
 		for (UltraPrisonEnchantment enchantment : playerEnchants.keySet()) {
-			int level = playerEnchants.get(enchantment);
-
-			if (!enchantment.isEnabled() || level == 0) {
+			if (!enchantment.isEnabled()) {
 				continue;
 			}
-
 			enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
 		}
 
@@ -537,7 +537,7 @@ public class EnchantsManager {
 		for (String s : firstJoinPickaxeEnchants) {
 			try {
 				String[] data = s.split(" ");
-				UltraPrisonEnchantment enchantment = UltraPrisonEnchantment.getEnchantByName(data[0]);
+				UltraPrisonEnchantment enchantment = getEnchantsRepository().getEnchantByName(data[0]);
 				int level = Integer.parseInt(data[1]);
 				this.setEnchantLevel(player, item, enchantment, level);
 			} catch (Exception e) {
@@ -549,8 +549,7 @@ public class EnchantsManager {
 	}
 
 	public boolean hasEnchants(ItemStack item) {
-		//TODO: improve handling
-		return item != null && this.getItemEnchants(item).values().stream().mapToInt(Integer::intValue).sum() > 0;
+		return item != null && !this.getItemEnchants(item).isEmpty();
 	}
 
 	public void enable() {
