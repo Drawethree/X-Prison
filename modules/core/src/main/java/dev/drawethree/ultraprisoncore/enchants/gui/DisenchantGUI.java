@@ -106,7 +106,7 @@ public final class DisenchantGUI extends Gui {
 			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
 		}
 
-		builder.name(enchantment.isRefundEnabled() ? enchantment.getName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
+		builder.name(enchantment.isRefundEnabled() ? enchantment.getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
 		builder.lore(enchantment.isRefundEnabled() ? GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, level) : new ArrayList<>());
 
 		return enchantment.isRefundEnabled() ? builder.buildItem().bind(handler -> {

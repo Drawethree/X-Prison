@@ -138,8 +138,10 @@ enchants:
   '1':
     # Raw name of the enchant for some commands.
     RawName: "efficiency"
-    # Displayname in chat / gui of the enchant
+    # Displayname in chat / lore of the enchant
     Name: '&aEfficiency'
+    # Name in Enchant / Disenchant GUI
+    GuiName: '&aEfficiency'
     # Representative icon of enchant in GUI
     Material: BOOK
     #If you would like to use Base64 custom player skulls, just uncomment this line an change the Material above to PLAYER_HEAD
@@ -168,6 +170,7 @@ enchants:
   '2':
     RawName: "unbreaking"
     Name: '&bUnbreaking'
+    GuiName: '&bUnbreaking'
     Material: BOOK
     Enabled: true
     InGuiSlot: 28
@@ -183,6 +186,7 @@ enchants:
   '3':
     RawName: "fortune"
     Name: '&cFortune'
+    GuiName: '&cFortune'
     Material: BOOK
     Enabled: true
     InGuiSlot: 29
@@ -206,6 +210,7 @@ enchants:
   '4':
     RawName: "haste"
     Name: '&dHaste'
+    GuiName: '&dHaste'
     Material: BOOK
     Enabled: true
     InGuiSlot: 30
@@ -221,6 +226,7 @@ enchants:
   '5':
     RawName: "speed"
     Name: '&aSpeed'
+    GuiName: '&aSpeed'
     Material: BOOK
     Enabled: true
     InGuiSlot: 31
@@ -236,6 +242,7 @@ enchants:
   '6':
     RawName: "jumpboost"
     Name: '&bJump Boost'
+    GuiName: '&bJump Boost'
     Material: BOOK
     Enabled: true
     InGuiSlot: 32
@@ -251,6 +258,7 @@ enchants:
   '7':
     RawName: "nightvision"
     Name: '&cNight Vision'
+    GuiName: '&cNight Vision'
     Material: BOOK
     Enabled: true
     InGuiSlot: 33
@@ -266,6 +274,7 @@ enchants:
   '8':
     RawName: "luckybooster"
     Name: '&cLucky Booster'
+    GuiName: '&cLucky Booster'
     Material: BOOK
     Enabled: true
     InGuiSlot: 34
@@ -282,6 +291,7 @@ enchants:
   '9':
     RawName: "explosive"
     Name: '&aExplosive'
+    GuiName: '&aExplosive'
     Material: BOOK
     Enabled: true
     InGuiSlot: 35
@@ -302,6 +312,7 @@ enchants:
   '10':
     RawName: "layer"
     Name: '&bLayer'
+    GuiName: '&bLayer'
     Material: BOOK
     Enabled: true
     Chance: 0.2
@@ -319,6 +330,7 @@ enchants:
   '11':
     RawName: "charity"
     Name: '&cCharity'
+    GuiName: '&cCharity'
     Material: BOOK
     Enabled: true
     InGuiSlot: 37
@@ -338,6 +350,7 @@ enchants:
   '12':
     RawName: "salary"
     Name: '&dSalary'
+    GuiName: '&dSalary'
     Material: BOOK
     Enabled: true
     InGuiSlot: 38
@@ -356,6 +369,7 @@ enchants:
   '13':
     RawName: "blessing"
     Name: '&eBlessing'
+    GuiName: '&eBlessing'
     Material: BOOK
     Enabled: true
     InGuiSlot: 39
@@ -375,6 +389,7 @@ enchants:
   '14':
     RawName: "tokenator"
     Name: '&aTokenator'
+    GuiName: '&aTokenator'
     Material: BOOK
     Enabled: true
     InGuiSlot: 40
@@ -393,6 +408,7 @@ enchants:
   '15':
     RawName: "keyfinder"
     Name: '&bKey Finder'
+    GuiName: '&bKey Finder'
     Material: BOOK
     Enabled: true
     InGuiSlot: 41
@@ -417,6 +433,7 @@ enchants:
   '16':
     RawName: "prestigefinder"
     Name: '&aPrestige Finder'
+    GuiName: '&aPrestige Finder'
     Material: BOOK
     Enabled: true
     Min-Levels: 1
@@ -436,6 +453,7 @@ enchants:
   '17':
     RawName: "blockbooster"
     Name: '&dBlock Booster'
+    GuiName: '&dBlock Booster'
     Material: BOOK
     Enabled: true
     InGuiSlot: 43
@@ -452,6 +470,7 @@ enchants:
   '18':
     RawName: "keyalls"
     Name: '&cKeyalls'
+    GuiName: '&cKeyalls'
     Material: BOOK
     Enabled: true
     InGuiSlot: 44
@@ -475,6 +494,7 @@ enchants:
   '19':
     RawName: "autosell"
     Name: '&eAutosell'
+    GuiName: '&eAutosell'
     Material: BOOK
     Enabled: true
     InGuiSlot: 45
@@ -493,6 +513,7 @@ enchants:
   '20':
     RawName: "voucher"
     Name: '&bVoucher Finder'
+    GuiName: '&bVoucher Finder'
     Material: BOOK
     Enabled: true
     InGuiSlot: 46
@@ -526,6 +547,7 @@ enchants:
   '21':
     RawName: "nuke"
     Name: '&cNuke'
+    GuiName: '&cNuke'
     Material: BOOK
     Enabled: true
     InGuiSlot: 47
@@ -544,6 +566,7 @@ enchants:
   '22':
     RawName: "gemfinder"
     Name: '&aGem Finder'
+    GuiName: '&aGem Finder'
     Material: BOOK
     Enabled: true
     InGuiSlot: 48
@@ -562,6 +585,7 @@ enchants:
   '23':
     RawName: "gang-value-finder"
     Name: '&eGang Value Finder'
+    GuiName: '&eGang Value Finder'
     Material: BOOK
     Enabled: true
     InGuiSlot: 49
