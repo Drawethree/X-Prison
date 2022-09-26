@@ -112,7 +112,7 @@ public final class EnchantGUI extends Gui {
 			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
 		}
 
-		builder.name(enchantment.getName());
+		builder.name(enchantment.getGuiName());
 		builder.lore(GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, currentLevel));
 
 		return builder.buildItem().bind(handler -> {

@@ -22,6 +22,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 	protected final int id;
 	private String rawName;
 	private String name;
+	private String guiName;
 	private String base64;
 	private Material material;
 	private List<String> description;
@@ -46,6 +47,7 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 	private void reloadDefaultAttributes() {
 		this.rawName = this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".RawName");
 		this.name = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Name"));
+		this.guiName = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".GuiName"));
 		this.material = CompMaterial.fromString(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Material")).toMaterial();
 		this.description = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Description"));
 		this.enabled = this.plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Enabled");
