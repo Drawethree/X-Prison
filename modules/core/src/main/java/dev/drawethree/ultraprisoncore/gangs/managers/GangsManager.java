@@ -68,6 +68,7 @@ public class GangsManager {
 		for (Gang g : this.gangs.values()) {
 			this.plugin.getCore().getPluginDatabase().updateGang(g);
 		}
+		this.plugin.getCore().getLogger().info("Saved all gangs.");
 	}
 
 	public Optional<Gang> getPlayerGang(OfflinePlayer p) {

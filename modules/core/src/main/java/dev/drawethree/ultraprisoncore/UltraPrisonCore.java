@@ -133,7 +133,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(CompMaterial::fromString).map(CompMaterial::getMaterial).collect(Collectors.toList());
 
 		for (Material m : this.supportedPickaxes) {
-			this.getLogger().info("Added support for " + m);
+			this.getLogger().info("Added support for pickaxe: " + m);
 		}
 	}
 

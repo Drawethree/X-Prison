@@ -40,7 +40,7 @@ public class PrestigeManager {
         for (UUID uuid : this.onlinePlayersPrestige.keySet()) {
             this.plugin.getCore().getPluginDatabase().updatePrestige(Players.getOfflineNullable(uuid), onlinePlayersPrestige.get(uuid));
         }
-        this.plugin.getCore().getLogger().info("Saved players prestiges.");
+        this.plugin.getCore().getLogger().info("Saved online players prestiges.");
     }
 
     private void loadAllData() {
@@ -62,7 +62,7 @@ public class PrestigeManager {
 		if (removeFromCache) {
 			this.onlinePlayersPrestige.remove(player.getUniqueId());
 		}
-		this.plugin.getCore().getLogger().info("Saved " + player.getName() + "'s prestige to database.");
+        this.plugin.getCore().debug("Saved " + player.getName() + "'s prestige to database.", this.plugin);
 	}
 
 
@@ -71,7 +71,7 @@ public class PrestigeManager {
             this.plugin.getCore().getPluginDatabase().addIntoPrestiges(player);
             long prestige = this.plugin.getCore().getPluginDatabase().getPlayerPrestige(player);
             this.onlinePlayersPrestige.put(player.getUniqueId(), prestige);
-            this.plugin.getCore().getLogger().info("Loaded " + player.getName() + "'s prestige.");
+            this.plugin.getCore().debug("Loaded " + player.getName() + "'s prestige.", this.plugin);
         });
     }
 

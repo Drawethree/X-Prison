@@ -101,7 +101,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			String perm = permPrefix + rank;
 			double multiplier = getConfig().get().getDouble("ranks." + rank);
 			this.permissionToMultiplier.put(perm, multiplier);
-			this.core.getLogger().info("Loaded Rank Multiplier '" + rank + "' with multiplier x" + multiplier + " (" + perm + ")");
+			this.core.debug("Loaded Rank Multiplier '" + rank + "' with multiplier x" + multiplier + " (" + perm + ")", this);
 		}
 	}
 
@@ -204,11 +204,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		if (async) {
 			Schedulers.async().run(() -> {
 				this.core.getPluginDatabase().saveSellMultiplier(player, multiplier);
-				this.core.getLogger().info(String.format("Saved Sell Multiplier of player %s", player.getName()));
+				this.core.debug(String.format("Saved Sell Multiplier of player %s", player.getName()), this);
 			});
 		} else {
 			this.core.getPluginDatabase().saveSellMultiplier(player, multiplier);
-			this.core.getLogger().info(String.format("Saved Sell Multiplier of player %s", player.getName()));
+			this.core.debug(String.format("Saved Sell Multiplier of player %s", player.getName()), this);
 		}
 	}
 
@@ -219,11 +219,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		if (async) {
 			Schedulers.async().run(() -> {
 				this.core.getPluginDatabase().saveTokenMultiplier(player, multiplier);
-				this.core.getLogger().info(String.format("Saved Token Multiplier of player %s", player.getName()));
+				this.core.debug(String.format("Saved Token Multiplier of player %s", player.getName()), this);
 			});
 		} else {
 			this.core.getPluginDatabase().saveTokenMultiplier(player, multiplier);
-			this.core.getLogger().info(String.format("Saved Token Multiplier of player %s", player.getName()));
+			this.core.debug(String.format("Saved Token Multiplier of player %s", player.getName()), this);
 		}
 	}
 
@@ -272,7 +272,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 			this.sellMultipliers.put(player.getUniqueId(), multiplier);
 
-			this.core.getLogger().info(String.format("Loaded Sell Multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
+			this.core.debug(String.format("Loaded Sell Multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()), this);
 		});
 	}
 
@@ -287,14 +287,14 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 			this.tokenMultipliers.put(player.getUniqueId(), multiplier);
 
-			this.core.getLogger().info(String.format("Loaded Token Multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()));
+			this.core.debug(String.format("Loaded Token Multiplier %.2fx for player %s", multiplier.getMultiplier(), player.getName()), this);
 		});
 	}
 
 	private void removeExpiredMultipliers() {
 		Schedulers.async().run(() -> {
 			this.core.getPluginDatabase().removeExpiredMultipliers();
-			this.core.getLogger().info("Removed expired multipliers from DB.");
+			this.core.debug("Removed expired multipliers from DB.", this);
 		});
 	}
 
@@ -342,6 +342,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 			saveTokenMultiplier(p, false);
 		});
 		this.saveGlobalMultipliers();
+		this.core.getLogger().info("Saved online players multipliers.");
 	}
 
 
