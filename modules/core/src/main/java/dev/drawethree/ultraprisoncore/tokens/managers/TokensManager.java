@@ -68,12 +68,11 @@ public class TokensManager {
 				this.blocksCacheWeekly.remove(player.getUniqueId());
 			}
 
-			this.plugin.getCore().getLogger().info(String.format("Saved player %s tokens & blocks broken to database.", player.getName()));
+			this.plugin.getCore().debug(String.format("Saved player %s tokens & blocks broken to database.", player.getName()), this.plugin);
 		}
 	}
 
 	public void savePlayerDataOnDisable() {
-		this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saving all player data");
 		for (UUID uuid : blocksCache.keySet()) {
 			this.plugin.getCore().getPluginDatabase().updateBlocks(Players.getOfflineNullable(uuid), blocksCache.get(uuid));
 		}
@@ -86,7 +85,7 @@ public class TokensManager {
 		tokensCache.clear();
 		blocksCache.clear();
 		blocksCacheWeekly.clear();
-		this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database");
+		this.plugin.getCore().getLogger().info("Saved online player tokens, blocks broken and weekly blocks broken.");
 
 	}
 
@@ -110,7 +109,7 @@ public class TokensManager {
 				this.blocksCache.put(player.getUniqueId(), playerBlocks);
 				this.blocksCacheWeekly.put(player.getUniqueId(), playerBlocksWeekly);
 
-				this.plugin.getCore().getLogger().info(String.format("Loaded tokens and blocks broken of player %s from database", player.getName()));
+				this.plugin.getCore().debug(String.format("Loaded tokens and blocks broken of player %s from database", player.getName()), this.plugin);
 			}
 		});
 	}

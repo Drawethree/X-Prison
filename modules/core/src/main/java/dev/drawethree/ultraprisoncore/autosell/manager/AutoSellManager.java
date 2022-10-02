@@ -94,7 +94,7 @@ public class AutoSellManager {
         SellRegion sellRegion = new SellRegion(region, world, permRequired, sellPrices);
         this.regionsAutoSell.put(regionName, sellRegion);
 
-        this.plugin.getCore().getLogger().info("Loaded auto-sell region named " + regionName);
+        this.plugin.getCore().getLogger().info("Loaded auto-sell region named '" + regionName + "'");
         return true;
     }
 

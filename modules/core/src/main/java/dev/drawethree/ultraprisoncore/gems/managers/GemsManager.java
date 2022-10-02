@@ -83,7 +83,7 @@ public class GemsManager {
 	}
 
 	public void stopUpdating() {
-		this.plugin.getCore().getLogger().info("Stopping updating Top 10 - Gems");
+		this.plugin.getCore().debug("Stopping updating Top 10 - Gems", this.plugin);
 		task.close();
 	}
 
@@ -104,24 +104,23 @@ public class GemsManager {
 				if (removeFromCache) {
 					gemsCache.remove(player.getUniqueId());
 				}
-				this.plugin.getCore().getLogger().info(String.format("Saved player %s gems to database.", player.getName()));
+				this.plugin.getCore().debug(String.format("Saved player %s gems to database.", player.getName()), this.plugin);
 			});
 		} else {
 			this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
 			if (removeFromCache) {
 				gemsCache.remove(player.getUniqueId());
 			}
-			this.plugin.getCore().getLogger().info(String.format("Saved player %s gems to database.", player.getName()));
+			this.plugin.getCore().debug(String.format("Saved player %s gems to database.", player.getName()), this.plugin);
 		}
 	}
 
 	public void savePlayerDataOnDisable() {
-		this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saving all player data - gems");
-			for (UUID uuid : gemsCache.keySet()) {
-				this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
-			}
-			gemsCache.clear();
-			this.plugin.getCore().getLogger().info("[PLUGIN DISABLE] Saved all player data to database - gems");
+		for (UUID uuid : gemsCache.keySet()) {
+			this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
+		}
+		gemsCache.clear();
+		this.plugin.getCore().getLogger().info("Saved online players gems.");
 	}
 
 	private void addIntoTable(Player player) {
@@ -138,7 +137,7 @@ public class GemsManager {
 		Schedulers.async().run(() -> {
 			long playerGems = this.plugin.getCore().getPluginDatabase().getPlayerGems(player);
 			gemsCache.put(player.getUniqueId(), playerGems);
-			this.plugin.getCore().getLogger().info(String.format("Loaded gems of player %s from database", player.getName()));
+			this.plugin.getCore().debug(String.format("Loaded gems of player %s from database", player.getName()), this.plugin);
 		});
 	}
 
@@ -318,9 +317,9 @@ public class GemsManager {
 
 	private void updateGemsTop() {
 		top10Gems = new LinkedHashMap<>();
-		this.plugin.getCore().getLogger().info("Starting updating GemsTop");
-		this.top10Gems = (LinkedHashMap<UUID, Long>) this.plugin.getCore().getPluginDatabase().getTopGems(10);
-		this.plugin.getCore().getLogger().info("GemsTop updated!");
+		this.plugin.getCore().debug("Starting updating Top 10 - Gems", this.plugin);
+		this.top10Gems = this.plugin.getCore().getPluginDatabase().getTopGems(10);
+		this.plugin.getCore().debug("GemsTop updated!", this.plugin);
 	}
 
 	public void sendGemsTop(CommandSender sender) {

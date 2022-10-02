@@ -26,14 +26,10 @@ import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -497,24 +493,6 @@ public class MineManager {
 
 		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_renamed").replace("%mine%", oldMineName).replace("%new_name%", newName));
 		return true;
-	}
-
-	public void cleanUpOldHolograms() {
-		this.plugin.getCore().getLogger().info("Starting cleanup of old mine holograms...");
-		int count = 0;
-		for (World world : Bukkit.getWorlds()) {
-			for (Entity entity : world.getEntities()) {
-				if (!(entity instanceof ArmorStand)) {
-					continue;
-				}
-				ArmorStand as = (ArmorStand) entity;
-				if (as.hasMetadata("mine_hologram")) {
-					as.remove();
-					count += 1;
-				}
-			}
-		}
-		this.plugin.getCore().getLogger().info("Removed " + count + " old holograms.");
 	}
 
 	public boolean redefineMine(Player creator, String name) {
