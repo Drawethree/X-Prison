@@ -337,8 +337,7 @@ enchants:
     Increase-Cost-by: 25
     Max: 500
     Chance: 0.2
-    Max-Money: 5000000000000
-    Min-Money: 1000000000000
+    Amount-To-Give: "level * 1000"
     Cost: 25
     Messages-Enabled: true
     Description:
@@ -357,8 +356,7 @@ enchants:
     Increase-Cost-by: 35
     Max: 500
     Chance: 0.2
-    Max-Money: 5000000000000
-    Min-Money: 2500000000000
+    Amount-To-Give: "level * 1000"
     Cost: 35
     Description:
       - '&7&o(( Ability to receive more money while mining ))'
@@ -376,8 +374,7 @@ enchants:
     Increase-Cost-by: 25
     Max: 500
     Chance: 0.2
-    Max-Tokens: 15000
-    Min-Tokens: 5000
+    Amount-To-Give: "level * 2"
     Cost: 25
     Messages-Enabled: true
     Description:
@@ -396,8 +393,7 @@ enchants:
     Increase-Cost-by: 6
     Max: 500
     Chance: 0.2
-    Max-Tokens: 75
-    Min-Tokens: 35
+    Amount-To-Give: "level * 2"
     Cost: 12
     Description:
       - '&7&o(( Ability to gain more tokens while mining ))'
@@ -436,8 +432,7 @@ enchants:
     GuiName: '&aPrestige Finder'
     Material: BOOK
     Enabled: true
-    Min-Levels: 1
-    Max-Levels: 10
+    Amount-To-Give: "level"
     InGuiSlot: 42
     Increase-Cost-by: 175
     Max: 500
@@ -573,8 +568,7 @@ enchants:
     Increase-Cost-by: 6
     Max: 500
     Chance: 0.2
-    Max-Gems: 75
-    Min-Gems: 35
+    Amount-To-Give: "level * 2"
     Cost: 12
     Description:
       - '&7&o(( Ability to find gems while mining ))'
@@ -592,8 +586,7 @@ enchants:
     Increase-Cost-by: 6
     Max: 500
     Chance: 0.2
-    Max-Value: 5
-    Min-Value: 1
+    Amount-To-Give: "level * 2"
     Cost: 12
     Description:
       - '&7&o(( Ability to find gang value while mining ))'

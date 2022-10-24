@@ -6,6 +6,8 @@ import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -15,14 +17,12 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class BlessingEnchant extends UltraPrisonEnchantment {
 
 	private double chance;
-	private long minAmount;
-	private long maxAmount;
+	private String amountToGiveExpression;
 
 	public BlessingEnchant(UltraPrisonEnchants instance) {
 		super(instance, 13);
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 	}
 
 	@Override
@@ -46,20 +46,19 @@ public final class BlessingEnchant extends UltraPrisonEnchantment {
 			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonTokens.MODULE_NAME)) {
 				return;
 			}
-			long randAmount;
+			long amount = (long) createExpression(enchantLevel).evaluate();
 
 			for (Player p : Players.all()) {
-				randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-				plugin.getCore().getTokens().getTokensManager().giveTokens(p, randAmount, null, ReceiveCause.MINING_OTHERS);
+				plugin.getCore().getTokens().getTokensManager().giveTokens(p, amount, null, ReceiveCause.MINING_OTHERS);
 
 				if (!this.isMessagesEnabled()) {
 					continue;
 				}
 
 				if (p.equals(e.getPlayer())) {
-					PlayerUtils.sendMessage(p, plugin.getEnchantsConfig().getMessage("blessing_your").replace("%amount%", String.format("%,d", randAmount)));
+					PlayerUtils.sendMessage(p, plugin.getEnchantsConfig().getMessage("blessing_your").replace("%amount%", String.format("%,d", amount)));
 				} else {
-					PlayerUtils.sendMessage(p, plugin.getEnchantsConfig().getMessage("blessing_other").replace("%amount%", String.format("%,d", randAmount)).replace("%player%", e.getPlayer().getName()));
+					PlayerUtils.sendMessage(p, plugin.getEnchantsConfig().getMessage("blessing_other").replace("%amount%", String.format("%,d", amount)).replace("%player%", e.getPlayer().getName()));
 				}
 			}
 		}
@@ -69,7 +68,14 @@ public final class BlessingEnchant extends UltraPrisonEnchantment {
 	public void reload() {
 		super.reload();
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 	}
+
+	private Expression createExpression(int level) {
+		return new ExpressionBuilder(this.amountToGiveExpression)
+				.variables("level")
+				.build()
+				.setVariable("level", level);
+	}
+
 }

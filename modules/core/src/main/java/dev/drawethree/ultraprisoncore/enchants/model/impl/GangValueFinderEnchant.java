@@ -3,6 +3,8 @@ package dev.drawethree.ultraprisoncore.enchants.model.impl;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -11,15 +13,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class GangValueFinderEnchant extends UltraPrisonEnchantment {
 
-	private int maxAmount;
-	private int minAmount;
 	private double chance;
+	private String amountToGiveExpression;
 
 
 	public GangValueFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 23);
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Min-Value");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max-Value");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
 	}
 
@@ -39,17 +39,23 @@ public final class GangValueFinderEnchant extends UltraPrisonEnchantment {
 			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonGangs.MODULE_NAME)) {
 				return;
 			}
-			int randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextInt(minAmount, maxAmount);
-			plugin.getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + randAmount));
+			int amount = (int) createExpression(enchantLevel).evaluate();
+			plugin.getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + amount));
 		}
 	}
 
 	@Override
 	public void reload() {
 		super.reload();
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Min-Value");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".Max-Value");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+	}
+
+	private Expression createExpression(int level) {
+		return new ExpressionBuilder(this.amountToGiveExpression)
+				.variables("level")
+				.build()
+				.setVariable("level", level);
 	}
 
 	@Override

@@ -4,6 +4,8 @@ import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -12,16 +14,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class TokenatorEnchant extends UltraPrisonEnchantment {
 
-	private long maxAmount;
-	private long minAmount;
 	private double chance;
+	private String amountToGiveExpression;
 
 
 	public TokenatorEnchant(UltraPrisonEnchants instance) {
 		super(instance, 14);
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public final class TokenatorEnchant extends UltraPrisonEnchantment {
 			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonTokens.MODULE_NAME)) {
 				return;
 			}
-			long randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
+			long randAmount = (long) createExpression(enchantLevel).evaluate();
 			plugin.getCore().getTokens().getTokensManager().giveTokens(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
 		}
 	}
@@ -48,9 +48,15 @@ public final class TokenatorEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void reload() {
 		super.reload();
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Tokens");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Tokens");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+	}
+
+	private Expression createExpression(int level) {
+		return new ExpressionBuilder(this.amountToGiveExpression)
+				.variables("level")
+				.build()
+				.setVariable("level", level);
 	}
 
 	@Override

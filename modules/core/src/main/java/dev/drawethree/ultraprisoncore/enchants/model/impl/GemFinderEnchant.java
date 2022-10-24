@@ -4,6 +4,8 @@ import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.enchants.model.UltraPrisonEnchantment;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -12,15 +14,13 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class GemFinderEnchant extends UltraPrisonEnchantment {
 
-	private long maxAmount;
-	private long minAmount;
 	private double chance;
+	private String amountToGiveExpression;
 
 	public GemFinderEnchant(UltraPrisonEnchants instance) {
 		super(instance, 22);
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Gems");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Gems");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 	}
 
 	@Override
@@ -39,17 +39,23 @@ public final class GemFinderEnchant extends UltraPrisonEnchantment {
 			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonGems.MODULE_NAME)) {
 				return;
 			}
-			long randAmount = minAmount == maxAmount ? minAmount : ThreadLocalRandom.current().nextLong(minAmount, maxAmount);
-			plugin.getCore().getGems().getGemsManager().giveGems(e.getPlayer(), randAmount, null, ReceiveCause.MINING);
+			long amount = (long) createExpression(enchantLevel).evaluate();
+			plugin.getCore().getGems().getGemsManager().giveGems(e.getPlayer(), amount, null, ReceiveCause.MINING);
 		}
 	}
 
 	@Override
 	public void reload() {
 		super.reload();
-		this.minAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Min-Gems");
-		this.maxAmount = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Max-Gems");
+		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
 		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+	}
+
+	private Expression createExpression(int level) {
+		return new ExpressionBuilder(this.amountToGiveExpression)
+				.variables("level")
+				.build()
+				.setVariable("level", level);
 	}
 
 	@Override
