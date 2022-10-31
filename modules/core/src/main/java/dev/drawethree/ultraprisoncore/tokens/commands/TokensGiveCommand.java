@@ -26,12 +26,12 @@ public final class TokensGiveCommand extends TokensCommand {
 	public boolean execute(CommandSender sender, ImmutableList<String> args) {
 		if (args.size() == 2) {
 			try {
-				long amount = Long.parseLong(args.get(1));
 				OfflinePlayer target = Players.getOfflineNullable(args.get(0));
+				long amount = Long.parseLong(args.get(1));
 				commandManager.getPlugin().getTokensManager().giveTokens(target, amount, sender, ReceiveCause.GIVE);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(1))));
 			}
 		}
 		return false;

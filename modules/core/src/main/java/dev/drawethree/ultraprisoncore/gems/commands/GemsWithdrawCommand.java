@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GemsWithdrawCommand extends GemsCommand {
+public final class GemsWithdrawCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "withdraw";
 

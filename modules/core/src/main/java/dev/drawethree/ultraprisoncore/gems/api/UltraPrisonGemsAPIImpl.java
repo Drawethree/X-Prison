@@ -8,10 +8,9 @@ import org.bukkit.OfflinePlayer;
 public class UltraPrisonGemsAPIImpl implements UltraPrisonGemsAPI {
 
 
-	private GemsManager manager;
+	private final GemsManager manager;
 
 	public UltraPrisonGemsAPIImpl(GemsManager manager) {
-
 		this.manager = manager;
 	}
 

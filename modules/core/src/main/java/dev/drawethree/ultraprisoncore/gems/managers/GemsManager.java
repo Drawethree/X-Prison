@@ -8,6 +8,7 @@ import dev.drawethree.ultraprisoncore.gems.api.events.PlayerGemsLostEvent;
 import dev.drawethree.ultraprisoncore.gems.api.events.PlayerGemsReceiveEvent;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import dev.drawethree.ultraprisoncore.utils.misc.NumberUtils;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -161,11 +162,19 @@ public class GemsManager {
 
 		this.plugin.getCore().debug("UltraPrisonPlayerGemsReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
 
-		if (!p.isOnline()) {
-			this.plugin.getCore().getPluginDatabase().updateGems(p, finalAmount + currentGems);
+		long newAmount;
+
+		if (NumberUtils.wouldAdditionBeOverMaxLong(currentGems, finalAmount)) {
+			newAmount = Long.MAX_VALUE;
 		} else {
-			gemsCache.put(p.getUniqueId(), gemsCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-			if (executor != null && executor instanceof ConsoleCommandSender && !this.hasOffGemsMessages(p.getPlayer())) {
+			newAmount = currentGems + finalAmount;
+		}
+
+		if (!p.isOnline()) {
+			this.plugin.getCore().getPluginDatabase().updateGems(p, newAmount);
+		} else {
+			gemsCache.put(p.getUniqueId(), newAmount);
+			if (executor instanceof ConsoleCommandSender && !this.hasOffGemsMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), plugin.getMessage("gems_received_console").replace("%gems%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 			} else if (cause == ReceiveCause.MINING && !this.hasOffGemsMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getMessage("gems_received_mining").replace("%amount%", String.format("%,d", finalAmount)));

@@ -28,12 +28,12 @@ public final class TokensRemoveCommand extends TokensCommand {
 
 		if (args.size() == 2) {
 			try {
-				long amount = Long.parseLong(args.get(1));
 				OfflinePlayer target = Players.getOfflineNullable(args.get(0));
+				long amount = Long.parseLong(args.get(1));
 				commandManager.getPlugin().getTokensManager().removeTokens(target, amount, sender, LostCause.ADMIN);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(1))));
 			}
 		}
 		return false;

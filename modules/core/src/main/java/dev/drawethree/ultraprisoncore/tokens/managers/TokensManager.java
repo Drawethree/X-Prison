@@ -10,6 +10,7 @@ import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent
 import dev.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
 import dev.drawethree.ultraprisoncore.tokens.model.BlockReward;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
+import dev.drawethree.ultraprisoncore.utils.misc.NumberUtils;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -134,11 +135,19 @@ public class TokensManager {
 
 		this.plugin.getCore().debug("UltraPrison PlayerTokenReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
 
-		if (!p.isOnline()) {
-			this.plugin.getCore().getPluginDatabase().updateTokens(p, finalAmount + currentTokens);
+		long newAmount;
+
+		if (NumberUtils.wouldAdditionBeOverMaxLong(currentTokens, finalAmount)) {
+			newAmount = Long.MAX_VALUE;
 		} else {
-			tokensCache.put(p.getUniqueId(), tokensCache.getOrDefault(p.getUniqueId(), (long) 0) + finalAmount);
-			if (executor != null && executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
+			newAmount = currentTokens + finalAmount;
+		}
+
+		if (!p.isOnline()) {
+			this.plugin.getCore().getPluginDatabase().updateTokens(p, newAmount);
+		} else {
+			tokensCache.put(p.getUniqueId(), newAmount);
+			if (executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), plugin.getTokensConfig().getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 			} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));

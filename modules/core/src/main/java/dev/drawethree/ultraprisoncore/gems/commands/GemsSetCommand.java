@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GemsSetCommand extends GemsCommand {
+public final class GemsSetCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "set";
 
