@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GemsHelpCommand extends GemsCommand {
+public final class GemsHelpCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "help";
 	private static final String[] COMMAND_ALIASES = {"?"};

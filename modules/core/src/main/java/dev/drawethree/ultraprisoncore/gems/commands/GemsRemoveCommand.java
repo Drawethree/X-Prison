@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GemsRemoveCommand extends GemsCommand {
+public final class GemsRemoveCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "remove";
 	private static final String[] COMMAND_ALIASES = {"subtract", "delete"};
 
 	public GemsRemoveCommand(CommandManager manager) {
-		super(manager, COMMAND_NAME,COMMAND_ALIASES);
+		super(manager, COMMAND_NAME, COMMAND_ALIASES);
 	}
 
 	@Override

@@ -28,17 +28,17 @@ public final class TokensPayCommand extends TokensCommand {
 			Player p = (Player) sender;
 			try {
 
-				long amount = Long.parseLong(args.get(1).replace(",", ""));
-
-				if (0 >= amount) {
-					return false;
-				}
-
 				OfflinePlayer target = Players.getOfflineNullable(args.get(0));
 
 				if (!target.isOnline()) {
 					PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("player_not_online").replace("%player%", target.getName()));
 					return true;
+				}
+
+				long amount = Long.parseLong(args.get(1).replace(",", ""));
+
+				if (0 >= amount) {
+					return false;
 				}
 
 				if (target.getUniqueId().equals(p.getUniqueId())) {
@@ -49,7 +49,7 @@ public final class TokensPayCommand extends TokensCommand {
 				commandManager.getPlugin().getTokensManager().payTokens(p, amount, target);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, commandManager.getPlugin().getTokensConfig().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(1))));
 			}
 		}
 		return false;

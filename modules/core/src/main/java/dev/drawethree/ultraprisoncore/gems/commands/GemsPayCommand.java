@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GemsPayCommand extends GemsCommand {
+public final class GemsPayCommand extends GemsCommand {
 
 	private static final String COMMAND_NAME = "pay";
 	private static final String[] COMMAND_ALIASES = {"send"};
 
 	public GemsPayCommand(CommandManager manager) {
-		super(manager, COMMAND_NAME,COMMAND_ALIASES);
+		super(manager, COMMAND_NAME, COMMAND_ALIASES);
 	}
 
 	@Override
@@ -27,17 +27,17 @@ public class GemsPayCommand extends GemsCommand {
 		if (args.size() == 2 && sender instanceof Player) {
 			Player p = (Player) sender;
 			try {
-				long amount = Long.parseLong(args.get(1).replace(",", ""));
-
-				if (0 >= amount) {
-					return false;
-				}
-
 				OfflinePlayer target = Players.getOfflineNullable(args.get(0));
 
 				if (!target.isOnline()) {
 					PlayerUtils.sendMessage(sender, this.commandManager.getPlugin().getMessage("player_not_online").replace("%player%", target.getName()));
 					return true;
+				}
+
+				long amount = Long.parseLong(args.get(1).replace(",", ""));
+
+				if (0 >= amount) {
+					return false;
 				}
 
 				if (target.getUniqueId().equals(p.getUniqueId())) {
@@ -48,7 +48,7 @@ public class GemsPayCommand extends GemsCommand {
 				this.commandManager.getPlugin().getGemsManager().payGems(p, amount, target);
 				return true;
 			} catch (NumberFormatException e) {
-				PlayerUtils.sendMessage(sender, this.commandManager.getPlugin().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(0))));
+				PlayerUtils.sendMessage(sender, this.commandManager.getPlugin().getMessage("not_a_number").replace("%input%", String.valueOf(args.get(1))));
 			}
 		}
 		return false;
