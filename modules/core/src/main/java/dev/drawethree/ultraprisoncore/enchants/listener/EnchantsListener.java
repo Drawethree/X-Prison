@@ -6,10 +6,12 @@ import dev.drawethree.ultraprisoncore.utils.Constants;
 import dev.drawethree.ultraprisoncore.utils.compat.MinecraftVersion;
 import dev.drawethree.ultraprisoncore.utils.inventory.InventoryUtils;
 import me.lucko.helper.Events;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.GrindstoneInventory;
@@ -123,6 +125,17 @@ public class EnchantsListener {
 						}
 					}).bindWith(this.plugin.getCore());
 		}
+
+		Events.subscribe(InventoryClickEvent.class, EventPriority.MONITOR)
+				.filter(e -> e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
+				.filter(e -> e.getWhoClicked() instanceof Player)
+				.filter(e -> !e.isCancelled())
+				.handler(e -> {
+					ItemStack item = e.getCurrentItem();
+					if (this.plugin.getCore().isPickaxeSupported(item)) {
+						this.plugin.getEnchantsManager().handlePickaxeUnequip((Player) e.getWhoClicked(), item);
+					}
+				}).bindWith(this.plugin.getCore());
 	}
 
 	private void subscribeToPlayerDeathEvent() {
