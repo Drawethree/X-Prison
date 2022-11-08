@@ -30,9 +30,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
-public class UltraPrisonHistory implements UltraPrisonModule {
+public final class UltraPrisonHistory implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_History";
 	private static final String MODULE_NAME = "History";
 	@Getter
 	private final UltraPrisonCore core;

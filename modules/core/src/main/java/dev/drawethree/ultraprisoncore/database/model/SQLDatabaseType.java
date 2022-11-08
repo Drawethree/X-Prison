@@ -1,6 +1,6 @@
 package dev.drawethree.ultraprisoncore.database.model;
 
-public enum DatabaseType {
+public enum SQLDatabaseType {
 	SQLITE,
 	MYSQL
 }

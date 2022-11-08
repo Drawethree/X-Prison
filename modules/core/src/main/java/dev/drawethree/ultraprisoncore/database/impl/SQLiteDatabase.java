@@ -4,21 +4,17 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
-import dev.drawethree.ultraprisoncore.database.SQLDatabase;
+import dev.drawethree.ultraprisoncore.database.PooledSQLDatabase;
 import dev.drawethree.ultraprisoncore.database.model.ConnectionProperties;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
-import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
 import dev.drawethree.ultraprisoncore.gems.UltraPrisonGems;
-import dev.drawethree.ultraprisoncore.history.UltraPrisonHistory;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import dev.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import dev.drawethree.ultraprisoncore.ranks.UltraPrisonRanks;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
-import me.lucko.helper.utils.Log;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -26,13 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
-public final class SQLiteDatabase extends SQLDatabase {
+public final class SQLiteDatabase extends PooledSQLDatabase {
 
     private static final String FILE_NAME = "playerdata.db";
 
@@ -46,8 +38,8 @@ public final class SQLiteDatabase extends SQLDatabase {
     }
 
     @Override
-    public DatabaseType getDatabaseType() {
-        return DatabaseType.SQLITE;
+    public SQLDatabaseType getDatabaseType() {
+        return SQLDatabaseType.SQLITE;
     }
 
     @Override
@@ -85,21 +77,6 @@ public final class SQLiteDatabase extends SQLDatabase {
     }
 
     @Override
-    public void createTables() {
-        execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
-        for (UltraPrisonModule module : this.plugin.getModules()) {
-            for (String sql : module.getCreateTablesSQL(this.getDatabaseType())) {
-                execute(sql);
-            }
-        }
-    }
-
-    @Override
-    public void createIndexes() {
-        this.executeAsync(String.format("CREATE INDEX IF NOT EXISTS %s ON %s (%s)", INDEX_HISTORY_PLAYER, UltraPrisonHistory.TABLE_NAME, HISTORY_PLAYER_UUID_COLNAME));
-    }
-
-    @Override
     public void addIntoTokens(OfflinePlayer player, long startingTokens) {
         this.execute("INSERT OR IGNORE INTO " + UltraPrisonTokens.TABLE_NAME_TOKENS + " VALUES(?,?)", player.getUniqueId().toString(), startingTokens);
     }
@@ -131,18 +108,7 @@ public final class SQLiteDatabase extends SQLDatabase {
 
     @Override
     public void createGang(Gang g) {
-        this.executeAsync("INSERT OR IGNORE INTO " + UltraPrisonGangs.TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)", g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
-    }
-
-    @Override
-    public void saveAutoMiner(Player p, int timeLeft) {
-        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + UltraPrisonAutoMiner.TABLE_NAME + " VALUES (?,?) ")) {
-            statement.setString(1, p.getUniqueId().toString());
-            statement.setInt(2, timeLeft);
-            statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        this.executeSqlAsync("INSERT OR IGNORE INTO " + UltraPrisonGangs.TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)", g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
     }
 
     @Override
@@ -184,67 +150,9 @@ public final class SQLiteDatabase extends SQLDatabase {
     }
 
     @Override
-    public void updatePlayerNickname(OfflinePlayer player) {
-        this.executeAsync("INSERT OR REPLACE INTO " + MySQLDatabase.UUID_PLAYERNAME_TABLE_NAME + " VALUES(?,?)", player.getUniqueId().toString(), player.getName());
-    }
-
-    @Override
-    public List<Gang> getAllGangs() {
-        List<Gang> returnList = new ArrayList<>();
-        try (Connection con = this.hikari.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + UltraPrisonGangs.TABLE_NAME)) {
-            try (ResultSet set = statement.executeQuery()) {
-                while (set.next()) {
-                    Gang gang = new Gang();
-
-                    UUID gangUUID;
-                    try {
-                        gangUUID = UUID.fromString(set.getString(GANGS_UUID_COLNAME));
-                    } catch (Exception e) {
-                        gangUUID = UUID.randomUUID();
-                        set.updateString(GANGS_UUID_COLNAME, gangUUID.toString());
-                        set.updateRow();
-                    }
-
-                    gang.setUuid(gangUUID);
-
-                    String gangName = set.getString(GANGS_NAME_COLNAME);
-                    gang.setName(gangName);
-                    UUID owner = UUID.fromString(set.getString(GANGS_OWNER_COLNAME));
-                    gang.setGangOwner(owner);
-                    List<UUID> members = new ArrayList<>();
-
-                    for (String s : set.getString(GANGS_MEMBERS_COLNAME).split(",")) {
-                        if (s.isEmpty()) {
-                            continue;
-                        }
-                        try {
-                            UUID uuid = UUID.fromString(s);
-                            members.add(uuid);
-                        } catch (Exception e) {
-                            Log.warn("Unable to fetch UUID: " + s);
-                            e.printStackTrace();
-                        }
-                    }
-                    gang.setGangMembers(members);
-
-                    int value = set.getInt(GANGS_VALUE_COLNAME);
-                    gang.setValue(value);
-                    List<GangInvitation> gangInvitations = getGangInvitations(gang);
-                    gang.setPendingInvites(gangInvitations);
-
-                    returnList.add(gang);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return returnList;
-    }
-
-    @Override
     public boolean resetData(UltraPrisonModule module) {
             for (String table : module.getTables()) {
-                executeAsync("DELETE FROM " + table);
+                executeSqlAsync("DELETE FROM " + table);
             }
         return true;
     }

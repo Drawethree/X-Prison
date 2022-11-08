@@ -3,7 +3,6 @@ package dev.drawethree.ultraprisoncore.gangs;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
@@ -18,8 +17,6 @@ import lombok.Getter;
 public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	public static final String MODULE_NAME = "Gangs";
-	public static final String TABLE_NAME = "UltraPrison_Gangs";
-	public static final String INVITES_TABLE_NAME = "UltraPrison_Gang_Invites";
 
 	@Getter
 	private static UltraPrisonGangs instance;
@@ -95,26 +92,6 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
-	}
-
-	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case SQLITE:
-			case MYSQL: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))",
-						"CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))",
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
 	}
 
 	@Override
