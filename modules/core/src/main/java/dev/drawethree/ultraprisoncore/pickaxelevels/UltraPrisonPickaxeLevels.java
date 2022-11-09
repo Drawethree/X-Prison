@@ -2,7 +2,6 @@ package dev.drawethree.ultraprisoncore.pickaxelevels;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPI;
 import dev.drawethree.ultraprisoncore.pickaxelevels.api.UltraPrisonPickaxeLevelsAPIImpl;
 import dev.drawethree.ultraprisoncore.pickaxelevels.config.PickaxeLevelsConfig;
@@ -67,17 +66,12 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     }
 
     @Override
-    public String[] getTables() {
-        return new String[0];
-    }
-
-    @Override
-    public String[] getCreateTablesSQL(DatabaseType type) {
-        return new String[0];
-    }
-
-    @Override
     public boolean isHistoryEnabled() {
         return false;
+    }
+
+    @Override
+    public boolean resetAllData() {
+        return true;
     }
 }

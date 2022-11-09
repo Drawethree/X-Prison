@@ -15,5 +15,8 @@ public interface GemsRepository {
 
 	void addIntoGems(OfflinePlayer player, long startingGems);
 
+	void createTables();
 
+
+	void clearTableData();
 }

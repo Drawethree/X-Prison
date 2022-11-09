@@ -1,6 +1,5 @@
 package dev.drawethree.ultraprisoncore.gangs;
 
-
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
@@ -12,6 +11,10 @@ import dev.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import dev.drawethree.ultraprisoncore.gangs.model.GangTopByValueProvider;
 import dev.drawethree.ultraprisoncore.gangs.model.GangTopProvider;
 import dev.drawethree.ultraprisoncore.gangs.model.GangUpdateTopTask;
+import dev.drawethree.ultraprisoncore.gangs.repo.GangsRepository;
+import dev.drawethree.ultraprisoncore.gangs.repo.impl.GangsRepositoryImpl;
+import dev.drawethree.ultraprisoncore.gangs.service.GangsService;
+import dev.drawethree.ultraprisoncore.gangs.service.impl.GangsServiceImpl;
 import lombok.Getter;
 
 public final class UltraPrisonGangs implements UltraPrisonModule {
@@ -39,6 +42,12 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	@Getter
 	private final UltraPrisonCore core;
 
+	@Getter
+	private GangsRepository gangsRepository;
+
+	@Getter
+	private GangsService gangsService;
+
 	private boolean enabled;
 
 	public UltraPrisonGangs(UltraPrisonCore prisonCore) {
@@ -63,6 +72,11 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
 		GangCommand gangCommand = new GangCommand(this);
 		gangCommand.register();
+
+		this.gangsRepository = new GangsRepositoryImpl(this.core.getPluginDatabase());
+		this.gangsRepository.createTables();
+
+		this.gangsService = new GangsServiceImpl(this.gangsRepository);
 
 		this.gangsManager = new GangsManager(this);
 		this.gangsManager.enable();
@@ -96,6 +110,12 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.gangsRepository.clearTableData();
 		return true;
 	}
 }

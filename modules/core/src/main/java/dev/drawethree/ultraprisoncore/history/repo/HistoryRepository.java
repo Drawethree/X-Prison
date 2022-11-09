@@ -11,5 +11,9 @@ public interface HistoryRepository {
 
 	void addHistoryLine(OfflinePlayer player, HistoryLine history);
 
-	void clearHistory(OfflinePlayer target);
+	void deleteHistory(OfflinePlayer target);
+
+	void createTables();
+
+	void clearTableData();
 }

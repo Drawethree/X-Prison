@@ -9,12 +9,14 @@ import dev.drawethree.ultraprisoncore.autominer.command.AutoMinerCommand;
 import dev.drawethree.ultraprisoncore.autominer.config.AutoMinerConfig;
 import dev.drawethree.ultraprisoncore.autominer.listener.AutoMinerListener;
 import dev.drawethree.ultraprisoncore.autominer.manager.AutoMinerManager;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
+import dev.drawethree.ultraprisoncore.autominer.repo.AutominerRepository;
+import dev.drawethree.ultraprisoncore.autominer.repo.impl.AutominerRepositoryImpl;
+import dev.drawethree.ultraprisoncore.autominer.service.AutominerService;
+import dev.drawethree.ultraprisoncore.autominer.service.impl.AutominerServiceImpl;
 import lombok.Getter;
 
 public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_AutoMiner";
 	public static final String MODULE_NAME = "Auto Miner";
 
 	@Getter
@@ -31,6 +33,12 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 	@Getter
 	private UltraPrisonAutoMinerAPI api;
+
+	@Getter
+	private AutominerService autominerService;
+
+	@Getter
+	private AutominerRepository autominerRepository;
 
 	private boolean enabled;
 
@@ -49,6 +57,12 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 
 		this.autoMinerConfig = new AutoMinerConfig(this);
 		this.autoMinerConfig.load();
+
+		this.autominerRepository = new AutominerRepositoryImpl(this.core.getPluginDatabase());
+		this.autominerRepository.createTables();
+		this.autominerRepository.removeExpiredAutoMiners();
+
+		this.autominerService = new AutominerServiceImpl(this.autominerRepository);
 
 		this.manager = new AutoMinerManager(this);
 		this.manager.load();
@@ -81,24 +95,13 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case SQLITE:
-			case MYSQL: {
-				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))"};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.autominerRepository.clearTableData();
 		return true;
 	}
 

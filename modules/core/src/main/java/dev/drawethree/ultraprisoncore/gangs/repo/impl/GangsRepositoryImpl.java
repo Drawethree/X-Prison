@@ -1,9 +1,10 @@
-package dev.drawethree.ultraprisoncore.gangs.repo;
+package dev.drawethree.ultraprisoncore.gangs.repo.impl;
 
-import dev.drawethree.ultraprisoncore.database.Database;
-import dev.drawethree.ultraprisoncore.gangs.UltraPrisonGangs;
+import dev.drawethree.ultraprisoncore.database.SQLDatabase;
+import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import dev.drawethree.ultraprisoncore.gangs.model.GangInvitation;
+import dev.drawethree.ultraprisoncore.gangs.repo.GangsRepository;
 import me.lucko.helper.utils.Log;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
@@ -34,9 +35,9 @@ public class GangsRepositoryImpl implements GangsRepository {
 	private static final String GANG_INVITATION_INVITED_PLAYER = "invited_player";
 	private static final String GANG_INVITATION_INVITE_DATE = "invite_date";
 
-	private final Database database;
+	private final SQLDatabase database;
 
-	public GangsRepositoryImpl(Database database) {
+	public GangsRepositoryImpl(SQLDatabase database) {
 		this.database = database;
 	}
 
@@ -88,12 +89,13 @@ public class GangsRepositoryImpl implements GangsRepository {
 
 	@Override
 	public void createGang(Gang g) {
-		this.database.executeSqlAsync("INSERT IGNORE INTO " + UltraPrisonGangs.TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)", g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
+		String sql = database.getDatabaseType() == SQLDatabaseType.SQLITE ? "INSERT OR IGNORE INTO " + TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)" : "INSERT IGNORE INTO " + TABLE_NAME + "(UUID,name,owner,members) VALUES(?,?,?,?)";
+		this.database.executeSqlAsync(sql, g.getUuid().toString(), g.getName(), g.getGangOwner().toString(), "");
 	}
 
 	@Override
 	public void createGangInvitation(GangInvitation gangInvitation) {
-		this.database.execute("INSERT IGNORE INTO " + INVITES_TABLE_NAME + "(uuid,gang_id,invited_by,invited_player,invite_date) VALUES(?,?,?,?,?)",
+		this.database.executeSql("INSERT IGNORE INTO " + INVITES_TABLE_NAME + "(uuid,gang_id,invited_by,invited_player,invite_date) VALUES(?,?,?,?,?)",
 				gangInvitation.getUuid().toString(),
 				gangInvitation.getGang().getUuid().toString(),
 				gangInvitation.getInvitedBy().getUniqueId().toString(),
@@ -139,7 +141,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 
 	@Override
 	public void updateGang(Gang g) {
-		this.database.execute("UPDATE " +
+		this.database.executeSql("UPDATE " +
 						TABLE_NAME + " SET " +
 						GANGS_MEMBERS_COLNAME + "=?," +
 						GANGS_NAME_COLNAME + "=?," +
@@ -150,7 +152,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 				g.getValue(),
 				g.getUuid().toString());
 
-		this.database.execute("DELETE FROM " + INVITES_TABLE_NAME + " WHERE ?=?", GANG_INVITATION_GANG_ID, g.getUuid().toString());
+		this.database.executeSql("DELETE FROM " + INVITES_TABLE_NAME + " WHERE ?=?", GANG_INVITATION_GANG_ID, g.getUuid().toString());
 
 		for (GangInvitation gangInvitation : g.getPendingInvites()) {
 			createGangInvitation(gangInvitation);
@@ -159,14 +161,13 @@ public class GangsRepositoryImpl implements GangsRepository {
 
 	@Override
 	public void createTables() {
-		switch (database.getDatabaseType()) {
-			case SQLITE:
-			case MYSQL: {
-				this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))");
-				this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))");
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + database.getDatabaseType());
-		}
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))");
+	}
+
+	@Override
+	public void clearTableData() {
+		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME);
+		this.database.executeSqlAsync("TRUNCATE TABLE " + INVITES_TABLE_NAME);
 	}
 }

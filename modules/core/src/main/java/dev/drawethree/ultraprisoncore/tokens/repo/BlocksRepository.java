@@ -1,14 +1,13 @@
 package dev.drawethree.ultraprisoncore.tokens.repo;
 
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 import java.util.UUID;
 
 public interface BlocksRepository {
 
-	void resetBlocksWeekly(CommandSender sender);
+	void resetBlocksWeekly();
 
 	void updateBlocks(OfflinePlayer player, long newAmount);
 
@@ -26,5 +25,7 @@ public interface BlocksRepository {
 
 	Map<UUID, Long> getTopBlocks(int amountOfRecords);
 
+	void createTables();
 
+	void clearTableData();
 }

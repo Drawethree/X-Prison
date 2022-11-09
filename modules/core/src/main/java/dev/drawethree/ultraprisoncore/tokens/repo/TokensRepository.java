@@ -14,4 +14,8 @@ public interface TokensRepository {
 	Map<UUID, Long> getTopTokens(int amountOfRecords);
 
 	void addIntoTokens(OfflinePlayer player, long startingTokens);
+
+	void createTables();
+
+	void clearTableData();
 }

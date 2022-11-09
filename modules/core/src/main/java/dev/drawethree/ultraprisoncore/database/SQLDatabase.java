@@ -1,7 +1,6 @@
 package dev.drawethree.ultraprisoncore.database;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
-import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 import me.lucko.helper.Schedulers;
 
@@ -67,24 +66,7 @@ public abstract class SQLDatabase {
 		}
 	}
 
-
 	public void executeSqlAsync(String sql, Object... replacements) {
 		Schedulers.async().run(() -> this.executeSql(sql, replacements));
-	}
-
-	@Override
-	public boolean resetAllData() {
-		for (UltraPrisonModule module : this.plugin.getModules()) {
-			this.resetData(module);
-		}
-		return true;
-	}
-
-	@Override
-	public boolean resetData(UltraPrisonModule module) {
-		for (String table : module.getTables()) {
-			executeSqlAsync("TRUNCATE TABLE " + table);
-		}
-		return true;
 	}
 }

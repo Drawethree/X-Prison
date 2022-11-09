@@ -10,5 +10,7 @@ public interface RanksRepository {
 
 	void addIntoRanks(OfflinePlayer player);
 
+	void createTables();
 
+	void clearTableData();
 }

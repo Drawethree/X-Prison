@@ -11,5 +11,7 @@ public interface AutominerRepository {
 
 	void saveAutoMiner(Player p, int timeLeft);
 
+	void createTables();
 
+	void clearTableData();
 }

@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 public class TokensManager {
 
 	private final UltraPrisonTokens plugin;
-
 	private final Map<UUID, Long> tokensCache;
 	private final Map<UUID, Long> blocksCache;
 	private final Map<UUID, Long> blocksCacheWeekly;
@@ -59,9 +58,9 @@ public class TokensManager {
 
 	private void savePlayerDataLogic(Collection<Player> players, boolean removeFromCache) {
 		for (Player player : players) {
-			this.plugin.getCore().getPluginDatabase().updateTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
-			this.plugin.getCore().getPluginDatabase().updateBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
-			this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getTokensService().setTokens(player, tokensCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getBlocksService().setBlocks(player, blocksCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getBlocksService().setBlocksWeekly(player, blocksCacheWeekly.getOrDefault(player.getUniqueId(), 0L));
 
 			if (removeFromCache) {
 				this.tokensCache.remove(player.getUniqueId());
@@ -75,13 +74,13 @@ public class TokensManager {
 
 	public void savePlayerDataOnDisable() {
 		for (UUID uuid : blocksCache.keySet()) {
-			this.plugin.getCore().getPluginDatabase().updateBlocks(Players.getOfflineNullable(uuid), blocksCache.get(uuid));
+			this.plugin.getBlocksService().setBlocks(Players.getOfflineNullable(uuid), blocksCache.get(uuid));
 		}
 		for (UUID uuid : tokensCache.keySet()) {
-			this.plugin.getCore().getPluginDatabase().updateTokens(Players.getOfflineNullable(uuid), tokensCache.get(uuid));
+			this.plugin.getTokensService().setTokens(Players.getOfflineNullable(uuid), tokensCache.get(uuid));
 		}
 		for (UUID uuid : blocksCache.keySet()) {
-			this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(Players.getOfflineNullable(uuid), blocksCacheWeekly.get(uuid));
+			this.plugin.getBlocksService().setBlocksWeekly(Players.getOfflineNullable(uuid), blocksCacheWeekly.get(uuid));
 		}
 		tokensCache.clear();
 		blocksCache.clear();
@@ -98,13 +97,13 @@ public class TokensManager {
 		Schedulers.async().run(() -> {
 			for (Player player : players) {
 
-				this.plugin.getCore().getPluginDatabase().addIntoTokens(player, this.plugin.getTokensConfig().getStartingTokens());
-				this.plugin.getCore().getPluginDatabase().addIntoBlocks(player);
-				this.plugin.getCore().getPluginDatabase().addIntoBlocksWeekly(player);
+				this.plugin.getTokensService().createTokens(player, this.plugin.getTokensConfig().getStartingTokens());
+				this.plugin.getBlocksService().createBlocks(player);
+				this.plugin.getBlocksService().createBlocksWeekly(player);
 
-				long playerTokens = this.plugin.getCore().getPluginDatabase().getPlayerTokens(player);
-				long playerBlocks = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocks(player);
-				long playerBlocksWeekly = this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocksWeekly(player);
+				long playerTokens = this.plugin.getTokensService().getTokens(player);
+				long playerBlocks = this.plugin.getBlocksService().getPlayerBrokenBlocks(player);
+				long playerBlocksWeekly = this.plugin.getBlocksService().getPlayerBrokenBlocksWeekly(player);
 
 				this.tokensCache.put(player.getUniqueId(), playerTokens);
 				this.blocksCache.put(player.getUniqueId(), playerBlocks);
@@ -118,7 +117,7 @@ public class TokensManager {
 	public void setTokens(OfflinePlayer p, long newAmount, CommandSender executor) {
 		Schedulers.async().run(() -> {
 			if (!p.isOnline()) {
-				this.plugin.getCore().getPluginDatabase().updateTokens(p, newAmount);
+				this.plugin.getTokensService().setTokens(p, newAmount);
 			} else {
 				tokensCache.put(p.getUniqueId(), newAmount);
 			}
@@ -144,7 +143,7 @@ public class TokensManager {
 		}
 
 		if (!p.isOnline()) {
-			this.plugin.getCore().getPluginDatabase().updateTokens(p, newAmount);
+			this.plugin.getTokensService().setTokens(p, newAmount);
 		} else {
 			tokensCache.put(p.getUniqueId(), newAmount);
 			if (executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
@@ -247,7 +246,7 @@ public class TokensManager {
 
 	public synchronized long getPlayerTokens(OfflinePlayer p) {
 		if (!p.isOnline()) {
-			return this.plugin.getCore().getPluginDatabase().getPlayerTokens(p);
+			return this.plugin.getTokensManager().getPlayerTokens(p);
 		} else {
 			return tokensCache.getOrDefault(p.getUniqueId(), (long) 0);
 		}
@@ -255,7 +254,7 @@ public class TokensManager {
 
 	public synchronized long getPlayerBrokenBlocks(OfflinePlayer p) {
 		if (!p.isOnline()) {
-			return this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocks(p);
+			return this.plugin.getBlocksService().getPlayerBrokenBlocks(p);
 		} else {
 			return blocksCache.getOrDefault(p.getUniqueId(), (long) 0);
 		}
@@ -263,7 +262,7 @@ public class TokensManager {
 
 	public synchronized long getPlayerBrokenBlocksWeekly(OfflinePlayer p) {
 		if (!p.isOnline()) {
-			return this.plugin.getCore().getPluginDatabase().getPlayerBrokenBlocksWeekly(p);
+			return this.plugin.getBlocksService().getPlayerBrokenBlocksWeekly(p);
 		} else {
 			return blocksCacheWeekly.getOrDefault(p.getUniqueId(), (long) 0);
 		}
@@ -280,7 +279,7 @@ public class TokensManager {
 		this.callTokensLostEvent(cause, p, amount);
 
 		if (!p.isOnline()) {
-			this.plugin.getCore().getPluginDatabase().updateTokens(p, amount);
+			this.plugin.getTokensService().setTokens(p, amount);
 		} else {
 			tokensCache.put(p.getUniqueId(), finalTokens);
 		}
@@ -346,8 +345,8 @@ public class TokensManager {
 			BlockReward nextReward = this.getNextBlockReward(player);
 
 			if (!player.isOnline()) {
-				this.plugin.getCore().getPluginDatabase().updateBlocks(player, currentBroken + finalAmount);
-				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, currentBrokenWeekly + finalAmount);
+				this.plugin.getBlocksService().setBlocks(player, currentBroken + finalAmount);
+				this.plugin.getBlocksService().setBlocksWeekly(player, currentBrokenWeekly + finalAmount);
 			} else {
 				blocksCache.put(player.getUniqueId(), currentBroken + finalAmount);
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
@@ -388,8 +387,8 @@ public class TokensManager {
 			BlockReward nextReward = this.getNextBlockReward(player);
 
 			if (!player.isOnline()) {
-				this.plugin.getCore().getPluginDatabase().updateBlocks(player, currentBroken + finalAmount);
-				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, currentBrokenWeekly + finalAmount);
+				this.plugin.getBlocksService().setBlocks(player, currentBroken + finalAmount);
+				this.plugin.getBlocksService().setBlocksWeekly(player, currentBrokenWeekly + finalAmount);
 			} else {
 				blocksCache.put(player.getUniqueId(), currentBroken + finalAmount);
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
@@ -429,8 +428,8 @@ public class TokensManager {
 			long currentBrokenWeekly = getPlayerBrokenBlocksWeekly(player);
 
 			if (!player.isOnline()) {
-				this.plugin.getCore().getPluginDatabase().updateBlocks(player, currentBroken - amount);
-				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, currentBrokenWeekly - amount);
+				this.plugin.getBlocksService().setBlocks(player, currentBroken - amount);
+				this.plugin.getBlocksService().setBlocksWeekly(player, currentBrokenWeekly - amount);
 			} else {
 				blocksCache.put(player.getUniqueId(), currentBroken - amount);
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly - amount);
@@ -453,8 +452,8 @@ public class TokensManager {
 
 			if (!player.isOnline()) {
 
-				this.plugin.getCore().getPluginDatabase().updateBlocks(player, amount);
-				this.plugin.getCore().getPluginDatabase().updateBlocksWeekly(player, amount);
+				this.plugin.getBlocksService().setBlocks(player, amount);
+				this.plugin.getBlocksService().setBlocksWeekly(player, amount);
 			} else {
 				blocksCache.put(player.getUniqueId(), amount);
 				blocksCacheWeekly.put(player.getUniqueId(), amount);
@@ -474,7 +473,7 @@ public class TokensManager {
 		List<String> format = this.plugin.getTokensConfig().getTokensTopFormat();
 
 		Schedulers.async().run(() -> {
-			Map<UUID, Long> topTokens = this.plugin.getCore().getPluginDatabase().getTopTokens(this.plugin.getTokensConfig().getTopPlayersAmount());
+			Map<UUID, Long> topTokens = this.plugin.getTokensService().getTopTokens(this.plugin.getTokensConfig().getTopPlayersAmount());
 			for (String s : format) {
 				if (s.startsWith("{FOR_EACH_PLAYER}")) {
 					String rawContent = s.replace("{FOR_EACH_PLAYER} ", "");
@@ -504,7 +503,7 @@ public class TokensManager {
 	public void sendBlocksTop(CommandSender sender) {
 		List<String> format = this.plugin.getTokensConfig().getBlocksTopFormat();
 		Schedulers.async().run(() -> {
-			Map<UUID, Long> topBlocks = this.plugin.getCore().getPluginDatabase().getTopBlocks(this.plugin.getTokensConfig().getTopPlayersAmount());
+			Map<UUID, Long> topBlocks = this.plugin.getBlocksService().getTopBlocks(this.plugin.getTokensConfig().getTopPlayersAmount());
 			for (String s : format) {
 				if (s.startsWith("{FOR_EACH_PLAYER}")) {
 					sendBlocksTop(sender, s, topBlocks);
@@ -539,7 +538,7 @@ public class TokensManager {
 		List<String> format = this.plugin.getTokensConfig().getBlocksTopFormatWeekly();
 
 		Schedulers.async().run(() -> {
-			Map<UUID, Long> topBlocksWeekly = this.plugin.getCore().getPluginDatabase().getTopBlocksWeekly(this.plugin.getTokensConfig().getTopPlayersAmount());
+			Map<UUID, Long> topBlocksWeekly = this.plugin.getBlocksService().getTopBlocksWeekly(this.plugin.getTokensConfig().getTopPlayersAmount());
 			for (String s : format) {
 				if (s.startsWith("{FOR_EACH_PLAYER}")) {
 					sendBlocksTop(sender, s, topBlocksWeekly);
@@ -561,10 +560,10 @@ public class TokensManager {
 	}
 
 	public void resetBlocksTopWeekly(CommandSender sender) {
-			PlayerUtils.sendMessage(sender, "&7&oStarting to reset BlocksTop - Weekly. This may take a while...");
-			this.plugin.getTokensConfig().setNextResetWeekly(Time.nowMillis() + TimeUnit.DAYS.toMillis(7));
-			this.plugin.getCore().getPluginDatabase().resetBlocksWeekly(sender);
-			PlayerUtils.sendMessage(sender, "&aBlocksTop - Weekly - Resetted!");
+		PlayerUtils.sendMessage(sender, "&7&oStarting to reset BlocksTop - Weekly. This may take a while...");
+		this.plugin.getTokensConfig().setNextResetWeekly(Time.nowMillis() + TimeUnit.DAYS.toMillis(7));
+		this.plugin.getBlocksService().resetBlocksWeekly();
+		PlayerUtils.sendMessage(sender, "&aBlocksTop - Weekly - Reset!");
 	}
 
 	private void saveWeeklyReset() {

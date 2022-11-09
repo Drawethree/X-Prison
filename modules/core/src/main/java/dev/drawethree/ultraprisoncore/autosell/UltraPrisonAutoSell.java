@@ -11,7 +11,6 @@ import dev.drawethree.ultraprisoncore.autosell.config.AutoSellConfig;
 import dev.drawethree.ultraprisoncore.autosell.listener.AutoSellListener;
 import dev.drawethree.ultraprisoncore.autosell.manager.AutoSellManager;
 import dev.drawethree.ultraprisoncore.autosell.model.AutoSellBroadcastTask;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
 import lombok.Getter;
 
@@ -82,34 +81,29 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
         sellPriceCommand.register();
     }
 
-    public boolean isMultipliersModuleEnabled() {
-        return this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
-    }
+	public boolean isMultipliersModuleEnabled() {
+		return this.core.isModuleEnabled(UltraPrisonMultipliers.MODULE_NAME);
+	}
 
-    @Override
-    public void disable() {
-        this.broadcastTask.stop();
-        this.enabled = false;
-    }
+	@Override
+	public void disable() {
+		this.broadcastTask.stop();
+		this.enabled = false;
+	}
 
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
 
-    @Override
-    public String[] getTables() {
-        return new String[0];
-    }
+	@Override
+	public boolean isHistoryEnabled() {
+		return false;
+	}
 
-    @Override
-    public String[] getCreateTablesSQL(DatabaseType type) {
-        return new String[0];
-    }
-
-    @Override
-    public boolean isHistoryEnabled() {
-        return false;
-    }
+	@Override
+	public boolean resetAllData() {
+		return true;
+	}
 
 }

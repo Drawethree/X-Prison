@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 
 public interface MultipliersRepository {
 
-
 	void saveSellMultiplier(Player player, PlayerMultiplier multiplier);
 
 	void deleteSellMultiplier(Player player);
@@ -20,4 +19,7 @@ public interface MultipliersRepository {
 
 	void removeExpiredMultipliers();
 
+	void createTables();
+
+	void clearTableData();
 }

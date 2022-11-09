@@ -34,7 +34,7 @@ public class RanksManager {
 
 	private void saveAllDataSync() {
 		for (UUID uuid : this.onlinePlayersRanks.keySet()) {
-			this.plugin.getCore().getPluginDatabase().updateRank(Players.getOfflineNullable(uuid), onlinePlayersRanks.get(uuid));
+			this.plugin.getRanksService().setRank(Players.getOfflineNullable(uuid), onlinePlayersRanks.get(uuid));
 		}
 		this.plugin.getCore().getLogger().info("Saved online players ranks.");
 	}
@@ -45,7 +45,7 @@ public class RanksManager {
 
 	public void savePlayerRank(Player player) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().updateRank(player, this.getPlayerRank(player).getId());
+			this.plugin.getRanksService().setRank(player, this.getPlayerRank(player).getId());
 			this.onlinePlayersRanks.remove(player.getUniqueId());
 			this.plugin.getCore().debug("Saved " + player.getName() + "'s rank.", this.plugin);
 		});
@@ -54,8 +54,8 @@ public class RanksManager {
 	public void loadPlayerRank(Collection<Player> players) {
 		Schedulers.async().run(() -> {
 			for (Player player : players) {
-				this.plugin.getCore().getPluginDatabase().addIntoRanks(player);
-				int rank = this.plugin.getCore().getPluginDatabase().getPlayerRank(player);
+				this.plugin.getRanksService().createRank(player);
+				int rank = this.plugin.getRanksService().getPlayerRank(player);
 				this.onlinePlayersRanks.put(player.getUniqueId(), rank);
 				this.plugin.getCore().debug("Loaded " + player.getName() + "'s rank.", this.plugin);
 			}

@@ -5,7 +5,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.Map;
 import java.util.UUID;
 
-public interface PrestigesRepository {
+public interface PrestigeRepository {
 
 	void updatePrestige(OfflinePlayer player, long prestige);
 
@@ -15,5 +15,7 @@ public interface PrestigesRepository {
 
 	Map<UUID, Long> getTopPrestiges(int amountOfRecords);
 
+	void createTables();
 
+	void clearTableData();
 }

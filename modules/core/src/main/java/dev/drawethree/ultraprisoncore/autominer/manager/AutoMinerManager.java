@@ -36,7 +36,7 @@ public class AutoMinerManager {
 	private void loadAllPlayersAutoMinerData() {
 		Schedulers.async().run(() -> {
 			for (Player p : Players.all()) {
-				int timeLeft = this.plugin.getCore().getPluginDatabase().getPlayerAutoMinerTime(p);
+				int timeLeft = this.plugin.getAutominerService().getPlayerAutoMinerTime(p);
 				this.autoMinerTimes.put(p.getUniqueId(), timeLeft);
 				this.plugin.getCore().debug(String.format("Loaded %s's AutoMiner Time.", p.getName()), this.plugin);
 			}
@@ -46,7 +46,7 @@ public class AutoMinerManager {
 
 	public void loadPlayerAutoMinerData(Player p) {
 		Schedulers.async().run(() -> {
-			int timeLeft = this.plugin.getCore().getPluginDatabase().getPlayerAutoMinerTime(p);
+			int timeLeft = this.plugin.getAutominerService().getPlayerAutoMinerTime(p);
 			this.autoMinerTimes.put(p.getUniqueId(), timeLeft);
 			this.plugin.getCore().debug(String.format("Loaded %s's AutoMiner Time.", p.getName()), this.plugin);
 		});
@@ -64,7 +64,7 @@ public class AutoMinerManager {
 	}
 
 	private void savePlayerAutominerData(Player p, int timeLeft) {
-		this.plugin.getCore().getPluginDatabase().saveAutoMiner(p, timeLeft);
+		this.plugin.getAutominerService().setAutoMiner(p, timeLeft);
 		this.autoMinerTimes.remove(p.getUniqueId());
 		this.plugin.getCore().debug(String.format("Saved %s's AutoMiner time.", p.getName()), this.plugin);
 	}
@@ -185,7 +185,7 @@ public class AutoMinerManager {
 
 	private void removeExpiredAutoMiners() {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().removeExpiredAutoMiners();
+			this.plugin.getAutominerService().removeExpiredAutoMiners();
 			this.plugin.getCore().debug("Removed expired AutoMiners from database", this.plugin);
 		});
 	}

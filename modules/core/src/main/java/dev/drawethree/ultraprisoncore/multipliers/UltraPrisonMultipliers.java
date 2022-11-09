@@ -5,7 +5,6 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPI;
 import dev.drawethree.ultraprisoncore.multipliers.api.UltraPrisonMultipliersAPIImpl;
 import dev.drawethree.ultraprisoncore.multipliers.api.events.PlayerMultiplierReceiveEvent;
@@ -13,6 +12,10 @@ import dev.drawethree.ultraprisoncore.multipliers.enums.MultiplierType;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.GlobalMultiplier;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
+import dev.drawethree.ultraprisoncore.multipliers.repo.MultipliersRepository;
+import dev.drawethree.ultraprisoncore.multipliers.repo.impl.MultipliersRepositoryImpl;
+import dev.drawethree.ultraprisoncore.multipliers.service.MultipliersService;
+import dev.drawethree.ultraprisoncore.multipliers.service.impl.MultipliersServiceImpl;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
@@ -42,8 +45,6 @@ import java.util.concurrent.TimeUnit;
 
 public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_Multipliers";
-	public static final String TABLE_NAME_TOKEN = "UltraPrison_Token_Multipliers";
 	public static final String MODULE_NAME = "Multipliers";
 
 	@Getter
@@ -77,6 +78,12 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	private double playerSellMultiMax;
 	@Getter
 	private double playerTokenMultiMax;
+
+	@Getter
+	private MultipliersRepository multipliersRepository;
+
+	@Getter
+	private MultipliersService multipliersService;
 
 	public UltraPrisonMultipliers(UltraPrisonCore plugin) {
 		instance = this;
@@ -134,6 +141,12 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 		this.rankMultipliers = new ConcurrentHashMap<>();
 		this.sellMultipliers = new ConcurrentHashMap<>();
 		this.tokenMultipliers = new ConcurrentHashMap<>();
+
+		this.multipliersRepository = new MultipliersRepositoryImpl(this.core.getPluginDatabase());
+		this.multipliersRepository.createTables();
+		this.multipliersRepository.removeExpiredMultipliers();
+
+		this.multipliersService = new MultipliersServiceImpl(this.multipliersRepository);
 
 		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time", 5);
 		this.globalSellMultiMax = this.getConfig().get().getDouble("global-multiplier.sell.max", 10.0);
@@ -203,11 +216,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 		if (async) {
 			Schedulers.async().run(() -> {
-				this.core.getPluginDatabase().saveSellMultiplier(player, multiplier);
+				this.multipliersService.setSellMultiplier(player, multiplier);
 				this.core.debug(String.format("Saved Sell Multiplier of player %s", player.getName()), this);
 			});
 		} else {
-			this.core.getPluginDatabase().saveSellMultiplier(player, multiplier);
+			this.multipliersService.setSellMultiplier(player, multiplier);
 			this.core.debug(String.format("Saved Sell Multiplier of player %s", player.getName()), this);
 		}
 	}
@@ -218,11 +231,11 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 		if (async) {
 			Schedulers.async().run(() -> {
-				this.core.getPluginDatabase().saveTokenMultiplier(player, multiplier);
+				this.multipliersService.setTokenMultiplier(player, multiplier);
 				this.core.debug(String.format("Saved Token Multiplier of player %s", player.getName()), this);
 			});
 		} else {
-			this.core.getPluginDatabase().saveTokenMultiplier(player, multiplier);
+			this.multipliersService.setTokenMultiplier(player, multiplier);
 			this.core.debug(String.format("Saved Token Multiplier of player %s", player.getName()), this);
 		}
 	}
@@ -264,7 +277,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	private void loadSellMultiplier(Player player) {
 		Schedulers.async().run(() -> {
 
-			PlayerMultiplier multiplier = this.core.getPluginDatabase().getSellMultiplier(player);
+			PlayerMultiplier multiplier = this.multipliersService.getSellMultiplier(player);
 
 			if (multiplier == null) {
 				return;
@@ -279,7 +292,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	private void loadTokenMultiplier(Player player) {
 		Schedulers.async().run(() -> {
 
-			PlayerMultiplier multiplier = this.core.getPluginDatabase().getTokenMultiplier(player);
+			PlayerMultiplier multiplier = this.multipliersService.getTokenMultiplier(player);
 
 			if (multiplier == null) {
 				return;
@@ -293,7 +306,7 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 
 	private void removeExpiredMultipliers() {
 		Schedulers.async().run(() -> {
-			this.core.getPluginDatabase().removeExpiredMultipliers();
+			this.multipliersService.removeExpiredMultipliers();
 			this.core.debug("Removed expired multipliers from DB.", this);
 		});
 	}
@@ -312,27 +325,13 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME, TABLE_NAME_TOKEN};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case MYSQL:
-			case SQLITE: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))",
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKEN + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))"
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.multipliersRepository.clearTableData();
 		return true;
 	}
 

@@ -22,4 +22,6 @@ public interface GangsRepository {
 	void deleteGangInvitation(GangInvitation gangInvitation);
 
 	void createTables();
+
+	void clearTableData();
 }

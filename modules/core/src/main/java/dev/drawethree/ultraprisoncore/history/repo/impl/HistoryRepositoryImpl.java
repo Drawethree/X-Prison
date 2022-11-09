@@ -1,7 +1,8 @@
-package dev.drawethree.ultraprisoncore.history.repo;
+package dev.drawethree.ultraprisoncore.history.repo.impl;
 
-import dev.drawethree.ultraprisoncore.database.Database;
+import dev.drawethree.ultraprisoncore.database.SQLDatabase;
 import dev.drawethree.ultraprisoncore.history.model.HistoryLine;
+import dev.drawethree.ultraprisoncore.history.repo.HistoryRepository;
 import org.bukkit.OfflinePlayer;
 
 import java.sql.Connection;
@@ -22,11 +23,10 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 	private static final String HISTORY_MODULE_COLNAME = "module";
 	private static final String HISTORY_CONTEXT_COLNAME = "context";
 	private static final String HISTORY_CREATED_AT_COLNAME = "created_at";
-	private static final String INDEX_HISTORY_PLAYER = "idx_history_player";
 
-	private final Database database;
+	private final SQLDatabase database;
 
-	public HistoryRepositoryImpl(Database database) {
+	public HistoryRepositoryImpl(SQLDatabase database) {
 		this.database = database;
 	}
 
@@ -51,7 +51,7 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 							.module(moduleName)
 							.context(context)
 							.createdAt(createdAt)
-					z.build();
+							.build();
 					returnList.add(line);
 				}
 			}
@@ -67,7 +67,17 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 	}
 
 	@Override
-	public void clearHistory(OfflinePlayer target) {
+	public void deleteHistory(OfflinePlayer target) {
 		this.database.executeSqlAsync("DELETE FROM " + TABLE_NAME + " where ?=?", HISTORY_PLAYER_UUID_COLNAME, target.getUniqueId().toString());
+	}
+
+	@Override
+	public void createTables() {
+		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(uuid varchar(36) NOT NULL UNIQUE, player_uuid varchar(36) NOT NULL, module varchar(36) NOT NULL, context TEXT ,created_at DATETIME)");
+	}
+
+	@Override
+	public void clearTableData() {
+		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME);
 	}
 }

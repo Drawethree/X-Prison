@@ -3,11 +3,14 @@ package dev.drawethree.ultraprisoncore.gems;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPI;
 import dev.drawethree.ultraprisoncore.gems.api.UltraPrisonGemsAPIImpl;
 import dev.drawethree.ultraprisoncore.gems.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.gems.managers.GemsManager;
+import dev.drawethree.ultraprisoncore.gems.repo.GemsRepository;
+import dev.drawethree.ultraprisoncore.gems.repo.impl.GemsRepositoryImpl;
+import dev.drawethree.ultraprisoncore.gems.service.GemsService;
+import dev.drawethree.ultraprisoncore.gems.service.impl.GemsServiceImpl;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
@@ -22,7 +25,6 @@ import java.util.HashMap;
 
 public final class UltraPrisonGems implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_Gems";
 	public static final String MODULE_NAME = "Gems";
 	public static final String GEMS_ADMIN_PERM = "ultraprison.gems.admin";
 
@@ -39,6 +41,12 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	private GemsManager gemsManager;
 	@Getter
 	private final UltraPrisonCore core;
+
+	@Getter
+	private GemsRepository gemsRepository;
+
+	@Getter
+	private GemsService gemsService;
 
 	private HashMap<String, String> messages;
 
@@ -78,6 +86,9 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 		this.loadVariables();
 		this.loadMessages();
 
+		this.gemsRepository = new GemsRepositoryImpl(this.core.getPluginDatabase());
+		this.gemsRepository.createTables();
+		this.gemsService = new GemsServiceImpl(this.gemsRepository);
 		this.gemsManager = new GemsManager(this);
 		this.commandManager = new CommandManager(this);
 		this.commandManager.enable();
@@ -104,24 +115,13 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case SQLITE:
-			case MYSQL: {
-				return new String[]{"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))"};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.gemsRepository.clearTableData();
 		return true;
 	}
 
