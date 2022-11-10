@@ -18,10 +18,10 @@ public class ResetModulePlayerDataConfirmationGui extends ConfirmationGui {
 	public void confirm(boolean confirm) {
 		if (confirm) {
 			if (module == null) {
-				UltraPrisonCore.getInstance().getModules().forEach(UltraPrisonModule::resetAllData);
+				UltraPrisonCore.getInstance().getModules().forEach(UltraPrisonModule::resetPlayerData);
 				PlayerUtils.sendMessage(this.getPlayer(), "&aSuccessfully reset player data of all modules.");
 			} else {
-				module.resetAllData();
+				module.resetPlayerData();
 				PlayerUtils.sendMessage(this.getPlayer(), "&aSuccessfully reset player data of &e&l" + this.module.getName() + " &amodule.");
 			}
 

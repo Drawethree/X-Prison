@@ -102,8 +102,7 @@ public final class UltraPrisonAutoSell implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
-		return true;
+	public void resetPlayerData() {
 	}
 
 }

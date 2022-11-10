@@ -10,7 +10,6 @@ public final class UltraPrisonTokensAPIImpl implements UltraPrisonTokensAPI {
 	private final TokensManager manager;
 
 	public UltraPrisonTokensAPIImpl(TokensManager manager) {
-
 		this.manager = manager;
 	}
 

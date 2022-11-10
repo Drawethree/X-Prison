@@ -101,9 +101,8 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.prestigeRepository.clearTableData();
-		return true;
 	}
 
 	private void registerCommands() {

@@ -20,10 +20,10 @@ public class ClearDBGui extends ConfirmationGui {
 	public void confirm(boolean confirm) {
 		if (confirm) {
 			if (this.module == null) {
-				this.getAllModules().forEach(UltraPrisonModule::resetAllData);
+				this.getAllModules().forEach(UltraPrisonModule::resetPlayerData);
 				PlayerUtils.sendMessage(this.getPlayer(), "&aUltraPrisonCore - All Modules Data have been reset.");
 			} else {
-				this.module.resetAllData();
+				this.module.resetPlayerData();
 				PlayerUtils.sendMessage(this.getPlayer(), "&aUltraPrisonCore - DB Player data for module " + module.getName() + " has been reset.");
 			}
 		}

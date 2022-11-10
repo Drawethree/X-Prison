@@ -175,8 +175,7 @@ public final class UltraPrisonHistory implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.historyRepository.clearTableData();
-		return true;
 	}
 }

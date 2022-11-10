@@ -330,9 +330,8 @@ public final class UltraPrisonMultipliers implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.multipliersRepository.clearTableData();
-		return true;
 	}
 
 	private void saveAllMultipliers() {

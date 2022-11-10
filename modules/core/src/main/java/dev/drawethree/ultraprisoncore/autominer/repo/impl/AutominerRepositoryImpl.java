@@ -2,6 +2,7 @@ package dev.drawethree.ultraprisoncore.autominer.repo.impl;
 
 import dev.drawethree.ultraprisoncore.autominer.repo.AutominerRepository;
 import dev.drawethree.ultraprisoncore.database.SQLDatabase;
+import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -48,13 +49,23 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 
 	@Override
 	public void saveAutoMiner(Player p, int timeLeft) {
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + TABLE_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + AUTOMINER_TIME_COLNAME + "=?")) {
-			statement.setString(1, p.getUniqueId().toString());
-			statement.setInt(2, timeLeft);
-			statement.setInt(3, timeLeft);
-			statement.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if (database.getDatabaseType() == SQLDatabaseType.MYSQL) {
+			try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + TABLE_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + AUTOMINER_TIME_COLNAME + "=?")) {
+				statement.setString(1, p.getUniqueId().toString());
+				statement.setInt(2, timeLeft);
+				statement.setInt(3, timeLeft);
+				statement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} else {
+			try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES(?,?)")) {
+				statement.setString(1, p.getUniqueId().toString());
+				statement.setDouble(2, timeLeft);
+				statement.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

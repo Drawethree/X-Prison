@@ -140,8 +140,7 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
-		return true;
+	public void resetPlayerData() {
 	}
 
 	public boolean isAutoSellModuleEnabled() {

@@ -120,9 +120,8 @@ public final class UltraPrisonGems implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.gemsRepository.clearTableData();
-		return true;
 	}
 
 	private void registerEvents() {

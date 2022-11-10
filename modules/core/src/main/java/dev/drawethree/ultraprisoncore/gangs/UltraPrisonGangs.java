@@ -114,8 +114,7 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.gangsRepository.clearTableData();
-		return true;
 	}
 }

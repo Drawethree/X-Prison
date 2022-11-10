@@ -71,7 +71,6 @@ public final class UltraPrisonPickaxeLevels implements UltraPrisonModule {
     }
 
     @Override
-    public boolean resetAllData() {
-        return true;
+    public void resetPlayerData() {
     }
 }

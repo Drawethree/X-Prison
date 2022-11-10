@@ -14,5 +14,5 @@ public interface UltraPrisonModule {
 
 	boolean isHistoryEnabled();
 
-	boolean resetAllData();
+	void resetPlayerData();
 }

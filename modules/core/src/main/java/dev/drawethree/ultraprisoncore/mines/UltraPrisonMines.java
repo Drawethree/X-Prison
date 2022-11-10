@@ -92,8 +92,7 @@ public class UltraPrisonMines implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
-		return true;
+	public void resetPlayerData() {
 	}
 
 	private void loadMessages() {

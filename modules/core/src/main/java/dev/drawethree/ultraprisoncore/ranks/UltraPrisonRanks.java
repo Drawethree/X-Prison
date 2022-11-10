@@ -88,9 +88,8 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.ranksRepository.clearTableData();
-		return true;
 	}
 
 	private void registerCommands() {

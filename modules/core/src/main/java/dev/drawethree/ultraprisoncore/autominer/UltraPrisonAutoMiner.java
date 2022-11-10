@@ -100,9 +100,8 @@ public final class UltraPrisonAutoMiner implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.autominerRepository.clearTableData();
-		return true;
 	}
 
 	private void registerCommands() {

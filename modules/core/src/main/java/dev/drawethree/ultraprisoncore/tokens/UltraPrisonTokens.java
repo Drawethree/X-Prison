@@ -144,10 +144,9 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	}
 
 	@Override
-	public boolean resetAllData() {
+	public void resetPlayerData() {
 		this.tokensRepository.clearTableData();
 		this.blocksRepository.clearTableData();
-		return true;
 	}
 
 }
