@@ -8,7 +8,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerAutomineEvent extends UltraPrisonPlayerEvent implements Cancellable {
+public final class PlayerAutomineEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 

@@ -1,12 +1,12 @@
 package dev.drawethree.ultraprisoncore.gangs.api.events;
 
+import dev.drawethree.ultraprisoncore.api.events.UltraPrisonEvent;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import lombok.Getter;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public final class GangDisbandEvent extends Event implements Cancellable {
+public final class GangDisbandEvent extends UltraPrisonEvent implements Cancellable {
 
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 	@Getter

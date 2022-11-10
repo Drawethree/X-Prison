@@ -1,12 +1,12 @@
 package dev.drawethree.ultraprisoncore.mines.api.events;
 
+import dev.drawethree.ultraprisoncore.api.events.UltraPrisonEvent;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import lombok.Getter;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class MinePostResetEvent extends Event {
+public final class MinePostResetEvent extends UltraPrisonEvent {
 
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 

@@ -1,10 +1,10 @@
 package dev.drawethree.ultraprisoncore.api.events.player;
 
+import dev.drawethree.ultraprisoncore.api.events.UltraPrisonEvent;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.event.Event;
 
-public abstract class UltraPrisonPlayerEvent extends Event {
+public abstract class UltraPrisonPlayerEvent extends UltraPrisonEvent {
 
 	@Getter
 	protected OfflinePlayer player;

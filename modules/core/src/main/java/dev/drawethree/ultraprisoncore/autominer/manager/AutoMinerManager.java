@@ -1,7 +1,7 @@
 package dev.drawethree.ultraprisoncore.autominer.manager;
 
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
-import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeReceiveEvent;
+import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeModifyEvent;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
 import dev.drawethree.ultraprisoncore.autominer.model.AutoMinerRegion;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
@@ -54,7 +54,7 @@ public class AutoMinerManager {
 
 	public void savePlayerAutoMinerData(Player p, boolean async) {
 
-		int timeLeft = autoMinerTimes.getOrDefault(p.getUniqueId(), 0);
+		int timeLeft = getAutoMinerTime(p);
 
 		if (async) {
 			Schedulers.async().run(() -> savePlayerAutominerData(p, timeLeft));
@@ -69,31 +69,39 @@ public class AutoMinerManager {
 		this.plugin.getCore().debug(String.format("Saved %s's AutoMiner time.", p.getName()), this.plugin);
 	}
 
-	public void givePlayerAutoMinerTime(CommandSender sender, Player p, long time, TimeUnit unit) {
+	public void modifyPlayerAutoMinerTime(CommandSender sender, Player p, long time, TimeUnit unit) {
 
 		if (p == null || !p.isOnline()) {
 			PlayerUtils.sendMessage(sender, "&cPlayer is not online!");
 			return;
 		}
 
-		int currentTime = autoMinerTimes.getOrDefault(p.getUniqueId(), 0);
+		PlayerAutoMinerTimeModifyEvent event = this.callAutoMinerTimeModifyEvent(p, time, unit);
+
+		time = event.getDuration();
+		unit = event.getTimeUnit();
+
+		int currentTime = getAutoMinerTime(p);
 		currentTime += unit.toSeconds(time);
 
-		autoMinerTimes.put(p.getUniqueId(), currentTime);
+		if (currentTime < 0) {
+			currentTime = 0;
+		}
 
-		this.callAutoMinerTimeReceiveEvent(p, time, unit);
+		this.autoMinerTimes.put(p.getUniqueId(), currentTime);
 
-		PlayerUtils.sendMessage(sender, this.plugin.getAutoMinerConfig().getMessage("auto_miner_time_add").replace("%time%", String.valueOf(time)).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
+		String messageKey = time < 0 ? "auto_miner_time_remove" : "auto_miner_time_add";
+		PlayerUtils.sendMessage(sender, this.plugin.getAutoMinerConfig().getMessage(messageKey).replace("%time%", String.valueOf(Math.abs(time))).replace("%timeunit%", unit.name()).replace("%player%", p.getName()));
 	}
 
-	private PlayerAutoMinerTimeReceiveEvent callAutoMinerTimeReceiveEvent(Player p, long time, TimeUnit unit) {
-		PlayerAutoMinerTimeReceiveEvent event = new PlayerAutoMinerTimeReceiveEvent(p, unit, time);
+	private PlayerAutoMinerTimeModifyEvent callAutoMinerTimeModifyEvent(Player p, long time, TimeUnit unit) {
+		PlayerAutoMinerTimeModifyEvent event = new PlayerAutoMinerTimeModifyEvent(p, unit, time);
 		Events.callSync(event);
 		return event;
 	}
 
 	public boolean hasAutoMinerTime(Player p) {
-		return autoMinerTimes.getOrDefault(p.getUniqueId(), 0) > 0;
+		return getAutoMinerTime(p) > 0;
 	}
 
 	public void decrementPlayerAutominerTime(Player p) {

@@ -10,7 +10,7 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import java.util.List;
 
 @Getter
-public final class NukeTriggerEvent extends BlockEnchantEvent {
+public final class NukeTriggerEvent extends UltraPrisonPlayerEnchantTriggerEvent {
 
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 	private boolean cancelled;

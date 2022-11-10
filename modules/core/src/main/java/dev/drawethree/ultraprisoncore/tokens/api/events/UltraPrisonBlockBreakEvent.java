@@ -1,18 +1,18 @@
 package dev.drawethree.ultraprisoncore.tokens.api.events;
 
+import dev.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import java.util.List;
 
 @Getter
 @Setter
-public final class UltraPrisonBlockBreakEvent extends Event implements Cancellable {
+public final class UltraPrisonBlockBreakEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 	private static final HandlerList handlers = new HandlerList();
 
@@ -27,6 +27,7 @@ public final class UltraPrisonBlockBreakEvent extends Event implements Cancellab
 	 * @param blocks List of blocks that were affected
 	 */
 	public UltraPrisonBlockBreakEvent(Player player, List<Block> blocks) {
+		super(player);
 		this.player = player;
 		this.blocks = blocks;
 	}

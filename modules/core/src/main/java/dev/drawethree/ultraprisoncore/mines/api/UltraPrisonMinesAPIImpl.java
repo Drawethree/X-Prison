@@ -4,7 +4,7 @@ import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import org.bukkit.Location;
 
-public class UltraPrisonMinesAPIImpl implements UltraPrisonMinesAPI {
+public final class UltraPrisonMinesAPIImpl implements UltraPrisonMinesAPI {
 
 	private final UltraPrisonMines plugin;
 

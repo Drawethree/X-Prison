@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Collection;
 import java.util.List;
 
-public class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
+public final class UltraPrisonAutoSellAPIImpl implements UltraPrisonAutoSellAPI {
 
 	private final UltraPrisonAutoSell plugin;
 
