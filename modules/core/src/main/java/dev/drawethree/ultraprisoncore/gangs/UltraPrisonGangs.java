@@ -1,9 +1,7 @@
 package dev.drawethree.ultraprisoncore.gangs;
 
-
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPI;
 import dev.drawethree.ultraprisoncore.gangs.api.UltraPrisonGangsAPIImpl;
 import dev.drawethree.ultraprisoncore.gangs.commands.GangCommand;
@@ -13,13 +11,15 @@ import dev.drawethree.ultraprisoncore.gangs.managers.GangsManager;
 import dev.drawethree.ultraprisoncore.gangs.model.GangTopByValueProvider;
 import dev.drawethree.ultraprisoncore.gangs.model.GangTopProvider;
 import dev.drawethree.ultraprisoncore.gangs.model.GangUpdateTopTask;
+import dev.drawethree.ultraprisoncore.gangs.repo.GangsRepository;
+import dev.drawethree.ultraprisoncore.gangs.repo.impl.GangsRepositoryImpl;
+import dev.drawethree.ultraprisoncore.gangs.service.GangsService;
+import dev.drawethree.ultraprisoncore.gangs.service.impl.GangsServiceImpl;
 import lombok.Getter;
 
 public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	public static final String MODULE_NAME = "Gangs";
-	public static final String TABLE_NAME = "UltraPrison_Gangs";
-	public static final String INVITES_TABLE_NAME = "UltraPrison_Gang_Invites";
 
 	@Getter
 	private static UltraPrisonGangs instance;
@@ -41,6 +41,12 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
 	@Getter
 	private final UltraPrisonCore core;
+
+	@Getter
+	private GangsRepository gangsRepository;
+
+	@Getter
+	private GangsService gangsService;
 
 	private boolean enabled;
 
@@ -66,6 +72,11 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 
 		GangCommand gangCommand = new GangCommand(this);
 		gangCommand.register();
+
+		this.gangsRepository = new GangsRepositoryImpl(this.core.getPluginDatabase());
+		this.gangsRepository.createTables();
+
+		this.gangsService = new GangsServiceImpl(this.gangsRepository);
 
 		this.gangsManager = new GangsManager(this);
 		this.gangsManager.enable();
@@ -98,27 +109,13 @@ public final class UltraPrisonGangs implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case SQLITE:
-			case MYSQL: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))",
-						"CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))",
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.gangsRepository.clearTableData();
 		return true;
 	}
 }

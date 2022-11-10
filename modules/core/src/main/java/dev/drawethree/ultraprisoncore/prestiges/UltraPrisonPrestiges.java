@@ -2,7 +2,6 @@ package dev.drawethree.ultraprisoncore.prestiges;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.prestiges.api.UltraPrisonPrestigesAPI;
 import dev.drawethree.ultraprisoncore.prestiges.api.UltraPrisonPrestigesAPIImpl;
 import dev.drawethree.ultraprisoncore.prestiges.commands.MaxPrestigeCommand;
@@ -12,13 +11,16 @@ import dev.drawethree.ultraprisoncore.prestiges.commands.PrestigeTopCommand;
 import dev.drawethree.ultraprisoncore.prestiges.config.PrestigeConfig;
 import dev.drawethree.ultraprisoncore.prestiges.listener.PrestigeListener;
 import dev.drawethree.ultraprisoncore.prestiges.manager.PrestigeManager;
+import dev.drawethree.ultraprisoncore.prestiges.repo.PrestigeRepository;
+import dev.drawethree.ultraprisoncore.prestiges.repo.impl.PrestigeRepositoryImpl;
+import dev.drawethree.ultraprisoncore.prestiges.service.PrestigeService;
+import dev.drawethree.ultraprisoncore.prestiges.service.impl.PrestigeServiceImpl;
 import dev.drawethree.ultraprisoncore.prestiges.task.SavePlayerDataTask;
 import lombok.Getter;
 
 @Getter
 public final class UltraPrisonPrestiges implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_Prestiges";
 	public static final String MODULE_NAME = "Prestiges";
 
 	@Getter
@@ -33,6 +35,12 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 
 	@Getter
 	private final UltraPrisonCore core;
+
+	@Getter
+	private PrestigeRepository prestigeRepository;
+
+	@Getter
+	private PrestigeService prestigeService;
 
 	private boolean enabled;
 
@@ -56,6 +64,11 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 
 		this.prestigeConfig = new PrestigeConfig(this);
 		this.prestigeConfig.load();
+
+		this.prestigeRepository = new PrestigeRepositoryImpl(this.core.getPluginDatabase());
+		this.prestigeRepository.createTables();
+
+		this.prestigeService = new PrestigeServiceImpl(this.prestigeRepository);
 
 		this.prestigeManager = new PrestigeManager(this);
 		this.prestigeManager.enable();
@@ -83,26 +96,13 @@ public final class UltraPrisonPrestiges implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case MYSQL:
-			case SQLITE: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_prestige bigint, primary key (UUID))"
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.prestigeRepository.clearTableData();
 		return true;
 	}
 

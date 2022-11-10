@@ -3,7 +3,6 @@ package dev.drawethree.ultraprisoncore.mines;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPI;
 import dev.drawethree.ultraprisoncore.mines.api.UltraPrisonMinesAPIImpl;
 import dev.drawethree.ultraprisoncore.mines.commands.MineCommand;
@@ -88,18 +87,13 @@ public class UltraPrisonMines implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[0];
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		return new String[0];
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
 		return false;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		return true;
 	}
 
 	private void loadMessages() {

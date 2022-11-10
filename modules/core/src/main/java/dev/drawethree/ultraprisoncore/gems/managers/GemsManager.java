@@ -101,14 +101,14 @@ public class GemsManager {
 	private void savePlayerData(Player player, boolean removeFromCache, boolean async) {
 		if (async) {
 			Schedulers.async().run(() -> {
-				this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
+				this.plugin.getGemsService().setGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
 				if (removeFromCache) {
 					gemsCache.remove(player.getUniqueId());
 				}
 				this.plugin.getCore().debug(String.format("Saved player %s gems to database.", player.getName()), this.plugin);
 			});
 		} else {
-			this.plugin.getCore().getPluginDatabase().updateGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
+			this.plugin.getGemsService().setGems(player, gemsCache.getOrDefault(player.getUniqueId(), 0L));
 			if (removeFromCache) {
 				gemsCache.remove(player.getUniqueId());
 			}
@@ -118,7 +118,7 @@ public class GemsManager {
 
 	public void savePlayerDataOnDisable() {
 		for (UUID uuid : gemsCache.keySet()) {
-			this.plugin.getCore().getPluginDatabase().updateGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
+			this.plugin.getGemsService().setGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
 		}
 		gemsCache.clear();
 		this.plugin.getCore().getLogger().info("Saved online players gems.");
@@ -126,7 +126,7 @@ public class GemsManager {
 
 	private void addIntoTable(Player player) {
 		Schedulers.async().run(() -> {
-			this.plugin.getCore().getPluginDatabase().addIntoGems(player, startingGems);
+			this.plugin.getGemsService().createGems(player, startingGems);
 		});
 	}
 
@@ -136,7 +136,7 @@ public class GemsManager {
 
 	private void loadPlayerData(Player player) {
 		Schedulers.async().run(() -> {
-			long playerGems = this.plugin.getCore().getPluginDatabase().getPlayerGems(player);
+			long playerGems = this.plugin.getGemsService().getPlayerGems(player);
 			gemsCache.put(player.getUniqueId(), playerGems);
 			this.plugin.getCore().debug(String.format("Loaded gems of player %s from database", player.getName()), this.plugin);
 		});
@@ -145,7 +145,7 @@ public class GemsManager {
 	public void setGems(OfflinePlayer p, long newAmount, CommandSender executor) {
 		Schedulers.async().run(() -> {
 			if (!p.isOnline()) {
-				this.plugin.getCore().getPluginDatabase().updateGems(p, newAmount);
+				this.plugin.getGemsService().setGems(p, newAmount);
 			} else {
 				gemsCache.put(p.getUniqueId(), newAmount);
 			}
@@ -171,7 +171,7 @@ public class GemsManager {
 		}
 
 		if (!p.isOnline()) {
-			this.plugin.getCore().getPluginDatabase().updateGems(p, newAmount);
+			this.plugin.getGemsService().setGems(p, newAmount);
 		} else {
 			gemsCache.put(p.getUniqueId(), newAmount);
 			if (executor instanceof ConsoleCommandSender && !this.hasOffGemsMessages(p.getPlayer())) {
@@ -273,7 +273,7 @@ public class GemsManager {
 
 	public synchronized long getPlayerGems(OfflinePlayer p) {
 		if (!p.isOnline()) {
-			return this.plugin.getCore().getPluginDatabase().getPlayerGems(p);
+			return this.plugin.getGemsService().getPlayerGems(p);
 		} else {
 			return gemsCache.getOrDefault(p.getUniqueId(), (long) 0);
 		}
@@ -291,7 +291,7 @@ public class GemsManager {
 			this.callGemsLostEvent(cause, p, amount);
 
 			if (!p.isOnline()) {
-				this.plugin.getCore().getPluginDatabase().updateGems(p, finalgems);
+				this.plugin.getGemsService().setGems(p, finalgems);
 			} else {
 				gemsCache.put(p.getUniqueId(), finalgems);
 			}
@@ -327,7 +327,7 @@ public class GemsManager {
 	private void updateGemsTop() {
 		top10Gems = new LinkedHashMap<>();
 		this.plugin.getCore().debug("Starting updating Top 10 - Gems", this.plugin);
-		this.top10Gems = this.plugin.getCore().getPluginDatabase().getTopGems(10);
+		this.top10Gems = this.plugin.getGemsService().getTopGems(10);
 		this.plugin.getCore().debug("GemsTop updated!", this.plugin);
 	}
 

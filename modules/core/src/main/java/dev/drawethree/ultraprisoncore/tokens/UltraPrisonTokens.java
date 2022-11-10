@@ -1,9 +1,7 @@
 package dev.drawethree.ultraprisoncore.tokens;
 
-
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
 import dev.drawethree.ultraprisoncore.tokens.config.BlockRewardsConfig;
@@ -11,14 +9,19 @@ import dev.drawethree.ultraprisoncore.tokens.config.TokensConfig;
 import dev.drawethree.ultraprisoncore.tokens.listener.TokensListener;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
 import dev.drawethree.ultraprisoncore.tokens.managers.TokensManager;
+import dev.drawethree.ultraprisoncore.tokens.repo.BlocksRepository;
+import dev.drawethree.ultraprisoncore.tokens.repo.TokensRepository;
+import dev.drawethree.ultraprisoncore.tokens.repo.impl.BlocksRepositoryImpl;
+import dev.drawethree.ultraprisoncore.tokens.repo.impl.TokensRepositoryImpl;
+import dev.drawethree.ultraprisoncore.tokens.service.BlocksService;
+import dev.drawethree.ultraprisoncore.tokens.service.TokensService;
+import dev.drawethree.ultraprisoncore.tokens.service.impl.BlocksServiceImpl;
+import dev.drawethree.ultraprisoncore.tokens.service.impl.TokensServiceImpl;
 import dev.drawethree.ultraprisoncore.tokens.task.SavePlayerDataTask;
 import lombok.Getter;
 
 public final class UltraPrisonTokens implements UltraPrisonModule {
 
-	public static final String TABLE_NAME_TOKENS = "UltraPrison_Tokens";
-	public static final String TABLE_NAME_BLOCKS = "UltraPrison_BlocksBroken";
-	public static final String TABLE_NAME_BLOCKS_WEEKLY = "UltraPrison_BlocksBrokenWeekly";
 	public static final String MODULE_NAME = "Tokens";
 
 	@Getter
@@ -38,6 +41,18 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	@Getter
 	private CommandManager commandManager;
+
+	@Getter
+	private TokensRepository tokensRepository;
+
+	@Getter
+	private TokensService tokensService;
+
+	@Getter
+	private BlocksRepository blocksRepository;
+
+	@Getter
+	private BlocksService blocksService;
 
 	@Getter
 	private final UltraPrisonCore core;
@@ -75,6 +90,16 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 		this.tokensConfig.load();
 		this.blockRewardsConfig.load();
+
+		this.tokensRepository = new TokensRepositoryImpl(this.core.getPluginDatabase());
+		this.tokensRepository.createTables();
+
+		this.tokensService = new TokensServiceImpl(this.tokensRepository);
+
+		this.blocksRepository = new BlocksRepositoryImpl(this.core.getPluginDatabase());
+		this.blocksRepository.createTables();
+
+		this.blocksService = new BlocksServiceImpl(this.blocksRepository);
 
 		this.tokensManager = new TokensManager(this);
 		this.tokensManager.enable();
@@ -114,28 +139,14 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME_BLOCKS, TABLE_NAME_TOKENS, TABLE_NAME_BLOCKS_WEEKLY};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case MYSQL:
-			case SQLITE: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKENS + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))",
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_BLOCKS + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))",
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME_BLOCKS_WEEKLY + "(UUID varchar(36) NOT NULL UNIQUE, Blocks bigint, primary key (UUID))"
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.tokensRepository.clearTableData();
+		this.blocksRepository.clearTableData();
 		return true;
 	}
 

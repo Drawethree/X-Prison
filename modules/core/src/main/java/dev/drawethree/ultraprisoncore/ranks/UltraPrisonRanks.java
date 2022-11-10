@@ -2,7 +2,6 @@ package dev.drawethree.ultraprisoncore.ranks;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPI;
 import dev.drawethree.ultraprisoncore.ranks.api.UltraPrisonRanksAPIImpl;
 import dev.drawethree.ultraprisoncore.ranks.commands.MaxRankupCommand;
@@ -11,12 +10,15 @@ import dev.drawethree.ultraprisoncore.ranks.commands.SetRankCommand;
 import dev.drawethree.ultraprisoncore.ranks.config.RanksConfig;
 import dev.drawethree.ultraprisoncore.ranks.listener.RanksListener;
 import dev.drawethree.ultraprisoncore.ranks.manager.RanksManager;
+import dev.drawethree.ultraprisoncore.ranks.repo.RanksRepository;
+import dev.drawethree.ultraprisoncore.ranks.repo.impl.RanksRepositoryImpl;
+import dev.drawethree.ultraprisoncore.ranks.service.RanksService;
+import dev.drawethree.ultraprisoncore.ranks.service.impl.RanksServiceImpl;
 import lombok.Getter;
 
 @Getter
 public final class UltraPrisonRanks implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_Ranks";
 	public static final String MODULE_NAME = "Ranks";
 
 	@Getter
@@ -27,6 +29,12 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	private UltraPrisonRanksAPI api;
 	@Getter
 	private final UltraPrisonCore core;
+
+	@Getter
+	private RanksRepository ranksRepository;
+
+	@Getter
+	private RanksService ranksService;
 
 	private boolean enabled;
 
@@ -49,6 +57,9 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 		this.enabled = true;
 		this.ranksConfig = new RanksConfig(this);
 		this.ranksConfig.load();
+		this.ranksRepository = new RanksRepositoryImpl(this.core.getPluginDatabase());
+		this.ranksRepository.createTables();
+		this.ranksService = new RanksServiceImpl(this.ranksRepository);
 		this.ranksManager = new RanksManager(this);
 		this.ranksManager.enable();
 		this.api = new UltraPrisonRanksAPIImpl(this.ranksManager);
@@ -72,26 +83,13 @@ public final class UltraPrisonRanks implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{TABLE_NAME};
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case MYSQL:
-			case SQLITE: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, primary key (UUID))"
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.ranksRepository.clearTableData();
 		return true;
 	}
 

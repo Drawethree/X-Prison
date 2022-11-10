@@ -3,7 +3,6 @@ package dev.drawethree.ultraprisoncore;
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.config.FileManager;
-import dev.drawethree.ultraprisoncore.database.Database;
 import dev.drawethree.ultraprisoncore.database.SQLDatabase;
 import dev.drawethree.ultraprisoncore.database.impl.MySQLDatabase;
 import dev.drawethree.ultraprisoncore.database.impl.SQLiteDatabase;
@@ -17,6 +16,10 @@ import dev.drawethree.ultraprisoncore.mainmenu.MainMenu;
 import dev.drawethree.ultraprisoncore.mainmenu.help.HelpGui;
 import dev.drawethree.ultraprisoncore.mines.UltraPrisonMines;
 import dev.drawethree.ultraprisoncore.multipliers.UltraPrisonMultipliers;
+import dev.drawethree.ultraprisoncore.nicknames.repo.NicknameRepository;
+import dev.drawethree.ultraprisoncore.nicknames.repo.impl.NicknameRepositoryImpl;
+import dev.drawethree.ultraprisoncore.nicknames.service.NicknameService;
+import dev.drawethree.ultraprisoncore.nicknames.service.impl.NicknameServiceImpl;
 import dev.drawethree.ultraprisoncore.nms.NMSProvider;
 import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import dev.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
@@ -57,7 +60,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 
 	private boolean debugMode;
 	private Map<String, UltraPrisonModule> modules;
-	private Database pluginDatabase;
+	private SQLDatabase pluginDatabase;
 	private Economy economy;
 	private FileManager fileManager;
 
@@ -79,6 +82,8 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	private List<Material> supportedPickaxes;
 
 	private JetsPrisonMinesAPI jetsPrisonMinesAPI;
+
+	private NicknameService nicknameService;
 
 
 	@Override
@@ -115,9 +120,9 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.initVariables();
 
 		this.initModules();
-		this.pluginDatabase.createTables();
-		this.pluginDatabase.createIndexes();
 		this.loadModules();
+
+		this.initNicknameService();
 
 		this.registerPlaceholders();
 		this.registerJetsPrisonMines();
@@ -127,6 +132,12 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.startMetrics();
 
 		SkullUtils.init();
+	}
+
+	private void initNicknameService() {
+		NicknameRepository nicknameRepository = new NicknameRepositoryImpl(this.getPluginDatabase());
+		nicknameRepository.createTables();
+		this.nicknameService = new NicknameServiceImpl(nicknameRepository);
 	}
 
 	private void initVariables() {
@@ -251,7 +262,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		//Updating of mapping table
 		Events.subscribe(PlayerJoinEvent.class, EventPriority.LOW)
 				.handler(e -> {
-					this.pluginDatabase.updatePlayerNickname(e.getPlayer());
+					this.nicknameService.updatePlayerNickname(e.getPlayer());
 				}).bindWith(this);
 	}
 

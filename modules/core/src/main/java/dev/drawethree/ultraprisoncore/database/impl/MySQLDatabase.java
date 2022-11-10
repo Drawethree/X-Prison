@@ -3,14 +3,13 @@ package dev.drawethree.ultraprisoncore.database.impl;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
-import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.database.SQLDatabase;
+import dev.drawethree.ultraprisoncore.database.PooledSQLDatabase;
 import dev.drawethree.ultraprisoncore.database.model.ConnectionProperties;
 import dev.drawethree.ultraprisoncore.database.model.DatabaseCredentials;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
+import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 
 
-public final class MySQLDatabase extends SQLDatabase {
+public final class MySQLDatabase extends PooledSQLDatabase {
 
     private final DatabaseCredentials credentials;
     private final ConnectionProperties connectionProperties;
@@ -21,17 +20,25 @@ public final class MySQLDatabase extends SQLDatabase {
         this.credentials = credentials;
     }
 
-
     @Override
     public void connect() {
         final HikariConfig hikari = new HikariConfig();
 
         hikari.setPoolName("ultraprison-" + POOL_COUNTER.getAndIncrement());
-        hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName());
 
+        this.applyCredentials(hikari, credentials);
+        this.applyConnectionProperties(hikari, connectionProperties);
+        this.addDefaultDataSourceProperties(hikari);
+        this.hikari = new HikariDataSource(hikari);
+    }
+
+    private void applyCredentials(HikariConfig hikari, DatabaseCredentials credentials) {
+        hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName());
         hikari.setUsername(credentials.getUserName());
         hikari.setPassword(credentials.getPassword());
+    }
 
+    private void applyConnectionProperties(HikariConfig hikari, ConnectionProperties connectionProperties) {
         hikari.setConnectionTimeout(connectionProperties.getConnectionTimeout());
         hikari.setIdleTimeout(connectionProperties.getIdleTimeout());
         hikari.setKeepaliveTime(connectionProperties.getKeepAliveTime());
@@ -40,7 +47,9 @@ public final class MySQLDatabase extends SQLDatabase {
         hikari.setMaximumPoolSize(connectionProperties.getMaximumPoolSize());
         hikari.setLeakDetectionThreshold(connectionProperties.getLeakDetectionThreshold());
         hikari.setConnectionTestQuery(connectionProperties.getTestQuery());
+    }
 
+    private void addDefaultDataSourceProperties(HikariConfig hikari) {
         hikari.addDataSourceProperty("cachePrepStmts", true);
         hikari.addDataSourceProperty("prepStmtCacheSize", 250);
         hikari.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
@@ -51,23 +60,10 @@ public final class MySQLDatabase extends SQLDatabase {
         hikari.addDataSourceProperty("cacheServerConfiguration", true);
         hikari.addDataSourceProperty("elideSetAutoCommits", true);
         hikari.addDataSourceProperty("maintainTimeStats", false);
-
-        this.hikari = new HikariDataSource(hikari);
-
     }
 
     @Override
-    public void createTables() {
-        execute("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
-        for (UltraPrisonModule module : this.plugin.getModules()) {
-            for (String sql : module.getCreateTablesSQL(this.getDatabaseType())) {
-                execute(sql);
-            }
-        }
-    }
-
-    @Override
-    public DatabaseType getDatabaseType() {
-        return DatabaseType.MYSQL;
+    public SQLDatabaseType getDatabaseType() {
+        return SQLDatabaseType.MYSQL;
     }
 }

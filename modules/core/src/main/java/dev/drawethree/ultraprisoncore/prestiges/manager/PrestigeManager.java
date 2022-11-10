@@ -38,7 +38,7 @@ public class PrestigeManager {
 
     private void saveAllDataSync() {
         for (UUID uuid : this.onlinePlayersPrestige.keySet()) {
-            this.plugin.getCore().getPluginDatabase().updatePrestige(Players.getOfflineNullable(uuid), onlinePlayersPrestige.get(uuid));
+            this.plugin.getPrestigeService().setPrestige(Players.getOfflineNullable(uuid), onlinePlayersPrestige.get(uuid));
         }
         this.plugin.getCore().getLogger().info("Saved online players prestiges.");
     }
@@ -58,7 +58,7 @@ public class PrestigeManager {
 	}
 
 	private void savePlayerDataLogic(Player player, boolean removeFromCache) {
-		this.plugin.getCore().getPluginDatabase().updatePrestige(player, this.getPlayerPrestige(player).getId());
+        this.plugin.getPrestigeService().setPrestige(player, this.getPlayerPrestige(player).getId());
 		if (removeFromCache) {
 			this.onlinePlayersPrestige.remove(player.getUniqueId());
 		}
@@ -68,8 +68,8 @@ public class PrestigeManager {
 
     public void loadPlayerPrestige(Player player) {
         Schedulers.async().run(() -> {
-            this.plugin.getCore().getPluginDatabase().addIntoPrestiges(player);
-            long prestige = this.plugin.getCore().getPluginDatabase().getPlayerPrestige(player);
+            this.plugin.getPrestigeService().createPrestige(player);
+            long prestige = this.plugin.getPrestigeService().getPlayerPrestige(player);
             this.onlinePlayersPrestige.put(player.getUniqueId(), prestige);
             this.plugin.getCore().debug("Loaded " + player.getName() + "'s prestige.", this.plugin);
         });
@@ -198,7 +198,7 @@ public class PrestigeManager {
     public void sendPrestigeTop(CommandSender sender) {
 
         List<String> prestigeTopFormat = this.getConfig().getPrestigeTopFormat();
-		Map<UUID, Long> topPrestige = this.plugin.getCore().getPluginDatabase().getTopPrestiges(this.getConfig().getTopPlayersAmount());
+        Map<UUID, Long> topPrestige = this.plugin.getPrestigeService().getTopPrestiges(this.getConfig().getTopPlayersAmount());
 
 		for (String s : prestigeTopFormat) {
             if (s.startsWith("{FOR_EACH_PLAYER}")) {

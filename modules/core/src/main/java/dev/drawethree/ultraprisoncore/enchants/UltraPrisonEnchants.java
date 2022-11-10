@@ -3,7 +3,6 @@ package dev.drawethree.ultraprisoncore.enchants;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPI;
 import dev.drawethree.ultraprisoncore.enchants.api.UltraPrisonEnchantsAPIImpl;
 import dev.drawethree.ultraprisoncore.enchants.command.*;
@@ -136,18 +135,13 @@ public final class UltraPrisonEnchants implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[0];
-	}
-
-	@Override
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		return new String[0];
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
 		return false;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		return true;
 	}
 
 	public boolean isAutoSellModuleEnabled() {

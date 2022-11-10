@@ -4,7 +4,6 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeReceiveEvent;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
-import dev.drawethree.ultraprisoncore.database.model.DatabaseType;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangJoinEvent;
@@ -15,6 +14,10 @@ import dev.drawethree.ultraprisoncore.history.api.UltraPrisonHistoryAPI;
 import dev.drawethree.ultraprisoncore.history.api.UltraPrisonHistoryAPIImpl;
 import dev.drawethree.ultraprisoncore.history.gui.PlayerHistoryGUI;
 import dev.drawethree.ultraprisoncore.history.manager.HistoryManager;
+import dev.drawethree.ultraprisoncore.history.repo.HistoryRepository;
+import dev.drawethree.ultraprisoncore.history.repo.impl.HistoryRepositoryImpl;
+import dev.drawethree.ultraprisoncore.history.service.HistoryService;
+import dev.drawethree.ultraprisoncore.history.service.impl.HistoryServiceImpl;
 import dev.drawethree.ultraprisoncore.multipliers.api.events.PlayerMultiplierReceiveEvent;
 import dev.drawethree.ultraprisoncore.prestiges.api.events.PlayerPrestigeEvent;
 import dev.drawethree.ultraprisoncore.ranks.api.events.PlayerRankUpEvent;
@@ -30,15 +33,20 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
-public class UltraPrisonHistory implements UltraPrisonModule {
+public final class UltraPrisonHistory implements UltraPrisonModule {
 
-	public static final String TABLE_NAME = "UltraPrison_History";
 	private static final String MODULE_NAME = "History";
 	@Getter
 	private final UltraPrisonCore core;
 
 	@Getter
 	private HistoryManager historyManager;
+
+	@Getter
+	private HistoryRepository historyRepository;
+
+	@Getter
+	private HistoryService historyService;
 
 	@Getter
 	private UltraPrisonHistoryAPI api;
@@ -53,6 +61,9 @@ public class UltraPrisonHistory implements UltraPrisonModule {
 	@Override
 	public void enable() {
 		this.enabled = true;
+		this.historyRepository = new HistoryRepositoryImpl(this.core.getPluginDatabase());
+		this.historyRepository.createTables();
+		this.historyService = new HistoryServiceImpl(this.historyRepository);
 		this.historyManager = new HistoryManager(this);
 		this.api = new UltraPrisonHistoryAPIImpl(this);
 		this.registerCommands();
@@ -159,29 +170,13 @@ public class UltraPrisonHistory implements UltraPrisonModule {
 	}
 
 	@Override
-	public String[] getTables() {
-		return new String[]{
-				TABLE_NAME
-		};
-	}
-
-	@Override
-	// 						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))",
-	public String[] getCreateTablesSQL(DatabaseType type) {
-		switch (type) {
-			case SQLITE:
-			case MYSQL: {
-				return new String[]{
-						"CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(uuid varchar(36) NOT NULL UNIQUE, player_uuid varchar(36) NOT NULL, module varchar(36) NOT NULL, context TEXT ,created_at DATETIME)"
-				};
-			}
-			default:
-				throw new IllegalStateException("Unsupported Database type: " + type);
-		}
-	}
-
-	@Override
 	public boolean isHistoryEnabled() {
 		return false;
+	}
+
+	@Override
+	public boolean resetAllData() {
+		this.historyRepository.clearTableData();
+		return true;
 	}
 }

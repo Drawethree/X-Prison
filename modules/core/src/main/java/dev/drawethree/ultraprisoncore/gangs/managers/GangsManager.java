@@ -58,7 +58,7 @@ public class GangsManager {
 	private void loadGangs() {
 		this.gangs.clear();
 		Schedulers.async().run(() -> {
-			for (Gang g : this.plugin.getCore().getPluginDatabase().getAllGangs()) {
+			for (Gang g : this.plugin.getGangsService().getAllGangs()) {
 				this.gangs.put(g.getUuid(), g);
 			}
 		});
@@ -66,7 +66,7 @@ public class GangsManager {
 
 	private void saveDataOnDisable() {
 		for (Gang g : this.gangs.values()) {
-			this.plugin.getCore().getPluginDatabase().updateGang(g);
+			this.plugin.getGangsService().updateGang(g);
 		}
 		this.plugin.getCore().getLogger().info("Saved all gangs.");
 	}
@@ -122,7 +122,7 @@ public class GangsManager {
 
 		PlayerUtils.sendMessage(creator, this.plugin.getConfig().getMessage("gang-created").replace("%name%", TextUtils.applyColor(name)));
 
-		this.plugin.getCore().getPluginDatabase().createGang(g);
+		this.plugin.getGangsService().createGang(g);
 		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getConfig().getMessage("gang-create-broadcast").replace("%gang%", TextUtils.applyColor(g.getName())).replace("%player%", creator.getName())));
 		return GangCreateResult.SUCCESS;
 	}
@@ -341,7 +341,7 @@ public class GangsManager {
 		gang.disband();
 
 		this.gangs.remove(gang.getUuid());
-		this.plugin.getCore().getPluginDatabase().deleteGang(gang);
+		this.plugin.getGangsService().deleteGang(gang);
 
 		Players.all().forEach(player1 -> PlayerUtils.sendMessage(player1, this.plugin.getConfig().getMessage("gang-disband-broadcast").replace("%gang%", gang.getName()).replace("%player%", player.getName())));
 	}

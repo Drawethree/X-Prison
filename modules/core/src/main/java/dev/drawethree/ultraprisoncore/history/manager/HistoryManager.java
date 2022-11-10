@@ -37,16 +37,16 @@ public class HistoryManager {
 	}
 
 	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
-		return this.plugin.getCore().getPluginDatabase().getPlayerHistory(player);
+		return this.plugin.getHistoryService().getPlayerHistory(player);
 	}
 
 	public void createPlayerHistoryLine(OfflinePlayer player, UltraPrisonModule module, String context) {
 		HistoryLine history = createHistoryLineObject(player, module, context);
-		this.plugin.getCore().getPluginDatabase().addHistoryLine(player, history);
+		this.plugin.getHistoryService().createHistoryLine(player, history);
 	}
 
 	public void clearPlayerHistory(OfflinePlayer target) {
-		this.plugin.getCore().getPluginDatabase().clearHistory(target);
+		this.plugin.getHistoryService().deleteHistory(target);
 	}
 
 	public void openPlayerHistoryGui(Player sender, OfflinePlayer target, Predicate<HistoryLine> filter) {
