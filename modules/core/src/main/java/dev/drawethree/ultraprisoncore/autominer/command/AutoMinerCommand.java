@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class AutoMinerCommand {
 
-	private static final String[] COMMAND_ALIASES = {"miner", "autominer"};
+	private static final String[] COMMAND_ALIASES = {"autominer"};
 
 	private final UltraPrisonAutoMiner plugin;
 

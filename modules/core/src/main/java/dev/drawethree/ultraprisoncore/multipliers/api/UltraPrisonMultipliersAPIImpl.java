@@ -7,7 +7,7 @@ import dev.drawethree.ultraprisoncore.multipliers.multiplier.Multiplier;
 import dev.drawethree.ultraprisoncore.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.entity.Player;
 
-public class UltraPrisonMultipliersAPIImpl implements UltraPrisonMultipliersAPI {
+public final class UltraPrisonMultipliersAPIImpl implements UltraPrisonMultipliersAPI {
 
 	private final UltraPrisonMultipliers plugin;
 

@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.autominer.api;
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import org.bukkit.entity.Player;
 
-public class UltraPrisonAutoMinerAPIImpl implements UltraPrisonAutoMinerAPI {
+public final class UltraPrisonAutoMinerAPIImpl implements UltraPrisonAutoMinerAPI {
 
 	private final UltraPrisonAutoMiner plugin;
 

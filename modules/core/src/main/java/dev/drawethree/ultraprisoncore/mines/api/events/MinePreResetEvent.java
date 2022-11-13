@@ -1,14 +1,14 @@
 package dev.drawethree.ultraprisoncore.mines.api.events;
 
+import dev.drawethree.ultraprisoncore.api.events.UltraPrisonEvent;
 import dev.drawethree.ultraprisoncore.mines.model.mine.Mine;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class MinePreResetEvent extends Event implements Cancellable {
+public final class MinePreResetEvent extends UltraPrisonEvent implements Cancellable {
 
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 

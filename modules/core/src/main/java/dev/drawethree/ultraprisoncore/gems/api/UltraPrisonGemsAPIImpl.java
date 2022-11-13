@@ -5,7 +5,7 @@ import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
 import dev.drawethree.ultraprisoncore.gems.managers.GemsManager;
 import org.bukkit.OfflinePlayer;
 
-public class UltraPrisonGemsAPIImpl implements UltraPrisonGemsAPI {
+public final class UltraPrisonGemsAPIImpl implements UltraPrisonGemsAPI {
 
 
 	private final GemsManager manager;

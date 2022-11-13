@@ -9,8 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
-public class PlayerMultiplierReceiveEvent extends UltraPrisonPlayerEvent {
-
+public final class PlayerMultiplierReceiveEvent extends UltraPrisonPlayerEvent {
 
 	private static final HandlerList handlers = new HandlerList();
 

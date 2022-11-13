@@ -1,13 +1,13 @@
 package dev.drawethree.ultraprisoncore.gangs.api.events;
 
+import dev.drawethree.ultraprisoncore.api.events.player.UltraPrisonPlayerEvent;
 import dev.drawethree.ultraprisoncore.gangs.model.Gang;
 import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public final class GangJoinEvent extends Event implements Cancellable {
+public final class GangJoinEvent extends UltraPrisonPlayerEvent implements Cancellable {
 
 	private static final HandlerList HANDLERS_LIST = new HandlerList();
 
@@ -26,6 +26,7 @@ public final class GangJoinEvent extends Event implements Cancellable {
 	 * @param gang   Gang
 	 */
 	public GangJoinEvent(OfflinePlayer player, Gang gang) {
+		super(player);
 		this.player = player;
 		this.gang = gang;
 	}

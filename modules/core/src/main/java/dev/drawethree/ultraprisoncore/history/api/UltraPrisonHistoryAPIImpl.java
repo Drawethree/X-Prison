@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
-public class UltraPrisonHistoryAPIImpl implements UltraPrisonHistoryAPI {
+public final class UltraPrisonHistoryAPIImpl implements UltraPrisonHistoryAPI {
 
 	private final UltraPrisonHistory plugin;
 

@@ -21,6 +21,8 @@ import dev.drawethree.ultraprisoncore.nicknames.repo.impl.NicknameRepositoryImpl
 import dev.drawethree.ultraprisoncore.nicknames.service.NicknameService;
 import dev.drawethree.ultraprisoncore.nicknames.service.impl.NicknameServiceImpl;
 import dev.drawethree.ultraprisoncore.nms.NMSProvider;
+import dev.drawethree.ultraprisoncore.nms.factory.NMSProviderFactory;
+import dev.drawethree.ultraprisoncore.nms.factory.impl.NMSProviderFactoryImpl;
 import dev.drawethree.ultraprisoncore.pickaxelevels.UltraPrisonPickaxeLevels;
 import dev.drawethree.ultraprisoncore.placeholders.UltraPrisonMVdWPlaceholder;
 import dev.drawethree.ultraprisoncore.placeholders.UltraPrisonPAPIPlaceholder;
@@ -106,6 +108,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 
 		if (!this.initDatabase()) {
+			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
 
@@ -118,7 +121,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		}
 
 		this.initVariables();
-
 		this.initModules();
 		this.loadModules();
 
@@ -224,7 +226,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		} catch (Exception e) {
 			this.getLogger().warning("Could not maintain Database Connection. Disabling plugin.");
 			e.printStackTrace();
-			this.getServer().getPluginManager().disablePlugin(this);
 			return false;
 		}
 		return true;
@@ -388,16 +389,16 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	}
 
 	private boolean loadNMSProvider() {
+		NMSProviderFactory factory = new NMSProviderFactoryImpl();
 		try {
-			String packageName = NMSProvider.class.getPackage().getName();
-			String internalsName = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-			this.nmsProvider = (NMSProvider) Class.forName(packageName + ".NMSProvider_" + internalsName).newInstance();
-			this.getLogger().info("NMSProvider loaded for version " + internalsName);
-			return true;
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException exception) {
+			this.nmsProvider = factory.createNMSProvider();
+			this.getLogger().info("NMSProvider loaded:  " + nmsProvider.getClass().getSimpleName());
+		} catch (ClassNotFoundException e) {
 			this.getLogger().warning("NMSProvider could not find a valid implementation for this server version.");
-			return false;
+		} catch (InstantiationException | IllegalAccessException | ClassCastException e) {
+			e.printStackTrace();
 		}
+		return this.nmsProvider != null;
 	}
 
 	public Collection<UltraPrisonModule> getModules() {

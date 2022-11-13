@@ -2,7 +2,7 @@ package dev.drawethree.ultraprisoncore.history;
 
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
-import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeReceiveEvent;
+import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutoMinerTimeModifyEvent;
 import dev.drawethree.ultraprisoncore.autominer.api.events.PlayerAutomineEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangCreateEvent;
 import dev.drawethree.ultraprisoncore.gangs.api.events.GangDisbandEvent;
@@ -130,7 +130,7 @@ public final class UltraPrisonHistory implements UltraPrisonModule {
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getAutoMiner(), String.format("Player is Auto-Mining. Time left: %s", TimeUtil.getTime(e.getTimeLeft() - 1)));
 				}).bindWith(this.core);
-		Events.subscribe(PlayerAutoMinerTimeReceiveEvent.class, EventPriority.MONITOR)
+		Events.subscribe(PlayerAutoMinerTimeModifyEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getAutoMiner(), String.format("Received %,d %s of Auto-Miner time.", e.getDuration(), e.getTimeUnit().name()));
 				}).bindWith(this.core);

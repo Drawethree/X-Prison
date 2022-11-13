@@ -4,7 +4,7 @@ import dev.drawethree.ultraprisoncore.prestiges.UltraPrisonPrestiges;
 import dev.drawethree.ultraprisoncore.prestiges.model.Prestige;
 import org.bukkit.entity.Player;
 
-public class UltraPrisonPrestigesAPIImpl implements UltraPrisonPrestigesAPI {
+public final class UltraPrisonPrestigesAPIImpl implements UltraPrisonPrestigesAPI {
 
 	private final UltraPrisonPrestiges plugin;
 
