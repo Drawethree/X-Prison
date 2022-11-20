@@ -72,6 +72,6 @@ public class TokensRepositoryImpl implements TokensRepository {
 
 	@Override
 	public void clearTableData() {
-		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME_TOKENS);
+		this.database.executeSqlAsync("DELETE FROM " + TABLE_NAME_TOKENS);
 	}
 }
