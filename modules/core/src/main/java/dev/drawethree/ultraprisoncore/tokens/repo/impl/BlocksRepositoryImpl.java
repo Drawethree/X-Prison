@@ -117,6 +117,6 @@ public class BlocksRepositoryImpl implements BlocksRepository {
 
 	@Override
 	public void clearTableData() {
-		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME_BLOCKS);
+		this.database.executeSqlAsync("DELETE FROM " + TABLE_NAME_BLOCKS);
 	}
 }

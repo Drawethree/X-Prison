@@ -167,7 +167,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 
 	@Override
 	public void clearTableData() {
-		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME);
-		this.database.executeSqlAsync("TRUNCATE TABLE " + INVITES_TABLE_NAME);
+		this.database.executeSqlAsync("DELETE FROM " + TABLE_NAME);
+		this.database.executeSqlAsync("DELETE FROM " + INVITES_TABLE_NAME);
 	}
 }

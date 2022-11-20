@@ -78,6 +78,6 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 
 	@Override
 	public void clearTableData() {
-		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME);
+		this.database.executeSqlAsync("DELETE FROM " + TABLE_NAME);
 	}
 }

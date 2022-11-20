@@ -71,6 +71,6 @@ public class PrestigeRepositoryImpl implements PrestigeRepository {
 
 	@Override
 	public void clearTableData() {
-		this.database.executeSqlAsync("TRUNCATE TABLE " + TABLE_NAME);
+		this.database.executeSqlAsync("DELETE FROM " + TABLE_NAME);
 	}
 }
