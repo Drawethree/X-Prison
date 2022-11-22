@@ -17,6 +17,5 @@ public interface GemsRepository {
 
 	void createTables();
 
-
 	void clearTableData();
 }

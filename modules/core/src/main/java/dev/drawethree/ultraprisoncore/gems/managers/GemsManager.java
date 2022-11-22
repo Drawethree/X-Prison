@@ -137,7 +137,7 @@ public class GemsManager {
 	private void loadPlayerData(Player player) {
 		Schedulers.async().run(() -> {
 			long playerGems = this.plugin.getGemsService().getPlayerGems(player);
-			gemsCache.put(player.getUniqueId(), playerGems);
+			this.gemsCache.put(player.getUniqueId(), playerGems);
 			this.plugin.getCore().debug(String.format("Loaded gems of player %s from database", player.getName()), this.plugin);
 		});
 	}
