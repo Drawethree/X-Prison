@@ -32,6 +32,6 @@ public class GemsServiceImpl implements GemsService {
 
 	@Override
 	public void createGems(OfflinePlayer player, long startingGems) {
-		repository.updateGems(player, startingGems);
+		repository.addIntoGems(player, startingGems);
 	}
 }
