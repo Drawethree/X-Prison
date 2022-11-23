@@ -320,9 +320,9 @@ public class GangsManager {
 		return this.gangChatEnabledPlayers.contains(p.getUniqueId());
 	}
 
-	public void disbandGang(Player player, Gang gang) {
+	public void disbandGang(Player player, Gang gang, boolean force) {
 
-		if (!gang.isOwner(player)) {
+		if (!gang.isOwner(player) && !force) {
 			PlayerUtils.sendMessage(player, this.plugin.getConfig().getMessage("gang-not-owner"));
 			return;
 		}
