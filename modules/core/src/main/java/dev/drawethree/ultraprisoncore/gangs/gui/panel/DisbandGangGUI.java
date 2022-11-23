@@ -19,7 +19,7 @@ public final class DisbandGangGUI extends ConfirmationGui {
 	@Override
 	public void confirm(boolean confirm) {
 		if (confirm) {
-			this.plugin.getGangsManager().disbandGang(getPlayer(), this.gang);
+			this.plugin.getGangsManager().disbandGang(getPlayer(), this.gang, false);
 		}
 		this.close();
 	}
