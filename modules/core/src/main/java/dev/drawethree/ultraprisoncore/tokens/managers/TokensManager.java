@@ -636,6 +636,14 @@ public class TokensManager {
 	}
 
 	public void enable() {
+		if (this.checkBlocksTopWeeklyReset()) {
+			resetBlocksTopWeekly(Bukkit.getConsoleSender());
+		}
 		this.loadPlayerDataOnEnable();
+	}
+
+	private boolean checkBlocksTopWeeklyReset() {
+		long nextResetWeeklyMillis = this.plugin.getTokensConfig().getNextResetWeekly();
+		return Time.nowMillis() >= nextResetWeeklyMillis;
 	}
 }
