@@ -406,7 +406,7 @@ public class GangsManager {
 				for (int i = 0; i < 10; i++) {
 					try {
 						Gang gang = this.topGangs.get(i);
-						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%gang%", gang.getName()).replace("%value%", String.valueOf(gang.getValue())));
+						PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%gang%", gang.getName()).replace("%value%", String.format("%,d", gang.getValue())));
 					} catch (Exception e) {
 						break;
 					}
@@ -495,7 +495,7 @@ public class GangsManager {
 		return true;
 	}
 
-	public boolean modifyValue(CommandSender sender, Gang gang, int amount, String operation) {
+	public boolean modifyValue(CommandSender sender, Gang gang, long amount, String operation) {
 
 		if (amount <= 0) {
 			PlayerUtils.sendMessage(sender, this.plugin.getConfig().getMessage("invalid-value"));

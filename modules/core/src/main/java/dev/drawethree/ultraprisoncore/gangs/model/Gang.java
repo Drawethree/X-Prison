@@ -27,7 +27,7 @@ public class Gang {
 	private List<UUID> gangMembers;
 	private List<GangInvitation> pendingInvites;
 	private String name;
-	private int value;
+	private long value;
 
 	public Gang(String name, UUID gangOwner) {
 		this.uuid = UUID.randomUUID();
