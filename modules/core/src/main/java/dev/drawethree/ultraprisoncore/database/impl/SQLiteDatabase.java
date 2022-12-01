@@ -45,7 +45,7 @@ public final class SQLiteDatabase extends PooledSQLDatabase {
         hikari.setKeepaliveTime(connectionProperties.getKeepAliveTime());
         hikari.setMaxLifetime(connectionProperties.getMaxLifetime());
         hikari.setMinimumIdle(connectionProperties.getMinimumIdle());
-        hikari.setMaximumPoolSize(connectionProperties.getMaximumPoolSize());
+        hikari.setMaximumPoolSize(1);
         hikari.setLeakDetectionThreshold(connectionProperties.getLeakDetectionThreshold());
         hikari.setConnectionTestQuery(connectionProperties.getTestQuery());
 
