@@ -73,7 +73,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 				}
 				gang.setGangMembers(members);
 
-				int value = set.getInt(GANGS_VALUE_COLNAME);
+				long value = set.getLong(GANGS_VALUE_COLNAME);
 				gang.setValue(value);
 				List<GangInvitation> gangInvitations = getGangInvitations(gang);
 				gang.setPendingInvites(gangInvitations);
@@ -161,7 +161,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value int default 0, members text, primary key (UUID,name))");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, name varchar(36) NOT NULL UNIQUE, owner varchar(36) NOT NULL, value bigint default 0, members text, primary key (UUID,name))");
 		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + INVITES_TABLE_NAME + "(uuid varchar(36) NOT NULL, gang_id varchar(36) NOT NULL, invited_by varchar(36), invited_player varchar(36) not null, invite_date datetime not null, primary key(uuid))");
 	}
 

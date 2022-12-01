@@ -33,7 +33,7 @@ public final class GangValueRemoveSubCommand extends GangSubCommand {
 					return false;
 				}
 
-				int amount = Integer.parseInt(args.get(1));
+				long amount = Long.parseLong(args.get(1));
 				String operation = "remove";
 
 				return this.command.getPlugin().getGangsManager().modifyValue(sender, gang.get(), amount, operation);
