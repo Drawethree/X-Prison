@@ -1,5 +1,6 @@
 package dev.drawethree.ultraprisoncore;
 
+import com.github.lalyos.jfiglet.FigletFont;
 import dev.drawethree.ultraprisoncore.autominer.UltraPrisonAutoMiner;
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import dev.drawethree.ultraprisoncore.config.FileManager;
@@ -51,6 +52,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -97,6 +99,7 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	protected void enable() {
 
 		instance = this;
+		this.printOnEnableMessage();
 		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
@@ -134,6 +137,16 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 		this.startMetrics();
 
 		SkullUtils.init();
+	}
+
+	private void printOnEnableMessage() {
+		try {
+			this.getLogger().info(FigletFont.convertOneLine("UltraPrisonCore"));
+			this.getLogger().info(this.getDescription().getVersion());
+			this.getLogger().info("By: " + this.getDescription().getAuthors());
+			this.getLogger().info("Website: " + this.getDescription().getWebsite());
+		} catch (IOException ignored) {
+		}
 	}
 
 	private void initNicknameService() {

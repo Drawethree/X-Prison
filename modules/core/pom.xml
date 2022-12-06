@@ -5,7 +5,7 @@
     <parent>
         <artifactId>UltraPrisonCore</artifactId>
         <groupId>dev.drawethree</groupId>
-        <version>1.12.7.14</version>
+        <version>1.12.7.15</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -146,6 +146,11 @@
             <groupId>net.objecthunter</groupId>
             <artifactId>exp4j</artifactId>
             <version>0.4.8</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.lalyos</groupId>
+            <artifactId>jfiglet</artifactId>
+            <version>0.0.9</version>
         </dependency>
     </dependencies>
 </project>

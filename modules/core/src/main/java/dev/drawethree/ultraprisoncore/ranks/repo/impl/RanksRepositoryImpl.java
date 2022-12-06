@@ -24,7 +24,7 @@ public class RanksRepositoryImpl implements RanksRepository {
 
 	@Override
 	public int getPlayerRank(OfflinePlayer player) {
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + TABLE_NAME + " WHERE " + RANKS_UUID_COLNAME + "=?")) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con, "SELECT * FROM " + TABLE_NAME + " WHERE " + RANKS_UUID_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
@@ -50,7 +50,7 @@ public class RanksRepositoryImpl implements RanksRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, primary key (UUID))");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_rank int, primary key (UUID))");
 	}
 
 	@Override

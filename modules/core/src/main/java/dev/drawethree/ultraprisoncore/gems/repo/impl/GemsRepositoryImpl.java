@@ -27,7 +27,7 @@ public class GemsRepositoryImpl implements GemsRepository {
 
 	@Override
 	public long getPlayerGems(OfflinePlayer p) {
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + TABLE_NAME + " WHERE " + GEMS_UUID_COLNAME + "=?")) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME + " WHERE " + GEMS_UUID_COLNAME + "=?")) {
 			statement.setString(1, p.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
@@ -48,7 +48,7 @@ public class GemsRepositoryImpl implements GemsRepository {
 	@Override
 	public Map<UUID, Long> getTopGems(int amountOfRecords) {
 		Map<UUID, Long> topGems = new LinkedHashMap<>();
-		try (Connection con = this.database.getConnection(); ResultSet set = con.prepareStatement("SELECT " + GEMS_UUID_COLNAME + "," + GEMS_GEMS_COLNAME + " FROM " + TABLE_NAME + " ORDER BY " + GEMS_GEMS_COLNAME + " DESC LIMIT " + amountOfRecords).executeQuery()) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT " + GEMS_UUID_COLNAME + "," + GEMS_GEMS_COLNAME + " FROM " + TABLE_NAME + " ORDER BY " + GEMS_GEMS_COLNAME + " DESC LIMIT " + amountOfRecords); ResultSet set = statement.executeQuery()) {
 			while (set.next()) {
 				topGems.put(UUID.fromString(set.getString(GEMS_UUID_COLNAME)), set.getLong(GEMS_GEMS_COLNAME));
 			}
@@ -66,7 +66,7 @@ public class GemsRepositoryImpl implements GemsRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 	}
 
 	@Override
