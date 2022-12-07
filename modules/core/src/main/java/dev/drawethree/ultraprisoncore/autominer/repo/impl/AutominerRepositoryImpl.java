@@ -25,7 +25,7 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 
 	@Override
 	public int getPlayerAutoMinerTime(OfflinePlayer p) {
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + TABLE_NAME + " WHERE " + AUTOMINER_UUID_COLNAME + "=?")) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con, "SELECT * FROM " + TABLE_NAME + " WHERE " + AUTOMINER_UUID_COLNAME + "=?")) {
 			statement.setString(1, p.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
 				if (set.next()) {
@@ -40,7 +40,7 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 
 	@Override
 	public void removeExpiredAutoMiners() {
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("DELETE FROM " + TABLE_NAME + " WHERE " + AUTOMINER_TIME_COLNAME + " <= 0")) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con, "DELETE FROM " + TABLE_NAME + " WHERE " + AUTOMINER_TIME_COLNAME + " <= 0")) {
 			statement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -50,7 +50,7 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 	@Override
 	public void saveAutoMiner(Player p, int timeLeft) {
 		if (database.getDatabaseType() == SQLDatabaseType.MYSQL) {
-			try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT INTO " + TABLE_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + AUTOMINER_TIME_COLNAME + "=?")) {
+			try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con, "INSERT INTO " + TABLE_NAME + " VALUES (?,?) ON DUPLICATE KEY UPDATE " + AUTOMINER_TIME_COLNAME + "=?")) {
 				statement.setString(1, p.getUniqueId().toString());
 				statement.setInt(2, timeLeft);
 				statement.setInt(3, timeLeft);
@@ -59,7 +59,7 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 				e.printStackTrace();
 			}
 		} else {
-			try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES(?,?)")) {
+			try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con, "INSERT OR REPLACE INTO " + TABLE_NAME + " VALUES(?,?)")) {
 				statement.setString(1, p.getUniqueId().toString());
 				statement.setDouble(2, timeLeft);
 				statement.execute();
@@ -71,7 +71,7 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 	}
 
 	@Override

@@ -19,7 +19,6 @@ public class SellPriceCommand {
     private final UltraPrisonAutoSell plugin;
 
     public SellPriceCommand(UltraPrisonAutoSell plugin) {
-
         this.plugin = plugin;
     }
 

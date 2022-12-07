@@ -33,7 +33,7 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 	@Override
 	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
 		List<HistoryLine> returnList = new ArrayList<>();
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + TABLE_NAME + " where ?=?")) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME + " where ?=?")) {
 			statement.setString(1, HISTORY_PLAYER_UUID_COLNAME);
 			statement.setString(2, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
@@ -73,7 +73,7 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(uuid varchar(36) NOT NULL UNIQUE, player_uuid varchar(36) NOT NULL, module varchar(36) NOT NULL, context TEXT ,created_at DATETIME)");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(uuid varchar(36) NOT NULL UNIQUE, player_uuid varchar(36) NOT NULL, module varchar(36) NOT NULL, context TEXT ,created_at DATETIME)");
 	}
 
 	@Override

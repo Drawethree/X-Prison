@@ -3,9 +3,11 @@ package dev.drawethree.ultraprisoncore.database;
 import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 import me.lucko.helper.Schedulers;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.Validate;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 
@@ -25,6 +27,24 @@ public abstract class SQLDatabase {
 
 	public abstract Connection getConnection();
 
+	public PreparedStatement prepareStatement(Connection connection, String sql, Object... replacements) {
+
+		PreparedStatement statement;
+		try {
+			statement = connection.prepareStatement(sql);
+			this.replaceQueryParameters(statement,replacements);
+
+			if (this.plugin.isDebugMode()) {
+				this.plugin.getLogger().info("Statement prepared: " + sql + " (Replacement values: " + Arrays.toString(replacements) + ")");
+			}
+
+			return statement;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public void executeSql(String sql, Object... replacements) {
 
 		if (sql == null || sql.isEmpty()) {
@@ -32,9 +52,8 @@ public abstract class SQLDatabase {
 		}
 
 		long startTime = System.currentTimeMillis();
-		try (Connection c = getConnection(); PreparedStatement statement = c.prepareStatement(sql)) {
 
-			this.replaceQueryParamaters(statement, replacements);
+		try (Connection c = getConnection(); PreparedStatement statement = prepareStatement(c,sql,replacements)) {
 
 			statement.execute();
 
@@ -45,13 +64,11 @@ public abstract class SQLDatabase {
 			}
 
 		} catch (SQLException e) {
-			if (e.getErrorCode() != 1061) {
-				e.printStackTrace();
-			}
+			e.printStackTrace();
 		}
 	}
 
-	private void replaceQueryParamaters(PreparedStatement statement, Object[] replacements) {
+	private void replaceQueryParameters(PreparedStatement statement, Object[] replacements) {
 		if (replacements != null) {
 			for (int i = 0; i < replacements.length; i++) {
 				int position = i + 1;

@@ -44,7 +44,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 	@Override
 	public List<Gang> getAllGangs() {
 		List<Gang> returnList = new ArrayList<>();
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + TABLE_NAME); ResultSet set = statement.executeQuery()) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME); ResultSet set = statement.executeQuery()) {
 			while (set.next()) {
 				Gang gang = new Gang();
 
@@ -115,7 +115,7 @@ public class GangsRepositoryImpl implements GangsRepository {
 	@Override
 	public List<GangInvitation> getGangInvitations(Gang gang) {
 		List<GangInvitation> returnList = new ArrayList<>();
-		try (Connection con = this.database.getConnection(); PreparedStatement statement = con.prepareStatement("SELECT * FROM " + INVITES_TABLE_NAME + " WHERE ?=?")) {
+		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + INVITES_TABLE_NAME + " WHERE ?=?")) {
 			statement.setString(1, GANG_INVITATION_GANG_ID);
 			statement.setString(2, gang.getUuid().toString());
 			try (ResultSet set = statement.executeQuery()) {

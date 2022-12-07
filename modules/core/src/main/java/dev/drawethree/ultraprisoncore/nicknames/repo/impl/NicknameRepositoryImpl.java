@@ -29,7 +29,7 @@ public class NicknameRepositoryImpl implements NicknameRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
+		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + UUID_PLAYERNAME_TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, nickname varchar(16) NOT NULL, primary key (UUID))");
 	}
 
 	@Override

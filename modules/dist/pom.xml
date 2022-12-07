@@ -7,7 +7,7 @@
     <parent>
         <groupId>dev.drawethree</groupId>
         <artifactId>UltraPrisonCore</artifactId>
-        <version>1.12.7.14</version>
+        <version>1.12.7.15</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -58,7 +58,11 @@
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.metrics</shadedPattern>
+                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.metrics</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.github.lalyos.jfiglet</pattern>
+                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.jfiglet</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
