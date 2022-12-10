@@ -74,7 +74,8 @@ public final class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 
 			if (BOOSTED_PLAYERS.containsKey(e.getPlayer().getUniqueId())) {
 				return;
@@ -90,6 +91,11 @@ public final class LuckyBoosterEnchant extends UltraPrisonEnchantment {
 				BOOSTED_PLAYERS.remove(e.getPlayer().getUniqueId());
 			}, 5, TimeUnit.MINUTES);
 		}
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return chance * enchantLevel;
 	}
 
 	@Override

@@ -38,7 +38,9 @@ public final class BackpackAutoSellEnchant extends UltraPrisonEnchantment {
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
 				try {
 					UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
@@ -48,6 +50,11 @@ public final class BackpackAutoSellEnchant extends UltraPrisonEnchantment {
 			}
 		}
 
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return this.chance * enchantLevel;
 	}
 
 	@Override

@@ -36,8 +36,8 @@ messages:
   pickaxe_level_required: "&e&lENCHANT &8» &cYou need to have at least &ePickaxe Level %pickaxe_level%&c in order to enchant this!"
 # Should we keep UPC Enchanted pickaxes in players inventory when they die?
 keep-pickaxes-on-death: true
-# Should players be able to open enchanting menu on right clicking a block ?
-open-menu-on-right-click-block: false
+# Action to open Enchanting menu while holding pickaxe (LEFT_CLICK_BLOCK,RIGHT_CLICK_BLOCK,LEFT_CLICK_AIR,RIGHT_CLICK_AIR,PHYSICAL)
+open-enchant-menu-action: RIGHT_CLICK_AIR
 # Enchant Menu Settings
 enchant_menu:
   # GUI Name
@@ -58,6 +58,7 @@ enchant_menu:
       - "&6&l* &ePrice: &f%cost%"
       - "&6&l* &eMax Level: &f%max_level%"
       - "&6&l* &eCurrent Level: &f%current_level%"
+      - "&6&l* &eChance to trigger: &f%%chance%"
       - " "
       - "&7&o(( &f&oLeft-Click&7&o to add 1 level ))"
       - "&7&o(( &f&oRight-Click&7&o to add 10 levels ))"

@@ -41,6 +41,11 @@ public final class FortuneEnchant extends UltraPrisonEnchantment {
 	}
 
 	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return 100.0;
+	}
+
+	@Override
 	public void reload() {
 		super.reload();
 		this.whiteListedBlocks = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Whitelist").stream().map(CompMaterial::fromString).filter(Objects::nonNull).collect(Collectors.toList());

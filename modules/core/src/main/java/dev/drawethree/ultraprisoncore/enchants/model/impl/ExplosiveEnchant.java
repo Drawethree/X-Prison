@@ -71,7 +71,8 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 
 			long timeStart = Time.nowMillis();
 			Block b = e.getBlock();
@@ -145,6 +146,11 @@ public final class ExplosiveEnchant extends UltraPrisonEnchantment {
 			long timeEnd = Time.nowMillis();
 			this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.", this.plugin);
 		}
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return chance * enchantLevel;
 	}
 
 	private void giveEconomyRewardToPlayer(Player p, double totalDeposit) {

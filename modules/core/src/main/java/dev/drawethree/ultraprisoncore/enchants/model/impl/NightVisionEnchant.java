@@ -33,6 +33,11 @@ public final class NightVisionEnchant extends UltraPrisonEnchantment {
 	}
 
 	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return 100.0;
+	}
+
+	@Override
 	public void reload() {
 		super.reload();
 	}

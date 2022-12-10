@@ -4,7 +4,6 @@ import dev.drawethree.ultraprisoncore.UltraPrisonCore;
 import dev.drawethree.ultraprisoncore.UltraPrisonModule;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPI;
 import dev.drawethree.ultraprisoncore.tokens.api.UltraPrisonTokensAPIImpl;
-import dev.drawethree.ultraprisoncore.tokens.config.BlockRewardsConfig;
 import dev.drawethree.ultraprisoncore.tokens.config.TokensConfig;
 import dev.drawethree.ultraprisoncore.tokens.listener.TokensListener;
 import dev.drawethree.ultraprisoncore.tokens.managers.CommandManager;
@@ -26,9 +25,6 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 
 	@Getter
 	private static UltraPrisonTokens instance;
-
-	@Getter
-	private BlockRewardsConfig blockRewardsConfig;
 
 	@Getter
 	private TokensConfig tokensConfig;
@@ -76,7 +72,6 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	@Override
 	public void reload() {
 		this.tokensConfig.reload();
-		this.blockRewardsConfig.reload();
 		this.tokensManager.reload();
 		this.commandManager.reload();
 	}
@@ -86,10 +81,8 @@ public final class UltraPrisonTokens implements UltraPrisonModule {
 	public void enable() {
 
 		this.tokensConfig = new TokensConfig(this);
-		this.blockRewardsConfig = new BlockRewardsConfig(this);
 
 		this.tokensConfig.load();
-		this.blockRewardsConfig.load();
 
 		this.tokensRepository = new TokensRepositoryImpl(this.core.getPluginDatabase());
 		this.tokensRepository.createTables();

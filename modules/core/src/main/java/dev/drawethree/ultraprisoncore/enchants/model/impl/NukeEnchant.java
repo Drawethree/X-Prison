@@ -48,7 +48,8 @@ public final class NukeEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			long startTime = Time.nowMillis();
 			Block b = e.getBlock();
 
@@ -130,6 +131,11 @@ public final class NukeEnchant extends UltraPrisonEnchantment {
 			this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
 		}
 
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return chance * enchantLevel;
 	}
 
 	private void giveEconomyRewardsToPlayer(Player p, double totalDeposit) {

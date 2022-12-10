@@ -8,7 +8,6 @@ import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.UltraPrisonBlockBreakEvent;
-import dev.drawethree.ultraprisoncore.tokens.model.BlockReward;
 import dev.drawethree.ultraprisoncore.utils.item.ItemStackBuilder;
 import dev.drawethree.ultraprisoncore.utils.misc.NumberUtils;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
@@ -342,19 +341,12 @@ public class TokensManager {
 			long currentBroken = getPlayerBrokenBlocks(player);
 			long currentBrokenWeekly = getPlayerBrokenBlocksWeekly(player);
 
-			BlockReward nextReward = this.getNextBlockReward(player);
-
 			if (!player.isOnline()) {
 				this.plugin.getBlocksService().setBlocks(player, currentBroken + finalAmount);
 				this.plugin.getBlocksService().setBlocksWeekly(player, currentBrokenWeekly + finalAmount);
 			} else {
 				blocksCache.put(player.getUniqueId(), currentBroken + finalAmount);
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
-
-				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					nextReward.giveTo((Player) player);
-					nextReward = this.getNextBlockReward(nextReward);
-				}
 			}
 
 			if (sender != null && !(sender instanceof ConsoleCommandSender)) {
@@ -384,35 +376,14 @@ public class TokensManager {
 			long currentBroken = getPlayerBrokenBlocks(player);
 			long currentBrokenWeekly = getPlayerBrokenBlocksWeekly(player);
 
-			BlockReward nextReward = this.getNextBlockReward(player);
-
 			if (!player.isOnline()) {
 				this.plugin.getBlocksService().setBlocks(player, currentBroken + finalAmount);
 				this.plugin.getBlocksService().setBlocksWeekly(player, currentBrokenWeekly + finalAmount);
 			} else {
 				blocksCache.put(player.getUniqueId(), currentBroken + finalAmount);
 				blocksCacheWeekly.put(player.getUniqueId(), currentBrokenWeekly + finalAmount);
-
-				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					nextReward.giveTo((Player) player);
-					nextReward = this.getNextBlockReward(nextReward);
-				}
 			}
 		});
-	}
-
-	private BlockReward getNextBlockReward(BlockReward oldReward) {
-		boolean next = false;
-		for (long l : this.plugin.getBlockRewardsConfig().getBlockRewards().keySet()) {
-			if (next) {
-				return this.plugin.getBlockRewardsConfig().getBlockRewards().get(l);
-			}
-			if (l == oldReward.getBlocksRequired()) {
-				next = true;
-			}
-		}
-
-		return null;
 	}
 
 	public void removeBlocksBroken(CommandSender sender, OfflinePlayer player, long amount) {
@@ -448,7 +419,6 @@ public class TokensManager {
 		}
 
 		Schedulers.async().run(() -> {
-			BlockReward nextReward = this.getNextBlockReward(player);
 
 			if (!player.isOnline()) {
 
@@ -457,11 +427,6 @@ public class TokensManager {
 			} else {
 				blocksCache.put(player.getUniqueId(), amount);
 				blocksCacheWeekly.put(player.getUniqueId(), amount);
-
-				while (nextReward != null && nextReward.getBlocksRequired() <= blocksCache.get(player.getUniqueId())) {
-					nextReward.giveTo((Player) player);
-					nextReward = this.getNextBlockReward(nextReward);
-				}
 			}
 
 			PlayerUtils.sendMessage(sender, plugin.getTokensConfig().getMessage("admin_set_blocks").replace("%player%", player.getName()).replace("%blocks%", String.format("%,d", amount)));
@@ -547,16 +512,6 @@ public class TokensManager {
 				}
 			}
 		});
-	}
-
-	public BlockReward getNextBlockReward(OfflinePlayer p) {
-		long blocksBroken = this.getPlayerBrokenBlocks(p);
-		for (long l : this.plugin.getBlockRewardsConfig().getBlockRewards().keySet()) {
-			if (l > blocksBroken) {
-				return this.plugin.getBlockRewardsConfig().getBlockRewards().get(l);
-			}
-		}
-		return null;
 	}
 
 	public void resetBlocksTopWeekly(CommandSender sender) {
