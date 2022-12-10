@@ -54,6 +54,8 @@ public class MinesListener {
 						return;
 					}
 
+					e.setCancelled(true);
+
 					this.plugin.getManager().selectPosition(e.getPlayer(), pos, Position.of(e.getClickedBlock()));
 				}).bindWith(this.plugin.getCore());
 	}
