@@ -74,7 +74,7 @@ public class EnchantsListener {
 	private void subscribeToPlayerInteractEvent() {
 		Events.subscribe(PlayerInteractEvent.class)
 				.filter(e -> e.getItem() != null && this.plugin.getCore().isPickaxeSupported(e.getItem().getType()))
-				.filter(e -> (e.getAction() == Action.RIGHT_CLICK_AIR || (e.getAction() == Action.RIGHT_CLICK_BLOCK && this.plugin.getEnchantsConfig().isOpenEnchantMenuOnRightClickBlock())))
+				.filter(e -> (this.plugin.getEnchantsConfig().getOpenEnchantMenuActions().contains(e.getAction())))
 				.handler(e -> {
 
 					e.setCancelled(true);

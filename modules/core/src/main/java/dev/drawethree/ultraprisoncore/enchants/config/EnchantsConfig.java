@@ -5,10 +5,13 @@ import dev.drawethree.ultraprisoncore.enchants.UltraPrisonEnchants;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.text.TextUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.block.Action;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EnchantsConfig {
 
@@ -18,13 +21,13 @@ public class EnchantsConfig {
 	private Map<String, String> messages;
 
 	private List<String> pickaxeLore;
-	private boolean openEnchantMenuOnRightClickBlock;
 	private boolean allowEnchantsOutside;
 	private boolean firstJoinPickaxeEnabled;
 	private CompMaterial firstJoinPickaxeMaterial;
 	private List<String> firstJoinPickaxeEnchants;
 	private String firstJoinPickaxeName;
 	private boolean keepPickaxesOnDeath;
+	private List<Action> openEnchantMenuActions;
 
 	public EnchantsConfig(UltraPrisonEnchants plugin) {
 		this.plugin = plugin;
@@ -43,7 +46,7 @@ public class EnchantsConfig {
 
 	private void loadVariables() {
 		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
-		this.openEnchantMenuOnRightClickBlock = getYamlConfig().getBoolean("open-menu-on-right-click-block");
+		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
 		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
 		this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
 		this.firstJoinPickaxeMaterial = CompMaterial.fromString(getYamlConfig().getString("first-join-pickaxe.material"));
@@ -77,10 +80,6 @@ public class EnchantsConfig {
 		return pickaxeLore;
 	}
 
-	public boolean isOpenEnchantMenuOnRightClickBlock() {
-		return openEnchantMenuOnRightClickBlock;
-	}
-
 	public boolean isFirstJoinPickaxeEnabled() {
 		return firstJoinPickaxeEnabled;
 	}
@@ -99,5 +98,9 @@ public class EnchantsConfig {
 
 	public boolean isKeepPickaxesOnDeath() {
 		return keepPickaxesOnDeath;
+	}
+
+	public List<Action> getOpenEnchantMenuActions() {
+		return openEnchantMenuActions;
 	}
 }
