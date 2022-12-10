@@ -36,10 +36,16 @@ public final class PrestigeFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			int levels = (int) createExpression(enchantLevel).evaluate();
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandToExecute.replace("%player%", e.getPlayer().getName()).replace("%amount%", String.valueOf(levels)));
 		}
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return chance * enchantLevel;
 	}
 
 	@Override

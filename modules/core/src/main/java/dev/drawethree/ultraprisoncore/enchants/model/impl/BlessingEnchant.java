@@ -42,7 +42,9 @@ public final class BlessingEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonTokens.MODULE_NAME)) {
 				return;
 			}
@@ -62,6 +64,11 @@ public final class BlessingEnchant extends UltraPrisonEnchantment {
 				}
 			}
 		}
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return chance * enchantLevel;
 	}
 
 	@Override

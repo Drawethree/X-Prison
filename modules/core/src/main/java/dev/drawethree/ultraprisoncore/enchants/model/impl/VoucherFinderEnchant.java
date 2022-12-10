@@ -37,10 +37,16 @@ public final class VoucherFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (this.chance * enchantLevel >= ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			CommandWithChance randomCmd = RandomSelector.weighted(this.commandsToExecute, CommandWithChance::getChance).pick();
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.getCommand().replace("%player%", e.getPlayer().getName()));
 		}
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return this.chance * enchantLevel;
 	}
 
 	@Override

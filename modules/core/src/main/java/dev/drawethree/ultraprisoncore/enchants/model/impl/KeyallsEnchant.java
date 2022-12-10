@@ -33,10 +33,16 @@ public final class KeyallsEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		if (chance * enchantLevel > ThreadLocalRandom.current().nextDouble(100)) {
+		double chance = getChanceToTrigger(enchantLevel);
+		if (chance > ThreadLocalRandom.current().nextDouble(100)) {
 			String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
 			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
 		}
+	}
+
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return chance * enchantLevel;
 	}
 
 	@Override

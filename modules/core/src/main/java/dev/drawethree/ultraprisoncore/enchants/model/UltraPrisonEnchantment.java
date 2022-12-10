@@ -71,6 +71,8 @@ public abstract class UltraPrisonEnchantment implements Refundable {
 
 	public abstract void onBlockBreak(BlockBreakEvent e, int enchantLevel);
 
+	public abstract double getChanceToTrigger(int enchantLevel);
+
 	public void reload() {
 		this.reloadDefaultAttributes();
 	}
