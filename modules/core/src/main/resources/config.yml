@@ -12,7 +12,7 @@ mysql:
 # Connection properties
 # HikariCP database connection properties, please refer to https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby for more information
 connection_properties:
-  connection_timeout: 30000
+  connection_timeout: 60000
   idle_timeout: 600000
   keep_alive_time: 0
   max_life_time: 1800000
@@ -20,6 +20,7 @@ connection_properties:
   maximum_pool_size: 10
   leak_detection_threshold: 0
   connection_test_query: "SELECT 1"
+  character_encoding: "utf8"
 # Enabling / Disabling of specific modules
 modules:
   tokens: true

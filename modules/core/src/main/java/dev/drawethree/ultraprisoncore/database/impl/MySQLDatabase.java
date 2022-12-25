@@ -8,7 +8,6 @@ import dev.drawethree.ultraprisoncore.database.model.ConnectionProperties;
 import dev.drawethree.ultraprisoncore.database.model.DatabaseCredentials;
 import dev.drawethree.ultraprisoncore.database.model.SQLDatabaseType;
 
-
 public final class MySQLDatabase extends PooledSQLDatabase {
 
     private final DatabaseCredentials credentials;
@@ -26,14 +25,14 @@ public final class MySQLDatabase extends PooledSQLDatabase {
 
         hikari.setPoolName("ultraprison-" + POOL_COUNTER.getAndIncrement());
 
-        this.applyCredentials(hikari, credentials);
+        this.applyCredentials(hikari, credentials, connectionProperties);
         this.applyConnectionProperties(hikari, connectionProperties);
         this.addDefaultDataSourceProperties(hikari);
         this.hikari = new HikariDataSource(hikari);
     }
 
-    private void applyCredentials(HikariConfig hikari, DatabaseCredentials credentials) {
-        hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName());
+    private void applyCredentials(HikariConfig hikari, DatabaseCredentials credentials, ConnectionProperties connectionProperties) {
+        hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName() + "?characterEncoding=" + connectionProperties.getCharacterEncoding());
         hikari.setUsername(credentials.getUserName());
         hikari.setPassword(credentials.getPassword());
     }

@@ -10,7 +10,7 @@ public class ConnectionProperties {
 
 	private final long idleTimeout, maxLifetime, connectionTimeout, leakDetectionThreshold, keepAliveTime;
 	private final int minimumIdle, maximumPoolSize;
-	private final String testQuery;
+	private final String testQuery, characterEncoding;
 
 	public static ConnectionProperties fromConfig(FileConfiguration config) {
 
@@ -23,8 +23,9 @@ public class ConnectionProperties {
 		int minimumIdle = config.getInt(rootPath + "minimum_idle");
 		int maximumPoolSize = config.getInt(rootPath + "maximum_pool_size");
 		long leakDetectionThreshold = config.getLong(rootPath + "leak_detection_threshold");
+		String characterEncoding = config.getString(rootPath + "character_encoding", "utf8");
 		String testQuery = config.getString(rootPath + "connection_test_query");
-		return new ConnectionProperties(idleTimeout, maxLifeTime, connectionTimeout, leakDetectionThreshold, keepAliveTime, minimumIdle, maximumPoolSize, testQuery);
+		return new ConnectionProperties(idleTimeout, maxLifeTime, connectionTimeout, leakDetectionThreshold, keepAliveTime, minimumIdle, maximumPoolSize, testQuery,characterEncoding);
 	}
 }
 
