@@ -73,7 +73,7 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(uuid varchar(36) NOT NULL UNIQUE, player_uuid varchar(36) NOT NULL, module varchar(36) NOT NULL, context TEXT ,created_at DATETIME)");
+		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(uuid varchar(36) NOT NULL UNIQUE, player_uuid varchar(36) NOT NULL, module varchar(36) NOT NULL, context TEXT ,created_at DATETIME)");
 	}
 
 	@Override

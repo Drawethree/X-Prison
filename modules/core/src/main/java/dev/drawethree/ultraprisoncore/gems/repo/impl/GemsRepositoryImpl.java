@@ -66,7 +66,7 @@ public class GemsRepositoryImpl implements GemsRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
+		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, Gems bigint, primary key (UUID))");
 	}
 
 	@Override
