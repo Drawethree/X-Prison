@@ -71,7 +71,7 @@ public class AutominerRepositoryImpl implements AutominerRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
+		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, time int, primary key (UUID))");
 	}
 
 	@Override

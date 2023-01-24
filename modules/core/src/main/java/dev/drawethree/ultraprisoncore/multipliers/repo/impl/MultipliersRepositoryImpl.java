@@ -86,8 +86,8 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 
 	@Override
 	public void createTables() {
-		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))");
-		this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKEN + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))");
+		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, sell_multiplier double, sell_multiplier_timeleft long, primary key (UUID))");
+		this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKEN + "(UUID varchar(36) NOT NULL UNIQUE, token_multiplier double, token_multiplier_timeleft long, primary key (UUID))");
 	}
 
 	@Override

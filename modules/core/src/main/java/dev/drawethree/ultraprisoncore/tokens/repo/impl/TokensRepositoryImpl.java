@@ -67,7 +67,7 @@ public class TokensRepositoryImpl implements TokensRepository {
 
     @Override
     public void createTables() {
-        this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKENS + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
+        this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME_TOKENS + "(UUID varchar(36) NOT NULL UNIQUE, Tokens bigint, primary key (UUID))");
     }
 
     @Override

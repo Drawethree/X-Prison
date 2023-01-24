@@ -66,7 +66,7 @@ public class PrestigeRepositoryImpl implements PrestigeRepository {
 
     @Override
     public void createTables() {
-        this.database.executeSqlAsync("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_prestige bigint, primary key (UUID))");
+        this.database.executeSql("CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(UUID varchar(36) NOT NULL UNIQUE, id_prestige bigint, primary key (UUID))");
     }
 
     @Override
