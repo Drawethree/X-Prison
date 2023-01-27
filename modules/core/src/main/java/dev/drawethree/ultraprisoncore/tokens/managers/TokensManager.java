@@ -3,7 +3,7 @@ package dev.drawethree.ultraprisoncore.tokens.managers;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.ultraprisoncore.api.enums.LostCause;
 import dev.drawethree.ultraprisoncore.api.enums.ReceiveCause;
-import dev.drawethree.ultraprisoncore.enchants.model.impl.LuckyBoosterEnchant;
+import dev.drawethree.ultraprisoncore.enchants.model.impl.FlyEnchant;
 import dev.drawethree.ultraprisoncore.tokens.UltraPrisonTokens;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.ultraprisoncore.tokens.api.events.PlayerTokensReceiveEvent;
@@ -17,7 +17,6 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -607,8 +606,6 @@ public class TokensManager {
 			this.addBlocksBroken(p, blocks);
 		}
 
-		boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(p);
-
 		//Lucky block check
 		blocks.forEach(block -> {
 			List<String> rewards = this.plugin.getTokensConfig().getLuckyBlockReward(block.getType());
@@ -623,7 +620,6 @@ public class TokensManager {
 
 			if (this.plugin.getTokensConfig().getChance() >= random) {
 				long randAmount = this.plugin.getTokensConfig().getMinAmount() == this.plugin.getTokensConfig().getMaxAmount() ? this.plugin.getTokensConfig().getMinAmount() : ThreadLocalRandom.current().nextLong(this.plugin.getTokensConfig().getMinAmount(), this.plugin.getTokensConfig().getMaxAmount());
-				randAmount = luckyBooster ? randAmount * 2 : randAmount;
 				totalAmount += randAmount;
 			}
 		}

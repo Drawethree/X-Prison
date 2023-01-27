@@ -16,12 +16,8 @@ messages:
   blessing_your: "&6&l+ %amount% TOKENS &7(From Your Blessing)"
   layer_disabled: "&e&l(!) &7You've &c&lDISABLED &7layer."
   layer_enabled: "&e&l(!) &7You've &a&lENABLED &7layer."
-  lucky_booster_on: "&e&lENCHANT &8» &fLucky Mode &7has &Aactivated&7, &FX2 Money & Tokens &7for &a&l5:00"
-  lucky_booster_off: "&e&lENCHANT &8» &fLucky Mode &7has &cDeactivated&7."
   block_booster_on: "&e&lENCHANT &8» &fBlock Booster &7has &Aactivated&7, &FX2 Blocks &7for &a&l5:00"
   block_booster_off: "&e&lENCHANT &8» &fBlock Booster &7has &cDeactivated&7."
-  lucky_mode_timeleft: "&e&lENCHANT &8» &fLucky Mode Activated&7 For: &a&l%timeleft%&7."
-  lucky_mode_disabled: "&e&lENCHANT &8» &fLucky Mode &CDisabled&7."
   explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
   explosive_enabled: "&e&l(!) &7You've &a&lENABLED &7explosive."
   value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.ultraprison.net&7."
@@ -273,18 +269,17 @@ enchants:
       InGuiSlot: 33
       Percentage: 50.0
   '8':
-    RawName: "luckybooster"
-    Name: '&cLucky Booster'
-    GuiName: '&cLucky Booster'
+    RawName: "fly"
+    Name: '&cFly'
+    GuiName: '&cFly'
     Material: BOOK
     Enabled: true
     InGuiSlot: 34
     Increase-Cost-by: 350
-    Max: 500
-    Chance: 0.2
-    Cost: 350
+    Max: 1
+    Cost: 10000
     Description:
-      - '&7&o(( Ability to receive x2 Tokens And Money for short time ))'
+      - '&7&o(( Ability to fly while holding pickaxe ))'
     Refund:
       Enabled: true
       InGuiSlot: 34

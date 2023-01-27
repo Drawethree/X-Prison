@@ -90,7 +90,7 @@ public final class BlockBoosterEnchant extends UltraPrisonEnchantment {
 
 		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 
-			if (BOOSTED_PLAYERS.containsKey(e.getPlayer().getUniqueId())) {
+			if (hasBlockBoosterRunning(e.getPlayer())) {
 				return;
 			}
 

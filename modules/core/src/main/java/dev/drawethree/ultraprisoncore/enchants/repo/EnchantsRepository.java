@@ -51,7 +51,7 @@ public class EnchantsRepository {
 		register(new SpeedEnchant(this.plugin));
 		register(new JumpBoostEnchant(this.plugin));
 		register(new NightVisionEnchant(this.plugin));
-		register(new LuckyBoosterEnchant(this.plugin));
+		register(new FlyEnchant(this.plugin));
 		register(new ExplosiveEnchant(this.plugin));
 		register(new LayerEnchant(this.plugin));
 		register(new CharityEnchant(this.plugin));
