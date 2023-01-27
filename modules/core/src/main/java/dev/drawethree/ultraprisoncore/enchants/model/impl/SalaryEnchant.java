@@ -37,11 +37,9 @@ public final class SalaryEnchant extends UltraPrisonEnchantment {
 		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			double randAmount = createExpression(enchantLevel).evaluate();
 
-			boolean luckyBooster = LuckyBoosterEnchant.hasLuckyBoosterRunning(e.getPlayer());
-
-			plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
+			plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
 			if (this.plugin.isAutoSellModuleEnabled()) {
-				plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(e.getPlayer(), luckyBooster ? randAmount * 2 : randAmount);
+				plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(e.getPlayer(), randAmount);
 			}
 		}
 

@@ -35,7 +35,7 @@ public final class GemFinderEnchant extends UltraPrisonEnchantment {
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		double chace = getChanceToTrigger(enchantLevel);
+		double chance = getChanceToTrigger(enchantLevel);
 		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
 			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonGems.MODULE_NAME)) {
 				return;
