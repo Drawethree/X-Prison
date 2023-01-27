@@ -61,7 +61,6 @@ public class AutoSellListener {
                     }
 
                     if (success) {
-                        e.getBlock().getDrops().clear();
                         e.getBlock().setType(CompMaterial.AIR.toMaterial());
                     } else {
                         e.setCancelled(true);

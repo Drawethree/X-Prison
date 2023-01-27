@@ -67,7 +67,6 @@ public final class UltraPrisonCore extends ExtendedJavaPlugin {
 	private SQLDatabase pluginDatabase;
 	private Economy economy;
 	private FileManager fileManager;
-
 	private UltraPrisonTokens tokens;
 	private UltraPrisonGems gems;
 	private UltraPrisonRanks ranks;

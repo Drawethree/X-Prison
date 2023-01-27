@@ -1,0 +1,10 @@
+# Rewards when breaking certain amount of blocks. (Counts overall, not just for pickaxe)
+block-rewards:
+  # Amount of blocks required
+  100:
+    # Message to be sent
+    message: '&e&lBLOCKS &8» &7You have mined &f100&7 blocks.'
+    # Commands to give rewards
+    commands:
+      - tokens give %player% 1000
+      - aam add %player% 300
