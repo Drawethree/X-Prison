@@ -287,7 +287,7 @@ public class RanksManager {
     }
 
     public void resetPlayerRank(Player p) {
-        this.onlinePlayersRanks.put(p.getUniqueId(), 1);
+        setRank(p, getDefaultRank(), null);
     }
 
     private boolean arePrestigesEnabled() {

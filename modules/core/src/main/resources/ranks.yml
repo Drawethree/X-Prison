@@ -17,6 +17,9 @@ Ranks:
   '1':
     # Rank prefix
     Prefix: '&a&lA'
+    # Commands to run when player reaches this rank
+    CMD:
+      - lp user %player% perm set essentials.warps.A
   '2':
     # Rank prefix
     Prefix: '&b&lB'
