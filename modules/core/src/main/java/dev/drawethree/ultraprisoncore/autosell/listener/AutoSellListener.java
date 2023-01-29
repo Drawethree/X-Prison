@@ -1,6 +1,7 @@
 package dev.drawethree.ultraprisoncore.autosell.listener;
 
 import dev.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
+import dev.drawethree.ultraprisoncore.autosell.model.SellRegion;
 import dev.drawethree.ultraprisoncore.utils.compat.CompMaterial;
 import dev.drawethree.ultraprisoncore.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
@@ -49,6 +50,12 @@ public class AutoSellListener {
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
+
+                    SellRegion sellRegion = this.plugin.getManager().getAutoSellRegion(e.getBlock().getLocation());
+
+                    if (sellRegion == null) {
+                        return;
+                    }
 
                     boolean success = false;
 
