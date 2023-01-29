@@ -12,48 +12,55 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class KeyallsEnchant extends UltraPrisonEnchantment {
 
-	private double chance;
-	private List<String> commandsToExecute;
+    private double chance;
+    private List<String> commandsToExecute;
 
-	public KeyallsEnchant(UltraPrisonEnchants instance) {
-		super(instance, 18);
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-		this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
-	}
+    public KeyallsEnchant(UltraPrisonEnchants instance) {
+        super(instance, 18);
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+        this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
+    }
 
-	@Override
-	public void onEquip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onEquip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onUnequip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onUnequip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		double chance = getChanceToTrigger(enchantLevel);
-		if (chance > ThreadLocalRandom.current().nextDouble(100)) {
-			String randomCmd = this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
-		}
-	}
+    @Override
+    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+        double chance = getChanceToTrigger(enchantLevel);
 
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return chance * enchantLevel;
-	}
+        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
+            return;
+        }
 
-	@Override
-	public void reload() {
-		super.reload();
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-		this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
-	}
+        String randomCmd = getRandomCommandToExecute();
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), randomCmd.replace("%player%", e.getPlayer().getName()));
+    }
 
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
-	}
+    private String getRandomCommandToExecute() {
+        return this.commandsToExecute.get(ThreadLocalRandom.current().nextInt(commandsToExecute.size()));
+    }
+
+    @Override
+    public double getChanceToTrigger(int enchantLevel) {
+        return chance * enchantLevel;
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+        this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
+    }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }

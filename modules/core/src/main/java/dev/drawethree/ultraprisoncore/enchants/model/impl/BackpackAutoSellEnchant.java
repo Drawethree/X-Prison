@@ -13,53 +13,57 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class BackpackAutoSellEnchant extends UltraPrisonEnchantment {
 
-	private double chance;
+    private double chance;
 
-	public BackpackAutoSellEnchant(UltraPrisonEnchants instance) {
-		super(instance, 19);
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-	}
+    public BackpackAutoSellEnchant(UltraPrisonEnchants instance) {
+        super(instance, 19);
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    }
 
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
-	}
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 
-	@Override
-	public void onEquip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onEquip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onUnequip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onUnequip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+    @Override
+    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-		double chance = getChanceToTrigger(enchantLevel);
+        if (!UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
+            return;
+        }
 
-		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
-			if (UltraPrisonCore.getInstance().isUltraBackpacksEnabled()) {
-				try {
-					UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
-				} catch (BackpackNotFoundException ignored) {
-					this.plugin.getCore().debug("AutoSellEnchant::onBlockBreak > Player " + e.getPlayer().getName() + " does not have backpack.", this.plugin);
-				}
-			}
-		}
+        double chance = getChanceToTrigger(enchantLevel);
 
-	}
+        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
+            return;
+        }
 
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return this.chance * enchantLevel;
-	}
+        try {
+            UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
+        } catch (BackpackNotFoundException ignored) {
+            this.plugin.getCore().debug("BackpackAutoSellEnchant::onBlockBreak > Player " + e.getPlayer().getName() + " does not have backpack.", this.plugin);
+        }
 
-	@Override
-	public void reload() {
-		super.reload();
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-	}
+    }
+
+    @Override
+    public double getChanceToTrigger(int enchantLevel) {
+        return this.chance * enchantLevel;
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    }
 }

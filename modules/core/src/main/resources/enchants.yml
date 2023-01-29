@@ -190,14 +190,8 @@ enchants:
     Increase-Cost-by: 75
     Max: -1
     Cost: 75
-    Whitelist:
-      - STONE
-      - COBBLESTONE
-      - IRON_ORE
-      - DIAMOND_ORE
-      - GOLD_ORE
-      - QUARTZ_ORE
-      - COAL_ORE
+    Blacklist:
+      - BEDROCK
     Description:
       - '&7&o(( Ability to receive more blocks while mining ))'
     Refund:
@@ -549,7 +543,9 @@ enchants:
     Description:
       - '&7&o(( Ability to break whole mine while mining ))'
     Pickaxe-Level-Required: 1
+    Remove-Blocks: true
     Count-Blocks-Broken: true
+    Message: "&e&lENCHANT &8» &7You got &2&l$&a%money% &7from &c&lNuke &7activation."
     Refund:
       Enabled: true
       InGuiSlot: 47

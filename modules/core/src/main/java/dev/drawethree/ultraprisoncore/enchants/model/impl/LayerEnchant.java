@@ -27,140 +27,153 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class LayerEnchant extends UltraPrisonEnchantment {
 
-	private double chance;
-	private boolean countBlocksBroken;
+    private double chance;
+    private boolean countBlocksBroken;
 
-	public LayerEnchant(UltraPrisonEnchants instance) {
-		super(instance, 10);
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-	}
+    public LayerEnchant(UltraPrisonEnchants instance) {
+        super(instance, 10);
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
+    }
 
-	@Override
-	public void onEquip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onEquip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onUnequip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onUnequip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		double chance = getChanceToTrigger(enchantLevel);
-		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
+    @Override
+    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+        double chance = getChanceToTrigger(enchantLevel);
 
-			long startTime = Time.nowMillis();
-			Block b = e.getBlock();
+        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
+            return;
+        }
 
-			IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW);
+        long startTime = Time.nowMillis();
+        final Player p = e.getPlayer();
+        final Block b = e.getBlock();
 
-			if (region != null) {
-				this.plugin.getCore().debug("Found region: " + region.getId(), this.plugin);
-				Player p = e.getPlayer();
-				ICuboidSelection selection = (ICuboidSelection) region.getSelection();
-				List<Block> blocksAffected = new ArrayList<>();
+        IWrappedRegion region = RegionUtils.getRegionWithHighestPriorityAndFlag(b.getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW);
 
-				boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
+        if (region == null) {
+            return;
+        }
 
-				for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
-					for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
-						Block b1 = b.getWorld().getBlockAt(x, b.getY(), z);
-						if (b1.getType() == Material.AIR) {
-							continue;
-						}
-						blocksAffected.add(b1);
-					}
-				}
+        this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
+        List<Block> blocksAffected = this.getAffectedBlocks(b, region);
 
-				LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
+        LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
-				if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
-					this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
-					return;
-				}
+        if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
+            this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+            return;
+        }
 
-				double totalDeposit = 0;
-				int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
-				int amplifier = fortuneLevel == 0 ? 1 : fortuneLevel + 1;
+        blocksAffected = event.getBlocksAffected();
 
-				blocksAffected = event.getBlocksAffected();
+        if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
+            handleAffectedBlocks(p, region, blocksAffected);
+        } else {
+            UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
+        }
 
-				for (Block block : blocksAffected) {
-					if (autoSellPlayerEnabled) {
-						totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
-					} else {
-						if (plugin.getCore().isUltraBackpacksEnabled()) {
-							continue;
-						}
-						ItemStack toGive = CompMaterial.fromBlock(block).toItem(fortuneLevel + 1);
-						p.getInventory().addItem(toGive);
-					}
-					this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(block.getWorld(), block.getX(), block.getY(), block.getZ(), 0, (byte) 0, true);
-				}
+        if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
+            plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
+        }
 
-				if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
-					plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
-				}
+        if (this.plugin.isMinesModuleEnabled()) {
+            Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
+            if (mine != null) {
+                mine.handleBlockBreak(blocksAffected);
+            }
+        }
 
-				if (this.plugin.isMinesModuleEnabled()) {
-					Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
-					if (mine != null) {
-						mine.handleBlockBreak(blocksAffected);
-					}
-				}
+        if (this.countBlocksBroken) {
+            plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
+        }
 
-				this.giveEconomyRewardsToPlayer(p, totalDeposit);
+        plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
 
-				if (this.countBlocksBroken) {
-					plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
-				}
-				plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+        long timeEnd = Time.nowMillis();
+        this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
+    }
 
-				if (plugin.getCore().isUltraBackpacksEnabled()) {
-					UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
-				}
+    private List<Block> getAffectedBlocks(Block startBlock, IWrappedRegion region) {
+        List<Block> blocksAffected = new ArrayList<>();
+        ICuboidSelection selection = (ICuboidSelection) region.getSelection();
+        for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
+            for (int z = selection.getMinimumPoint().getBlockZ(); z <= selection.getMaximumPoint().getBlockZ(); z++) {
+                Block b1 = startBlock.getWorld().getBlockAt(x, startBlock.getY(), z);
+                if (b1.getType() == Material.AIR) {
+                    continue;
+                }
+                blocksAffected.add(b1);
+            }
+        }
+        return blocksAffected;
+    }
 
-			}
-			long timeEnd = Time.nowMillis();
-			this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
-		}
-	}
+    private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
+        double totalDeposit = 0.0;
+        int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
+        boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return chance * enchantLevel;
-	}
+        for (Block block : blocksAffected) {
 
-	private void giveEconomyRewardsToPlayer(Player p, double totalDeposit) {
-		double total = this.plugin.isMultipliersModuleEnabled() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+            int amplifier = fortuneLevel;
+            if (FortuneEnchant.isBlockBlacklisted(block)) {
+                amplifier = 1;
+            }
 
-		plugin.getCore().getEconomy().depositPlayer(p, total);
+            if (autoSellPlayerEnabled) {
+                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+            } else {
+                ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(amplifier);
+                p.getInventory().addItem(itemToGive);
+            }
+            this.plugin.getCore().getNmsProvider().setBlockInNativeDataPalette(block.getWorld(), block.getX(), block.getY(), block.getZ(), 0, (byte) 0, true);
+        }
+        this.giveEconomyRewardToPlayer(p, totalDeposit);
+    }
 
-		if (plugin.isAutoSellModuleEnabled()) {
-			plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
-		}
-	}
+    @Override
+    public double getChanceToTrigger(int enchantLevel) {
+        return chance * enchantLevel;
+    }
 
-	private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
-		LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
-		Events.callSync(event);
-		this.plugin.getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", this.plugin);
-		return event;
-	}
+    private void giveEconomyRewardToPlayer(Player p, double totalDeposit) {
+        double total = this.plugin.isMultipliersModuleEnabled() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
 
-	@Override
-	public void reload() {
-		super.reload();
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-		this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-	}
+        plugin.getCore().getEconomy().depositPlayer(p, total);
 
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
-	}
+        if (plugin.isAutoSellModuleEnabled()) {
+            plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
+        }
+    }
+
+    private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
+        LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
+        Events.callSync(event);
+        this.plugin.getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", this.plugin);
+        return event;
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
+    }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 
 
 }

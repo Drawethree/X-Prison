@@ -303,7 +303,7 @@ public class AutoSellManager {
     }
 
     private ItemStack createItemStackToGive(Player player, Block block) {
-        int fortuneLevel = EnchantUtils.getItemFortuneLevel(player.getItemInHand());
+        int amount = EnchantUtils.getFortuneBlockCount(player.getItemInHand(), block);
 
         ItemStack toGive;
 
@@ -312,7 +312,7 @@ public class AutoSellManager {
         } else {
             toGive = CompMaterial.fromBlock(block).toItem();
         }
-        toGive.setAmount(fortuneLevel + 1);
+        toGive.setAmount(amount);
         return toGive;
     }
 

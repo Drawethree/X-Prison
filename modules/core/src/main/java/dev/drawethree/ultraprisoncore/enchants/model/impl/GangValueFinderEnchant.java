@@ -13,59 +13,65 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class GangValueFinderEnchant extends UltraPrisonEnchantment {
 
-	private double chance;
-	private String amountToGiveExpression;
+    private double chance;
+    private String amountToGiveExpression;
 
 
-	public GangValueFinderEnchant(UltraPrisonEnchants instance) {
-		super(instance, 23);
-		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-	}
+    public GangValueFinderEnchant(UltraPrisonEnchants instance) {
+        super(instance, 23);
+        this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    }
 
-	@Override
-	public void onEquip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onEquip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onUnequip(Player p, ItemStack pickAxe, int level) {
+    @Override
+    public void onUnequip(Player p, ItemStack pickAxe, int level) {
 
-	}
+    }
 
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-		double chance = getChanceToTrigger(enchantLevel);
-		if (chance >= ThreadLocalRandom.current().nextDouble(100)) {
-			if (!this.plugin.getCore().isModuleEnabled(UltraPrisonGangs.MODULE_NAME)) {
-				return;
-			}
-			int amount = (int) createExpression(enchantLevel).evaluate();
-			plugin.getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + amount));
-		}
-	}
+    @Override
+    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return chance * enchantLevel;
-	}
+        if (!this.plugin.getCore().isModuleEnabled(UltraPrisonGangs.MODULE_NAME)) {
+            return;
+        }
 
-	@Override
-	public void reload() {
-		super.reload();
-		this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
-		this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-	}
+        double chance = getChanceToTrigger(enchantLevel);
 
-	private Expression createExpression(int level) {
-		return new ExpressionBuilder(this.amountToGiveExpression)
-				.variables("level")
-				.build()
-				.setVariable("level", level);
-	}
+        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
+            return;
+        }
 
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
-	}
+        int amount = (int) createExpression(enchantLevel).evaluate();
+        plugin.getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + amount));
+
+    }
+
+    @Override
+    public double getChanceToTrigger(int enchantLevel) {
+        return chance * enchantLevel;
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
+        this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    }
+
+    private Expression createExpression(int level) {
+        return new ExpressionBuilder(this.amountToGiveExpression)
+                .variables("level")
+                .build()
+                .setVariable("level", level);
+    }
+
+    @Override
+    public String getAuthor() {
+        return "Drawethree";
+    }
 }
