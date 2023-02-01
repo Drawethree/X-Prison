@@ -1,6 +1,6 @@
-name: UltraPrisonCore
+name: X-Prison
 version: ${project.version}
-main: dev.drawethree.ultraprisoncore.UltraPrisonCore
+main: dev.drawethree.xprison.XPrison
 depend: [ Vault, WorldGuard, WorldEdit, helper ]
 softdepend:
   - PlaceholderAPI
