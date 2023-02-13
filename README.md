@@ -1,5 +1,5 @@
-# UltraPrisonCore
-Source code of UltraPrisonCore plugin.
+# XPrison
+Source code of XPrison plugin.
 
 Actual release is up-to-date with master branch.
 

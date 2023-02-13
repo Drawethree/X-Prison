@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-        <artifactId>UltraPrisonCore</artifactId>
+        <artifactId>X-Prison</artifactId>
         <groupId>dev.drawethree</groupId>
-        <version>1.12.8.1</version>
+        <version>1.12.9</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ultraprisoncore-v1_18_R1</artifactId>
+    <artifactId>x-prison-v1_18_R1</artifactId>
 
     <build>
         <plugins>
@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-core</artifactId>
+            <artifactId>x-prison-core</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>
                 <exclusion>

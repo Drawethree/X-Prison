@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.drawethree</groupId>
-    <artifactId>UltraPrisonCore</artifactId>
-    <version>1.12.8.1</version>
+    <artifactId>X-Prison</artifactId>
+    <version>1.12.9</version>
 
     <modules>
         <module>modules/core</module>
@@ -33,7 +33,7 @@
     </modules>
 
     <packaging>pom</packaging>
-    <name>UltraPrisonCore</name>
+    <name>XPrison</name>
 
     <build>
         <defaultGoal>clean install</defaultGoal>

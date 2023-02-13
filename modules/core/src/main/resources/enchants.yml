@@ -20,7 +20,7 @@ messages:
   block_booster_off: "&e&lENCHANT &8» &fBlock Booster &7has &cDeactivated&7."
   explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
   explosive_enabled: "&e&l(!) &7You've &a&lENABLED &7explosive."
-  value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.ultraprison.net&7."
+  value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.xprison.net&7."
   value_no_pickaxe: "&e&lVALUE &8» &7You must hold an pickaxe in your hand."
   value_value: "&e&lVALUE &8» &f%player%'s &7Pickaxe Value: &f%tokens% Tokens&7."
   value_cooldown: "&e&lVALUE &8» &7Please wait &f%time% Seconds&7 before using this command again."

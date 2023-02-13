@@ -6,8 +6,8 @@
     <packaging>jar</packaging>
     <parent>
         <groupId>dev.drawethree</groupId>
-        <artifactId>UltraPrisonCore</artifactId>
-        <version>1.12.8.1</version>
+        <artifactId>X-Prison</artifactId>
+        <version>1.12.9</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -16,7 +16,7 @@
     </properties>
     <build>
         <directory>../../out</directory>
-        <finalName>UltraPrisonCore-${project.version}-${release.status}</finalName>
+        <finalName>XPrison-${project.version}-${release.status}</finalName>
         <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
@@ -42,27 +42,27 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.hikari</shadedPattern>
+                                    <shadedPattern>dev.drawethree.xprison.libs.hikari</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.slf4j</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.slf4j</shadedPattern>
+                                    <shadedPattern>dev.drawethree.xprison.libs.slf4j</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.nbtapi</shadedPattern>
+                                    <shadedPattern>dev.drawethree.xprison.libs.nbtapi</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.codemc.worldguardwrapper</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.worldguardwrapper</shadedPattern>
+                                    <shadedPattern>dev.drawethree.xprison.libs.worldguardwrapper</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.metrics</shadedPattern>
+                                    <shadedPattern>dev.drawethree.xprison.libs.metrics</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>com.github.lalyos.jfiglet</pattern>
-                                    <shadedPattern>dev.drawethree.ultraprisoncore.libs.jfiglet</shadedPattern>
+                                    <shadedPattern>dev.drawethree.xprison.libs.jfiglet</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -74,107 +74,107 @@
     <dependencies>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-core</artifactId>
+            <artifactId>x-prison-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_8_R1</artifactId>
+            <artifactId>x-prison-v1_8_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_8_R2</artifactId>
+            <artifactId>x-prison-v1_8_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_8_R3</artifactId>
+            <artifactId>x-prison-v1_8_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_9_R1</artifactId>
+            <artifactId>x-prison-v1_9_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_9_R2</artifactId>
+            <artifactId>x-prison-v1_9_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_10_R1</artifactId>
+            <artifactId>x-prison-v1_10_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_11_R1</artifactId>
+            <artifactId>x-prison-v1_11_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_12_R1</artifactId>
+            <artifactId>x-prison-v1_12_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_13_R1</artifactId>
+            <artifactId>x-prison-v1_13_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_13_R2</artifactId>
+            <artifactId>x-prison-v1_13_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_14_R1</artifactId>
+            <artifactId>x-prison-v1_14_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_15_R1</artifactId>
+            <artifactId>x-prison-v1_15_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_16_R1</artifactId>
+            <artifactId>x-prison-v1_16_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_16_R2</artifactId>
+            <artifactId>x-prison-v1_16_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_16_R3</artifactId>
+            <artifactId>x-prison-v1_16_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_17_R1</artifactId>
+            <artifactId>x-prison-v1_17_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_18_R1</artifactId>
+            <artifactId>x-prison-v1_18_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_18_R2</artifactId>
+            <artifactId>x-prison-v1_18_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_19_R1</artifactId>
+            <artifactId>x-prison-v1_19_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.drawethree</groupId>
-            <artifactId>ultraprisoncore-v1_19_R2</artifactId>
+            <artifactId>x-prison-v1_19_R2</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
