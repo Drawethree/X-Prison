@@ -59,7 +59,6 @@ import java.util.stream.Collectors;
 @Getter
 public final class XPrison extends ExtendedJavaPlugin {
 
-	@Getter
 	private static XPrison instance;
 
 	private boolean debugMode;
@@ -91,13 +90,13 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 	@Override
 	protected void load() {
+		instance = this;
 		registerWGFlag();
 	}
 
 	@Override
 	protected void enable() {
 
-		instance = this;
 		this.printOnEnableMessage();
 		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
@@ -451,6 +450,10 @@ public final class XPrison extends ExtendedJavaPlugin {
 			// This happens during plugin reloads. Flag cannot be registered as WG was already loaded,
 			// so we can safely ignore this exception.
 		}
+	}
+
+	public static XPrison getInstance() {
+		return instance;
 	}
 
 	public WorldGuardWrapper getWorldGuardWrapper() {
