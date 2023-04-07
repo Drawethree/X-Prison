@@ -5,7 +5,7 @@
     <parent>
         <artifactId>X-Prison</artifactId>
         <groupId>dev.drawethree</groupId>
-        <version>1.12.9</version>
+        <version>1.12.10</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
