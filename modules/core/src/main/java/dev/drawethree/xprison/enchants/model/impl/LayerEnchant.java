@@ -82,10 +82,6 @@ public final class LayerEnchant extends XPrisonEnchantment {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (plugin.getCore().getJetsPrisonMinesAPI() != null) {
-            plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
-        }
-
         if (this.plugin.isMinesModuleEnabled()) {
             Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
             if (mine != null) {

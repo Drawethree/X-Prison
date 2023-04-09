@@ -1,7 +1,6 @@
 package dev.drawethree.xprison.mines.migration.gui;
 
 import dev.drawethree.xprison.mines.migration.model.MinesMigration;
-import dev.drawethree.xprison.mines.migration.model.impl.JetsPrisonMinesMigration;
 import dev.drawethree.xprison.mines.migration.model.impl.MineResetLiteMigration;
 import dev.drawethree.xprison.mines.migration.utils.MinesMigrationUtils;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
@@ -42,12 +41,6 @@ public final class AllMinesMigrationGui extends Gui {
 	}
 
 	private void populateAvailableMigrations() {
-		try {
-			MinesMigration migration = new JetsPrisonMinesMigration();
-			this.addItem(createItemForMigration(migration));
-		} catch (NoClassDefFoundError e) {
-
-		}
 		try {
 			MinesMigration migration = new MineResetLiteMigration();
 			this.addItem(createItemForMigration(migration));

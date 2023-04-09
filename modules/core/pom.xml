@@ -5,7 +5,7 @@
     <parent>
         <artifactId>X-Prison</artifactId>
         <groupId>dev.drawethree</groupId>
-        <version>1.12.10</version>
+        <version>1.12.11</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -69,13 +69,6 @@
             <version>LATEST</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../../libs/spigot/spigot-1.17.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>internal</groupId>
-            <artifactId>jets</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../../libs/plugins/JetsPrisonMines-3.3.1_1.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>internal</groupId>

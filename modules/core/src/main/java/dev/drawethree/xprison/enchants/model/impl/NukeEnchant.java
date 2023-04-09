@@ -89,10 +89,6 @@ public final class NukeEnchant extends XPrisonEnchantment {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (plugin.getCore().getJetsPrisonMinesAPI() != null && removeBlocks) {
-            plugin.getCore().getJetsPrisonMinesAPI().blockBreak(blocksAffected);
-        }
-
         if (this.plugin.isMinesModuleEnabled() && removeBlocks) {
             Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
 

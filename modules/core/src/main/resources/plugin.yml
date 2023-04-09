@@ -4,7 +4,6 @@ main: dev.drawethree.xprison.XPrison
 depend: [ Vault, WorldGuard, WorldEdit, helper ]
 softdepend:
   - PlaceholderAPI
-  - JetsPrisonMines
   - MVdWPlaceholderAPI
   - Multiverse-Core
   - UltraBackpacks

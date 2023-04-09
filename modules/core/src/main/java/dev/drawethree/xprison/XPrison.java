@@ -35,8 +35,6 @@ import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Getter;
-import me.jet315.prisonmines.JetsPrisonMines;
-import me.jet315.prisonmines.JetsPrisonMinesAPI;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
@@ -83,8 +81,6 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 	private List<Material> supportedPickaxes;
 
-	private JetsPrisonMinesAPI jetsPrisonMinesAPI;
-
 	private NicknameService nicknameService;
 
 
@@ -128,7 +124,6 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.initNicknameService();
 
 		this.registerPlaceholders();
-		this.registerJetsPrisonMines();
 
 		this.registerMainEvents();
 		this.registerMainCommand();
@@ -366,12 +361,6 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 		if (isPlaceholderAPIEnabled()) {
 			new XPrisonPAPIPlaceholder(this).register();
-		}
-	}
-
-	private void registerJetsPrisonMines() {
-		if (Bukkit.getPluginManager().getPlugin("JetsPrisonMines") != null) {
-			this.jetsPrisonMinesAPI = ((JetsPrisonMines) getServer().getPluginManager().getPlugin("JetsPrisonMines")).getAPI();
 		}
 	}
 
