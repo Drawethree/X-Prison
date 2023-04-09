@@ -5,6 +5,8 @@
 
 **X-Prison** is a an **ultimate solution** for your prison server. This core contains **everything** that should be on each prison server. By including **Prison Mines System**, **20+ Custom Enchants**, **Gangs**, **Auto-Sell**, **Auto-Miner** region, **Pickaxe Levels**, **Tokens & Gems** currencies, **Ranks & Prestiges**, **Multipliers** and a lot of more, its one of the **best prison cores** on the market.
 
+As I am no longer actively maintaining this plugin, I have decided to go open-source and I am accepting pull requests!
+
 # Pages
 ### General
 * [Home](https://github.com/Drawethree/X-Prison/wiki)
