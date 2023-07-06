@@ -28,6 +28,19 @@ public class EnchantsRepository {
 		return enchantsById.values();
 	}
 
+	public XPrisonEnchantment getEnchantBy(Object object) {
+		if (object instanceof Integer) {
+			return getEnchantById((int) object);
+		} else {
+			final String s = String.valueOf(object);
+			try {
+				return getEnchantById(Integer.parseInt(s));
+			} catch (NumberFormatException e) {
+				return getEnchantByName(s);
+			}
+		}
+	}
+
 	public XPrisonEnchantment getEnchantById(int id) {
 		return enchantsById.get(id);
 	}

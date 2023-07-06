@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.enchants.managers;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
@@ -14,6 +13,7 @@ import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
+import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
@@ -36,8 +36,7 @@ import java.util.regex.Pattern;
 
 public class EnchantsManager {
 
-	private static final String NBT_TAG_IDENTIFIER = "ultra-prison-ench-";
-	private static final Pattern PICKAXE_LORE_ENCHANT_PATTER = Pattern.compile("%Enchant-\\d+%");
+	private static final Pattern PICKAXE_LORE_ENCHANT_PATTER = Pattern.compile("(?i)%Enchant-\\d+%");
 
 	private final XPrisonEnchants plugin;
 	private final List<UUID> lockedPlayers;
@@ -49,22 +48,11 @@ public class EnchantsManager {
 
 	public Map<XPrisonEnchantment, Integer> getItemEnchants(ItemStack itemStack) {
 
-		Map<XPrisonEnchantment,Integer> returnMap = new HashMap<>();
-
 		if (itemStack == null || itemStack.getType() == Material.AIR) {
-			return returnMap;
+			return new HashMap<>();
 		}
 
-		NBTItem nbtItem = new NBTItem(itemStack);
-
-		for (XPrisonEnchantment enchantment : getEnchantsRepository().getAll()) {
-			if (nbtItem.hasKey(NBT_TAG_IDENTIFIER + enchantment.getId())) {
-				int level = nbtItem.getInteger(NBT_TAG_IDENTIFIER + enchantment.getId());
-				returnMap.put(enchantment, Math.min(level, enchantment.getMaxLevel()));
-			}
-		}
-
-		return returnMap;
+        return new PrisonItem(itemStack).getEnchants(getEnchantsRepository());
 	}
 
 	public ItemStack updatePickaxe(Player player, ItemStack item) {
@@ -148,13 +136,7 @@ public class EnchantsManager {
 			return 0;
 		}
 
-		NBTItem nbtItem = new NBTItem(item);
-
-		if (!nbtItem.hasKey("blocks-broken")) {
-			return 0;
-		}
-
-		return nbtItem.getLong("blocks-broken");
+        return new PrisonItem(item).getBrokenBlocks();
 	}
 
 	public synchronized void addBlocksBrokenToItem(Player p, int amount) {
@@ -163,15 +145,9 @@ public class EnchantsManager {
 			return;
 		}
 
-		NBTItem nbtItem = new NBTItem(p.getItemInHand());
-
-		if (!nbtItem.hasKey("blocks-broken")) {
-			nbtItem.setLong("blocks-broken", 0L);
-		}
-
-		nbtItem.setLong("blocks-broken", nbtItem.getLong("blocks-broken") + amount);
-
-		ItemStack item = nbtItem.getItem();
+        final PrisonItem prisonItem = new PrisonItem(p.getItemInHand());
+        prisonItem.addBrokenBlocks(amount);
+		ItemStack item = prisonItem.loadCopy();
 		applyLoreToPickaxe(p, item);
 		p.setItemInHand(item);
 	}
@@ -182,14 +158,9 @@ public class EnchantsManager {
 			return;
 		}
 
-		NBTItem nbtItem = new NBTItem(item);
-
-		if (!nbtItem.hasKey("blocks-broken")) {
-			nbtItem.setLong("blocks-broken", 0L);
-		}
-
-		nbtItem.setLong("blocks-broken", nbtItem.getLong("blocks-broken") + amount);
-		player.setItemInHand(nbtItem.getItem());
+        final PrisonItem prisonItem = new PrisonItem(item);
+        prisonItem.addBrokenBlocks(amount);
+		player.setItemInHand(prisonItem.loadCopy());
 		applyLoreToPickaxe(player, player.getItemInHand());
 	}
 
@@ -199,15 +170,7 @@ public class EnchantsManager {
 			return 0;
 		}
 
-		NBTItem nbtItem = new NBTItem(itemStack);
-
-		if (!nbtItem.hasKey(NBT_TAG_IDENTIFIER + enchantment.getId())) {
-			return 0;
-		}
-
-		int level = nbtItem.getInteger(NBT_TAG_IDENTIFIER + enchantment.getId());
-
-		return Math.min(level, enchantment.getMaxLevel());
+		return Math.min(new PrisonItem(itemStack).getEnchantLevel(enchantment), enchantment.getMaxLevel());
 	}
 
 	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
@@ -256,15 +219,9 @@ public class EnchantsManager {
 			return item;
 		}
 
-		NBTItem nbtItem = new NBTItem(item, true);
-
-		if (level > 0) {
-			nbtItem.setInteger(EnchantsManager.NBT_TAG_IDENTIFIER + enchantment.getId(), level);
-		} else {
-			nbtItem.removeKey(EnchantsManager.NBT_TAG_IDENTIFIER + enchantment.getId());
-		}
-
-		nbtItem.mergeCustomNBT(item);
+        final PrisonItem prisonItem = new PrisonItem(item);
+        prisonItem.setEnchant(enchantment, level);
+		prisonItem.load();
 		return this.applyLoreToPickaxe(player, item);
 	}
 

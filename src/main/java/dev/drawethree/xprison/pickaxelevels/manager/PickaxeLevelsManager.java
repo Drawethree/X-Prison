@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.pickaxelevels.manager;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
 import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
+import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.ProgressBar;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -17,8 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static dev.drawethree.xprison.pickaxelevels.utils.PickaxeLevelsUtils.NBT_TAG_INDETIFIER;
 
 public class PickaxeLevelsManager {
 
@@ -49,13 +47,8 @@ public class PickaxeLevelsManager {
 			return Optional.empty();
 		}
 
-		NBTItem nbtItem = new NBTItem(itemStack);
-
-		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-			return Optional.of(getDefaultLevel());
-		}
-
-		return this.getPickaxeLevel(nbtItem.getInteger(NBT_TAG_INDETIFIER));
+		final Integer level = new PrisonItem(itemStack).getLevel();
+		return level != null ? this.getPickaxeLevel(level) : Optional.of(getDefaultLevel());
 	}
 
 	private PickaxeLevel getDefaultLevel() {
@@ -68,15 +61,9 @@ public class PickaxeLevelsManager {
 			return item;
 		}
 
-		NBTItem nbtItem = new NBTItem(item);
-
-		if (!nbtItem.hasKey(NBT_TAG_INDETIFIER)) {
-			nbtItem.setInteger(NBT_TAG_INDETIFIER, 0);
-		}
-
-		nbtItem.setInteger(NBT_TAG_INDETIFIER, level.getLevel());
-
-		ItemStackBuilder builder = ItemStackBuilder.of(nbtItem.getItem());
+		final PrisonItem prisonItem = new PrisonItem(item);
+		prisonItem.setLevel(level.getLevel());
+		ItemStackBuilder builder = ItemStackBuilder.of(prisonItem.loadCopy());
 		if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
 			builder = builder.name(this.getDisplayName(level, p));
 		}
@@ -137,13 +124,7 @@ public class PickaxeLevelsManager {
 			return 0;
 		}
 
-		NBTItem nbtItem = new NBTItem(item);
-
-		if (!nbtItem.hasKey("blocks-broken")) {
-			return 0;
-		}
-
-		return nbtItem.getLong("blocks-broken");
+		return new PrisonItem(item).getBrokenBlocks();
 	}
 
 	private String getProgressBarDelimiter() {

@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.gems.managers;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
 import dev.drawethree.xprison.gems.XPrisonGems;
@@ -8,6 +7,7 @@ import dev.drawethree.xprison.gems.api.events.PlayerGemsLostEvent;
 import dev.drawethree.xprison.gems.api.events.PlayerGemsReceiveEvent;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
+import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
@@ -202,33 +202,32 @@ public class GemsManager {
 	}
 
 	public void redeemGems(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
-		NBTItem nbtItem = new NBTItem(item);
-		if (nbtItem.hasKey("gems-amount")) {
-			long gemsAmount = nbtItem.getLong("gems-amount");
-			int itemAmount = item.getAmount();
-			if (shiftClick) {
+		final Long gemsAmount = new PrisonItem(item).getGems();
+		if (gemsAmount == null) {
+			PlayerUtils.sendMessage(p, plugin.getMessage("not_gems_item"));
+			return;
+		}
+		int itemAmount = item.getAmount();
+		if (shiftClick) {
+			if (offhand) {
+				p.getInventory().setItemInOffHand(null);
+			} else {
+				p.setItemInHand(null);
+			}
+			this.giveGems(p, gemsAmount * itemAmount, null, ReceiveCause.REDEEM);
+			PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", gemsAmount * itemAmount)));
+		} else {
+			this.giveGems(p, gemsAmount, null, ReceiveCause.REDEEM);
+			if (item.getAmount() == 1) {
 				if (offhand) {
 					p.getInventory().setItemInOffHand(null);
 				} else {
 					p.setItemInHand(null);
 				}
-				this.giveGems(p, gemsAmount * itemAmount, null, ReceiveCause.REDEEM);
-				PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", gemsAmount * itemAmount)));
 			} else {
-				this.giveGems(p, gemsAmount, null, ReceiveCause.REDEEM);
-				if (item.getAmount() == 1) {
-					if (offhand) {
-						p.getInventory().setItemInOffHand(null);
-					} else {
-						p.setItemInHand(null);
-					}
-				} else {
-					item.setAmount(item.getAmount() - 1);
-				}
-				PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", gemsAmount)));
+				item.setAmount(item.getAmount() - 1);
 			}
-		} else {
-			PlayerUtils.sendMessage(p, plugin.getMessage("not_gems_item"));
+			PlayerUtils.sendMessage(p, plugin.getMessage("gems_redeem").replace("%gems%", String.format("%,d", gemsAmount)));
 		}
 	}
 
@@ -308,9 +307,10 @@ public class GemsManager {
 
 	private ItemStack createGemsItem(long amount, int value) {
 		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
-		NBTItem nbt = new NBTItem(item);
-		nbt.setLong("gems-amount", amount);
-		return nbt.getItem();
+		final PrisonItem prisonItem = new PrisonItem(item);
+		prisonItem.setGems(amount);
+		prisonItem.load();
+		return item;
 	}
 
 	public void sendInfoMessage(CommandSender sender, OfflinePlayer target) {

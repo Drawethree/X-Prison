@@ -37,6 +37,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <minimizeJar>true</minimizeJar>
                             <relocations>
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
@@ -47,8 +48,8 @@
                                     <shadedPattern>${project.groupId}.libs.slf4j</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>de.tr7zw.changeme.nbtapi</pattern>
-                                    <shadedPattern>${project.groupId}.libs.nbtapi</shadedPattern>
+                                    <pattern>com.saicone.rtag</pattern>
+                                    <shadedPattern>${project.groupId}.libs.rtag</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.codemc.worldguardwrapper</pattern>
@@ -139,9 +140,14 @@
             <systemPath>${project.basedir}/libs/plugins/MVdWPlaceholderAPI.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api</artifactId>
-            <version>2.11.3</version>
+            <groupId>com.saicone.rtag</groupId>
+            <artifactId>rtag</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.saicone.rtag</groupId>
+            <artifactId>rtag-item</artifactId>
+            <version>1.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.codemc.worldguardwrapper</groupId>

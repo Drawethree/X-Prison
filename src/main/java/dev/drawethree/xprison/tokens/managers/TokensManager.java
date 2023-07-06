@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.tokens.managers;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
@@ -9,6 +8,7 @@ import dev.drawethree.xprison.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.tokens.api.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.tokens.model.BlockReward;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
+import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
@@ -173,34 +173,33 @@ public class TokensManager {
 	}
 
 	public void redeemTokens(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
-		NBTItem nbtItem = new NBTItem(item);
-		if (nbtItem.hasKey("token-amount")) {
-			long tokenAmount = nbtItem.getLong("token-amount");
-			int itemAmount = item.getAmount();
-			if (shiftClick) {
-				if (offhand) {
-					p.getInventory().setItemInOffHand(null);
-				} else {
-					p.setItemInHand(null);
-				}
-				this.giveTokens(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
-				PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
-			} else {
-				this.giveTokens(p, tokenAmount, null, ReceiveCause.REDEEM);
-				if (item.getAmount() == 1) {
-					if (offhand) {
-						p.getInventory().setItemInOffHand(null);
-					} else {
-						p.setItemInHand(null);
-					}
-				} else {
-					item.setAmount(item.getAmount() - 1);
-				}
-				PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
-			}
-		} else {
-			PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("not_token_item"));
-		}
+        final Long tokenAmount = new PrisonItem(item).getTokens();
+        if (tokenAmount == null) {
+            PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("not_token_item"));
+            return;
+        }
+        int itemAmount = item.getAmount();
+        if (shiftClick) {
+            if (offhand) {
+                p.getInventory().setItemInOffHand(null);
+            } else {
+                p.setItemInHand(null);
+            }
+            this.giveTokens(p, tokenAmount * itemAmount, null, ReceiveCause.REDEEM);
+            PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount * itemAmount)));
+        } else {
+            this.giveTokens(p, tokenAmount, null, ReceiveCause.REDEEM);
+            if (item.getAmount() == 1) {
+                if (offhand) {
+                    p.getInventory().setItemInOffHand(null);
+                } else {
+                    p.setItemInHand(null);
+                }
+            } else {
+                item.setAmount(item.getAmount() - 1);
+            }
+            PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("tokens_redeem").replace("%tokens%", String.format("%,d", tokenAmount)));
+        }
 	}
 
 	public void payTokens(Player executor, long amount, OfflinePlayer target) {
@@ -300,9 +299,10 @@ public class TokensManager {
 				.enchant(Enchantment.PROTECTION_ENVIRONMENTAL)
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
-		NBTItem nbt = new NBTItem(item);
-		nbt.setLong("token-amount", amount);
-		return nbt.getItem();
+		final PrisonItem prisonItem = new PrisonItem(item);
+		prisonItem.setTokens(amount);
+		prisonItem.load();
+		return item;
 	}
 
 	public void sendInfoMessage(CommandSender sender, OfflinePlayer target, boolean tokens) {

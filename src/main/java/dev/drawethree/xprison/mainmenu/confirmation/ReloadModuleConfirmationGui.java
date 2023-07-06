@@ -20,6 +20,7 @@ public class ReloadModuleConfirmationGui extends ConfirmationGui {
 		if (confirm) {
 			if (module == null) {
 				XPrison.getInstance().getModules().forEach(module1 -> XPrison.getInstance().reloadModule(module1));
+				XPrison.getInstance().getItemMigrator().reload();
 				PlayerUtils.sendMessage(this.getPlayer(), "&aSuccessfully reloaded all modules.");
 			} else {
 				XPrison.getInstance().reloadModule(module);
