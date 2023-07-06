@@ -317,11 +317,37 @@ public final class XPrison extends ExtendedJavaPlugin {
 		Commands.create()
 				.assertPermission("xprison.admin")
 				.handler(c -> {
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
-						new MainMenu(this, (Player) c.sender()).open();
-					} else if (c.args().size() == 1 && c.sender() instanceof Player && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
-						new HelpGui((Player) c.sender()).open();
-					}
+                    if (c.args().size() == 0 && c.sender() instanceof Player) {
+                        new MainMenu(this, (Player) c.sender()).open();
+                    } else if (c.args().size() >= 1) {
+                        if ("reload".equalsIgnoreCase(c.rawArg(0))) {
+                            final String name = c.args().size() >= 2 ? c.rawArg(1).trim().toLowerCase().replace("-", "") : "all";
+                            switch (name) {
+                                case "all":
+                                case "*":
+                                    getModules().forEach(this::reloadModule);
+                                    getItemMigrator().reload();
+                                    c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded all the plugin"));
+                                    break;
+                                case "migrator":
+                                case "itemmigrator":
+                                    getItemMigrator().reload();
+                                    c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded item migrator"));
+                                    break;
+                                default:
+                                    final XPrisonModule module = modules.get(name);
+                                    if (module != null) {
+                                        reloadModule(module);
+                                        c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded &f" + name + " &amodule"));
+                                    } else {
+                                        c.sender().sendMessage(TextUtils.applyColor("&cThe module &6" + c.rawArg(1) + " &cdoesn't exist"));
+                                    }
+                                    break;
+                            }
+                        } else if (c.sender() instanceof Player && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
+                            new HelpGui((Player) c.sender()).open();
+                        }
+                    }
 				}).registerAndBind(this, commandAliasesArray);
 	}
 
