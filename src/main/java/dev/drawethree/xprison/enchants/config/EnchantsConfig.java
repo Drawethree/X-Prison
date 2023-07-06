@@ -20,6 +20,7 @@ public class EnchantsConfig {
 
 	private Map<String, String> messages;
 
+	private String excludedFormat;
 	private List<String> pickaxeLore;
 	private boolean allowEnchantsOutside;
 	private boolean firstJoinPickaxeEnabled;
@@ -45,6 +46,7 @@ public class EnchantsConfig {
 	}
 
 	private void loadVariables() {
+		this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
 		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
 		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
 		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
@@ -75,6 +77,9 @@ public class EnchantsConfig {
 		return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
 	}
 
+	public String getExcludedFormat() {
+		return excludedFormat;
+	}
 
 	public List<String> getPickaxeLore() {
 		return pickaxeLore;

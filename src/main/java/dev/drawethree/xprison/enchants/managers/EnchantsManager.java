@@ -31,11 +31,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EnchantsManager {
 
+    private static final String EXCLUDE_PERMISSION = "xprison.enchant.exclude.";
 	private static final Pattern PICKAXE_LORE_ENCHANT_PATTER = Pattern.compile("(?i)%Enchant-\\d+%");
 
 	private final XPrisonEnchants plugin;
@@ -104,7 +106,15 @@ public class EnchantsManager {
 				if (enchantment != null) {
 					int enchLvl = enchants.getOrDefault(enchantment, 0);
 					if (enchLvl > 0) {
-						s = s.replace(matcher.group(), enchantment.getName() + " " + enchLvl);
+                        final String line;
+                        if (player.hasPermission(EXCLUDE_PERMISSION + enchantment.getRawName())) {
+                            line = this.plugin.getEnchantsConfig().getExcludedFormat()
+									.replace("%Enchant%", enchantment.getNameUncolor())
+									.replace("%Level%", String.valueOf(enchLvl));
+                        } else {
+							line = enchantment.getName() + " " + enchLvl;
+						}
+						s = s.replace(matcher.group(), line);
 					} else {
 						continue;
 					}
@@ -173,6 +183,15 @@ public class EnchantsManager {
 		return Math.min(new PrisonItem(itemStack).getEnchantLevel(enchantment), enchantment.getMaxLevel());
 	}
 
+    public void forEachEffectiveEnchant(Player player, ItemStack item, BiConsumer<XPrisonEnchantment, Integer> consumer) {
+        for (var entry : this.getItemEnchants(item).entrySet()) {
+            final XPrisonEnchantment enchant = entry.getKey();
+            if (enchant.isEnabled() && !player.hasPermission(EXCLUDE_PERMISSION + enchant.getRawName())) {
+                consumer.accept(enchant, entry.getValue());
+            }
+        }
+    }
+
 	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
 
 		this.addBlocksBrokenToItem(e.getPlayer(), 1);
@@ -182,35 +201,15 @@ public class EnchantsManager {
 			return;
 		}
 
-		Map<XPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(pickAxe);
-
-		for (XPrisonEnchantment enchantment : playerEnchants.keySet()) {
-			if (!enchantment.isEnabled()) {
-				continue;
-			}
-			enchantment.onBlockBreak(e, playerEnchants.get(enchantment));
-		}
-
+        forEachEffectiveEnchant(e.getPlayer(), pickAxe, (enchant, level) -> enchant.onBlockBreak(e, level));
 	}
 
 	public void handlePickaxeEquip(Player p, ItemStack newItem) {
-		Map<XPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
-		for (XPrisonEnchantment enchantment : playerEnchants.keySet()) {
-			if (!enchantment.isEnabled()) {
-				continue;
-			}
-			enchantment.onEquip(p, newItem, playerEnchants.get(enchantment));
-		}
+        forEachEffectiveEnchant(p, newItem, (enchant, level) -> enchant.onEquip(p, newItem, level));
 	}
 
 	public void handlePickaxeUnequip(Player p, ItemStack newItem) {
-		Map<XPrisonEnchantment, Integer> playerEnchants = this.getItemEnchants(newItem);
-		for (XPrisonEnchantment enchantment : playerEnchants.keySet()) {
-			if (!enchantment.isEnabled()) {
-				continue;
-			}
-			enchantment.onUnequip(p, newItem, playerEnchants.get(enchantment));
-		}
+        forEachEffectiveEnchant(p, newItem, (enchant, level) -> enchant.onUnequip(p, newItem, level));
 	}
 
 	public ItemStack setEnchantLevel(Player player, ItemStack item, XPrisonEnchantment enchantment, int level) {
