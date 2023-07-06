@@ -35,6 +35,12 @@ modules:
   gangs: true
   mines: true
   history: true
+# Item migrator config
+item-migrator:
+  enabled: true
+  bind:
+    join: true
+    inventory: false
 # List of supported pickaxes by UPC Enchants
 supported-pickaxes:
   - DIAMOND_PICKAXE

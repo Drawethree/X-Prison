@@ -15,6 +15,7 @@ import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.history.XPrisonHistory;
 import dev.drawethree.xprison.mainmenu.MainMenu;
 import dev.drawethree.xprison.mainmenu.help.HelpGui;
+import dev.drawethree.xprison.migrator.ItemMigrator;
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import dev.drawethree.xprison.nicknames.repo.NicknameRepository;
@@ -74,6 +75,8 @@ public final class XPrison extends ExtendedJavaPlugin {
 	private XPrisonMines mines;
 	private XPrisonHistory history;
 
+	private ItemMigrator itemMigrator;
+
 	private List<Material> supportedPickaxes;
 
 	private NicknameService nicknameService;
@@ -110,6 +113,9 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.initVariables();
 		this.initModules();
 		this.loadModules();
+
+		this.itemMigrator = new ItemMigrator(this);
+		this.itemMigrator.reload();
 
 		this.initNicknameService();
 
