@@ -52,6 +52,10 @@
                                     <shadedPattern>${project.groupId}.libs.rtag</shadedPattern>
                                 </relocation>
                                 <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>${project.groupId}.libs.xseries</shadedPattern>
+                                </relocation>
+                                <relocation>
                                     <pattern>org.codemc.worldguardwrapper</pattern>
                                     <shadedPattern>${project.groupId}.libs.worldguardwrapper</shadedPattern>
                                 </relocation>
@@ -148,6 +152,11 @@
             <groupId>com.saicone.rtag</groupId>
             <artifactId>rtag-item</artifactId>
             <version>1.3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>9.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.codemc.worldguardwrapper</groupId>

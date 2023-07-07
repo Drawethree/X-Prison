@@ -1,10 +1,9 @@
 package dev.drawethree.xprison.autominer.model;
 
+import com.cryptomorin.xseries.messages.ActionBar;
 import dev.drawethree.xprison.autominer.api.events.PlayerAutomineEvent;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -63,18 +62,18 @@ public final class AutoMinerTask implements Runnable {
 
 	private void decrementPlayerAutoMinerTimeAndNotify(Player p) {
 		this.region.getPlugin().getManager().decrementPlayerAutominerTime(p);
-		p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(this.region.getPlugin().getAutoMinerConfig().getMessage("auto_miner_enabled")));
+		ActionBar.sendActionBar(p, this.region.getPlugin().getAutoMinerConfig().getMessage("auto_miner_enabled"));
 	}
 
 	private boolean executeTaskValidationAndNotifyPlayerOnFail(Player p) {
 
 		if (!this.checkPlayerAutoMinerTime(p)) {
-			p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(this.region.getPlugin().getAutoMinerConfig().getMessage("auto_miner_disabled")));
+			ActionBar.sendActionBar(p, this.region.getPlugin().getAutoMinerConfig().getMessage("auto_miner_disabled"));
 			return false;
 		}
 
 		if (!this.checkPlayerItemInHand(p)) {
-			p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(this.region.getPlugin().getAutoMinerConfig().getMessage("auto_miner_no_pickaxe")));
+			ActionBar.sendActionBar(p, this.region.getPlugin().getAutoMinerConfig().getMessage("auto_miner_no_pickaxe"));
 			return false;
 		}
 
