@@ -28,6 +28,7 @@ public class TokensConfig {
 	private boolean displayTokenMessages;
 	private Map<String, String> messages;
 	private Map<Material, List<String>> luckyBlockRewards;
+	private List<String> worldWhitelist;
 	private List<String> tokensTopFormat;
 	private List<String> blocksTopFormat;
 	private List<String> blocksTopFormatWeekly;
@@ -74,6 +75,7 @@ public class TokensConfig {
 		}
 
 		this.topPlayersAmount = configuration.getInt("top_players_amount");
+		this.worldWhitelist = configuration.getStringList("world-whitelist");
 		this.tokensTopFormat = configuration.getStringList("tokens-top-format");
 		this.blocksTopFormat = configuration.getStringList("blocks-top-format");
 		this.blocksTopFormatWeekly = configuration.getStringList("blocks-top-weekly-format");
@@ -123,6 +125,10 @@ public class TokensConfig {
 
 	public long getStartingTokens() {
 		return this.startingTokens;
+	}
+
+	public List<String> getWorldWhitelist() {
+		return worldWhitelist;
 	}
 
 	public List<String> getTokensTopFormat() {
