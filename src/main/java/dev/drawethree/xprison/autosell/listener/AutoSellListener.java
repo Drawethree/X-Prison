@@ -68,7 +68,8 @@ public class AutoSellListener {
                     }
 
                     if (success) {
-                        e.getBlock().setType(CompMaterial.AIR.toMaterial());
+                        // Do not set block to air due compatibility issues
+                        e.setDropItems(false);
                     } else {
                         e.setCancelled(true);
                     }
