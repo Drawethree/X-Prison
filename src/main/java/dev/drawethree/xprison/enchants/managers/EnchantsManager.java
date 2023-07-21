@@ -110,9 +110,9 @@ public class EnchantsManager {
                         if (player.hasPermission(EXCLUDE_PERMISSION + enchantment.getRawName())) {
                             line = this.plugin.getEnchantsConfig().getExcludedFormat()
 									.replace("%Enchant%", enchantment.getNameUncolor())
-									.replace("%Level%", String.valueOf(enchLvl));
+									.replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
                         } else {
-							line = enchantment.getName() + " " + enchLvl;
+							line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
 						}
 						s = s.replace(matcher.group(), line);
 					} else {

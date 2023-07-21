@@ -589,6 +589,10 @@ enchants:
 # Format of every pickaxe that has UPC Enchants on it
 # %Enchant-X% represents the name + level of specific enchant (X = id)
 Pickaxe:
+  # NUMBER = All levels as numbers
+  # ROMAN = All levels as roman numbers
+  # FIXED = First 10 levels as roman,
+  level-format: NUMBER
   excluded-format: "&7[&c-&7] &8%Enchant% %Level%"
   lore:
     - '&8&m------------------------'

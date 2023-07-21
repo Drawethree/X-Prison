@@ -2,6 +2,7 @@ package dev.drawethree.xprison.enchants.config;
 
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
+import dev.drawethree.xprison.enchants.model.LevelFormat;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +21,7 @@ public class EnchantsConfig {
 
 	private Map<String, String> messages;
 
+	private LevelFormat levelFormat;
 	private String excludedFormat;
 	private List<String> pickaxeLore;
 	private boolean allowEnchantsOutside;
@@ -46,6 +48,7 @@ public class EnchantsConfig {
 	}
 
 	private void loadVariables() {
+		this.levelFormat = LevelFormat.of(getYamlConfig().getString("Pickaxe.level-format", "NUMBER"));
 		this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
 		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
 		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
@@ -75,6 +78,10 @@ public class EnchantsConfig {
 
 	public String getMessage(String key) {
 		return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
+	}
+
+	public LevelFormat getLevelFormat() {
+		return levelFormat;
 	}
 
 	public String getExcludedFormat() {
