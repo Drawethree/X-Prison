@@ -14,6 +14,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import me.lucko.helper.utils.Players;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -154,6 +155,14 @@ public class GemsManager {
 	}
 
 	public void giveGems(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
+		if (Bukkit.isPrimaryThread()) {
+			giveGemsSync(p, amount, executor, cause);
+		} else {
+			Schedulers.sync().run(() -> giveGemsSync(p, amount, executor, cause));
+		}
+	}
+
+	private void giveGemsSync(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
 		long currentGems = getPlayerGems(p);
 
 		this.plugin.getCore().debug("XPrisonPlayerGemsReceiveEvent :: Player Gems :: " + currentGems, this.plugin);
@@ -171,7 +180,7 @@ public class GemsManager {
 		}
 
 		if (!p.isOnline()) {
-			this.plugin.getGemsService().setGems(p, newAmount);
+			Schedulers.async().run(() -> this.plugin.getGemsService().setGems(p, newAmount));
 		} else {
 			gemsCache.put(p.getUniqueId(), newAmount);
 			if (executor instanceof ConsoleCommandSender && !this.hasOffGemsMessages(p.getPlayer())) {
