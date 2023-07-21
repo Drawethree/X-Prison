@@ -8,6 +8,7 @@ import dev.drawethree.xprison.enchants.gui.DisenchantGUI;
 import dev.drawethree.xprison.enchants.gui.EnchantGUI;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
+import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
 import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.utils.Constants;
@@ -88,6 +89,16 @@ public class EnchantsManager {
 
 		List<String> pickaxeLore = this.plugin.getEnchantsConfig().getPickaxeLore();
 
+		boolean durabilityOnLore = this.plugin.getEnchantsConfig().isDurabilityOnLore();
+		String durability = null;
+		if (durabilityOnLore) {
+			if (EnchantUtils.isUnbreakable(item, meta)) {
+				durability = "∞";
+			} else {
+				durability = String.valueOf(item.getType().getMaxDurability() - EnchantUtils.getDurability(item, meta));
+			}
+		}
+
 		for (String s : pickaxeLore) {
 			s = s.replace("%Blocks%", String.valueOf(blocksBroken));
 
@@ -95,6 +106,10 @@ public class EnchantsManager {
 				s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
 				s = s.replace("%PickaxeLevel%", currentLevel == null ? "0" : String.valueOf(currentLevel.getLevel()));
 				s = s.replace("%PickaxeProgress%", pickaxeProgressBar);
+			}
+
+			if (durabilityOnLore) {
+				s = s.replace("%Durability%", durability);
 			}
 
 			Matcher matcher = PICKAXE_LORE_ENCHANT_PATTER.matcher(s);

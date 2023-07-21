@@ -596,8 +596,9 @@ Pickaxe:
   excluded-format: "&7[&c-&7] &8%Enchant% %Level%"
   lore:
     - '&8&m------------------------'
-    - '&E&lBLOCKS MINED: &f%Blocks%/%Blocks_Required%'
-    - '&E&lPICKAXE LEVEL: &f%PickaxeLevel% &7[%PickaxeProgress%&7]'
+    - '&e&lBLOCKS MINED: &f%Blocks%/%Blocks_Required%'
+    - '&e&lPICKAXE LEVEL: &f%PickaxeLevel% &7[%PickaxeProgress%&7]'
+    - '&e&lDURABILITY: &f%Durability%'
     - '&8&m------------------------'
     - '%Enchant-1%'
     - '%Enchant-2%'

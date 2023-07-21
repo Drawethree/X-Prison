@@ -24,6 +24,7 @@ public class EnchantsConfig {
 	private LevelFormat levelFormat;
 	private String excludedFormat;
 	private List<String> pickaxeLore;
+	private boolean durabilityOnLore;
 	private boolean allowEnchantsOutside;
 	private boolean firstJoinPickaxeEnabled;
 	private CompMaterial firstJoinPickaxeMaterial;
@@ -51,6 +52,12 @@ public class EnchantsConfig {
 		this.levelFormat = LevelFormat.of(getYamlConfig().getString("Pickaxe.level-format", "NUMBER"));
 		this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
 		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
+		for (String s : this.pickaxeLore) {
+			if (s.contains("%Durability%")) {
+				this.durabilityOnLore = true;
+				break;
+			}
+		}
 		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
 		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
 		this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
@@ -90,6 +97,10 @@ public class EnchantsConfig {
 
 	public List<String> getPickaxeLore() {
 		return pickaxeLore;
+	}
+
+	public boolean isDurabilityOnLore() {
+		return durabilityOnLore;
 	}
 
 	public boolean isFirstJoinPickaxeEnabled() {
