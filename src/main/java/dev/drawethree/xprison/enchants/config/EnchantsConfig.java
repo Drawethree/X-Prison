@@ -30,6 +30,7 @@ public class EnchantsConfig {
 	private List<String> firstJoinPickaxeEnchants;
 	private String firstJoinPickaxeName;
 	private boolean keepPickaxesOnDeath;
+	private boolean useUnbreakablePermission;
 	private List<Action> openEnchantMenuActions;
 
 	public EnchantsConfig(XPrisonEnchants plugin) {
@@ -58,6 +59,7 @@ public class EnchantsConfig {
 		this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");
 		this.firstJoinPickaxeName = getYamlConfig().getString("first-join-pickaxe.name");
 		this.keepPickaxesOnDeath = getYamlConfig().getBoolean("keep-pickaxes-on-death");
+		this.useUnbreakablePermission = getYamlConfig().getBoolean("use-unbreakable-permission");
 	}
 
 	private void loadMessages() {
@@ -110,6 +112,10 @@ public class EnchantsConfig {
 
 	public boolean isKeepPickaxesOnDeath() {
 		return keepPickaxesOnDeath;
+	}
+
+	public boolean isUseUnbreakablePermission() {
+		return useUnbreakablePermission;
 	}
 
 	public List<Action> getOpenEnchantMenuActions() {

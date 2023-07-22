@@ -96,14 +96,14 @@ public class EnchantsManager {
 		final boolean isUnbreakable;
 		Boolean unbreakResult = null;
 		if (USE_META_UNBREAK ? meta.isUnbreakable() : prisonItem.isUnbreakable()) {
-			if (player.hasPermission(UNBREAK_PERMISSION)) {
+			if (!this.plugin.getEnchantsConfig().isUseUnbreakablePermission() || player.hasPermission(UNBREAK_PERMISSION)) {
 				isUnbreakable = true;
 			} else {
 				isUnbreakable = false;
 				unbreakResult = false;
 			}
 		} else {
-			if (player.hasPermission(UNBREAK_PERMISSION)) {
+			if (this.plugin.getEnchantsConfig().isUseUnbreakablePermission() && player.hasPermission(UNBREAK_PERMISSION)) {
 				isUnbreakable = true;
 				unbreakResult = true;
 			} else {
