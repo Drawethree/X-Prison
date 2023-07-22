@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.enchants.managers;
 
+import com.saicone.rtag.util.ServerInstance;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
@@ -39,6 +40,8 @@ import java.util.regex.Pattern;
 public class EnchantsManager {
 
     private static final String EXCLUDE_PERMISSION = "xprison.enchant.exclude.";
+	private static final String UNBREAK_PERMISSION = "xprison.pickaxe.unbreakable";
+	private static final boolean USE_META_UNBREAK = ServerInstance.verNumber >= 11;
 	private static final Pattern PICKAXE_LORE_ENCHANT_PATTER = Pattern.compile("(?i)%Enchant-\\d+%");
 
 	private final XPrisonEnchants plugin;
@@ -85,31 +88,51 @@ public class EnchantsManager {
 		}
 
 		long blocksBroken = getBlocksBroken(item);
-		Map<XPrisonEnchantment, Integer> enchants = this.getItemEnchants(item);
+		final PrisonItem prisonItem = new PrisonItem(item);
+		Map<XPrisonEnchantment, Integer> enchants = prisonItem.getEnchants(getEnchantsRepository());
 
 		List<String> pickaxeLore = this.plugin.getEnchantsConfig().getPickaxeLore();
 
-		boolean durabilityOnLore = this.plugin.getEnchantsConfig().isDurabilityOnLore();
-		String durability = null;
-		if (durabilityOnLore) {
-			if (EnchantUtils.isUnbreakable(item, meta)) {
-				durability = "∞";
+		final boolean isUnbreakable;
+		Boolean unbreakResult = null;
+		if (USE_META_UNBREAK ? meta.isUnbreakable() : prisonItem.isUnbreakable()) {
+			if (player.hasPermission(UNBREAK_PERMISSION)) {
+				isUnbreakable = true;
 			} else {
-				durability = String.valueOf(item.getType().getMaxDurability() - EnchantUtils.getDurability(item, meta));
+				isUnbreakable = false;
+				unbreakResult = false;
+			}
+		} else {
+			if (player.hasPermission(UNBREAK_PERMISSION)) {
+				isUnbreakable = true;
+				unbreakResult = true;
+			} else {
+				isUnbreakable = false;
+			}
+		}
+		final String durability = isUnbreakable ? "∞" : String.valueOf(item.getType().getMaxDurability() - EnchantUtils.getDurability(item, meta));
+		if (unbreakResult != null) {
+			if (USE_META_UNBREAK) {
+				meta.setUnbreakable(unbreakResult);
+			} else {
+				if (unbreakResult) {
+					prisonItem.setUnbreakable(true);
+				} else {
+					prisonItem.remove("Unbreakable");
+				}
+				prisonItem.load();
+				meta = item.getItemMeta();
 			}
 		}
 
 		for (String s : pickaxeLore) {
 			s = s.replace("%Blocks%", String.valueOf(blocksBroken));
+			s = s.replace("%Durability%", durability);
 
 			if (pickaxeLevels) {
 				s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
 				s = s.replace("%PickaxeLevel%", currentLevel == null ? "0" : String.valueOf(currentLevel.getLevel()));
 				s = s.replace("%PickaxeProgress%", pickaxeProgressBar);
-			}
-
-			if (durabilityOnLore) {
-				s = s.replace("%Durability%", durability);
 			}
 
 			Matcher matcher = PICKAXE_LORE_ENCHANT_PATTER.matcher(s);

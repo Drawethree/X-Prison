@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.enchants.utils;
 
-import com.saicone.rtag.RtagItem;
 import com.saicone.rtag.util.ServerInstance;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
@@ -47,34 +46,5 @@ public final class EnchantUtils {
             return ((Damageable) meta).getDamage();
         }
         return 0;
-    }
-
-    public static ItemStack setUnbreakable(ItemStack item, boolean bool) {
-        if (ServerInstance.verNumber >= 11) {
-            final ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setUnbreakable(bool);
-                item.setItemMeta(meta);
-                return item;
-            }
-        }
-        return RtagItem.edit(item, tag -> {
-            tag.setUnbreakable(bool);
-        });
-    }
-
-    public static boolean isUnbreakable(ItemStack item) {
-        return isUnbreakable(item, item.getItemMeta());
-    }
-
-    public static boolean isUnbreakable(ItemStack item, ItemMeta meta) {
-        if (item.getType().isBlock() || item.getType().getMaxDurability() < 1) {
-            return true;
-        }
-        if (ServerInstance.verNumber >= 11) {
-            return meta.isUnbreakable();
-        } else {
-            return new RtagItem(item).isUnbreakable();
-        }
     }
 }
