@@ -15,6 +15,7 @@ import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -27,12 +28,14 @@ import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public final class NukeEnchant extends XPrisonEnchantment {
 
     private double chance;
     private boolean countBlocksBroken;
     private boolean removeBlocks;
+    private boolean useEvents;
     private String message;
 
     public NukeEnchant(XPrisonEnchants instance) {
@@ -40,6 +43,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
         this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
         this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
         this.removeBlocks = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Remove-Blocks");
+        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
         this.message = TextUtils.applyColor(plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Message"));
     }
 
@@ -81,7 +85,18 @@ public final class NukeEnchant extends XPrisonEnchantment {
             return;
         }
 
-        blocksAffected = event.getBlocksAffected();
+        if (this.useEvents) {
+            final List<BlockBreakEvent> ignored = this.plugin.getEnchantsListener().getIgnoredEvents();
+            blocksAffected = event.getBlocksAffected().stream().filter(block -> {
+                final BlockBreakEvent blockEvent = new BlockBreakEvent(block, p);
+                ignored.add(blockEvent);
+                Bukkit.getPluginManager().callEvent(blockEvent);
+                ignored.remove(blockEvent);
+                return !e.isCancelled();
+            }).collect(Collectors.toList());
+        } else {
+            blocksAffected = event.getBlocksAffected();
+        }
 
         if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
             handleAffectedBlocks(p, region, blocksAffected);
@@ -89,7 +104,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (this.plugin.isMinesModuleEnabled() && removeBlocks) {
+        if (!this.useEvents && this.plugin.isMinesModuleEnabled() && removeBlocks) {
             Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
 
             if (mine != null) {
@@ -101,7 +116,9 @@ public final class NukeEnchant extends XPrisonEnchantment {
             plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
         }
 
-        plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+        if (!this.useEvents) {
+            plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+        }
 
         long timeEnd = Time.nowMillis();
         this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
@@ -184,6 +201,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
         this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
         this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
         this.removeBlocks = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Remove-Blocks");
+        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
         this.message = TextUtils.applyColor(plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Message"));
 
     }

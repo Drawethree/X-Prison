@@ -44,6 +44,9 @@ public final class XPrisonEnchants implements XPrisonModule {
 	private EnchantsConfig enchantsConfig;
 
 	@Getter
+	private EnchantsListener enchantsListener;
+
+	@Getter
 	private EnchantsRepository enchantsRepository;
 
 	@Getter
@@ -84,8 +87,8 @@ public final class XPrisonEnchants implements XPrisonModule {
 		this.enchantsManager = new EnchantsManager(this);
 		this.enchantsManager.enable();
 
-		EnchantsListener listener = new EnchantsListener(this);
-		listener.register();
+		this.enchantsListener = new EnchantsListener(this);
+		this.enchantsListener.register();
 
 		this.registerCommands();
 

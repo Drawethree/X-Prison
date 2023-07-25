@@ -12,6 +12,7 @@ import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,16 +25,19 @@ import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 public final class LayerEnchant extends XPrisonEnchantment {
 
     private double chance;
     private boolean countBlocksBroken;
+    private boolean useEvents;
 
     public LayerEnchant(XPrisonEnchants instance) {
         super(instance, 10);
         this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
         this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
+        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
     }
 
     @Override
@@ -74,7 +78,18 @@ public final class LayerEnchant extends XPrisonEnchantment {
             return;
         }
 
-        blocksAffected = event.getBlocksAffected();
+        if (this.useEvents) {
+            final List<BlockBreakEvent> ignored = this.plugin.getEnchantsListener().getIgnoredEvents();
+            blocksAffected = event.getBlocksAffected().stream().filter(block -> {
+                final BlockBreakEvent blockEvent = new BlockBreakEvent(block, p);
+                ignored.add(blockEvent);
+                Bukkit.getPluginManager().callEvent(blockEvent);
+                ignored.remove(blockEvent);
+                return !e.isCancelled();
+            }).collect(Collectors.toList());
+        } else {
+            blocksAffected = event.getBlocksAffected();
+        }
 
         if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
             handleAffectedBlocks(p, region, blocksAffected);
@@ -82,7 +97,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (this.plugin.isMinesModuleEnabled()) {
+        if (!this.useEvents && this.plugin.isMinesModuleEnabled()) {
             Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
             if (mine != null) {
                 mine.handleBlockBreak(blocksAffected);
@@ -93,7 +108,9 @@ public final class LayerEnchant extends XPrisonEnchantment {
             plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
         }
 
-        plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+        if (!this.useEvents) {
+            plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+        }
 
         long timeEnd = Time.nowMillis();
         this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
@@ -164,6 +181,7 @@ public final class LayerEnchant extends XPrisonEnchantment {
         super.reload();
         this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
         this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
+        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
     }
 
     @Override

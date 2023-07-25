@@ -209,7 +209,7 @@ public class AutoSellManager {
     private boolean validateRegionBeforeSellAll(Player sender, IWrappedRegion region) {
 
         if (region == null) {
-            PlayerUtils.sendMessage(sender, this.plugin.getAutoSellConfig().getMessage("not_in_region"));
+            //PlayerUtils.sendMessage(sender, this.plugin.getAutoSellConfig().getMessage("not_in_region"));
             return false;
         }
 

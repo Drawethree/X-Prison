@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.flag.IWrappedFlag;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class EnchantsListener {
 
 	private final XPrisonEnchants plugin;
+	private final List<BlockBreakEvent> ignoredEvents = new ArrayList<>();
 
 	public EnchantsListener(XPrisonEnchants plugin) {
 		this.plugin = plugin;
@@ -42,9 +44,13 @@ public class EnchantsListener {
 		this.subscribeToBlockBreakEvent();
 	}
 
+	public List<BlockBreakEvent> getIgnoredEvents() {
+		return ignoredEvents;
+	}
+
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-				.filter(e -> !e.isCancelled())
+				.filter(e -> !e.isCancelled() && !ignoredEvents.contains(e))
 				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
 				.handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin.getCore());
 	}

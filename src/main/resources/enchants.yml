@@ -297,6 +297,7 @@ enchants:
     Count-Blocks-Broken: true
     Explosion-Type: CUBE
     Sounds: true
+    Use-Events: false
     Refund:
       Enabled: true
       InGuiSlot: 35
@@ -315,6 +316,7 @@ enchants:
     Description:
       - '&7&o(( Ability to break full layer of your mine while mining))'
     Count-Blocks-Broken: true
+    Use-Events: false
     Refund:
       Enabled: true
       InGuiSlot: 36
@@ -547,6 +549,7 @@ enchants:
     Pickaxe-Level-Required: 1
     Remove-Blocks: true
     Count-Blocks-Broken: true
+    Use-Events: false
     Message: "&e&lENCHANT &8» &7You got &2&l$&a%money% &7from &c&lNuke &7activation."
     Refund:
       Enabled: true
