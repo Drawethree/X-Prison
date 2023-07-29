@@ -1,0 +1,643 @@
+messages:
+  no_pickaxe_found: "&cYou do not have any diamond pickaxe!"
+  enchant_max_level: "&e&l(!) &eYou have already maxed out this enchantment"
+  enchant_max_level_exceed: "&e&l(!) &eThis transaction would exceed the max level for this enchant."
+  enchant_min_level_exceed: "&e&l(!) &eThis transaction would exceed the min level for this enchant."
+  not_enough_tokens: "&cYou do not have enough tokens!"
+  enchant_bought: "&e&lENCHANT &8» &c&l-%tokens% TOKENS"
+  enchant_bought_multiple: "&e&lENCHANT &8» &7You have bought &f%amount% &7levels of %enchant%&r &7for &f%tokens% &7tokens."
+  enchant_refunded: "&e&lREFUND &8» &7You have refunded &f%amount% &7levels of %enchant%"
+  enchant_tokens_back: "&e&lREFUND &8» &7You have received &f%tokens% &7tokens back."
+  enchant_cant_disenchant: "&c&l(!) &cThis enchant can't be disenchanted."
+  enchant_no_level: "&e&l(!) &cYou do not have this enchant!"
+  charity_other: "&a&l+ $%amount% &7(From %player%'s Charity)"
+  charity_your: "&a&l+ $%amount% &7(From Your Charity)"
+  blessing_other: "&6&l+ %amount% TOKENS &7(From %player%'s Blessing)"
+  blessing_your: "&6&l+ %amount% TOKENS &7(From Your Blessing)"
+  layer_disabled: "&e&l(!) &7You've &c&lDISABLED &7layer."
+  layer_enabled: "&e&l(!) &7You've &a&lENABLED &7layer."
+  block_booster_on: "&e&lENCHANT &8» &fBlock Booster &7has &Aactivated&7, &FX2 Blocks &7for &a&l5:00"
+  block_booster_off: "&e&lENCHANT &8» &fBlock Booster &7has &cDeactivated&7."
+  explosive_disabled: "&e&l(!) &7You've &c&lDISABLED &7explosive."
+  explosive_enabled: "&e&l(!) &7You've &a&lENABLED &7explosive."
+  value_no_permission: "&e&lVALUE &8» &7No Permission, Unlock at &fstore.xprison.net&7."
+  value_no_pickaxe: "&e&lVALUE &8» &7You must hold an pickaxe in your hand."
+  value_value: "&e&lVALUE &8» &f%player%'s &7Pickaxe Value: &f%tokens% Tokens&7."
+  value_cooldown: "&e&lVALUE &8» &7Please wait &f%time% Seconds&7 before using this command again."
+  pickaxe_given: "&e&lENCHANT &8» &fYou have given pickaxe to &e%player%"
+  pickaxe_received: "&e&lENCHANT &8» &fYou have received pickaxe from &e%sender%"
+  pickaxe_inventory_full: "&e&lENCHANT &8» &e%player% &chas full inventory!"
+  prestige_finder: "&e&lPRESTIGE FINDER &8» &7You've just found a &fX%prestige% Prestige Level &7while mining."
+  transaction_in_progress: "&e&lENCHANT &8» &cPlease wait for your other transaction to complete."
+  pickaxe_level_required: "&e&lENCHANT &8» &cYou need to have at least &ePickaxe Level %pickaxe_level%&c in order to enchant this!"
+# Should we keep UPC Enchanted pickaxes in players inventory when they die?
+keep-pickaxes-on-death: true
+# Should use unbreakable permission to handle unbreakable pickaxes?
+use-unbreakable-permission: false
+# Action to open Enchanting menu while holding pickaxe. For multiple, separate them with ',' (LEFT_CLICK_BLOCK,RIGHT_CLICK_BLOCK,LEFT_CLICK_AIR,RIGHT_CLICK_AIR,PHYSICAL)
+open-enchant-menu-action: "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK"
+# Enchant Menu Settings
+enchant_menu:
+  # GUI Name
+  title: "&7Enchants Menu"
+  # Filler items
+  empty_slots: STAINED_GLASS_PANE:7
+  # Number of GUI rows
+  lines: 6
+  # Slot where player's pickaxe should be displayed
+  pickaxe_slot: 13
+  # Should we show player's pickaxe in GUI ?
+  pickaxe_enabled: true
+  # Displaying Enchant Info
+  item:
+    lore:
+      - "&7%description%"
+      - " "
+      - "&6&l* &ePrice: &f%cost%"
+      - "&6&l* &eMax Level: &f%max_level%"
+      - "&6&l* &eCurrent Level: &f%current_level%"
+      - "&6&l* &eChance to trigger: &f%%chance%"
+      - " "
+      - "&7&o(( &f&oLeft-Click&7&o to add 1 level ))"
+      - "&7&o(( &f&oRight-Click&7&o to add 10 levels ))"
+      - "&7&o(( &f&oMiddle-Click&7&o to add 100 levels ))"
+      - "&7&o(( &f&oPress 'Q'&7&o to buy as much as you can afford ))"
+      - " "
+      - "&c&lYou must have at least Level %pickaxe_level% on your pickaxe"
+  # Help item settings
+  help_item:
+    enabled: true
+    material: NAME_TAG
+    #If you would like to use Base64 custom player skulls, just uncomment this line an change the Material above to PLAYER_HEAD
+    #Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2YzY2E0ZjdjOTJkZGUzYTc3ZWM1MTBhNzRiYThjMmU4ZDBlYzdiODBmMGUzNDhjYzZkZGRkNmI0NThiZCJ9fX0=
+    slot: 15
+    name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - "&6&l* &eLeft-Click &8» &7Buy 1 Level"
+      - " "
+      - "&6&l* &eRight-Click &8» &7Buy 10 Levels"
+      - " "
+      - "&6&l* &eMiddle-Click &8» &7Buy 100 Levels"
+      - " "
+      - "&6&l* &ePress Q &8» &7Buy MAX you can afford"
+      - " "
+      - "&7&o(( &f&oClick&7&o on the enchant to buy ))"
+  # Disenchant item settings
+  disenchant_item:
+    enabled: true
+    material: FLINT_AND_STEEL
+    slot: 11
+    name: "&c&lDISENCHANTING"
+    lore:
+      - " "
+      - "&6&l* &eClick to open Disenchant GUI"
+      - " "
+# Disenchant menu settings
+disenchant_menu:
+  # GUI Name
+  title: "&7Disenchant Menu"
+  # Filler items
+  empty_slots: STAINED_GLASS_PANE:7
+  # Number of GUI rows
+  lines: 6
+  # Player's pickaxe GUI slot
+  pickaxe_slot: 13
+  # Should we show player's pickaxe in Disenchant GUI ?
+  pickaxe_enabled: true
+  # Displaying Enchant Info
+  item:
+    lore:
+      - "&6&l* &eCurrent Level: &f%current_level%"
+      - "&6&l* &eRefunded Price: &f%refund%"
+      - " "
+      - "&7&o(( &f&oLeft-Click&7&o to refund 1 level ))"
+      - "&7&o(( &f&oRight-Click&7&o to refund 10 levels ))"
+      - "&7&o(( &f&oMiddle-Click&7&o to refund 100 levels ))"
+      - "&7&o(( &f&oPress 'Q'&7&o to refund ALL levels ))"
+  # Help Item settings
+  help_item:
+    enabled: true
+    material: NAME_TAG
+    slot: 15
+    name: "&6&lHOW IT WORKS?"
+    lore:
+      - " "
+      - "&6&l* &eLeft-Click &8» &7-1 Levels"
+      - " "
+      - "&6&l* &eRight-Click &8» &7-10 Levels"
+      - " "
+      - "&6&l* &eMiddle-Click &8» &7-100 Levels"
+      - " "
+      - "&6&l* &e'Q' &8» &7-ALL Levels"
+      - "&7&o(( &f&oClick&7&o on the enchant name to disenchant ))"
+# All available UPC  Enchants settings.
+enchants:
+  # Enchant ID
+  '1':
+    # Raw name of the enchant for some commands.
+    RawName: "efficiency"
+    # Displayname in chat / lore of the enchant
+    Name: '&aEfficiency'
+    # Name in Enchant / Disenchant GUI
+    GuiName: '&aEfficiency'
+    # Representative icon of enchant in GUI
+    Material: BOOK
+    #If you would like to use Base64 custom player skulls, just uncomment this line an change the Material above to PLAYER_HEAD
+    #Base64: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY4M2RhZTZkMTMyZjUyZWZhNTVlOThjMTgxZGVmNTQwMzY3MmZkZWMyY2JjZjQ3OTMxNDJjYjBlNTliZDAifX19
+    # Should enchant be enabled ?
+    Enabled: true
+    # Enchant GUI slot
+    InGuiSlot: 27
+    # Increasing cost per level
+    Increase-Cost-by: 10
+    # Max level of enchant
+    Max: 500
+    # Initial cost of enchant
+    Cost: 10
+    # Description of enchant show in GUIs
+    Description:
+      - '&7&o(( Ability to mine blocks faster ))'
+    # Refund settings
+    Refund:
+      # Can this enchant be refunded?
+      Enabled: true
+      # Disenchant GUI slot
+      InGuiSlot: 27
+      # Refund percentage
+      Percentage: 50.0
+  '2':
+    RawName: "unbreaking"
+    Name: '&bUnbreaking'
+    GuiName: '&bUnbreaking'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 28
+    Increase-Cost-by: 75
+    Max: 300
+    Cost: 75
+    Description:
+      - '&7&o(( Prevents your pickaxe from breaking while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 28
+      Percentage: 50.0
+  '3':
+    RawName: "fortune"
+    Name: '&cFortune'
+    GuiName: '&cFortune'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 29
+    Increase-Cost-by: 75
+    Max: -1
+    Cost: 75
+    Blacklist:
+      - BEDROCK
+    Description:
+      - '&7&o(( Ability to receive more blocks while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 29
+      Percentage: 50.0
+  '4':
+    RawName: "haste"
+    Name: '&dHaste'
+    GuiName: '&dHaste'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 30
+    Increase-Cost-by: 2500
+    Max: 5
+    Cost: 2500
+    Description:
+      - '&7&o(( Ability to swing your pickaxe faster while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 30
+      Percentage: 50.0
+  '5':
+    RawName: "speed"
+    Name: '&aSpeed'
+    GuiName: '&aSpeed'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 31
+    Increase-Cost-by: 10000
+    Max: 2
+    Cost: 10000
+    Description:
+      - '&7&o(( Ability to move faster while holding your pickaxe ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 31
+      Percentage: 50.0
+  '6':
+    RawName: "jumpboost"
+    Name: '&bJump Boost'
+    GuiName: '&bJump Boost'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 32
+    Increase-Cost-by: 5000
+    Max: 5
+    Cost: 5000
+    Description:
+      - '&7&o(( Ability to jump higher while holding your pickaxe ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 32
+      Percentage: 50.0
+  '7':
+    RawName: "nightvision"
+    Name: '&cNight Vision'
+    GuiName: '&cNight Vision'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 33
+    Increase-Cost-by: 0
+    Max: 1
+    Cost: 10000
+    Description:
+      - '&7&o(( Ability to see in the dark while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 33
+      Percentage: 50.0
+  '8':
+    RawName: "fly"
+    Name: '&cFly'
+    GuiName: '&cFly'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 34
+    Increase-Cost-by: 350
+    Max: 1
+    Cost: 10000
+    Description:
+      - '&7&o(( Ability to fly while holding pickaxe ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 34
+      Percentage: 50.0
+  '9':
+    RawName: "explosive"
+    Name: '&aExplosive'
+    GuiName: '&aExplosive'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 35
+    Increase-Cost-by: 125
+    Cooldown: 0
+    Max: 500
+    Chance: 0.2
+    Cost: 125
+    Description:
+      - '&7&o(( Explodes nearby blocks while mining ))'
+    Count-Blocks-Broken: true
+    Explosion-Type: CUBE
+    Sounds: true
+    Use-Events: false
+    Refund:
+      Enabled: true
+      InGuiSlot: 35
+      Percentage: 50.0
+  '10':
+    RawName: "layer"
+    Name: '&bLayer'
+    GuiName: '&bLayer'
+    Material: BOOK
+    Enabled: true
+    Chance: 0.2
+    InGuiSlot: 36
+    Increase-Cost-by: 200
+    Max: 500
+    Cost: 200
+    Description:
+      - '&7&o(( Ability to break full layer of your mine while mining))'
+    Count-Blocks-Broken: true
+    Use-Events: false
+    Refund:
+      Enabled: true
+      InGuiSlot: 36
+      Percentage: 50.0
+  '11':
+    RawName: "charity"
+    Name: '&cCharity'
+    GuiName: '&cCharity'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 37
+    Increase-Cost-by: 25
+    Max: 500
+    Chance: 0.2
+    Amount-To-Give: "level * 1000"
+    Cost: 25
+    Messages-Enabled: true
+    Description:
+      - '&7&o(( Chance to give to everyone online money while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 37
+      Percentage: 50.0
+  '12':
+    RawName: "salary"
+    Name: '&dSalary'
+    GuiName: '&dSalary'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 38
+    Increase-Cost-by: 35
+    Max: 500
+    Chance: 0.2
+    Amount-To-Give: "level * 1000"
+    Cost: 35
+    Description:
+      - '&7&o(( Ability to receive more money while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 38
+      Percentage: 50.0
+  '13':
+    RawName: "blessing"
+    Name: '&eBlessing'
+    GuiName: '&eBlessing'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 39
+    Increase-Cost-by: 25
+    Max: 500
+    Chance: 0.2
+    Amount-To-Give: "level * 2"
+    Cost: 25
+    Messages-Enabled: true
+    Description:
+      - '&7&o(( Chance to give to everyone online tokens while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 39
+      Percentage: 50.0
+  '14':
+    RawName: "tokenator"
+    Name: '&aTokenator'
+    GuiName: '&aTokenator'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 40
+    Increase-Cost-by: 6
+    Max: 500
+    Chance: 0.2
+    Amount-To-Give: "level * 2"
+    Cost: 12
+    Description:
+      - '&7&o(( Ability to gain more tokens while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 40
+      Percentage: 50.0
+  '15':
+    RawName: "keyfinder"
+    Name: '&bKey Finder'
+    GuiName: '&bKey Finder'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 41
+    Increase-Cost-by: 350
+    Max: 500
+    Chance: 0.2
+    Cost: 350
+    Description:
+      - '&7&o(( Ability to find crate keys while mining ))'
+    Commands:
+      - cc give physical Coal 1 %player%
+      - cc give physical Iron 1 %player%
+      - cc give physical Gold 1 %player%
+      - cc give physical Diamond 1 %player%
+      - cc give physical Emerald 1 %player%
+      - cc give physical Token 1 %player%
+      - cc give physical Token 2 %player%
+    Refund:
+      Enabled: true
+      InGuiSlot: 41
+      Percentage: 50.0
+  '16':
+    RawName: "prestigefinder"
+    Name: '&aPrestige Finder'
+    GuiName: '&aPrestige Finder'
+    Material: BOOK
+    Enabled: true
+    Amount-To-Give: "level"
+    InGuiSlot: 42
+    Increase-Cost-by: 175
+    Max: 500
+    Chance: 0.2
+    Cost: 175
+    Command: "prestigeadmin add %player% %amount%"
+    Description:
+      - '&7&o(( Ability to find prestige levels while mining. ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 42
+      Percentage: 50.0
+  '17':
+    RawName: "blockbooster"
+    Name: '&dBlock Booster'
+    GuiName: '&dBlock Booster'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 43
+    Increase-Cost-by: 225
+    Max: 500
+    Chance: 0.2
+    Cost: 500
+    Description:
+      - '&7&o(( Ability to receive x2 Blocks for 1 Minute while mining))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 43
+      Percentage: 50.0
+  '18':
+    RawName: "keyalls"
+    Name: '&cKeyalls'
+    GuiName: '&cKeyalls'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 44
+    Increase-Cost-by: 350
+    Max: 500
+    Chance: 0.2
+    Cost: 350
+    Description:
+      - '&7&o(( Ability to give everyone crate keys while mining ))'
+    Pickaxe-Level-Required: 1
+    Commands:
+      - cc giveall physical Token 1
+      - cc giveall physical Token 2
+      - cc giveall physical Coal 1
+      - cc giveall physical Iron 1
+      - cc giveall physical Gold 1
+    Refund:
+      Enabled: true
+      InGuiSlot: 44
+      Percentage: 50.0
+  '19':
+    RawName: "autosell"
+    Name: '&eAutosell'
+    GuiName: '&eAutosell'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 45
+    Increase-Cost-by: 0
+    Max: 1
+    Chance: 25.0
+    Cost: 1000
+    Description:
+      - '&7&o(( Ability to sell all items while mining ))'
+    Pickaxe-Level-Required: 1
+    Messages-Enabled: true
+    Refund:
+      Enabled: true
+      InGuiSlot: 45
+      Percentage: 50.0
+  '20':
+    RawName: "voucher"
+    Name: '&bVoucher Finder'
+    GuiName: '&bVoucher Finder'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 46
+    Increase-Cost-by: 5000
+    Max: 500
+    Chance: 0.2
+    Cost: 5000
+    Description:
+      - '&7&o(( Ability to find store vouchers while mining ))'
+    Pickaxe-Level-Required: 1
+    Refund:
+      Enabled: true
+      InGuiSlot: 46
+      Percentage: 50.0
+    Commands:
+      '1':
+        command: 'voucher give %player% 5$'
+        chance: 50
+      '2':
+        command: 'voucher give %player% 10$'
+        chance: 25
+      '3':
+        command: 'voucher give %player% 25$'
+        chance: 10
+      '4':
+        command: 'voucher give %player% 50$'
+        chance: 5
+      '5':
+        command: 'voucher give %player% 50$'
+        chance: 1
+  '21':
+    RawName: "nuke"
+    Name: '&cNuke'
+    GuiName: '&cNuke'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 47
+    Increase-Cost-by: 0
+    Max: 500
+    Chance: 0.2
+    Cost: 1000
+    Description:
+      - '&7&o(( Ability to break whole mine while mining ))'
+    Pickaxe-Level-Required: 1
+    Remove-Blocks: true
+    Count-Blocks-Broken: true
+    Use-Events: false
+    Message: "&e&lENCHANT &8» &7You got &2&l$&a%money% &7from &c&lNuke &7activation."
+    Refund:
+      Enabled: true
+      InGuiSlot: 47
+      Percentage: 50.0
+  '22':
+    RawName: "gemfinder"
+    Name: '&aGem Finder'
+    GuiName: '&aGem Finder'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 48
+    Increase-Cost-by: 6
+    Max: 500
+    Chance: 0.2
+    Amount-To-Give: "level * 2"
+    Cost: 12
+    Description:
+      - '&7&o(( Ability to find gems while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 48
+      Percentage: 50.0
+  '23':
+    RawName: "gang-value-finder"
+    Name: '&eGang Value Finder'
+    GuiName: '&eGang Value Finder'
+    Material: BOOK
+    Enabled: true
+    InGuiSlot: 49
+    Increase-Cost-by: 6
+    Max: 500
+    Chance: 0.2
+    Amount-To-Give: "level * 2"
+    Cost: 12
+    Description:
+      - '&7&o(( Ability to find gang value while mining ))'
+    Refund:
+      Enabled: true
+      InGuiSlot: 49
+      Percentage: 50.0
+# Format of every pickaxe that has UPC Enchants on it
+# %Enchant-X% represents the name + level of specific enchant (X = id)
+Pickaxe:
+  # NUMBER = All levels as numbers
+  # ROMAN = All levels as roman numbers
+  # FIXED = First 10 levels as roman,
+  level-format: NUMBER
+  excluded-format: "&7[&c-&7] &8%Enchant% %Level%"
+  lore:
+    - '&8&m------------------------'
+    - '&e&lBLOCKS MINED: &f%Blocks%/%Blocks_Required%'
+    - '&e&lPICKAXE LEVEL: &f%PickaxeLevel% &7[%PickaxeProgress%&7]'
+    - '&e&lDURABILITY: &f%Durability%'
+    - '&8&m------------------------'
+    - '%Enchant-1%'
+    - '%Enchant-2%'
+    - '%Enchant-3%'
+    - '%Enchant-4%'
+    - '%Enchant-5%'
+    - '%Enchant-6%'
+    - '%Enchant-7%'
+    - '%Enchant-8%'
+    - '%Enchant-9%'
+    - '%Enchant-10%'
+    - '%Enchant-11%'
+    - '%Enchant-12%'
+    - '%Enchant-13%'
+    - '%Enchant-14%'
+    - '%Enchant-15%'
+    - '%Enchant-16%'
+    - '%Enchant-17%'
+    - '%Enchant-18%'
+    - '%Enchant-19%'
+    - '%Enchant-20%'
+    - '%Enchant-21%'
+    - '%Enchant-22%'
+    - '%Enchant-23%'
+# First Join Pickaxe Settings
+first-join-pickaxe:
+  # Should we give this pickaxe to players when they first join?
+  enabled: true
+  # Name of pickaxe
+  name: "&e%player%'s Pickaxe"
+  # Material of pickaxe
+  material: DIAMOND_PICKAXE
+  # Raw names + levels of specific enchants for first join pickaxe
+  enchants:
+    - efficiency 10
+    - unbreaking 10
+    - fortune 10

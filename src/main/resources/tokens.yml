@@ -1,0 +1,91 @@
+messages:
+  no_permission: "&c&l(!) &fYou do not have permission to do that!"
+  not_enough_tokens: "&e&l(!) &eYou don't have enough tokens"
+  your_tokens: "&eYour Tokens: %tokens%"
+  other_tokens: "&e%player%'s Tokens: %tokens%"
+  cooldown: "&cPlease wait %time% seconds before executing this command again."
+  your_blocks: "&eYour Blocks: %blocks%"
+  other_blocks: "&e%player%'s Blocks: %blocks%"
+  withdraw_successful: "&aYou have withdrawn &e%value%x %amount% Tokens!"
+  admin_set_tokens: "&aSuccessfuly set &e%player%'s &atokens to &e%tokens%."
+  admin_give_tokens: "&aSuccessfuly given &e%tokens% &atokens to &e%player%."
+  admin_remove_tokens: "&aSuccessfuly removed &e%tokens% &atokens from &e%player%."
+  admin_set_blocks: "&aSuccessfuly set &e%blocks%'s &ablocks to &e%blocks%."
+  admin_give_blocks: "&aSuccessfuly given &e%blocks% &ablocks to &e%player%."
+  admin_remove_blocks: "&aSuccessfuly removed &e%blocks% &ablocks from &e%player%."
+  not_token_item: "&cThis is not a token item!"
+  tokens_redeem: "&e&l(!) &eYou redeemed &f%tokens% &etoken(s)"
+  tokens_send: "&eYou have sent %tokens% to %player%"
+  tokens_cant_send_to_yourself: "&c&l(!) &cYou can't send tokens to yourself."
+  tokens_received: "&eYou received %tokens% from %player%."
+  tokens_received_console: "&e&lTOKENS &8» &7You have received &f%tokens% tokens&7."
+  not_a_number: "&c%input% is not a number!"
+  player_not_online: "&cPlayer &e%player% &cis not online!"
+  top_updating: "&c&lLeaderboard is currently updating..."
+  top_weekly_reset: "&7&oTime Left: %time%"
+  token_message_disabled: "&e&lTOKENS &8» &7Messages &c&lOFF"
+  token_message_enabled: "&e&lTOKENS &8» &7Messages &a&lON"
+  tokens_received_mining: "&e&lTOKENS &8» &7You found &6%amount% Tokens &7while mining"
+  lucky_block_mined: "&e&lLUCKY BLOCK &8» &7You have mined a &e&lLUCKY BLOCK &7and received &6%amount% Tokens!"
+# Starting tokens for players
+starting-tokens: 1000
+tokens:
+  breaking:
+    chance: 5.0
+    # Maximum amount of tokens to receive
+    max: 5
+    # Minimum amount of tokens to receive
+    min: 1
+  # Physical token item settings
+  item:
+    material: SUNFLOWER
+    name: "&e&l%amount% TOKENS"
+    lore:
+      - "&7Right-Click to Redeem"
+# LuckyBlocks settings for rewards
+lucky-blocks:
+  SPONGE:
+    - tokens give %player% 1000
+# This value determines when will the next weekly top reset be. Updated automatically with /resetblockstopweekly command
+next-reset-weekly: 0
+# Should players receive token messages when mining?
+display-token-messages: true
+# Interval in minutes for saving player data into database
+player_data_save_interval: 10
+# Cooldown in seconds to check other player's tokens balances (/tokens <player>)
+# Applies also for /blocks <player>
+tokens-command-cooldown: 5
+# Amount of players displayed in top lists
+top_players_amount: 10
+world-whitelist: []
+tokens-top-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lTOKENS TOP"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%tokens% Tokens"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+blocks-top-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lBLOCKS TOP"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+blocks-top-weekly-format:
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - "&e&lBLOCKS TOP WEEKLY"
+  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
+  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+# Aliases for /tokens command
+tokens-command-aliases:
+  - token
+  - tokens
+# Aliases for /tokenstop command
+tokens-top-command-aliases:
+  - tokentop
+  - tokenstop
+# Aliases for /blockstop command
+blocks-top-command-aliases:
+  - blockstop
+  - blocktop
+# Aliases for /tokenmessage command
+token-message-command-aliases:
+  - tokenmessage
+  - tokenmessages

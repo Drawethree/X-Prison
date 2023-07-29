@@ -1,0 +1,50 @@
+# Should plugin show debug messages?
+debug-mode: false
+# Database type (SQLite, MySQL)
+database_type: SQLite
+# MySQL connection details
+mysql:
+  host: localhost
+  port: 3306
+  database: dbName
+  username: dbUser
+  password: dbPass
+# Connection properties
+# HikariCP database connection properties, please refer to https://github.com/brettwooldridge/HikariCP#gear-configuration-knobs-baby for more information
+connection_properties:
+  connection_timeout: 60000
+  idle_timeout: 600000
+  keep_alive_time: 0
+  max_life_time: 1800000
+  minimum_idle: 10
+  maximum_pool_size: 10
+  leak_detection_threshold: 0
+  connection_test_query: "SELECT 1"
+  character_encoding: "utf8"
+# Enabling / Disabling of specific modules
+modules:
+  tokens: true
+  gems: true
+  ranks: true
+  prestiges: true
+  multipliers: true
+  enchants: true
+  autosell: true
+  autominer: true
+  pickaxe_levels: true
+  gangs: true
+  mines: true
+  history: true
+# Item migrator config
+item-migrator:
+  enabled: true
+  bind:
+    join: true
+    inventory: false
+# List of supported pickaxes by UPC Enchants
+supported-pickaxes:
+  - DIAMOND_PICKAXE
+# Aliases for main command
+main-command-aliases:
+  - xprison
+  - prison
