@@ -11,7 +11,7 @@ messages:
 # Rank Multipliers settings
 ranks: { }
   #ultra: 1.0
-  #donor: 0.7
+#donor: 0.7
 #vip: 0.5
 #default: 0.1
 # Should the plugins check for LuckPerms groups instead of Xprison permissions?
