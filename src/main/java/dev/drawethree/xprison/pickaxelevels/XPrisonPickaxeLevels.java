@@ -12,17 +12,14 @@ import lombok.Getter;
 public final class XPrisonPickaxeLevels implements XPrisonModule {
 
     public static final String MODULE_NAME = "Pickaxe Levels";
-
+    @Getter
+    private final XPrison core;
     @Getter
     private PickaxeLevelsConfig pickaxeLevelsConfig;
     @Getter
     private PickaxeLevelsManager pickaxeLevelsManager;
     @Getter
     private XPrisonPickaxeLevelsAPI api;
-
-    @Getter
-    private final XPrison core;
-
     private boolean enabled;
 
     public XPrisonPickaxeLevels(XPrison core) {
@@ -37,7 +34,7 @@ public final class XPrisonPickaxeLevels implements XPrisonModule {
     @Override
     public void reload() {
         this.pickaxeLevelsConfig.reload();
-	}
+    }
 
     @Override
     public void enable() {
