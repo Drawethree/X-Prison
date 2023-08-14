@@ -23,139 +23,130 @@ import org.bukkit.entity.Player;
 public final class XPrisonEnchants implements XPrisonModule {
 
 
-	public static final String MODULE_NAME = "Enchants";
+    public static final String MODULE_NAME = "Enchants";
 
-	@Getter
-	private static XPrisonEnchants instance;
+    @Getter
+    private static XPrisonEnchants instance;
+    @Getter
+    private final XPrison core;
+    @Getter
+    private XPrisonEnchantsAPI api;
+    @Getter
+    private EnchantsManager enchantsManager;
+    @Getter
+    private CooldownManager cooldownManager;
+    @Getter
+    private RespawnManager respawnManager;
+    @Getter
+    private EnchantsConfig enchantsConfig;
+    @Getter
+    private EnchantsListener enchantsListener;
+    @Getter
+    private EnchantsRepository enchantsRepository;
+    private boolean enabled;
 
-	@Getter
-	private XPrisonEnchantsAPI api;
+    public XPrisonEnchants(XPrison core) {
+        instance = this;
+        this.core = core;
+    }
 
-	@Getter
-	private EnchantsManager enchantsManager;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	@Getter
-	private CooldownManager cooldownManager;
+    @Override
+    public void reload() {
 
-	@Getter
-	private RespawnManager respawnManager;
+        this.enchantsConfig.reload();
+        this.enchantsRepository.reload();
 
-	@Getter
-	private EnchantsConfig enchantsConfig;
+        EnchantGUI.init();
+        DisenchantGUI.init();
 
-	@Getter
-	private EnchantsListener enchantsListener;
+    }
 
-	@Getter
-	private EnchantsRepository enchantsRepository;
+    @Override
+    public void enable() {
 
-	@Getter
-	private final XPrison core;
+        this.enchantsConfig = new EnchantsConfig(this);
+        this.enchantsConfig.load();
 
-	private boolean enabled;
+        this.cooldownManager = new CooldownManager(this);
+        this.respawnManager = new RespawnManager(this);
 
-	public XPrisonEnchants(XPrison core) {
-		instance = this;
-		this.core = core;
-	}
+        this.enchantsManager = new EnchantsManager(this);
+        this.enchantsManager.enable();
 
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
+        this.enchantsListener = new EnchantsListener(this);
+        this.enchantsListener.register();
 
-	@Override
-	public void reload() {
+        this.registerCommands();
 
-		this.enchantsConfig.reload();
-		this.enchantsRepository.reload();
+        this.enchantsRepository = new EnchantsRepository(this);
+        this.enchantsRepository.loadDefaultEnchantments();
 
-		EnchantGUI.init();
-		DisenchantGUI.init();
+        EnchantGUI.init();
+        DisenchantGUI.init();
 
-	}
-
-	@Override
-	public void enable() {
-
-		this.enchantsConfig = new EnchantsConfig(this);
-		this.enchantsConfig.load();
-
-		this.cooldownManager = new CooldownManager(this);
-		this.respawnManager = new RespawnManager(this);
-
-		this.enchantsManager = new EnchantsManager(this);
-		this.enchantsManager.enable();
-
-		this.enchantsListener = new EnchantsListener(this);
-		this.enchantsListener.register();
-
-		this.registerCommands();
-
-		this.enchantsRepository = new EnchantsRepository(this);
-		this.enchantsRepository.loadDefaultEnchantments();
-
-		EnchantGUI.init();
-		DisenchantGUI.init();
-
-		this.api = new XPrisonEnchantsAPIImpl(this.enchantsManager, this.enchantsRepository);
+        this.api = new XPrisonEnchantsAPIImpl(this.enchantsManager, this.enchantsRepository);
 
 
-		this.enabled = true;
-	}
+        this.enabled = true;
+    }
 
 
-	private void registerCommands() {
-		DisenchantCommand disenchantCommand = new DisenchantCommand(this);
-		disenchantCommand.register();
+    private void registerCommands() {
+        DisenchantCommand disenchantCommand = new DisenchantCommand(this);
+        disenchantCommand.register();
 
-		EnchantMenuCommand enchantMenuCommand = new EnchantMenuCommand(this);
-		enchantMenuCommand.register();
+        EnchantMenuCommand enchantMenuCommand = new EnchantMenuCommand(this);
+        enchantMenuCommand.register();
 
-		GiveFirstJoinPickaxeCommand giveFirstJoinPickaxeCommand = new GiveFirstJoinPickaxeCommand(this);
-		giveFirstJoinPickaxeCommand.register();
+        GiveFirstJoinPickaxeCommand giveFirstJoinPickaxeCommand = new GiveFirstJoinPickaxeCommand(this);
+        giveFirstJoinPickaxeCommand.register();
 
-		GivePickaxeCommand givePickaxeCommand = new GivePickaxeCommand(this);
-		givePickaxeCommand.register();
+        GivePickaxeCommand givePickaxeCommand = new GivePickaxeCommand(this);
+        givePickaxeCommand.register();
 
-		ValueCommand valueCommand = new ValueCommand(this);
-		valueCommand.register();
-	}
+        ValueCommand valueCommand = new ValueCommand(this);
+        valueCommand.register();
+    }
 
 
-	@Override
-	public void disable() {
-		for (Player p : Players.all()) {
-			p.closeInventory();
-		}
-		this.enchantsManager.disable();
-		this.enabled = false;
-	}
+    @Override
+    public void disable() {
+        for (Player p : Players.all()) {
+            p.closeInventory();
+        }
+        this.enchantsManager.disable();
+        this.enabled = false;
+    }
 
-	@Override
-	public String getName() {
-		return MODULE_NAME;
-	}
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
 
-	@Override
-	public boolean isHistoryEnabled() {
-		return false;
-	}
+    @Override
+    public boolean isHistoryEnabled() {
+        return false;
+    }
 
-	@Override
-	public void resetPlayerData() {
-	}
+    @Override
+    public void resetPlayerData() {
+    }
 
-	public boolean isAutoSellModuleEnabled() {
-		return this.core.isModuleEnabled(XPrisonAutoSell.MODULE_NAME);
-	}
+    public boolean isAutoSellModuleEnabled() {
+        return this.core.isModuleEnabled(XPrisonAutoSell.MODULE_NAME);
+    }
 
-	public boolean isMultipliersModuleEnabled() {
-		return this.core.isModuleEnabled(XPrisonMultipliers.MODULE_NAME);
-	}
+    public boolean isMultipliersModuleEnabled() {
+        return this.core.isModuleEnabled(XPrisonMultipliers.MODULE_NAME);
+    }
 
-	public boolean isMinesModuleEnabled() {
-		return this.core.isModuleEnabled(XPrisonMines.MODULE_NAME);
-	}
+    public boolean isMinesModuleEnabled() {
+        return this.core.isModuleEnabled(XPrisonMines.MODULE_NAME);
+    }
 
 }

@@ -14,9 +14,9 @@ import java.util.UUID;
 @Builder
 public class HistoryLine {
 
-	private UUID uuid;
-	private UUID playerUuid;
-	private String module;
-	private String context;
-	private Date createdAt;
+    private UUID uuid;
+    private UUID playerUuid;
+    private String module;
+    private String context;
+    private Date createdAt;
 }

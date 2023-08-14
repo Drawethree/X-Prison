@@ -184,7 +184,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
         }
 
         if (message != null || !message.isEmpty()) {
-            PlayerUtils.sendMessage(p,message.replace("%money%", MathUtils.formatNumber(total)));
+            PlayerUtils.sendMessage(p, message.replace("%money%", MathUtils.formatNumber(total)));
         }
     }
 

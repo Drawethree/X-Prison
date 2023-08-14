@@ -4,5 +4,5 @@ import dev.drawethree.xprison.mines.model.mine.Mine;
 
 public interface MineLoader<T> {
 
-	Mine load(T type);
+    Mine load(T type);
 }

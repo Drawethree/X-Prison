@@ -12,36 +12,36 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MineCreateEvent extends XPrisonEvent implements Cancellable {
 
-	private static final HandlerList HANDLERS_LIST = new HandlerList();
+    private static final HandlerList HANDLERS_LIST = new HandlerList();
 
-	@Getter
-	@Setter
-	private boolean cancelled;
+    @Getter
+    @Setter
+    private boolean cancelled;
 
-	@Getter
-	private CommandSender creator;
+    @Getter
+    private CommandSender creator;
 
-	@Getter
-	private Mine mine;
+    @Getter
+    private Mine mine;
 
-	/**
-	 * Fired when mine is created
-	 *
-	 * @param creator CommandSender who created the mine
-	 * @param mine    Mine
-	 */
-	public MineCreateEvent(Player creator, Mine mine) {
-		this.creator = creator;
-		this.mine = mine;
-	}
+    /**
+     * Fired when mine is created
+     *
+     * @param creator CommandSender who created the mine
+     * @param mine    Mine
+     */
+    public MineCreateEvent(Player creator, Mine mine) {
+        this.creator = creator;
+        this.mine = mine;
+    }
 
-	public static HandlerList getHandlerList() {
-		return HANDLERS_LIST;
-	}
+    public static HandlerList getHandlerList() {
+        return HANDLERS_LIST;
+    }
 
-	@NotNull
-	@Override
-	public HandlerList getHandlers() {
-		return HANDLERS_LIST;
-	}
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS_LIST;
+    }
 }

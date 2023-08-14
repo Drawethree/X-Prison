@@ -2,7 +2,7 @@ package dev.drawethree.xprison.interfaces;
 
 public interface UPCRepository {
 
-	void createTables();
+    void createTables();
 
-	void resetData();
+    void resetData();
 }

@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface TokensService {
 
-	long getTokens(OfflinePlayer player);
+    long getTokens(OfflinePlayer player);
 
-	void setTokens(OfflinePlayer player, long newAmount);
+    void setTokens(OfflinePlayer player, long newAmount);
 
-	Map<UUID, Long> getTopTokens(int amountOfRecords);
+    Map<UUID, Long> getTopTokens(int amountOfRecords);
 
-	void createTokens(OfflinePlayer player, long startingTokens);
+    void createTokens(OfflinePlayer player, long startingTokens);
 }

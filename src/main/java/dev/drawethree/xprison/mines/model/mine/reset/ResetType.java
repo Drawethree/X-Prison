@@ -6,25 +6,25 @@ import lombok.Getter;
 
 public abstract class ResetType {
 
-	public static final GradualReset GRADUAL = new GradualReset();
-	public static final InstantReset INSTANT = new InstantReset();
+    public static final GradualReset GRADUAL = new GradualReset();
+    public static final InstantReset INSTANT = new InstantReset();
 
-	@Getter
-	private final String name;
+    @Getter
+    private final String name;
 
-	ResetType(String paramString) {
-		this.name = paramString;
-	}
+    ResetType(String paramString) {
+        this.name = paramString;
+    }
 
-	public static ResetType of(String name) {
-		switch (name.toLowerCase()) {
-			case "gradual":
-				return GRADUAL;
-			case "instant":
-				return INSTANT;
-		}
-		return null;
-	}
+    public static ResetType of(String name) {
+        switch (name.toLowerCase()) {
+            case "gradual":
+                return GRADUAL;
+            case "instant":
+                return INSTANT;
+        }
+        return null;
+    }
 
-	public abstract void reset(Mine paramMine, BlockPalette blockPalette);
+    public abstract void reset(Mine paramMine, BlockPalette blockPalette);
 }

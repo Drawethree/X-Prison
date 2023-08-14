@@ -7,15 +7,15 @@ import java.util.UUID;
 
 public interface GemsRepository {
 
-	long getPlayerGems(OfflinePlayer player);
+    long getPlayerGems(OfflinePlayer player);
 
-	void updateGems(OfflinePlayer player, long newAmount);
+    void updateGems(OfflinePlayer player, long newAmount);
 
-	Map<UUID, Long> getTopGems(int amountOfRecords);
+    Map<UUID, Long> getTopGems(int amountOfRecords);
 
-	void addIntoGems(OfflinePlayer player, long startingGems);
+    void addIntoGems(OfflinePlayer player, long startingGems);
 
-	void createTables();
+    void createTables();
 
-	void clearTableData();
+    void clearTableData();
 }

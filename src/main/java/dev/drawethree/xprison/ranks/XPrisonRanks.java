@@ -19,82 +19,80 @@ import lombok.Getter;
 @Getter
 public final class XPrisonRanks implements XPrisonModule {
 
-	public static final String MODULE_NAME = "Ranks";
+    public static final String MODULE_NAME = "Ranks";
+    @Getter
+    private final XPrison core;
+    @Getter
+    private RanksConfig ranksConfig;
+    @Getter
+    private RanksManager ranksManager;
+    @Getter
+    private XPrisonRanksAPI api;
+    @Getter
+    private RanksRepository ranksRepository;
 
-	@Getter
-	private RanksConfig ranksConfig;
-	@Getter
-	private RanksManager ranksManager;
-	@Getter
-	private XPrisonRanksAPI api;
-	@Getter
-	private final XPrison core;
+    @Getter
+    private RanksService ranksService;
 
-	@Getter
-	private RanksRepository ranksRepository;
+    private boolean enabled;
 
-	@Getter
-	private RanksService ranksService;
+    public XPrisonRanks(XPrison core) {
+        this.core = core;
+    }
 
-	private boolean enabled;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public XPrisonRanks(XPrison core) {
-		this.core = core;
-	}
+    @Override
+    public void reload() {
+        this.ranksConfig.reload();
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
+    @Override
+    public void enable() {
+        this.enabled = true;
+        this.ranksConfig = new RanksConfig(this);
+        this.ranksConfig.load();
+        this.ranksRepository = new RanksRepositoryImpl(this.core.getPluginDatabase());
+        this.ranksRepository.createTables();
+        this.ranksService = new RanksServiceImpl(this.ranksRepository);
+        this.ranksManager = new RanksManager(this);
+        this.ranksManager.enable();
+        this.api = new XPrisonRanksAPIImpl(this.ranksManager);
+        this.registerCommands();
+        this.registerListeners();
+    }
 
-	@Override
-	public void reload() {
-		this.ranksConfig.reload();
-	}
+    private void registerListeners() {
+        new RanksListener(this).register();
+    }
 
-	@Override
-	public void enable() {
-		this.enabled = true;
-		this.ranksConfig = new RanksConfig(this);
-		this.ranksConfig.load();
-		this.ranksRepository = new RanksRepositoryImpl(this.core.getPluginDatabase());
-		this.ranksRepository.createTables();
-		this.ranksService = new RanksServiceImpl(this.ranksRepository);
-		this.ranksManager = new RanksManager(this);
-		this.ranksManager.enable();
-		this.api = new XPrisonRanksAPIImpl(this.ranksManager);
-		this.registerCommands();
-		this.registerListeners();
-	}
+    @Override
+    public void disable() {
+        this.ranksManager.disable();
+        this.enabled = false;
+    }
 
-	private void registerListeners() {
-		new RanksListener(this).register();
-	}
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
 
-	@Override
-	public void disable() {
-		this.ranksManager.disable();
-		this.enabled = false;
-	}
+    @Override
+    public boolean isHistoryEnabled() {
+        return true;
+    }
 
-	@Override
-	public String getName() {
-		return MODULE_NAME;
-	}
+    @Override
+    public void resetPlayerData() {
+        this.ranksRepository.clearTableData();
+    }
 
-	@Override
-	public boolean isHistoryEnabled() {
-		return true;
-	}
-
-	@Override
-	public void resetPlayerData() {
-		this.ranksRepository.clearTableData();
-	}
-
-	private void registerCommands() {
-		new RankupCommand(this).register();
-		new MaxRankupCommand(this).register();
-		new SetRankCommand(this).register();
-	}
+    private void registerCommands() {
+        new RankupCommand(this).register();
+        new MaxRankupCommand(this).register();
+        new SetRankCommand(this).register();
+    }
 }

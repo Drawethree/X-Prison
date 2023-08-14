@@ -26,158 +26,155 @@ import java.util.List;
 
 public final class EnchantGUI extends Gui {
 
-	private static List<String> GUI_ITEM_LORE;
-	private static String GUI_TITLE;
-	private static Item EMPTY_SLOT_ITEM;
-	private static int PICKAXE_ITEM_SLOT;
-	private static int HELP_ITEM_SLOT;
-	private static int DISENCHANT_ITEM_SLOT;
-	private static int GUI_LINES;
-	private static Item HELP_ITEM;
-	private static ItemStack DISENCHANT_ITEM;
-	private static boolean PICKAXE_ITEM_ENABLED;
-	private static boolean HELP_ITEM_ENABLED;
-	private static boolean DISENCHANT_ITEM_ENABLED;
+    private static List<String> GUI_ITEM_LORE;
+    private static String GUI_TITLE;
+    private static Item EMPTY_SLOT_ITEM;
+    private static int PICKAXE_ITEM_SLOT;
+    private static int HELP_ITEM_SLOT;
+    private static int DISENCHANT_ITEM_SLOT;
+    private static int GUI_LINES;
+    private static Item HELP_ITEM;
+    private static ItemStack DISENCHANT_ITEM;
+    private static boolean PICKAXE_ITEM_ENABLED;
+    private static boolean HELP_ITEM_ENABLED;
+    private static boolean DISENCHANT_ITEM_ENABLED;
+    @Getter
+    private final int pickaxePlayerInventorySlot;
+    private final XPrisonEnchants plugin;
+    @Getter
+    @Setter
+    private ItemStack pickAxe;
 
-	@Getter
-	@Setter
-	private ItemStack pickAxe;
+    public EnchantGUI(XPrisonEnchants plugin, Player player, ItemStack pickAxe, int pickaxePlayerInventorySlot) {
+        super(player, GUI_LINES, GUI_TITLE);
+        this.plugin = plugin;
+        this.pickAxe = pickAxe;
+        this.pickaxePlayerInventorySlot = pickaxePlayerInventorySlot;
 
-	@Getter
-	private final int pickaxePlayerInventorySlot;
+        Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
+                .filter(e -> e.getInventory().equals(this.getHandle()))
+                .handler(e -> {
+                    XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
+                    XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
+                }).bindWith(this);
 
-	private final XPrisonEnchants plugin;
+        // Checking for duping
+        Schedulers.sync().runLater(() -> {
+            if (!pickAxe.equals(this.getPlayer().getInventory().getItem(this.pickaxePlayerInventorySlot))) {
+                this.close();
+            }
+        }, 10);
+    }
 
-	public EnchantGUI(XPrisonEnchants plugin, Player player, ItemStack pickAxe, int pickaxePlayerInventorySlot) {
-		super(player, GUI_LINES, GUI_TITLE);
-		this.plugin = plugin;
-		this.pickAxe = pickAxe;
-		this.pickaxePlayerInventorySlot = pickaxePlayerInventorySlot;
+    public static void init() {
 
-		Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
-				.filter(e -> e.getInventory().equals(this.getHandle()))
-				.handler(e -> {
-					XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
-					XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
-				}).bindWith(this);
+        GUI_ITEM_LORE = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.item.lore");
+        GUI_TITLE = TextUtils.applyColor(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.title"));
+        EMPTY_SLOT_ITEM = ItemStackBuilder.
+                of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
+        GUI_LINES = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.lines");
 
-		// Checking for duping
-		Schedulers.sync().runLater(() -> {
-			if (!pickAxe.equals(this.getPlayer().getInventory().getItem(this.pickaxePlayerInventorySlot))) {
-				this.close();
-			}
-		},10);
-	}
+        HELP_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.help_item.enabled", true);
+        PICKAXE_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.pickaxe_enabled", true);
+        DISENCHANT_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.disenchant_item.enabled", true);
 
-	@Override
-	public void redraw() {
+        if (DISENCHANT_ITEM_ENABLED) {
+            String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.Base64", null);
 
-		// perform initial setup.
-		if (isFirstDraw()) {
-			for (int i = 0; i < this.getHandle().getSize(); i++) {
-				this.setItem(i, EMPTY_SLOT_ITEM);
-			}
-		}
+            if (base64 != null) {
+                DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
+            } else {
+                DISENCHANT_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.material")).toMaterial())
+                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
+            }
+            DISENCHANT_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.disenchant_item.slot");
 
-		if (HELP_ITEM_ENABLED) {
-			this.setItem(HELP_ITEM_SLOT, HELP_ITEM);
-		}
+        }
 
-		if (DISENCHANT_ITEM_ENABLED) {
-			this.setItem(DISENCHANT_ITEM_SLOT, ItemStackBuilder.of(DISENCHANT_ITEM).build(() -> {
-				this.close();
-				new DisenchantGUI(this.plugin, this.getPlayer(), this.pickAxe, this.pickaxePlayerInventorySlot).open();
-			}));
-		}
+        if (HELP_ITEM_ENABLED) {
+            String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.Base64", null);
 
-		if (PICKAXE_ITEM_ENABLED) {
-			this.setItem(PICKAXE_ITEM_SLOT, Item.builder(this.pickAxe).build());
-		}
+            if (base64 != null) {
+                HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+            } else {
+                HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.material")).toMaterial())
+                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+            }
 
-		Collection<XPrisonEnchantment> allEnchants = this.plugin.getEnchantsRepository().getAll();
-		for (XPrisonEnchantment enchantment : allEnchants) {
-			if (!enchantment.isEnabled()) {
-				continue;
-			}
-			int level = XPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment);
-			this.setItem(enchantment.getGuiSlot(), getGuiItem(enchantment, this, level));
-		}
-	}
+            HELP_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.help_item.slot");
 
-	private Item getGuiItem(XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
+        }
 
-		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getMaterial());
+        if (PICKAXE_ITEM_ENABLED) {
+            PICKAXE_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.pickaxe_slot");
+        }
+    }
 
-		if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
-			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
-		}
+    @Override
+    public void redraw() {
 
-		builder.name(enchantment.getGuiName());
-		builder.lore(GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, currentLevel));
+        // perform initial setup.
+        if (isFirstDraw()) {
+            for (int i = 0; i < this.getHandle().getSize(); i++) {
+                this.setItem(i, EMPTY_SLOT_ITEM);
+            }
+        }
 
-		return builder.buildItem().bind(handler -> {
-			if (!enchantment.canBeBought(gui.getPickAxe())) {
-				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
-				return;
-			}
-			if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
-				this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 100);
-				gui.redraw();
-			} else if (handler.getClick() == ClickType.LEFT) {
-				this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 1);
-				gui.redraw();
-			} else if (handler.getClick() == ClickType.RIGHT) {
-				this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 10);
-				gui.redraw();
-			} else if (handler.getClick() == ClickType.DROP) {
-				this.plugin.getEnchantsManager().buyMaxEnchant(enchantment, gui, currentLevel);
-			}
-		}, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.RIGHT, ClickType.LEFT, ClickType.DROP).build();
-	}
+        if (HELP_ITEM_ENABLED) {
+            this.setItem(HELP_ITEM_SLOT, HELP_ITEM);
+        }
 
-	public static void init() {
+        if (DISENCHANT_ITEM_ENABLED) {
+            this.setItem(DISENCHANT_ITEM_SLOT, ItemStackBuilder.of(DISENCHANT_ITEM).build(() -> {
+                this.close();
+                new DisenchantGUI(this.plugin, this.getPlayer(), this.pickAxe, this.pickaxePlayerInventorySlot).open();
+            }));
+        }
 
-		GUI_ITEM_LORE = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.item.lore");
-		GUI_TITLE = TextUtils.applyColor(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.title"));
-		EMPTY_SLOT_ITEM = ItemStackBuilder.
-				of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
-		GUI_LINES = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.lines");
+        if (PICKAXE_ITEM_ENABLED) {
+            this.setItem(PICKAXE_ITEM_SLOT, Item.builder(this.pickAxe).build());
+        }
 
-		HELP_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.help_item.enabled", true);
-		PICKAXE_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.pickaxe_enabled", true);
-		DISENCHANT_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.disenchant_item.enabled", true);
+        Collection<XPrisonEnchantment> allEnchants = this.plugin.getEnchantsRepository().getAll();
+        for (XPrisonEnchantment enchantment : allEnchants) {
+            if (!enchantment.isEnabled()) {
+                continue;
+            }
+            int level = XPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment);
+            this.setItem(enchantment.getGuiSlot(), getGuiItem(enchantment, this, level));
+        }
+    }
 
-		if (DISENCHANT_ITEM_ENABLED) {
-			String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.Base64", null);
+    private Item getGuiItem(XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
-			if (base64 != null) {
-				DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
-			} else {
-				DISENCHANT_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.material")).toMaterial())
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
-			}
-			DISENCHANT_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.disenchant_item.slot");
+        ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getMaterial());
 
-		}
+        if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
+            builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
+        }
 
-		if (HELP_ITEM_ENABLED) {
-			String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.Base64", null);
+        builder.name(enchantment.getGuiName());
+        builder.lore(GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, currentLevel));
 
-			if (base64 != null) {
-				HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
-			} else {
-				HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.material")).toMaterial())
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
-			}
-
-			HELP_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.help_item.slot");
-
-		}
-
-		if (PICKAXE_ITEM_ENABLED) {
-			PICKAXE_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.pickaxe_slot");
-		}
-	}
+        return builder.buildItem().bind(handler -> {
+            if (!enchantment.canBeBought(gui.getPickAxe())) {
+                PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
+                return;
+            }
+            if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
+                this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 100);
+                gui.redraw();
+            } else if (handler.getClick() == ClickType.LEFT) {
+                this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 1);
+                gui.redraw();
+            } else if (handler.getClick() == ClickType.RIGHT) {
+                this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 10);
+                gui.redraw();
+            } else if (handler.getClick() == ClickType.DROP) {
+                this.plugin.getEnchantsManager().buyMaxEnchant(enchantment, gui, currentLevel);
+            }
+        }, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.RIGHT, ClickType.LEFT, ClickType.DROP).build();
+    }
 }

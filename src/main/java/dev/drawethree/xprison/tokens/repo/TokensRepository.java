@@ -7,15 +7,15 @@ import java.util.UUID;
 
 public interface TokensRepository {
 
-	long getPlayerTokens(OfflinePlayer player);
+    long getPlayerTokens(OfflinePlayer player);
 
-	void updateTokens(OfflinePlayer player, long newAmount);
+    void updateTokens(OfflinePlayer player, long newAmount);
 
-	Map<UUID, Long> getTopTokens(int amountOfRecords);
+    Map<UUID, Long> getTopTokens(int amountOfRecords);
 
-	void addIntoTokens(OfflinePlayer player, long startingTokens);
+    void addIntoTokens(OfflinePlayer player, long startingTokens);
 
-	void createTables();
+    void createTables();
 
-	void clearTableData();
+    void clearTableData();
 }

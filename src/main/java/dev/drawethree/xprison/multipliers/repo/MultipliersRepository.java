@@ -5,21 +5,21 @@ import org.bukkit.entity.Player;
 
 public interface MultipliersRepository {
 
-	void saveSellMultiplier(Player player, PlayerMultiplier multiplier);
+    void saveSellMultiplier(Player player, PlayerMultiplier multiplier);
 
-	void deleteSellMultiplier(Player player);
+    void deleteSellMultiplier(Player player);
 
-	void saveTokenMultiplier(Player player, PlayerMultiplier multiplier);
+    void saveTokenMultiplier(Player player, PlayerMultiplier multiplier);
 
-	void deleteTokenMultiplier(Player player);
+    void deleteTokenMultiplier(Player player);
 
-	PlayerMultiplier getSellMultiplier(Player player);
+    PlayerMultiplier getSellMultiplier(Player player);
 
-	PlayerMultiplier getTokenMultiplier(Player player);
+    PlayerMultiplier getTokenMultiplier(Player player);
 
-	void removeExpiredMultipliers();
+    void removeExpiredMultipliers();
 
-	void createTables();
+    void createTables();
 
-	void clearTableData();
+    void clearTableData();
 }

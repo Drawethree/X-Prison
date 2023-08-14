@@ -5,37 +5,37 @@ import org.bukkit.ChatColor;
 
 public class ProgressBar {
 
-	static final ChatColor AVAILABLE_COLOR = ChatColor.GREEN;
-	static final ChatColor NOT_AVAILABLE_COLOR = ChatColor.RED;
-	static final String DEFAULT_DELIMITER = ":";
+    static final ChatColor AVAILABLE_COLOR = ChatColor.GREEN;
+    static final ChatColor NOT_AVAILABLE_COLOR = ChatColor.RED;
+    static final String DEFAULT_DELIMITER = ":";
 
-	public static String getProgressBar(int amountOfDelimeters, String delimeter, double current, double required) {
+    private ProgressBar() {
+        throw new UnsupportedOperationException("Cannot instantiate");
+    }
 
-		if (delimeter == null || delimeter.isEmpty()) {
-			delimeter = DEFAULT_DELIMITER;
-		}
+    public static String getProgressBar(int amountOfDelimeters, String delimeter, double current, double required) {
 
-		if (current > required) {
-			current = required;
-		}
+        if (delimeter == null || delimeter.isEmpty()) {
+            delimeter = DEFAULT_DELIMITER;
+        }
 
-		double treshold = required / amountOfDelimeters;
-		int numberOfGreens = (int) (current / treshold);
+        if (current > required) {
+            current = required;
+        }
 
-		StringBuilder result = new StringBuilder();
+        double treshold = required / amountOfDelimeters;
+        int numberOfGreens = (int) (current / treshold);
 
-		result.append(AVAILABLE_COLOR);
-		for (int i = 0; i < numberOfGreens; i++) {
-			result.append(delimeter);
-		}
-		result.append(NOT_AVAILABLE_COLOR);
-		for (int i = 0; i < amountOfDelimeters - numberOfGreens; i++) {
-			result.append(delimeter);
-		}
-		return TextUtils.applyColor(result.toString());
-	}
+        StringBuilder result = new StringBuilder();
 
-	private ProgressBar() {
-		throw new UnsupportedOperationException("Cannot instantiate");
-	}
+        result.append(AVAILABLE_COLOR);
+        for (int i = 0; i < numberOfGreens; i++) {
+            result.append(delimeter);
+        }
+        result.append(NOT_AVAILABLE_COLOR);
+        for (int i = 0; i < amountOfDelimeters - numberOfGreens; i++) {
+            result.append(delimeter);
+        }
+        return TextUtils.applyColor(result.toString());
+    }
 }

@@ -16,38 +16,38 @@ import lombok.Getter;
 
 public final class XPrisonAutoSell implements XPrisonModule {
 
-	public static final String MODULE_NAME = "Auto Sell";
+    public static final String MODULE_NAME = "Auto Sell";
 
-	@Getter
-	private static XPrisonAutoSell instance;
-	@Getter
-	private final XPrison core;
-	@Getter
-	private XPrisonAutoSellAPI api;
-	@Getter
-	private AutoSellConfig autoSellConfig;
-	@Getter
-	private AutoSellManager manager;
-	@Getter
-	private AutoSellBroadcastTask broadcastTask;
+    @Getter
+    private static XPrisonAutoSell instance;
+    @Getter
+    private final XPrison core;
+    @Getter
+    private XPrisonAutoSellAPI api;
+    @Getter
+    private AutoSellConfig autoSellConfig;
+    @Getter
+    private AutoSellManager manager;
+    @Getter
+    private AutoSellBroadcastTask broadcastTask;
 
-	private boolean enabled;
+    private boolean enabled;
 
-	public XPrisonAutoSell(XPrison core) {
-		instance = this;
-		this.core = core;
-	}
+    public XPrisonAutoSell(XPrison core) {
+        instance = this;
+        this.core = core;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	@Override
-	public void reload() {
-		this.autoSellConfig.reload();
-		this.manager.reload();
-	}
+    @Override
+    public void reload() {
+        this.autoSellConfig.reload();
+        this.manager.reload();
+    }
 
 
     @Override
@@ -81,28 +81,28 @@ public final class XPrisonAutoSell implements XPrisonModule {
         sellPriceCommand.register();
     }
 
-	public boolean isMultipliersModuleEnabled() {
-		return this.core.isModuleEnabled(XPrisonMultipliers.MODULE_NAME);
-	}
+    public boolean isMultipliersModuleEnabled() {
+        return this.core.isModuleEnabled(XPrisonMultipliers.MODULE_NAME);
+    }
 
-	@Override
-	public void disable() {
-		this.broadcastTask.stop();
-		this.enabled = false;
-	}
+    @Override
+    public void disable() {
+        this.broadcastTask.stop();
+        this.enabled = false;
+    }
 
-	@Override
-	public String getName() {
-		return MODULE_NAME;
-	}
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
 
-	@Override
-	public boolean isHistoryEnabled() {
-		return false;
-	}
+    @Override
+    public boolean isHistoryEnabled() {
+        return false;
+    }
 
-	@Override
-	public void resetPlayerData() {
-	}
+    @Override
+    public void resetPlayerData() {
+    }
 
 }

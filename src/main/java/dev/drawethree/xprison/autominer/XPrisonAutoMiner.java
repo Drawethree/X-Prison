@@ -17,98 +17,98 @@ import lombok.Getter;
 
 public final class XPrisonAutoMiner implements XPrisonModule {
 
-	public static final String MODULE_NAME = "Auto Miner";
+    public static final String MODULE_NAME = "Auto Miner";
 
-	@Getter
-	private static XPrisonAutoMiner instance;
+    @Getter
+    private static XPrisonAutoMiner instance;
 
-	@Getter
-	private final XPrison core;
+    @Getter
+    private final XPrison core;
 
-	@Getter
-	private AutoMinerManager manager;
+    @Getter
+    private AutoMinerManager manager;
 
-	@Getter
-	private AutoMinerConfig autoMinerConfig;
+    @Getter
+    private AutoMinerConfig autoMinerConfig;
 
-	@Getter
-	private XPrisonAutoMinerAPI api;
+    @Getter
+    private XPrisonAutoMinerAPI api;
 
-	@Getter
-	private AutominerService autominerService;
+    @Getter
+    private AutominerService autominerService;
 
-	@Getter
-	private AutominerRepository autominerRepository;
+    @Getter
+    private AutominerRepository autominerRepository;
 
-	private boolean enabled;
+    private boolean enabled;
 
-	public XPrisonAutoMiner(XPrison core) {
-		this.core = core;
-	}
+    public XPrisonAutoMiner(XPrison core) {
+        this.core = core;
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	@Override
-	public void enable() {
-		instance = this;
+    @Override
+    public void enable() {
+        instance = this;
 
-		this.autoMinerConfig = new AutoMinerConfig(this);
-		this.autoMinerConfig.load();
+        this.autoMinerConfig = new AutoMinerConfig(this);
+        this.autoMinerConfig.load();
 
-		this.autominerRepository = new AutominerRepositoryImpl(this.core.getPluginDatabase());
-		this.autominerRepository.createTables();
-		this.autominerRepository.removeExpiredAutoMiners();
+        this.autominerRepository = new AutominerRepositoryImpl(this.core.getPluginDatabase());
+        this.autominerRepository.createTables();
+        this.autominerRepository.removeExpiredAutoMiners();
 
-		this.autominerService = new AutominerServiceImpl(this.autominerRepository);
+        this.autominerService = new AutominerServiceImpl(this.autominerRepository);
 
-		this.manager = new AutoMinerManager(this);
-		this.manager.load();
+        this.manager = new AutoMinerManager(this);
+        this.manager.load();
 
-		AutoMinerListener listener = new AutoMinerListener(this);
-		listener.subscribeToEvents();
+        AutoMinerListener listener = new AutoMinerListener(this);
+        listener.subscribeToEvents();
 
-		this.registerCommands();
+        this.registerCommands();
 
-		this.api = new XPrisonAutoMinerAPIImpl(this);
+        this.api = new XPrisonAutoMinerAPIImpl(this);
 
-		this.enabled = true;
-	}
+        this.enabled = true;
+    }
 
-	@Override
-	public void disable() {
-		this.manager.disable();
-		this.enabled = false;
-	}
+    @Override
+    public void disable() {
+        this.manager.disable();
+        this.enabled = false;
+    }
 
-	@Override
-	public void reload() {
-		this.autoMinerConfig.reload();
-		this.manager.reload();
-	}
+    @Override
+    public void reload() {
+        this.autoMinerConfig.reload();
+        this.manager.reload();
+    }
 
-	@Override
-	public String getName() {
-		return MODULE_NAME;
-	}
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
 
-	@Override
-	public boolean isHistoryEnabled() {
-		return true;
-	}
+    @Override
+    public boolean isHistoryEnabled() {
+        return true;
+    }
 
-	@Override
-	public void resetPlayerData() {
-		this.autominerRepository.clearTableData();
-	}
+    @Override
+    public void resetPlayerData() {
+        this.autominerRepository.clearTableData();
+    }
 
-	private void registerCommands() {
-		AutoMinerCommand autoMinerCommand = new AutoMinerCommand(this);
-		autoMinerCommand.register();
+    private void registerCommands() {
+        AutoMinerCommand autoMinerCommand = new AutoMinerCommand(this);
+        autoMinerCommand.register();
 
-		AdminAutoMinerCommand adminAutoMinerCommand = new AdminAutoMinerCommand(this);
-		adminAutoMinerCommand.register();
-	}
+        AdminAutoMinerCommand adminAutoMinerCommand = new AdminAutoMinerCommand(this);
+        adminAutoMinerCommand.register();
+    }
 }

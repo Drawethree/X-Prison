@@ -13,51 +13,51 @@ import java.util.Map;
 
 public class BlockRewardsConfig {
 
-	private final XPrisonTokens plugin;
-	private final FileManager.Config config;
-	private final Map<Long, BlockReward> blockRewards;
+    private final XPrisonTokens plugin;
+    private final FileManager.Config config;
+    private final Map<Long, BlockReward> blockRewards;
 
-	public BlockRewardsConfig(XPrisonTokens plugin) {
-		this.plugin = plugin;
-		this.config = this.plugin.getCore().getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
-		this.blockRewards = new LinkedHashMap<>();
-	}
+    public BlockRewardsConfig(XPrisonTokens plugin) {
+        this.plugin = plugin;
+        this.config = this.plugin.getCore().getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
+        this.blockRewards = new LinkedHashMap<>();
+    }
 
-	private FileManager.Config getConfig() {
-		return this.config;
-	}
+    private FileManager.Config getConfig() {
+        return this.config;
+    }
 
-	public YamlConfiguration getYamlConfig() {
-		return this.config.get();
-	}
+    public YamlConfiguration getYamlConfig() {
+        return this.config.get();
+    }
 
-	public void load() {
-		YamlConfiguration configuration = getYamlConfig();
-		this.loadVariables(configuration);
-	}
+    public void load() {
+        YamlConfiguration configuration = getYamlConfig();
+        this.loadVariables(configuration);
+    }
 
-	public void reload() {
-		this.getConfig().reload();
-		this.load();
-	}
+    public void reload() {
+        this.getConfig().reload();
+        this.load();
+    }
 
-	private void loadVariables(YamlConfiguration configuration) {
-		this.blockRewards.clear();
-		ConfigurationSection section = configuration.getConfigurationSection("block-rewards");
+    private void loadVariables(YamlConfiguration configuration) {
+        this.blockRewards.clear();
+        ConfigurationSection section = configuration.getConfigurationSection("block-rewards");
 
-		if (section != null) {
-			for (String key : section.getKeys(false)) {
-				long blocksNeeded = Long.parseLong(key);
-				String message = TextUtils.applyColor(configuration.getString("block-rewards." + key + ".message"));
-				List<String> commands = configuration.getStringList("block-rewards." + key + ".commands");
-				BlockReward reward = new BlockReward(blocksNeeded, commands, message);
-				this.blockRewards.put(blocksNeeded, reward);
-			}
-		}
-		this.plugin.getCore().getLogger().info("Loaded " + this.blockRewards.keySet().size() + " Block Rewards!");
-	}
+        if (section != null) {
+            for (String key : section.getKeys(false)) {
+                long blocksNeeded = Long.parseLong(key);
+                String message = TextUtils.applyColor(configuration.getString("block-rewards." + key + ".message"));
+                List<String> commands = configuration.getStringList("block-rewards." + key + ".commands");
+                BlockReward reward = new BlockReward(blocksNeeded, commands, message);
+                this.blockRewards.put(blocksNeeded, reward);
+            }
+        }
+        this.plugin.getCore().getLogger().info("Loaded " + this.blockRewards.keySet().size() + " Block Rewards!");
+    }
 
-	public Map<Long, BlockReward> getBlockRewards() {
-		return blockRewards;
-	}
+    public Map<Long, BlockReward> getBlockRewards() {
+        return blockRewards;
+    }
 }

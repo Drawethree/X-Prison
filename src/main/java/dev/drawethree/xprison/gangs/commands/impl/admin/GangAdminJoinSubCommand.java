@@ -16,38 +16,38 @@ import java.util.stream.Collectors;
 
 public final class GangAdminJoinSubCommand extends GangSubCommand {
 
-	public GangAdminJoinSubCommand(GangCommand command) {
-		super(command, "join", "add");
-	}
+    public GangAdminJoinSubCommand(GangCommand command) {
+        super(command, "join", "add");
+    }
 
-	@Override
-	public boolean execute(CommandSender sender, List<String> args) {
-		if (args.size() == 2) {
-			Player target = Players.getNullable(args.get(0));
-			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(1));
+    @Override
+    public boolean execute(CommandSender sender, List<String> args) {
+        if (args.size() == 2) {
+            Player target = Players.getNullable(args.get(0));
+            Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(1));
 
-			if (!gangOptional.isPresent()) {
-				PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));
-				return false;
-			}
+            if (!gangOptional.isPresent()) {
+                PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));
+                return false;
+            }
 
-			return this.command.getPlugin().getGangsManager().forceAdd(sender, target, gangOptional.get());
-		}
-		return false;
-	}
+            return this.command.getPlugin().getGangsManager().forceAdd(sender, target, gangOptional.get());
+        }
+        return false;
+    }
 
-	@Override
-	public String getUsage() {
-		return ChatColor.RED + "/gang admin join <player> <gang>";
-	}
+    @Override
+    public String getUsage() {
+        return ChatColor.RED + "/gang admin join <player> <gang>";
+    }
 
-	@Override
-	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(GangsConstants.GANGS_ADMIN_PERM);
-	}
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return sender.hasPermission(GangsConstants.GANGS_ADMIN_PERM);
+    }
 
-	@Override
-	public List<String> getTabComplete() {
-		return Players.all().stream().map(Player::getName).collect(Collectors.toList());
-	}
+    @Override
+    public List<String> getTabComplete() {
+        return Players.all().stream().map(Player::getName).collect(Collectors.toList());
+    }
 }

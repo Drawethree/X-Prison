@@ -5,6 +5,6 @@ import org.bukkit.OfflinePlayer;
 
 public interface NicknameRepository extends UPCRepository {
 
-	void updatePlayerNickname(OfflinePlayer player);
+    void updatePlayerNickname(OfflinePlayer player);
 
 }

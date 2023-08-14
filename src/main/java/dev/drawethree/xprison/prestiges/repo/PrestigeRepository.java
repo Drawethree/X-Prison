@@ -7,15 +7,15 @@ import java.util.UUID;
 
 public interface PrestigeRepository {
 
-	void updatePrestige(OfflinePlayer player, long prestige);
+    void updatePrestige(OfflinePlayer player, long prestige);
 
-	void addIntoPrestiges(OfflinePlayer player);
+    void addIntoPrestiges(OfflinePlayer player);
 
-	long getPlayerPrestige(OfflinePlayer player);
+    long getPlayerPrestige(OfflinePlayer player);
 
-	Map<UUID, Long> getTopPrestiges(int amountOfRecords);
+    Map<UUID, Long> getTopPrestiges(int amountOfRecords);
 
-	void createTables();
+    void createTables();
 
-	void clearTableData();
+    void clearTableData();
 }

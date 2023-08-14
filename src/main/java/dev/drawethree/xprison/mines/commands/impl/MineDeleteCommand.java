@@ -8,28 +8,28 @@ import java.util.List;
 
 public class MineDeleteCommand extends MineCommand {
 
-	public MineDeleteCommand(XPrisonMines plugin) {
-		super(plugin, "delete", "remove");
-	}
+    public MineDeleteCommand(XPrisonMines plugin) {
+        super(plugin, "delete", "remove");
+    }
 
-	@Override
-	public boolean execute(CommandSender sender, List<String> args) {
+    @Override
+    public boolean execute(CommandSender sender, List<String> args) {
 
-		if (args.size() != 1) {
-			return false;
-		}
+        if (args.size() != 1) {
+            return false;
+        }
 
-		this.plugin.getManager().deleteMine(sender, args.get(0));
-		return true;
-	}
+        this.plugin.getManager().deleteMine(sender, args.get(0));
+        return true;
+    }
 
-	@Override
-	public String getUsage() {
-		return "&cUsage: /mines delete <name> - Delete a mine";
-	}
+    @Override
+    public String getUsage() {
+        return "&cUsage: /mines delete <name> - Delete a mine";
+    }
 
-	@Override
-	public boolean canExecute(CommandSender sender) {
-		return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
-	}
+    @Override
+    public boolean canExecute(CommandSender sender) {
+        return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
+    }
 }

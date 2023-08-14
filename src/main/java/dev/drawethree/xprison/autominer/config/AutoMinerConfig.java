@@ -10,48 +10,48 @@ import java.util.Map;
 
 public class AutoMinerConfig {
 
-	private final XPrisonAutoMiner plugin;
-	private final FileManager.Config config;
+    private final XPrisonAutoMiner plugin;
+    private final FileManager.Config config;
 
-	private Map<String, String> messages;
+    private Map<String, String> messages;
 
-	public AutoMinerConfig(XPrisonAutoMiner plugin) {
-		this.plugin = plugin;
-		this.config = this.plugin.getCore().getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
-	}
+    public AutoMinerConfig(XPrisonAutoMiner plugin) {
+        this.plugin = plugin;
+        this.config = this.plugin.getCore().getFileManager().getConfig("autominer.yml").copyDefaults(true).save();
+    }
 
-	private void loadMessages() {
-		messages = new HashMap<>();
+    private void loadMessages() {
+        messages = new HashMap<>();
 
-		YamlConfiguration configuration = getYamlConfig();
+        YamlConfiguration configuration = getYamlConfig();
 
-		for (String key : configuration.getConfigurationSection("messages").getKeys(false)) {
-			messages.put(key.toLowerCase(), TextUtils.applyColor(configuration.getString("messages." + key)));
-		}
-	}
+        for (String key : configuration.getConfigurationSection("messages").getKeys(false)) {
+            messages.put(key.toLowerCase(), TextUtils.applyColor(configuration.getString("messages." + key)));
+        }
+    }
 
-	public String getMessage(String key) {
-		return messages.getOrDefault(key.toLowerCase(), "No message with key '" + key + "' found");
-	}
+    public String getMessage(String key) {
+        return messages.getOrDefault(key.toLowerCase(), "No message with key '" + key + "' found");
+    }
 
-	private void loadVariables() {
-		this.loadMessages();
-	}
+    private void loadVariables() {
+        this.loadMessages();
+    }
 
-	private FileManager.Config getConfig() {
-		return this.config;
-	}
+    private FileManager.Config getConfig() {
+        return this.config;
+    }
 
-	public YamlConfiguration getYamlConfig() {
-		return this.config.get();
-	}
+    public YamlConfiguration getYamlConfig() {
+        return this.config.get();
+    }
 
-	public void load() {
-		this.getConfig().reload();
-		this.loadVariables();
-	}
+    public void load() {
+        this.getConfig().reload();
+        this.loadVariables();
+    }
 
-	public void reload() {
-		this.load();
-	}
+    public void reload() {
+        this.load();
+    }
 }

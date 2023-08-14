@@ -21,98 +21,92 @@ import lombok.Getter;
 @Getter
 public final class XPrisonPrestiges implements XPrisonModule {
 
-	public static final String MODULE_NAME = "Prestiges";
+    public static final String MODULE_NAME = "Prestiges";
+    @Getter
+    private final XPrison core;
+    @Getter
+    private PrestigeConfig prestigeConfig;
+    private PrestigeManager prestigeManager;
+    @Getter
+    private XPrisonPrestigesAPI api;
+    private SavePlayerDataTask savePlayerDataTask;
+    @Getter
+    private PrestigeRepository prestigeRepository;
 
-	@Getter
-	private PrestigeConfig prestigeConfig;
+    @Getter
+    private PrestigeService prestigeService;
 
-	private PrestigeManager prestigeManager;
+    private boolean enabled;
 
-	@Getter
-	private XPrisonPrestigesAPI api;
+    public XPrisonPrestiges(XPrison core) {
+        this.core = core;
+    }
 
-	private SavePlayerDataTask savePlayerDataTask;
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	@Getter
-	private final XPrison core;
+    @Override
+    public void reload() {
+        this.prestigeConfig.reload();
+    }
 
-	@Getter
-	private PrestigeRepository prestigeRepository;
+    @Override
+    public void enable() {
+        this.enabled = true;
 
-	@Getter
-	private PrestigeService prestigeService;
+        this.prestigeConfig = new PrestigeConfig(this);
+        this.prestigeConfig.load();
 
-	private boolean enabled;
+        this.prestigeRepository = new PrestigeRepositoryImpl(this.core.getPluginDatabase());
+        this.prestigeRepository.createTables();
 
-	public XPrisonPrestiges(XPrison core) {
-		this.core = core;
-	}
+        this.prestigeService = new PrestigeServiceImpl(this.prestigeRepository);
 
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
+        this.prestigeManager = new PrestigeManager(this);
+        this.prestigeManager.enable();
 
-	@Override
-	public void reload() {
-		this.prestigeConfig.reload();
-	}
+        this.api = new XPrisonPrestigesAPIImpl(this);
 
-	@Override
-	public void enable() {
-		this.enabled = true;
+        this.savePlayerDataTask = new SavePlayerDataTask(this);
+        this.savePlayerDataTask.start();
 
-		this.prestigeConfig = new PrestigeConfig(this);
-		this.prestigeConfig.load();
-
-		this.prestigeRepository = new PrestigeRepositoryImpl(this.core.getPluginDatabase());
-		this.prestigeRepository.createTables();
-
-		this.prestigeService = new PrestigeServiceImpl(this.prestigeRepository);
-
-		this.prestigeManager = new PrestigeManager(this);
-		this.prestigeManager.enable();
-
-		this.api = new XPrisonPrestigesAPIImpl(this);
-
-		this.savePlayerDataTask = new SavePlayerDataTask(this);
-		this.savePlayerDataTask.start();
-
-		this.registerCommands();
-		this.registerListeners();
-	}
+        this.registerCommands();
+        this.registerListeners();
+    }
 
 
-	@Override
-	public void disable() {
-		this.savePlayerDataTask.stop();
-		this.prestigeManager.disable();
-		this.enabled = false;
-	}
+    @Override
+    public void disable() {
+        this.savePlayerDataTask.stop();
+        this.prestigeManager.disable();
+        this.enabled = false;
+    }
 
-	@Override
-	public String getName() {
-		return MODULE_NAME;
-	}
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
 
-	@Override
-	public boolean isHistoryEnabled() {
-		return true;
-	}
+    @Override
+    public boolean isHistoryEnabled() {
+        return true;
+    }
 
-	@Override
-	public void resetPlayerData() {
-		this.prestigeRepository.clearTableData();
-	}
+    @Override
+    public void resetPlayerData() {
+        this.prestigeRepository.clearTableData();
+    }
 
-	private void registerCommands() {
-		new PrestigeCommand(this).register();
-		new MaxPrestigeCommand(this).register();
-		new PrestigeTopCommand(this).register();
-		new PrestigeAdminCommand(this).register();
-	}
+    private void registerCommands() {
+        new PrestigeCommand(this).register();
+        new MaxPrestigeCommand(this).register();
+        new PrestigeTopCommand(this).register();
+        new PrestigeAdminCommand(this).register();
+    }
 
-	private void registerListeners() {
-		new PrestigeListener(this).register();
-	}
+    private void registerListeners() {
+        new PrestigeListener(this).register();
+    }
 }

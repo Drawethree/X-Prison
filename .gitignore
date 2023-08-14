@@ -1,5 +1,6 @@
 out
 dependency-reduced-pom.xml
-.idea
+/.idea/
+/.target/
 .circleci
 *.iml

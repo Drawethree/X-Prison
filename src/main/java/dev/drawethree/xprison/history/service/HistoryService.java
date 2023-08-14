@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface HistoryService {
 
-	List<HistoryLine> getPlayerHistory(OfflinePlayer player);
+    List<HistoryLine> getPlayerHistory(OfflinePlayer player);
 
-	void createHistoryLine(OfflinePlayer player, HistoryLine history);
+    void createHistoryLine(OfflinePlayer player, HistoryLine history);
 
-	void deleteHistory(OfflinePlayer target);
+    void deleteHistory(OfflinePlayer target);
 }

@@ -10,14 +10,14 @@ import me.lucko.helper.serialize.Region;
 @NoArgsConstructor
 @Data
 public class MineSelection {
-	private Position pos1;
-	private Position pos2;
+    private Position pos1;
+    private Position pos2;
 
-	public boolean isValid() {
-		return pos1 != null && pos2 != null;
-	}
+    public boolean isValid() {
+        return pos1 != null && pos2 != null;
+    }
 
-	public Region toRegion() {
-		return pos1.regionWith(pos2);
-	}
+    public Region toRegion() {
+        return pos1.regionWith(pos2);
+    }
 }

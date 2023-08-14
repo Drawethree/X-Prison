@@ -15,32 +15,32 @@ import java.util.Map;
 @Getter
 public final class XPrisonSellAllEvent extends XPrisonPlayerEvent implements Cancellable {
 
-	private static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 
-	private final Player player;
-	private final SellRegion region;
+    private final Player player;
+    private final SellRegion region;
 
-	@Getter
-	@Setter
-	private Map<AutoSellItemStack, Double> itemsToSell;
+    @Getter
+    @Setter
+    private Map<AutoSellItemStack, Double> itemsToSell;
 
     @Getter
     @Setter
     private boolean cancelled;
 
-	/**
-	 * Called when mined blocks are automatically sold
-	 *
-	 * @param player      Player
-	 * @param reg         SellRegion where block was mined
-	 * @param itemsToSell Map of items to sell with prices as values
-	 */
-	public XPrisonSellAllEvent(Player player, SellRegion reg, Map<AutoSellItemStack, Double> itemsToSell) {
-		super(player);
-		this.player = player;
-		this.region = reg;
-		this.itemsToSell = itemsToSell;
-	}
+    /**
+     * Called when mined blocks are automatically sold
+     *
+     * @param player      Player
+     * @param reg         SellRegion where block was mined
+     * @param itemsToSell Map of items to sell with prices as values
+     */
+    public XPrisonSellAllEvent(Player player, SellRegion reg, Map<AutoSellItemStack, Double> itemsToSell) {
+        super(player);
+        this.player = player;
+        this.region = reg;
+        this.itemsToSell = itemsToSell;
+    }
 
     public static HandlerList getHandlerList() {
         return handlers;

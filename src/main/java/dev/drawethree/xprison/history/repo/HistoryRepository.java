@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface HistoryRepository {
 
-	List<HistoryLine> getPlayerHistory(OfflinePlayer player);
+    List<HistoryLine> getPlayerHistory(OfflinePlayer player);
 
-	void addHistoryLine(OfflinePlayer player, HistoryLine history);
+    void addHistoryLine(OfflinePlayer player, HistoryLine history);
 
-	void deleteHistory(OfflinePlayer target);
+    void deleteHistory(OfflinePlayer target);
 
-	void createTables();
+    void createTables();
 
-	void clearTableData();
+    void clearTableData();
 }

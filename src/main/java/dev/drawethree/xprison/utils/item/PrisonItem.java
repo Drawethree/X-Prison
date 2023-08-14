@@ -37,12 +37,24 @@ public class PrisonItem extends RtagItem {
         return get(MAIN, "gems");
     }
 
+    public void setGems(long amount) {
+        set(amount, MAIN, "gems");
+    }
+
     public Integer getLevel() {
         return get(MAIN, "level");
     }
 
+    public void setLevel(int level) {
+        set(level, MAIN, "level");
+    }
+
     public Long getTokens() {
         return get(MAIN, "tokens");
+    }
+
+    public void setTokens(long amount) {
+        set(amount, MAIN, "tokens");
     }
 
     public void setEnchant(XPrisonEnchantment enchant, int level) {
@@ -51,18 +63,6 @@ public class PrisonItem extends RtagItem {
         } else {
             remove(MAIN, "enchants", String.valueOf(enchant.getId()));
         }
-    }
-
-    public void setGems(long amount) {
-        set(amount, MAIN, "gems");
-    }
-
-    public void setLevel(int level) {
-        set(level, MAIN, "level");
-    }
-
-    public void setTokens(long amount) {
-        set(amount, MAIN, "tokens");
     }
 
     public void addBrokenBlocks(int amount) {

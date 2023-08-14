@@ -12,24 +12,24 @@ import java.util.List;
 @Getter
 public final class NukeTriggerEvent extends XPrisonPlayerEnchantTriggerEvent {
 
-	private static final HandlerList HANDLERS_LIST = new HandlerList();
-	private boolean cancelled;
+    private static final HandlerList HANDLERS_LIST = new HandlerList();
+    private boolean cancelled;
 
-	/**
-	 * Called when nuke enchant procs
-	 *
-	 * @param p           Player
-	 * @param mineRegion  WorldGuard region where it was triggered
-	 * @param originBlock Original block broken that triggered it
-	 * @param blocks      List of affected blocks (marked for removal)
-	 */
-	public NukeTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
-		super(p, mineRegion, originBlock, blocks);
-	}
+    /**
+     * Called when nuke enchant procs
+     *
+     * @param p           Player
+     * @param mineRegion  WorldGuard region where it was triggered
+     * @param originBlock Original block broken that triggered it
+     * @param blocks      List of affected blocks (marked for removal)
+     */
+    public NukeTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
+        super(p, mineRegion, originBlock, blocks);
+    }
 
-	public static HandlerList getHandlerList() {
-		return HANDLERS_LIST;
-	}
+    public static HandlerList getHandlerList() {
+        return HANDLERS_LIST;
+    }
 
     @Override
     public HandlerList getHandlers() {

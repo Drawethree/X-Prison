@@ -9,18 +9,18 @@ import java.util.stream.Collectors;
 
 public final class GangTopByValueProvider implements GangTopProvider {
 
-	private final GangsManager manager;
+    private final GangsManager manager;
 
-	public GangTopByValueProvider(GangsManager manager) {
-		this.manager = manager;
-	}
+    public GangTopByValueProvider(GangsManager manager) {
+        this.manager = manager;
+    }
 
-	@Override
-	public List<Gang> provide() {
-		return getAllGangs().stream().sorted(Comparator.comparingLong(Gang::getValue).reversed()).collect(Collectors.toList());
-	}
+    @Override
+    public List<Gang> provide() {
+        return getAllGangs().stream().sorted(Comparator.comparingLong(Gang::getValue).reversed()).collect(Collectors.toList());
+    }
 
-	private Collection<Gang> getAllGangs() {
-		return manager.getAllGangs();
-	}
+    private Collection<Gang> getAllGangs() {
+        return manager.getAllGangs();
+    }
 }

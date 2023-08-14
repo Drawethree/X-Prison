@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface GemsService {
 
-	long getPlayerGems(OfflinePlayer player);
+    long getPlayerGems(OfflinePlayer player);
 
-	void setGems(OfflinePlayer player, long newAmount);
+    void setGems(OfflinePlayer player, long newAmount);
 
-	Map<UUID, Long> getTopGems(int amountOfRecords);
+    Map<UUID, Long> getTopGems(int amountOfRecords);
 
-	void createGems(OfflinePlayer player, long startingGems);
+    void createGems(OfflinePlayer player, long startingGems);
 }

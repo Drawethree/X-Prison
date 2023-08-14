@@ -2,9 +2,9 @@ package dev.drawethree.xprison.enchants.model;
 
 public interface Refundable {
 
-	boolean isRefundEnabled();
+    boolean isRefundEnabled();
 
-	int getRefundGuiSlot();
+    int getRefundGuiSlot();
 
-	double getRefundPercentage();
+    double getRefundPercentage();
 }

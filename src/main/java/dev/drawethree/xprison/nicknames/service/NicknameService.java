@@ -4,6 +4,6 @@ import org.bukkit.OfflinePlayer;
 
 public interface NicknameService {
 
-	void updatePlayerNickname(OfflinePlayer player);
+    void updatePlayerNickname(OfflinePlayer player);
 
 }

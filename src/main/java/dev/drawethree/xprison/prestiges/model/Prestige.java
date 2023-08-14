@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 public class Prestige {
 
-	private final long id;
-	private final double cost;
-	private final String prefix;
-	private final List<String> commandsToExecute;
+    private final long id;
+    private final double cost;
+    private final String prefix;
+    private final List<String> commandsToExecute;
 }

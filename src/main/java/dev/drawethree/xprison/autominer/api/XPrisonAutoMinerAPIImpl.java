@@ -5,19 +5,19 @@ import org.bukkit.entity.Player;
 
 public final class XPrisonAutoMinerAPIImpl implements XPrisonAutoMinerAPI {
 
-	private final XPrisonAutoMiner plugin;
+    private final XPrisonAutoMiner plugin;
 
-	public XPrisonAutoMinerAPIImpl(XPrisonAutoMiner plugin) {
-		this.plugin = plugin;
-	}
+    public XPrisonAutoMinerAPIImpl(XPrisonAutoMiner plugin) {
+        this.plugin = plugin;
+    }
 
-	@Override
-	public boolean isInAutoMinerRegion(Player player) {
-		return this.plugin.getManager().isInAutoMinerRegion(player);
-	}
+    @Override
+    public boolean isInAutoMinerRegion(Player player) {
+        return this.plugin.getManager().isInAutoMinerRegion(player);
+    }
 
-	@Override
-	public int getAutoMinerTime(Player player) {
-		return this.plugin.getManager().getAutoMinerTime(player);
-	}
+    @Override
+    public int getAutoMinerTime(Player player) {
+        return this.plugin.getManager().getAutoMinerTime(player);
+    }
 }

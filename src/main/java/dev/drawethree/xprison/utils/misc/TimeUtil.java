@@ -4,37 +4,37 @@ import java.util.StringJoiner;
 
 public class TimeUtil {
 
-	public static String getTime(long seconds) {
-		final StringJoiner joiner = new StringJoiner(" ");
+    private TimeUtil() {
+        throw new UnsupportedOperationException("Cannot instantiate");
+    }
 
-		long minutes = seconds / 60;
-		long hours = minutes / 60;
-		final long days = hours / 24;
+    public static String getTime(long seconds) {
+        final StringJoiner joiner = new StringJoiner(" ");
 
-		seconds %= 60;
-		minutes %= 60;
-		hours %= 24;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        final long days = hours / 24;
 
-		if (days > 0) {
-			joiner.add(days + "d");
-		}
+        seconds %= 60;
+        minutes %= 60;
+        hours %= 24;
 
-		if (hours > 0) {
-			joiner.add(hours + "h");
-		}
+        if (days > 0) {
+            joiner.add(days + "d");
+        }
 
-		if (minutes > 0) {
-			joiner.add(minutes + "m");
-		}
+        if (hours > 0) {
+            joiner.add(hours + "h");
+        }
 
-		if (seconds > 0) {
-			joiner.add(seconds + "s");
-		}
+        if (minutes > 0) {
+            joiner.add(minutes + "m");
+        }
 
-		return joiner.toString();
-	}
+        if (seconds > 0) {
+            joiner.add(seconds + "s");
+        }
 
-	private TimeUtil() {
-		throw new UnsupportedOperationException("Cannot instantiate");
-	}
+        return joiner.toString();
+    }
 }

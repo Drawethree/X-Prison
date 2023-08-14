@@ -23,6 +23,11 @@ public final class FortuneEnchant extends XPrisonEnchantment {
         blackListedBlocks = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Blacklist").stream().map(CompMaterial::fromString).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    public static boolean isBlockBlacklisted(Block block) {
+        CompMaterial blockMaterial = CompMaterial.fromBlock(block);
+        return blackListedBlocks.contains(blockMaterial);
+    }
+
     @Override
     public void onEquip(Player p, ItemStack pickAxe, int level) {
         ItemMeta meta = pickAxe.getItemMeta();
@@ -54,10 +59,5 @@ public final class FortuneEnchant extends XPrisonEnchantment {
     @Override
     public String getAuthor() {
         return "Drawethree";
-    }
-
-    public static boolean isBlockBlacklisted(Block block) {
-        CompMaterial blockMaterial = CompMaterial.fromBlock(block);
-        return blackListedBlocks.contains(blockMaterial);
     }
 }

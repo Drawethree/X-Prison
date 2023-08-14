@@ -7,21 +7,21 @@ import java.util.List;
 
 public interface GangsRepository {
 
-	void updateGang(Gang g);
+    void updateGang(Gang g);
 
-	void deleteGang(Gang g);
+    void deleteGang(Gang g);
 
-	void createGang(Gang g);
+    void createGang(Gang g);
 
-	List<Gang> getAllGangs();
+    List<Gang> getAllGangs();
 
-	List<GangInvitation> getGangInvitations(Gang gang);
+    List<GangInvitation> getGangInvitations(Gang gang);
 
-	void createGangInvitation(GangInvitation gangInvitation);
+    void createGangInvitation(GangInvitation gangInvitation);
 
-	void deleteGangInvitation(GangInvitation gangInvitation);
+    void deleteGangInvitation(GangInvitation gangInvitation);
 
-	void createTables();
+    void createTables();
 
-	void clearTableData();
+    void clearTableData();
 }

@@ -14,34 +14,34 @@ import java.util.stream.Collectors;
 
 public final class AllSellRegionsGui {
 
-	private AllSellRegionsGui() {
-		throw new UnsupportedOperationException("Cannot instantiate");
-	}
+    private AllSellRegionsGui() {
+        throw new UnsupportedOperationException("Cannot instantiate");
+    }
 
-	public static void createAndOpenTo(Player player) {
+    public static void createAndOpenTo(Player player) {
 
-		PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
+        PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 
-		builder.title("Sell Regions");
-		builder.lines(6);
-		builder.previousPageSlot(45);
-		builder.nextPageSlot(53);
-		builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&aNext Page").lore("&7Click to see next page.").build());
-		builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&aPrevious Page").lore("&7Click to see previous page.").build());
+        builder.title("Sell Regions");
+        builder.lines(6);
+        builder.previousPageSlot(45);
+        builder.nextPageSlot(53);
+        builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&aNext Page").lore("&7Click to see next page.").build());
+        builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&aPrevious Page").lore("&7Click to see previous page.").build());
 
-		Collection<SellRegion> regions = getSellRegions();
-		PaginatedGui gui = builder.build(player, paginatedGui -> regions.stream().map(sellRegion -> buildItemForSellRegion(sellRegion, player)).collect(Collectors.toList()));
-		gui.open();
-	}
+        Collection<SellRegion> regions = getSellRegions();
+        PaginatedGui gui = builder.build(player, paginatedGui -> regions.stream().map(sellRegion -> buildItemForSellRegion(sellRegion, player)).collect(Collectors.toList()));
+        gui.open();
+    }
 
-	private static Item buildItemForSellRegion(SellRegion sellRegion, Player player) {
-		return ItemStackBuilder.of(Material.DIAMOND_PICKAXE)
-				.name(sellRegion.getRegion().getId())
-				.lore(" ", "&7Click to edit sell prices.", " ")
-				.build(() -> new SellRegionGui(sellRegion, player).open());
-	}
+    private static Item buildItemForSellRegion(SellRegion sellRegion, Player player) {
+        return ItemStackBuilder.of(Material.DIAMOND_PICKAXE)
+                .name(sellRegion.getRegion().getId())
+                .lore(" ", "&7Click to edit sell prices.", " ")
+                .build(() -> new SellRegionGui(sellRegion, player).open());
+    }
 
-	private static Collection<SellRegion> getSellRegions() {
-		return XPrisonAutoSell.getInstance().getManager().getAutoSellRegions();
-	}
+    private static Collection<SellRegion> getSellRegions() {
+        return XPrisonAutoSell.getInstance().getManager().getAutoSellRegions();
+    }
 }

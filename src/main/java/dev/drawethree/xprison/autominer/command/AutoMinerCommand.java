@@ -9,30 +9,30 @@ import org.bukkit.entity.Player;
 
 public class AutoMinerCommand {
 
-	private static final String[] COMMAND_ALIASES = {"autominer"};
+    private static final String[] COMMAND_ALIASES = {"autominer"};
 
-	private final XPrisonAutoMiner plugin;
+    private final XPrisonAutoMiner plugin;
 
-	public AutoMinerCommand(XPrisonAutoMiner plugin) {
-		this.plugin = plugin;
-	}
+    public AutoMinerCommand(XPrisonAutoMiner plugin) {
+        this.plugin = plugin;
+    }
 
-	public void register() {
-		Commands.create()
-				.assertPlayer()
-				.handler(c -> {
+    public void register() {
+        Commands.create()
+                .assertPlayer()
+                .handler(c -> {
 
-					if (!validateArguments(c)) {
-						return;
-					}
+                    if (!validateArguments(c)) {
+                        return;
+                    }
 
-					int timeLeft = this.plugin.getManager().getAutoMinerTime(c.sender());
-					PlayerUtils.sendMessage(c.sender(), this.plugin.getAutoMinerConfig().getMessage("auto_miner_time").replace("%time%", AutoMinerUtils.getAutoMinerTimeLeftFormatted(timeLeft)));
+                    int timeLeft = this.plugin.getManager().getAutoMinerTime(c.sender());
+                    PlayerUtils.sendMessage(c.sender(), this.plugin.getAutoMinerConfig().getMessage("auto_miner_time").replace("%time%", AutoMinerUtils.getAutoMinerTimeLeftFormatted(timeLeft)));
 
-				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
-	}
+                }).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
+    }
 
-	private boolean validateArguments(CommandContext<Player> c) {
-		return c.args().size() == 0;
-	}
+    private boolean validateArguments(CommandContext<Player> c) {
+        return c.args().size() == 0;
+    }
 }

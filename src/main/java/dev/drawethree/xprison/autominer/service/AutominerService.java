@@ -5,9 +5,9 @@ import org.bukkit.entity.Player;
 
 public interface AutominerService {
 
-	int getPlayerAutoMinerTime(OfflinePlayer player);
+    int getPlayerAutoMinerTime(OfflinePlayer player);
 
-	void removeExpiredAutoMiners();
+    void removeExpiredAutoMiners();
 
-	void setAutoMiner(Player p, int timeLeft);
+    void setAutoMiner(Player p, int timeLeft);
 }

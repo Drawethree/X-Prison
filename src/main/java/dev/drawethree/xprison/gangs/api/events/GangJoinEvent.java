@@ -9,44 +9,41 @@ import org.bukkit.event.HandlerList;
 
 public final class GangJoinEvent extends XPrisonPlayerEvent implements Cancellable {
 
-	private static final HandlerList HANDLERS_LIST = new HandlerList();
+    private static final HandlerList HANDLERS_LIST = new HandlerList();
+    @Getter
+    private final OfflinePlayer player;
+    @Getter
+    private final Gang gang;
+    private boolean cancelled;
 
-	private boolean cancelled;
+    /**
+     * Called when player joins a gang
+     *
+     * @param player Player
+     * @param gang   Gang
+     */
+    public GangJoinEvent(OfflinePlayer player, Gang gang) {
+        super(player);
+        this.player = player;
+        this.gang = gang;
+    }
 
-	@Getter
-	private final OfflinePlayer player;
+    public static HandlerList getHandlerList() {
+        return HANDLERS_LIST;
+    }
 
-	@Getter
-	private final Gang gang;
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
-	/**
-	 * Called when player joins a gang
-	 *
-	 * @param player Player
-	 * @param gang   Gang
-	 */
-	public GangJoinEvent(OfflinePlayer player, Gang gang) {
-		super(player);
-		this.player = player;
-		this.gang = gang;
-	}
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
 
-	public static HandlerList getHandlerList() {
-		return HANDLERS_LIST;
-	}
-
-	@Override
-	public boolean isCancelled() {
-		return cancelled;
-	}
-
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.cancelled = cancel;
-	}
-
-	@Override
-	public HandlerList getHandlers() {
-		return HANDLERS_LIST;
-	}
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS_LIST;
+    }
 }
