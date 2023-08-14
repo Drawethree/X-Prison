@@ -9,8 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PickaxeLevel {
 
-    private int level;
-    private long blocksRequired;
-    private String displayName;
-    private List<String> rewards;
+	private int level;
+	private long blocksRequired;
+	private String displayName;
+	private List<String> rewards;
 }

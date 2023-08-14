@@ -634,11 +634,10 @@ first-join-pickaxe:
   enabled: true
   # Name of pickaxe
   name: "&e%player%'s Pickaxe"
-  # Unbreakable setting
-  unbreakable: true
   # Material of pickaxe
   material: DIAMOND_PICKAXE
   # Raw names + levels of specific enchants for first join pickaxe
   enchants:
     - efficiency 10
+    - unbreaking 10
     - fortune 10
