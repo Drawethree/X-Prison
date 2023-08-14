@@ -57,7 +57,7 @@ player_data_save_interval: 10
 tokens-command-cooldown: 5
 # Amount of players displayed in top lists
 top_players_amount: 10
-world-whitelist: []
+world-whitelist: [ ]
 tokens-top-format:
   - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
   - "&e&lTOKENS TOP"

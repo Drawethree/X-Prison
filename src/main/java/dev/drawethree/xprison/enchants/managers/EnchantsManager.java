@@ -146,9 +146,7 @@ public class EnchantsManager {
                     if (enchLvl > 0) {
                         final String line;
                         if (player.hasPermission(EXCLUDE_PERMISSION + enchantment.getRawName())) {
-                            line = this.plugin.getEnchantsConfig().getExcludedFormat()
-                                    .replace("%Enchant%", enchantment.getNameUncolor())
-                                    .replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
+                            line = this.plugin.getEnchantsConfig().getExcludedFormat().replace("%Enchant%", enchantment.getNameUncolor()).replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
                         } else {
                             line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
                         }
@@ -313,10 +311,7 @@ public class EnchantsManager {
         if (addition == 1) {
             PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_bought").replace("%tokens%", String.format("%,d", totalCost)));
         } else {
-            PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_bought_multiple")
-                    .replace("%amount%", String.valueOf(addition))
-                    .replace("%enchant%", enchantment.getName())
-                    .replace("%tokens%", String.format("%,d", totalCost)));
+            PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_bought_multiple").replace("%amount%", String.valueOf(addition)).replace("%enchant%", enchantment.getName()).replace("%tokens%", String.format("%,d", totalCost)));
         }
     }
 
@@ -460,10 +455,7 @@ public class EnchantsManager {
             if (levelsToBuy == 1) {
                 PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_bought").replace("%tokens%", String.format("%,d", totalCost)));
             } else {
-                PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_bought_multiple")
-                        .replace("%amount%", String.valueOf(levelsToBuy))
-                        .replace("%enchant%", enchantment.getName())
-                        .replace("%tokens%", String.format("%,d", totalCost)));
+                PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_bought_multiple").replace("%amount%", String.valueOf(levelsToBuy)).replace("%enchant%", enchantment.getName()).replace("%tokens%", String.format("%,d", totalCost)));
             }
         });
     }
@@ -524,7 +516,13 @@ public class EnchantsManager {
         }
 
         CompMaterial material = this.plugin.getEnchantsConfig().getFirstJoinPickaxeMaterial();
-        ItemStack item = ItemStackBuilder.of(material.toItem()).name(pickaxeName).build();
+        ItemStack item;
+
+        if (this.plugin.getEnchantsConfig().isUnbreakable()) {
+            item = ItemStackBuilder.of(material.toItem()).name(pickaxeName).flag(ItemFlag.HIDE_UNBREAKABLE).breakable(true).build();
+        } else {
+            item = ItemStackBuilder.of(material.toItem()).name(pickaxeName).build();
+        }
 
         List<String> firstJoinPickaxeEnchants = this.plugin.getEnchantsConfig().getFirstJoinPickaxeEnchants();
 

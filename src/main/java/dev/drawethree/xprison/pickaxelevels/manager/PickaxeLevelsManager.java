@@ -20,169 +20,169 @@ import java.util.Optional;
 
 public class PickaxeLevelsManager {
 
-	private final XPrisonPickaxeLevels plugin;
+    private final XPrisonPickaxeLevels plugin;
 
-	public PickaxeLevelsManager(XPrisonPickaxeLevels plugin) {
-		this.plugin = plugin;
-	}
+    public PickaxeLevelsManager(XPrisonPickaxeLevels plugin) {
+        this.plugin = plugin;
+    }
 
-	public Optional<PickaxeLevel> getNextPickaxeLevel(PickaxeLevel currentLevel) {
-		if (currentLevel == null || currentLevel == getMaxLevel()) {
-			return Optional.empty();
-		}
-		return this.getPickaxeLevel(currentLevel.getLevel() + 1);
-	}
+    public Optional<PickaxeLevel> getNextPickaxeLevel(PickaxeLevel currentLevel) {
+        if (currentLevel == null || currentLevel == getMaxLevel()) {
+            return Optional.empty();
+        }
+        return this.getPickaxeLevel(currentLevel.getLevel() + 1);
+    }
 
-	private PickaxeLevel getMaxLevel() {
-		return this.plugin.getPickaxeLevelsConfig().getMaxLevel();
-	}
-
-
-	public Optional<PickaxeLevel> getPickaxeLevel(int level) {
-		return this.plugin.getPickaxeLevelsConfig().getPickaxeLevel(level);
-	}
-
-	public Optional<PickaxeLevel> getPickaxeLevel(ItemStack itemStack) {
-		if (itemStack == null || !this.plugin.getCore().isPickaxeSupported(itemStack.getType())) {
-			return Optional.empty();
-		}
-
-		final Integer level = new PrisonItem(itemStack).getLevel();
-		return level != null ? this.getPickaxeLevel(level) : Optional.of(getDefaultLevel());
-	}
-
-	private PickaxeLevel getDefaultLevel() {
-		return this.plugin.getPickaxeLevelsConfig().getDefaultLevel();
-	}
-
-	public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
-
-		if (level == null || level.getLevel() <= 0 || level.getLevel() > this.getMaxLevel().getLevel()) {
-			return item;
-		}
-
-		final PrisonItem prisonItem = new PrisonItem(item);
-		prisonItem.setLevel(level.getLevel());
-		ItemStackBuilder builder = ItemStackBuilder.of(prisonItem.loadCopy());
-		if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
-			builder = builder.name(this.getDisplayName(level, p));
-		}
-
-		item = builder.build();
-		item = this.updatePickaxe(p, item);
-		return item;
-	}
-
-	private ItemStack updatePickaxe(Player p, ItemStack item) {
-		return this.plugin.getCore().getEnchants().getEnchantsManager().updatePickaxe(p, item);
-	}
-
-	public ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
-		return setPickaxeLevel(item, this.getDefaultLevel(), p);
-	}
+    private PickaxeLevel getMaxLevel() {
+        return this.plugin.getPickaxeLevelsConfig().getMaxLevel();
+    }
 
 
-	public ItemStack findPickaxe(Player p) {
-		for (ItemStack i : p.getInventory()) {
-			if (i == null) {
-				continue;
-			}
-			if (this.plugin.getCore().isPickaxeSupported(i.getType())) {
-				return i;
-			}
-		}
-		return null;
-	}
+    public Optional<PickaxeLevel> getPickaxeLevel(int level) {
+        return this.plugin.getPickaxeLevelsConfig().getPickaxeLevel(level);
+    }
 
-	public String getProgressBar(Player player) {
-		ItemStack pickaxe = findPickaxe(player);
-		return this.getProgressBar(pickaxe);
-	}
+    public Optional<PickaxeLevel> getPickaxeLevel(ItemStack itemStack) {
+        if (itemStack == null || !this.plugin.getCore().isPickaxeSupported(itemStack.getType())) {
+            return Optional.empty();
+        }
 
-	public String getProgressBar(ItemStack item) {
+        final Integer level = new PrisonItem(itemStack).getLevel();
+        return level != null ? this.getPickaxeLevel(level) : Optional.of(getDefaultLevel());
+    }
 
-		Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(item);
+    private PickaxeLevel getDefaultLevel() {
+        return this.plugin.getPickaxeLevelsConfig().getDefaultLevel();
+    }
 
-		double current = 0;
-		double required = 1;
+    public ItemStack setPickaxeLevel(ItemStack item, PickaxeLevel level, Player p) {
 
-		if (currentLevelOptional.isPresent()) {
-			PickaxeLevel currentLevel = currentLevelOptional.get();
-			Optional<PickaxeLevel> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
-			current = this.getBlocksBroken(item) - currentLevel.getBlocksRequired();
-			if (nextLevelOptional.isPresent()) {
-				PickaxeLevel nextLevel = nextLevelOptional.get();
-				required = nextLevel.getBlocksRequired() - currentLevel.getBlocksRequired();
-			}
-		}
-		return ProgressBar.getProgressBar(this.getProgressBarLength(), this.getProgressBarDelimiter(), current, required);
-	}
+        if (level == null || level.getLevel() <= 0 || level.getLevel() > this.getMaxLevel().getLevel()) {
+            return item;
+        }
 
-	public long getBlocksBroken(ItemStack item) {
+        final PrisonItem prisonItem = new PrisonItem(item);
+        prisonItem.setLevel(level.getLevel());
+        ItemStackBuilder builder = ItemStackBuilder.of(prisonItem.loadCopy());
+        if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
+            builder = builder.name(this.getDisplayName(level, p));
+        }
 
-		if (item == null || item.getType() == Material.AIR) {
-			return 0;
-		}
+        item = builder.build();
+        item = this.updatePickaxe(p, item);
+        return item;
+    }
 
-		return new PrisonItem(item).getBrokenBlocks();
-	}
+    private ItemStack updatePickaxe(Player p, ItemStack item) {
+        return this.plugin.getCore().getEnchants().getEnchantsManager().updatePickaxe(p, item);
+    }
 
-	private String getProgressBarDelimiter() {
-		return this.plugin.getPickaxeLevelsConfig().getProgressBarDelimiter();
-	}
+    public ItemStack addDefaultPickaxeLevel(ItemStack item, Player p) {
+        return setPickaxeLevel(item, this.getDefaultLevel(), p);
+    }
 
-	private int getProgressBarLength() {
-		return this.plugin.getPickaxeLevelsConfig().getProgressBarLength();
-	}
 
-	public void giveRewards(PickaxeLevel level, Player p) {
-		if (!Bukkit.isPrimaryThread()) {
-			Schedulers.sync().run(() -> level.getRewards().forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()))));
-		} else {
-			level.getRewards().forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
-		}
-	}
+    public ItemStack findPickaxe(Player p) {
+        for (ItemStack i : p.getInventory()) {
+            if (i == null) {
+                continue;
+            }
+            if (this.plugin.getCore().isPickaxeSupported(i.getType())) {
+                return i;
+            }
+        }
+        return null;
+    }
 
-	public String getDisplayName(PickaxeLevel level, Player p) {
-		if (XPrison.getInstance().isPlaceholderAPIEnabled()) {
-			return PlaceholderAPI.setPlaceholders(p, level.getDisplayName()).replace("%player%", p.getName());
-		}
-		return level.getDisplayName().replace("%player%", p.getName());
-	}
+    public String getProgressBar(Player player) {
+        ItemStack pickaxe = findPickaxe(player);
+        return this.getProgressBar(pickaxe);
+    }
 
-	public Optional<PickaxeLevel> getPickaxeLevel(Player player) {
-		ItemStack item = this.findPickaxe(player);
-		return this.getPickaxeLevel(item);
-	}
+    public String getProgressBar(ItemStack item) {
 
-	public void updatePickaxeLevel(Player player, ItemStack pickaxe) {
-		long currentBlocks = this.plugin.getPickaxeLevelsManager().getBlocksBroken(pickaxe);
+        Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(item);
 
-		Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(pickaxe);
+        double current = 0;
+        double required = 1;
 
-		if (!currentLevelOptional.isPresent()) {
-			return;
-		}
+        if (currentLevelOptional.isPresent()) {
+            PickaxeLevel currentLevel = currentLevelOptional.get();
+            Optional<PickaxeLevel> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
+            current = this.getBlocksBroken(item) - currentLevel.getBlocksRequired();
+            if (nextLevelOptional.isPresent()) {
+                PickaxeLevel nextLevel = nextLevelOptional.get();
+                required = nextLevel.getBlocksRequired() - currentLevel.getBlocksRequired();
+            }
+        }
+        return ProgressBar.getProgressBar(this.getProgressBarLength(), this.getProgressBarDelimiter(), current, required);
+    }
 
-		PickaxeLevel currentLevel = currentLevelOptional.get();
-		Optional<PickaxeLevel> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
+    public long getBlocksBroken(ItemStack item) {
 
-		List<PickaxeLevel> toGive = new ArrayList<>();
+        if (item == null || item.getType() == Material.AIR) {
+            return 0;
+        }
 
-		while (nextLevelOptional.isPresent()) {
-			PickaxeLevel nextLevel = nextLevelOptional.get();
-			if (currentBlocks < nextLevel.getBlocksRequired()) {
-				break;
-			}
-			toGive.add(nextLevel);
-			nextLevelOptional = this.getNextPickaxeLevel(nextLevel);
-		}
+        return new PrisonItem(item).getBrokenBlocks();
+    }
 
-		if (!toGive.isEmpty()) {
-			toGive.forEach(pickaxeLevel -> this.giveRewards(pickaxeLevel, player));
-			ItemStack updatedPickaxe = this.setPickaxeLevel(pickaxe, toGive.get(toGive.size() - 1), player);
-			player.setItemInHand(updatedPickaxe);
-			PlayerUtils.sendMessage(player, this.plugin.getPickaxeLevelsConfig().getMessage("pickaxe-level-up").replace("%level%", String.valueOf(toGive.get(toGive.size() - 1).getLevel())));
-		}
-	}
+    private String getProgressBarDelimiter() {
+        return this.plugin.getPickaxeLevelsConfig().getProgressBarDelimiter();
+    }
+
+    private int getProgressBarLength() {
+        return this.plugin.getPickaxeLevelsConfig().getProgressBarLength();
+    }
+
+    public void giveRewards(PickaxeLevel level, Player p) {
+        if (!Bukkit.isPrimaryThread()) {
+            Schedulers.sync().run(() -> level.getRewards().forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()))));
+        } else {
+            level.getRewards().forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName())));
+        }
+    }
+
+    public String getDisplayName(PickaxeLevel level, Player p) {
+        if (XPrison.getInstance().isPlaceholderAPIEnabled()) {
+            return PlaceholderAPI.setPlaceholders(p, level.getDisplayName()).replace("%player%", p.getName());
+        }
+        return level.getDisplayName().replace("%player%", p.getName());
+    }
+
+    public Optional<PickaxeLevel> getPickaxeLevel(Player player) {
+        ItemStack item = this.findPickaxe(player);
+        return this.getPickaxeLevel(item);
+    }
+
+    public void updatePickaxeLevel(Player player, ItemStack pickaxe) {
+        long currentBlocks = this.plugin.getPickaxeLevelsManager().getBlocksBroken(pickaxe);
+
+        Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(pickaxe);
+
+        if (!currentLevelOptional.isPresent()) {
+            return;
+        }
+
+        PickaxeLevel currentLevel = currentLevelOptional.get();
+        Optional<PickaxeLevel> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
+
+        List<PickaxeLevel> toGive = new ArrayList<>();
+
+        while (nextLevelOptional.isPresent()) {
+            PickaxeLevel nextLevel = nextLevelOptional.get();
+            if (currentBlocks < nextLevel.getBlocksRequired()) {
+                break;
+            }
+            toGive.add(nextLevel);
+            nextLevelOptional = this.getNextPickaxeLevel(nextLevel);
+        }
+
+        if (!toGive.isEmpty()) {
+            toGive.forEach(pickaxeLevel -> this.giveRewards(pickaxeLevel, player));
+            ItemStack updatedPickaxe = this.setPickaxeLevel(pickaxe, toGive.get(toGive.size() - 1), player);
+            player.setItemInHand(updatedPickaxe);
+            PlayerUtils.sendMessage(player, this.plugin.getPickaxeLevelsConfig().getMessage("pickaxe-level-up").replace("%level%", String.valueOf(toGive.get(toGive.size() - 1).getLevel())));
+        }
+    }
 }

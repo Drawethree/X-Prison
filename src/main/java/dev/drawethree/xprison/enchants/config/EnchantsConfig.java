@@ -25,6 +25,7 @@ public class EnchantsConfig {
     private String excludedFormat;
     private List<String> pickaxeLore;
     private boolean allowEnchantsOutside;
+    private boolean unbreakable;
     private boolean firstJoinPickaxeEnabled;
     private CompMaterial firstJoinPickaxeMaterial;
     private List<String> firstJoinPickaxeEnchants;
@@ -58,6 +59,7 @@ public class EnchantsConfig {
         this.firstJoinPickaxeMaterial = CompMaterial.fromString(getYamlConfig().getString("first-join-pickaxe.material"));
         this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");
         this.firstJoinPickaxeName = getYamlConfig().getString("first-join-pickaxe.name");
+        this.unbreakable = getYamlConfig().getBoolean("first-join-pickaxe.unbreakable");
         this.keepPickaxesOnDeath = getYamlConfig().getBoolean("keep-pickaxes-on-death");
         this.useUnbreakablePermission = getYamlConfig().getBoolean("use-unbreakable-permission");
     }
@@ -120,5 +122,9 @@ public class EnchantsConfig {
 
     public List<Action> getOpenEnchantMenuActions() {
         return openEnchantMenuActions;
+    }
+
+    public boolean isUnbreakable() {
+        return unbreakable;
     }
 }
