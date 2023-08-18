@@ -6,12 +6,15 @@ import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.inventory.InventoryUtils;
 import me.lucko.helper.Events;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +36,6 @@ public class EnchantsListener {
     }
 
     public void register() {
-
         this.subscribeToPlayerDeathEvent();
         this.subscribeToPlayerRespawnEvent();
         this.subscribeToInventoryClickEvent();
@@ -131,8 +133,49 @@ public class EnchantsListener {
                     }).bindWith(this.plugin.getCore());
         }
 
+        Events.subscribe(InventoryClickEvent.class)
+                .filter(e -> e.getWhoClicked() instanceof Player)
+                .filter(e -> !(e.getSlotType().equals(InventoryType.SlotType.OUTSIDE)))
+                .handler(e -> {
+                    HumanEntity humanEntity = e.getWhoClicked();
+                    if (humanEntity instanceof Player) {
+                        Player p = (Player) humanEntity;
+                        if (e.getClickedInventory() != null) {
+                            if (e.getClickedInventory().getType() == InventoryType.PLAYER) {
+                                ItemStack pickItem = e.getCurrentItem();
+                                ItemStack replaceItem = e.getCursor();
+                                if (e.getClick().equals(ClickType.NUMBER_KEY)) {
+                                    int pickSlot = 0;
+                                    for (int i = 0; i < p.getInventory().getContents().length; i++) {
+                                        if (this.plugin.getCore().isPickaxeSupported(p.getInventory().getItem(i))) {
+                                            pickSlot = i;
+                                        }
+                                    }
+                                    if (this.plugin.getCore().isPickaxeSupported(pickItem)) {
+                                        this.plugin.getEnchantsManager().handlePickaxeEquip(p, pickItem);
+                                    }
+                                    if (!this.plugin.getCore().isPickaxeSupported(pickItem)) {
+                                        this.plugin.getEnchantsManager().handlePickaxeUnequip(p, p.getInventory().getItem(pickSlot));
+                                    }
+                                } else {
+                                    if (e.getSlot() == p.getInventory().getHeldItemSlot()) {
+                                        if (!this.plugin.getCore().isPickaxeSupported(pickItem)
+                                                && this.plugin.getCore().isPickaxeSupported(replaceItem)) {
+                                            this.plugin.getEnchantsManager().handlePickaxeEquip(p, replaceItem);
+                                        }
+                                        if (this.plugin.getCore().isPickaxeSupported(pickItem)) {
+                                            this.plugin.getEnchantsManager().handlePickaxeUnequip(p, pickItem);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }).bindWith(this.plugin.getCore());
+
         Events.subscribe(InventoryClickEvent.class, EventPriority.MONITOR)
-                .filter(e -> e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
+                .filter(e -> e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
                 .filter(e -> e.getWhoClicked() instanceof Player)
                 .filter(e -> !e.isCancelled())
                 .handler(e -> {
