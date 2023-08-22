@@ -298,6 +298,11 @@ enchants:
     Explosion-Type: CUBE
     Sounds: true
     Use-Events: false
+    Sound:
+      Enable: true
+      Sound: ENTITY_TNT_PRIMED
+      Volume: 1
+      Pitch: 1
     Refund:
       Enabled: true
       InGuiSlot: 35
@@ -317,6 +322,11 @@ enchants:
       - '&7&o(( Ability to break full layer of your mine while mining))'
     Count-Blocks-Broken: true
     Use-Events: false
+    Sound:
+      Enable: true
+      Sound: ENTITY_TNT_PRIMED
+      Volume: 1
+      Pitch: 1
     Refund:
       Enabled: true
       InGuiSlot: 36
@@ -551,6 +561,11 @@ enchants:
     Count-Blocks-Broken: true
     Use-Events: false
     Message: "&e&lENCHANT &8» &7You got &2&l$&a%money% &7from &c&lNuke &7activation."
+    Sound:
+      Enable: true
+      Sound: ENTITY_TNT_PRIMED
+      Volume: 1
+      Pitch: 1
     Refund:
       Enabled: true
       InGuiSlot: 47

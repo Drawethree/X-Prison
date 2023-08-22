@@ -17,6 +17,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -37,6 +38,10 @@ public final class NukeEnchant extends XPrisonEnchantment {
     private boolean removeBlocks;
     private boolean useEvents;
     private String message;
+    private final boolean soundEnable;
+    private final String sound;
+    private final long volume;
+    private final long pitch;
 
     public NukeEnchant(XPrisonEnchants instance) {
         super(instance, 21);
@@ -45,6 +50,10 @@ public final class NukeEnchant extends XPrisonEnchantment {
         this.removeBlocks = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Remove-Blocks");
         this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
         this.message = TextUtils.applyColor(plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Message"));
+        this.soundEnable = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sound.Enable");
+        this.sound = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Sound.Sound");
+        this.volume = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Sound.Volume");
+        this.pitch = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Sound.Pitch");
     }
 
     @Override
@@ -185,6 +194,9 @@ public final class NukeEnchant extends XPrisonEnchantment {
 
         if (message != null || !message.isEmpty()) {
             PlayerUtils.sendMessage(p, message.replace("%money%", MathUtils.formatNumber(total)));
+        }
+        if (soundEnable) {
+            p.playSound(p.getLocation(), Sound.valueOf(sound), volume, pitch);
         }
     }
 

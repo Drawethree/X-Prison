@@ -17,6 +17,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -35,6 +36,10 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
     private boolean soundsEnabled;
     private boolean useEvents;
     private ExplosionBlockProvider blockProvider;
+    private final boolean soundEnable;
+    private final String sound;
+    private final long volume;
+    private final long pitch;
 
     public ExplosiveEnchant(XPrisonEnchants instance) {
         super(instance, 9);
@@ -43,6 +48,10 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
         this.soundsEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sounds");
         this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
         this.blockProvider = this.loadBlockProvider();
+        this.soundEnable = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sound.Enable");
+        this.sound = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Sound.Sound");
+        this.volume = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Sound.Volume");
+        this.pitch = plugin.getEnchantsConfig().getYamlConfig().getLong("enchants." + id + ".Sound.Pitch");
     }
 
     private ExplosionBlockProvider loadBlockProvider() {
@@ -182,6 +191,9 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
 
         if (this.plugin.isAutoSellModuleEnabled()) {
             plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
+        }
+        if (soundEnable) {
+            p.playSound(p.getLocation(), Sound.valueOf(sound), volume, pitch);
         }
     }
 
