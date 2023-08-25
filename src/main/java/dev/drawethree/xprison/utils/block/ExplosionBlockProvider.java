@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ExplosionBlockProvider {
 
-    List<Block> provide(Block center, int radius);
+	List<Block> provide(Block center, int radius);
 }

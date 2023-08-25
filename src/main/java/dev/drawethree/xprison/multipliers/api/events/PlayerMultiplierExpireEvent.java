@@ -11,29 +11,29 @@ import org.jetbrains.annotations.NotNull;
 public final class PlayerMultiplierExpireEvent extends XPrisonPlayerEvent {
 
 
-    private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 
-    @Getter
-    private final PlayerMultiplier multiplier;
+	@Getter
+	private final PlayerMultiplier multiplier;
 
-    /**
-     * Called when player's multiplier expires
-     *
-     * @param player     Player
-     * @param multiplier multiplier
-     */
-    public PlayerMultiplierExpireEvent(Player player, PlayerMultiplier multiplier) {
-        super(player);
-        this.multiplier = multiplier;
-    }
+	/**
+	 * Called when player's multiplier expires
+	 *
+	 * @param player     Player
+	 * @param multiplier multiplier
+	 */
+	public PlayerMultiplierExpireEvent(Player player, PlayerMultiplier multiplier) {
+		super(player);
+		this.multiplier = multiplier;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return handlers;
+	}
 
 }

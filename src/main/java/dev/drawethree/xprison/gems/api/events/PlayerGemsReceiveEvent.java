@@ -11,38 +11,38 @@ import org.bukkit.event.HandlerList;
 public final class PlayerGemsReceiveEvent extends XPrisonPlayerEvent implements Cancellable {
 
 
-    private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 
-    @Getter
-    private final ReceiveCause cause;
-    @Getter
-    @Setter
-    private long amount;
+	@Getter
+	private final ReceiveCause cause;
+	@Getter
+	@Setter
+	private long amount;
 
-    @Getter
-    @Setter
-    private boolean cancelled;
+	@Getter
+	@Setter
+	private boolean cancelled;
 
-    /**
-     * Called when player receive gems
-     *
-     * @param cause  ReceiveCause
-     * @param player Player
-     * @param amount Amount of gems received
-     */
-    public PlayerGemsReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
-        super(player);
-        this.cause = cause;
-        this.amount = amount;
-    }
+	/**
+	 * Called when player receive gems
+	 *
+	 * @param cause  ReceiveCause
+	 * @param player Player
+	 * @param amount Amount of gems received
+	 */
+	public PlayerGemsReceiveEvent(ReceiveCause cause, OfflinePlayer player, long amount) {
+		super(player);
+		this.cause = cause;
+		this.amount = amount;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
 
 }

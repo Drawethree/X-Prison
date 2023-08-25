@@ -5,17 +5,17 @@ import org.bukkit.entity.Player;
 
 public interface MultipliersService {
 
-    void setSellMultiplier(Player player, PlayerMultiplier multiplier);
+	void setSellMultiplier(Player player, PlayerMultiplier multiplier);
 
-    void deleteSellMultiplier(Player player);
+	void deleteSellMultiplier(Player player);
 
-    void setTokenMultiplier(Player player, PlayerMultiplier multiplier);
+	void setTokenMultiplier(Player player, PlayerMultiplier multiplier);
 
-    void deleteTokenMultiplier(Player player);
+	void deleteTokenMultiplier(Player player);
 
-    PlayerMultiplier getSellMultiplier(Player player);
+	PlayerMultiplier getSellMultiplier(Player player);
 
-    PlayerMultiplier getTokenMultiplier(Player player);
+	PlayerMultiplier getTokenMultiplier(Player player);
 
-    void removeExpiredMultipliers();
+	void removeExpiredMultipliers();
 }

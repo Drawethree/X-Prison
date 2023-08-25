@@ -15,196 +15,196 @@ import java.util.Map;
 
 public class TokensConfig {
 
-    private final FileManager.Config config;
-    private final XPrisonTokens plugin;
+	private final FileManager.Config config;
+	private final XPrisonTokens plugin;
 
-    private double chance;
-    private long minAmount;
-    private long maxAmount;
-    private long commandCooldown;
-    private long nextResetWeekly;
-    private long startingTokens;
-    private int savePlayerDataInterval;
-    private boolean displayTokenMessages;
-    private Map<String, String> messages;
-    private Map<Material, List<String>> luckyBlockRewards;
-    private List<String> worldWhitelist;
-    private List<String> tokensTopFormat;
-    private List<String> blocksTopFormat;
-    private List<String> blocksTopFormatWeekly;
-    private List<String> tokenItemLore;
-    private String tokenItemDisplayName;
-    private ItemStack tokenItem;
-    private int topPlayersAmount;
+	private double chance;
+	private long minAmount;
+	private long maxAmount;
+	private long commandCooldown;
+	private long nextResetWeekly;
+	private long startingTokens;
+	private int savePlayerDataInterval;
+	private boolean displayTokenMessages;
+	private Map<String, String> messages;
+	private Map<Material, List<String>> luckyBlockRewards;
+	private List<String> worldWhitelist;
+	private List<String> tokensTopFormat;
+	private List<String> blocksTopFormat;
+	private List<String> blocksTopFormatWeekly;
+	private List<String> tokenItemLore;
+	private String tokenItemDisplayName;
+	private ItemStack tokenItem;
+	private int topPlayersAmount;
 
-    private String[] tokensCommandAliases;
-    private String[] tokensTopCommandAliases;
-    private String[] blocksTopCommandAliases;
-
-
-    public TokensConfig(XPrisonTokens plugin) {
-        this.plugin = plugin;
-        this.config = this.plugin.getCore().getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
-    }
-
-    private FileManager.Config getConfig() {
-        return this.config;
-    }
-
-    public YamlConfiguration getYamlConfig() {
-        return this.config.get();
-    }
+	private String[] tokensCommandAliases;
+	private String[] tokensTopCommandAliases;
+	private String[] blocksTopCommandAliases;
 
 
-    private void loadVariables(YamlConfiguration configuration) {
-        this.chance = configuration.getDouble("tokens.breaking.chance");
-        this.minAmount = configuration.getLong("tokens.breaking.min");
-        this.maxAmount = configuration.getLong("tokens.breaking.max");
+	public TokensConfig(XPrisonTokens plugin) {
+		this.plugin = plugin;
+		this.config = this.plugin.getCore().getFileManager().getConfig("tokens.yml").copyDefaults(true).save();
+	}
 
-        this.commandCooldown = configuration.getLong("tokens-command-cooldown");
+	private FileManager.Config getConfig() {
+		return this.config;
+	}
 
-        this.luckyBlockRewards = new HashMap<>();
+	public YamlConfiguration getYamlConfig() {
+		return this.config.get();
+	}
 
-        for (String key : configuration.getConfigurationSection("lucky-blocks").getKeys(false)) {
-            CompMaterial material = CompMaterial.fromString(key);
-            List<String> rewards = configuration.getStringList("lucky-blocks." + key);
-            if (rewards.isEmpty()) {
-                continue;
-            }
-            this.luckyBlockRewards.put(material.toMaterial(), rewards);
-        }
 
-        this.topPlayersAmount = configuration.getInt("top_players_amount");
-        this.worldWhitelist = configuration.getStringList("world-whitelist");
-        this.tokensTopFormat = configuration.getStringList("tokens-top-format");
-        this.blocksTopFormat = configuration.getStringList("blocks-top-format");
-        this.blocksTopFormatWeekly = configuration.getStringList("blocks-top-weekly-format");
-        this.nextResetWeekly = configuration.getLong("next-reset-weekly");
-        this.displayTokenMessages = configuration.getBoolean("display-token-messages");
-        this.savePlayerDataInterval = configuration.getInt("player_data_save_interval");
-        this.tokenItemDisplayName = configuration.getString("tokens.item.name");
-        this.tokenItemLore = configuration.getStringList("tokens.item.lore");
-        this.tokenItem = CompMaterial.fromString(configuration.getString("tokens.item.material")).toItem();
-        this.startingTokens = configuration.getLong("starting-tokens");
-        this.tokensCommandAliases = configuration.getStringList("tokens-command-aliases").toArray(new String[0]);
-        this.tokensTopCommandAliases = configuration.getStringList("tokens-top-command-aliases").toArray(new String[0]);
-        this.blocksTopCommandAliases = configuration.getStringList("blocks-top-command-aliases").toArray(new String[0]);
+	private void loadVariables(YamlConfiguration configuration) {
+		this.chance = configuration.getDouble("tokens.breaking.chance");
+		this.minAmount = configuration.getLong("tokens.breaking.min");
+		this.maxAmount = configuration.getLong("tokens.breaking.max");
 
-    }
+		this.commandCooldown = configuration.getLong("tokens-command-cooldown");
 
-    private void loadMessages(YamlConfiguration configuration) {
-        this.messages = new HashMap<>();
+		this.luckyBlockRewards = new HashMap<>();
 
-        for (String key : configuration.getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key.toLowerCase(), TextUtils.applyColor(getConfig().get().getString("messages." + key)));
-        }
-    }
+		for (String key : configuration.getConfigurationSection("lucky-blocks").getKeys(false)) {
+			CompMaterial material = CompMaterial.fromString(key);
+			List<String> rewards = configuration.getStringList("lucky-blocks." + key);
+			if (rewards.isEmpty()) {
+				continue;
+			}
+			this.luckyBlockRewards.put(material.toMaterial(), rewards);
+		}
 
-    public void reload() {
-        this.config.reload();
-        YamlConfiguration configuration = getYamlConfig();
-        this.loadVariables(configuration);
-        this.loadMessages(configuration);
-    }
+		this.topPlayersAmount = configuration.getInt("top_players_amount");
+		this.worldWhitelist = configuration.getStringList("world-whitelist");
+		this.tokensTopFormat = configuration.getStringList("tokens-top-format");
+		this.blocksTopFormat = configuration.getStringList("blocks-top-format");
+		this.blocksTopFormatWeekly = configuration.getStringList("blocks-top-weekly-format");
+		this.nextResetWeekly = configuration.getLong("next-reset-weekly");
+		this.displayTokenMessages = configuration.getBoolean("display-token-messages");
+		this.savePlayerDataInterval = configuration.getInt("player_data_save_interval");
+		this.tokenItemDisplayName = configuration.getString("tokens.item.name");
+		this.tokenItemLore = configuration.getStringList("tokens.item.lore");
+		this.tokenItem = CompMaterial.fromString(configuration.getString("tokens.item.material")).toItem();
+		this.startingTokens = configuration.getLong("starting-tokens");
+		this.tokensCommandAliases = configuration.getStringList("tokens-command-aliases").toArray(new String[0]);
+		this.tokensTopCommandAliases = configuration.getStringList("tokens-top-command-aliases").toArray(new String[0]);
+		this.blocksTopCommandAliases = configuration.getStringList("blocks-top-command-aliases").toArray(new String[0]);
 
-    public void load() {
-        this.reload();
-    }
+	}
 
-    public String getMessage(String messageKey) {
-        return this.messages.getOrDefault(messageKey.toLowerCase(), "Missing message with key: " + messageKey);
-    }
+	private void loadMessages(YamlConfiguration configuration) {
+		this.messages = new HashMap<>();
 
-    public boolean isDisplayTokenMessages() {
-        return this.displayTokenMessages;
-    }
+		for (String key : configuration.getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key.toLowerCase(), TextUtils.applyColor(getConfig().get().getString("messages." + key)));
+		}
+	}
 
-    public Material getTokenItemMaterial() {
-        return this.tokenItem.getType();
-    }
+	public void reload() {
+		this.config.reload();
+		YamlConfiguration configuration = getYamlConfig();
+		this.loadVariables(configuration);
+		this.loadMessages(configuration);
+	}
 
-    public long getStartingTokens() {
-        return this.startingTokens;
-    }
+	public void load() {
+		this.reload();
+	}
 
-    public List<String> getWorldWhitelist() {
-        return worldWhitelist;
-    }
+	public String getMessage(String messageKey) {
+		return this.messages.getOrDefault(messageKey.toLowerCase(), "Missing message with key: " + messageKey);
+	}
 
-    public List<String> getTokensTopFormat() {
-        return tokensTopFormat;
-    }
+	public boolean isDisplayTokenMessages() {
+		return this.displayTokenMessages;
+	}
 
-    public List<String> getBlocksTopFormat() {
-        return blocksTopFormat;
-    }
+	public Material getTokenItemMaterial() {
+		return this.tokenItem.getType();
+	}
 
-    public List<String> getBlocksTopFormatWeekly() {
-        return blocksTopFormatWeekly;
-    }
+	public long getStartingTokens() {
+		return this.startingTokens;
+	}
 
-    public List<String> getTokenItemLore() {
-        return tokenItemLore;
-    }
+	public List<String> getWorldWhitelist() {
+		return worldWhitelist;
+	}
 
-    public String getTokenItemDisplayName() {
-        return tokenItemDisplayName;
-    }
+	public List<String> getTokensTopFormat() {
+		return tokensTopFormat;
+	}
 
-    public List<String> getLuckyBlockReward(Material m) {
-        return this.luckyBlockRewards.getOrDefault(m, new ArrayList<>());
-    }
+	public List<String> getBlocksTopFormat() {
+		return blocksTopFormat;
+	}
 
-    public double getChance() {
-        return chance;
-    }
+	public List<String> getBlocksTopFormatWeekly() {
+		return blocksTopFormatWeekly;
+	}
 
-    public long getMinAmount() {
-        return minAmount;
-    }
+	public List<String> getTokenItemLore() {
+		return tokenItemLore;
+	}
 
-    public long getMaxAmount() {
-        return maxAmount;
-    }
+	public String getTokenItemDisplayName() {
+		return tokenItemDisplayName;
+	}
 
-    public long getCommandCooldown() {
-        return commandCooldown;
-    }
+	public List<String> getLuckyBlockReward(Material m) {
+		return this.luckyBlockRewards.getOrDefault(m, new ArrayList<>());
+	}
 
-    public long getNextResetWeekly() {
-        return nextResetWeekly;
-    }
+	public double getChance() {
+		return chance;
+	}
 
-    public void setNextResetWeekly(long time) {
-        this.nextResetWeekly = time;
+	public long getMinAmount() {
+		return minAmount;
+	}
 
-    }
+	public long getMaxAmount() {
+		return maxAmount;
+	}
 
-    public int getTopPlayersAmount() {
-        return topPlayersAmount;
-    }
+	public long getCommandCooldown() {
+		return commandCooldown;
+	}
 
-    public ItemStack getTokenItem() {
-        return tokenItem;
-    }
+	public long getNextResetWeekly() {
+		return nextResetWeekly;
+	}
 
-    public String[] getTokensCommandAliases() {
-        return tokensCommandAliases;
-    }
+	public int getTopPlayersAmount() {
+		return topPlayersAmount;
+	}
 
-    public String[] getTokensTopCommandAliases() {
-        return tokensTopCommandAliases;
-    }
+	public ItemStack getTokenItem() {
+		return tokenItem;
+	}
 
-    public String[] getBlocksTopCommandAliases() {
-        return blocksTopCommandAliases;
-    }
+	public String[] getTokensCommandAliases() {
+		return tokensCommandAliases;
+	}
 
-    public void save() {
-        this.config.save();
-    }
+	public String[] getTokensTopCommandAliases() {
+		return tokensTopCommandAliases;
+	}
 
-    public int getSavePlayerDataInterval() {
-        return savePlayerDataInterval;
-    }
+	public String[] getBlocksTopCommandAliases() {
+		return blocksTopCommandAliases;
+	}
+
+	public void save() {
+		this.config.save();
+	}
+
+	public void setNextResetWeekly(long time) {
+		this.nextResetWeekly = time;
+
+	}
+
+	public int getSavePlayerDataInterval() {
+		return savePlayerDataInterval;
+	}
 }

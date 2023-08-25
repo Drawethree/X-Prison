@@ -10,10 +10,10 @@ messages:
   token_multi_reset: "&e&l(!) &cYour token multiplier was reset."
 # Rank Multipliers settings
 ranks: { }
-#ultra: 1.0
-#donor: 0.7
-#vip: 0.5
-#default: 0.1
+  #ultra: 1.0
+  #donor: 0.7
+  #vip: 0.5
+  #default: 0.1
 # Should the plugins check for LuckPerms groups instead of Xprison permissions?
 use-luckperms-groups: true
 # GlobalMultiplier settings

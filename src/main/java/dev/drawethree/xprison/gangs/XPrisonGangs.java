@@ -19,95 +19,102 @@ import lombok.Getter;
 
 public final class XPrisonGangs implements XPrisonModule {
 
-    public static final String MODULE_NAME = "Gangs";
+	public static final String MODULE_NAME = "Gangs";
 
-    @Getter
-    private static XPrisonGangs instance;
-    @Getter
-    private final XPrison core;
-    @Getter
-    private XPrisonGangsAPI api;
-    @Getter
-    private GangsConfig config;
-    @Getter
-    private GangsManager gangsManager;
-    @Getter
-    private GangTopProvider gangTopProvider;
-    @Getter
-    private GangUpdateTopTask gangUpdateTopTask;
-    @Getter
-    private GangsRepository gangsRepository;
+	@Getter
+	private static XPrisonGangs instance;
 
-    @Getter
-    private GangsService gangsService;
+	@Getter
+	private XPrisonGangsAPI api;
 
-    private boolean enabled;
+	@Getter
+	private GangsConfig config;
 
-    public XPrisonGangs(XPrison prisonCore) {
-        instance = this;
-        this.core = prisonCore;
-    }
+	@Getter
+	private GangsManager gangsManager;
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+	@Getter
+	private GangTopProvider gangTopProvider;
 
-    @Override
-    public void reload() {
-        this.config.reload();
-    }
+	@Getter
+	private GangUpdateTopTask gangUpdateTopTask;
 
-    @Override
-    public void enable() {
-        this.config = new GangsConfig(this);
-        this.config.load();
+	@Getter
+	private final XPrison core;
 
-        GangCommand gangCommand = new GangCommand(this);
-        gangCommand.register();
+	@Getter
+	private GangsRepository gangsRepository;
 
-        this.gangsRepository = new GangsRepositoryImpl(this.core.getPluginDatabase());
-        this.gangsRepository.createTables();
+	@Getter
+	private GangsService gangsService;
 
-        this.gangsService = new GangsServiceImpl(this.gangsRepository);
+	private boolean enabled;
 
-        this.gangsManager = new GangsManager(this);
-        this.gangsManager.enable();
+	public XPrisonGangs(XPrison prisonCore) {
+		instance = this;
+		this.core = prisonCore;
+	}
 
-        this.gangTopProvider = new GangTopByValueProvider(this.gangsManager);
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-        GangsListener gangsListener = new GangsListener(this);
-        gangsListener.register();
+	@Override
+	public void reload() {
+		this.config.reload();
+	}
 
-        this.gangUpdateTopTask = new GangUpdateTopTask(this, this.gangTopProvider);
-        this.gangUpdateTopTask.start();
+	@Override
+	public void enable() {
+		this.config = new GangsConfig(this);
+		this.config.load();
+
+		GangCommand gangCommand = new GangCommand(this);
+		gangCommand.register();
+
+		this.gangsRepository = new GangsRepositoryImpl(this.core.getPluginDatabase());
+		this.gangsRepository.createTables();
+
+		this.gangsService = new GangsServiceImpl(this.gangsRepository);
+
+		this.gangsManager = new GangsManager(this);
+		this.gangsManager.enable();
+
+		this.gangTopProvider = new GangTopByValueProvider(this.gangsManager);
+
+		GangsListener gangsListener = new GangsListener(this);
+		gangsListener.register();
+
+		this.gangUpdateTopTask = new GangUpdateTopTask(this, this.gangTopProvider);
+		this.gangUpdateTopTask.start();
 
 
-        this.api = new XPrisonGangsAPIImpl(this.gangsManager);
+		this.api = new XPrisonGangsAPIImpl(this.gangsManager);
 
-        this.enabled = true;
-    }
+		this.enabled = true;
+	}
 
 
-    @Override
-    public void disable() {
-        this.gangsManager.disable();
-        this.gangUpdateTopTask.stop();
-        this.enabled = false;
-    }
+	@Override
+	public void disable() {
+		this.gangsManager.disable();
+		this.gangUpdateTopTask.stop();
+		this.enabled = false;
+	}
 
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
 
-    @Override
-    public boolean isHistoryEnabled() {
-        return true;
-    }
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
 
-    @Override
-    public void resetPlayerData() {
-        this.gangsRepository.clearTableData();
-    }
+	@Override
+	public void resetPlayerData() {
+		this.gangsRepository.clearTableData();
+	}
 }

@@ -4,9 +4,9 @@ import org.bukkit.OfflinePlayer;
 
 public interface RanksService {
 
-    int getPlayerRank(OfflinePlayer player);
+	int getPlayerRank(OfflinePlayer player);
 
-    void setRank(OfflinePlayer player, int rank);
+	void setRank(OfflinePlayer player, int rank);
 
-    void createRank(OfflinePlayer player);
+	void createRank(OfflinePlayer player);
 }

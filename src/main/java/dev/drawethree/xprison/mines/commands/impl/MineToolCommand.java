@@ -9,30 +9,30 @@ import java.util.List;
 
 public class MineToolCommand extends MineCommand {
 
-    public MineToolCommand(XPrisonMines plugin) {
-        super(plugin, "tool");
-    }
+	public MineToolCommand(XPrisonMines plugin) {
+		super(plugin, "tool");
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
-        if (!(sender instanceof Player)) {
-            return false;
-        }
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
+		if (!(sender instanceof Player)) {
+			return false;
+		}
 
-        if (args.size() != 0) {
-            return false;
-        }
+		if (args.size() != 0) {
+			return false;
+		}
 
-        return this.plugin.getManager().giveTool((Player) sender);
-    }
+		return this.plugin.getManager().giveTool((Player) sender);
+	}
 
-    @Override
-    public String getUsage() {
-        return "/mines tool - Gives you a selection tool";
-    }
+	@Override
+	public String getUsage() {
+		return "/mines tool - Gives you a selection tool";
+	}
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
+	}
 }

@@ -9,9 +9,9 @@ import java.util.List;
 @Getter
 public class Rank {
 
-    private int id;
-    private double cost;
-    private String prefix;
-    private List<String> commandsToExecute;
+	private int id;
+	private double cost;
+	private String prefix;
+	private List<String> commandsToExecute;
 
 }

@@ -4,13 +4,13 @@ import org.bukkit.OfflinePlayer;
 
 public interface RanksRepository {
 
-    int getPlayerRank(OfflinePlayer player);
+	int getPlayerRank(OfflinePlayer player);
 
-    void updateRank(OfflinePlayer player, int rank);
+	void updateRank(OfflinePlayer player, int rank);
 
-    void addIntoRanks(OfflinePlayer player);
+	void addIntoRanks(OfflinePlayer player);
 
-    void createTables();
+	void createTables();
 
-    void clearTableData();
+	void clearTableData();
 }

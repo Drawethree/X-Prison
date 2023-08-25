@@ -11,36 +11,36 @@ import java.util.concurrent.TimeUnit;
 
 public final class PlayerAutoMinerTimeModifyEvent extends XPrisonPlayerEvent {
 
-    private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 
-    @Getter
-    @Setter
-    private final TimeUnit timeUnit;
+	@Getter
+	@Setter
+	private final TimeUnit timeUnit;
 
-    @Getter
-    @Setter
-    private final long duration;
+	@Getter
+	@Setter
+	private final long duration;
 
-    /**
-     * Called when player received autominer time
-     *
-     * @param player   Player
-     * @param unit     TimeUnit
-     * @param duration duration, can be negative
-     */
-    public PlayerAutoMinerTimeModifyEvent(Player player, TimeUnit unit, long duration) {
-        super(player);
-        this.timeUnit = unit;
-        this.duration = duration;
-    }
+	/**
+	 * Called when player received autominer time
+	 *
+	 * @param player   Player
+	 * @param unit     TimeUnit
+	 * @param duration duration, can be negative
+	 */
+	public PlayerAutoMinerTimeModifyEvent(Player player, TimeUnit unit, long duration) {
+		super(player);
+		this.timeUnit = unit;
+		this.duration = duration;
+	}
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return handlers;
+	}
 
 }

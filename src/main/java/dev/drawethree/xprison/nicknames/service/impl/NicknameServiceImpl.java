@@ -6,15 +6,15 @@ import org.bukkit.OfflinePlayer;
 
 public class NicknameServiceImpl implements NicknameService {
 
-    private final NicknameRepository repository;
+	private final NicknameRepository repository;
 
-    public NicknameServiceImpl(NicknameRepository repository) {
+	public NicknameServiceImpl(NicknameRepository repository) {
 
-        this.repository = repository;
-    }
+		this.repository = repository;
+	}
 
-    @Override
-    public void updatePlayerNickname(OfflinePlayer player) {
-        repository.updatePlayerNickname(player);
-    }
+	@Override
+	public void updatePlayerNickname(OfflinePlayer player) {
+		repository.updatePlayerNickname(player);
+	}
 }

@@ -14,47 +14,47 @@ import java.util.List;
 
 public class MineAddBlockCommand extends MineCommand {
 
-    public MineAddBlockCommand(XPrisonMines plugin) {
-        super(plugin, "addblock", "blockadd");
-    }
+	public MineAddBlockCommand(XPrisonMines plugin) {
+		super(plugin, "addblock", "blockadd");
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
 
-        if (!(sender instanceof Player)) {
-            return false;
-        }
+		if (!(sender instanceof Player)) {
+			return false;
+		}
 
-        if (args.size() != 1) {
-            return false;
-        }
+		if (args.size() != 1) {
+			return false;
+		}
 
-        Mine mine = this.plugin.getManager().getMineByName(args.get(0));
+		Mine mine = this.plugin.getManager().getMineByName(args.get(0));
 
-        if (mine == null) {
-            PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
-            return true;
-        }
+		if (mine == null) {
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
+			return true;
+		}
 
-        ItemStack inHand = ((Player) sender).getItemInHand();
-        if (inHand == null || inHand.getType() == Material.AIR) {
-            PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_no_item_in_hand"));
-            return true;
-        }
+		ItemStack inHand = ((Player) sender).getItemInHand();
+		if (inHand == null || inHand.getType() == Material.AIR) {
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_no_item_in_hand"));
+			return true;
+		}
 
-        CompMaterial material = CompMaterial.fromItem(inHand);
-        mine.getBlockPalette().addToPalette(material, 0.0);
-        PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_block_added").replace("%block%", material.name()).replace("%mine%", mine.getName()));
-        return true;
-    }
+		CompMaterial material = CompMaterial.fromItem(inHand);
+		mine.getBlockPalette().addToPalette(material, 0.0);
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_block_added").replace("%block%", material.name()).replace("%mine%", mine.getName()));
+		return true;
+	}
 
-    @Override
-    public String getUsage() {
-        return "&cUsage: /mines addblock <mine> - Adds a block in your hand to the specified mine";
-    }
+	@Override
+	public String getUsage() {
+		return "&cUsage: /mines addblock <mine> - Adds a block in your hand to the specified mine";
+	}
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
+	}
 }

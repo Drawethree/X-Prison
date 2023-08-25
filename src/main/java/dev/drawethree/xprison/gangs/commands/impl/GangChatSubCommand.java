@@ -12,31 +12,31 @@ import java.util.List;
 
 public final class GangChatSubCommand extends GangSubCommand {
 
-    public GangChatSubCommand(GangCommand command) {
-        super(command, "chat", "c");
-    }
+	public GangChatSubCommand(GangCommand command) {
+		super(command, "chat", "c");
+	}
 
-    @Override
-    public String getUsage() {
-        return ChatColor.RED + "/gang chat";
-    }
+	@Override
+	public String getUsage() {
+		return ChatColor.RED + "/gang chat";
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
-        if (args.size() == 0 && sender instanceof Player) {
-            Player p = (Player) sender;
-            return this.command.getPlugin().getGangsManager().toggleGangChat(p);
-        }
-        return false;
-    }
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
+		if (args.size() == 0 && sender instanceof Player) {
+			Player p = (Player) sender;
+			return this.command.getPlugin().getGangsManager().toggleGangChat(p);
+		}
+		return false;
+	}
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return true;
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return true;
+	}
 
-    @Override
-    public List<String> getTabComplete() {
-        return new ArrayList<>();
-    }
+	@Override
+	public List<String> getTabComplete() {
+		return new ArrayList<>();
+	}
 }

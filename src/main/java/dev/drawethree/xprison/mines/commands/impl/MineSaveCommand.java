@@ -11,37 +11,37 @@ import java.util.List;
 public class MineSaveCommand extends MineCommand {
 
 
-    public MineSaveCommand(XPrisonMines plugin) {
-        super(plugin, "save");
-    }
+	public MineSaveCommand(XPrisonMines plugin) {
+		super(plugin, "save");
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
 
-        if (args.size() != 1) {
-            return false;
-        }
+		if (args.size() != 1) {
+			return false;
+		}
 
-        Mine mine = this.plugin.getManager().getMineByName(args.get(0));
+		Mine mine = this.plugin.getManager().getMineByName(args.get(0));
 
-        if (mine == null) {
-            PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
-            return true;
-        }
+		if (mine == null) {
+			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
+			return true;
+		}
 
-        this.plugin.getManager().getMineSaver().save(mine);
+		this.plugin.getManager().getMineSaver().save(mine);
 
-        PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_saved").replace("%mine%", mine.getName()));
-        return true;
-    }
+		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_saved").replace("%mine%", mine.getName()));
+		return true;
+	}
 
-    @Override
-    public String getUsage() {
-        return "&cUsage: /mines save <mine> - Saves a mine";
-    }
+	@Override
+	public String getUsage() {
+		return "&cUsage: /mines save <mine> - Saves a mine";
+	}
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
+	}
 }

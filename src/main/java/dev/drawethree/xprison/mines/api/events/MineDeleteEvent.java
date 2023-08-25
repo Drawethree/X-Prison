@@ -10,31 +10,31 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MineDeleteEvent extends XPrisonEvent implements Cancellable {
 
-    private static final HandlerList HANDLERS_LIST = new HandlerList();
+	private static final HandlerList HANDLERS_LIST = new HandlerList();
 
-    @Getter
-    @Setter
-    private boolean cancelled;
+	@Getter
+	@Setter
+	private boolean cancelled;
 
-    @Getter
-    private Mine mine;
+	@Getter
+	private Mine mine;
 
-    /**
-     * Called when mine is deleted
-     *
-     * @param mine MIne
-     */
-    public MineDeleteEvent(Mine mine) {
-        this.mine = mine;
-    }
+	/**
+	 * Called when mine is deleted
+	 *
+	 * @param mine MIne
+	 */
+	public MineDeleteEvent(Mine mine) {
+		this.mine = mine;
+	}
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS_LIST;
-    }
+	public static HandlerList getHandlerList() {
+		return HANDLERS_LIST;
+	}
 
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS_LIST;
-    }
+	@NotNull
+	@Override
+	public HandlerList getHandlers() {
+		return HANDLERS_LIST;
+	}
 }

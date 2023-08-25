@@ -9,18 +9,18 @@ import java.io.IOException;
 
 public class MineFileSaver implements MineSaver {
 
-    private final MineManager manager;
+	private final MineManager manager;
 
-    public MineFileSaver(MineManager manager) {
-        this.manager = manager;
-    }
+	public MineFileSaver(MineManager manager) {
+		this.manager = manager;
+	}
 
-    @Override
-    public void save(Mine mine) {
-        try (FileWriter writer = new FileWriter(mine.getFile())) {
-            GsonProvider.writeObjectPretty(writer, mine.serialize().getAsJsonObject());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void save(Mine mine) {
+		try (FileWriter writer = new FileWriter(mine.getFile())) {
+			GsonProvider.writeObjectPretty(writer, mine.serialize().getAsJsonObject());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

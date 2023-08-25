@@ -10,31 +10,33 @@ import org.jetbrains.annotations.NotNull;
 
 public final class PlayerAutomineEvent extends XPrisonPlayerEvent implements Cancellable {
 
-    private static final HandlerList handlers = new HandlerList();
-    @Getter
-    private final int timeLeft;
-    @Getter
-    @Setter
-    private boolean cancelled;
+	private static final HandlerList handlers = new HandlerList();
 
-    /**
-     * Called when player auto mines in region
-     *
-     * @param player   Player
-     * @param timeLeft Timeleft in seconds of player's autominer time
-     */
-    public PlayerAutomineEvent(Player player, int timeLeft) {
-        super(player);
-        this.timeLeft = timeLeft;
-    }
+	@Getter
+	@Setter
+	private boolean cancelled;
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	@Getter
+	private final int timeLeft;
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+	/**
+	 * Called when player auto mines in region
+	 *
+	 * @param player   Player
+	 * @param timeLeft Timeleft in seconds of player's autominer time
+	 */
+	public PlayerAutomineEvent(Player player, int timeLeft) {
+		super(player);
+		this.timeLeft = timeLeft;
+	}
+
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
+
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return handlers;
+	}
 
 }

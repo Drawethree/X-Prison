@@ -28,188 +28,188 @@ import java.util.stream.Collectors;
 
 public class EnchantsListener {
 
-    private final XPrisonEnchants plugin;
-    private final List<BlockBreakEvent> ignoredEvents = new ArrayList<>();
+	private final XPrisonEnchants plugin;
+	private final List<BlockBreakEvent> ignoredEvents = new ArrayList<>();
 
-    public EnchantsListener(XPrisonEnchants plugin) {
-        this.plugin = plugin;
-    }
+	public EnchantsListener(XPrisonEnchants plugin) {
+		this.plugin = plugin;
+	}
 
-    public void register() {
-        this.subscribeToPlayerDeathEvent();
-        this.subscribeToPlayerRespawnEvent();
-        this.subscribeToInventoryClickEvent();
-        this.subscribeToPlayerJoinEvent();
-        this.subscribeToPlayerDropItemEvent();
-        this.subscribeToPlayerInteractEvent();
-        this.subscribeToPlayerItemHeldEvent();
-        this.subscribeToBlockBreakEvent();
-    }
+	public void register() {
+		this.subscribeToPlayerDeathEvent();
+		this.subscribeToPlayerRespawnEvent();
+		this.subscribeToInventoryClickEvent();
+		this.subscribeToPlayerJoinEvent();
+		this.subscribeToPlayerDropItemEvent();
+		this.subscribeToPlayerInteractEvent();
+		this.subscribeToPlayerItemHeldEvent();
+		this.subscribeToBlockBreakEvent();
+	}
 
-    public List<BlockBreakEvent> getIgnoredEvents() {
-        return ignoredEvents;
-    }
+	public List<BlockBreakEvent> getIgnoredEvents() {
+		return ignoredEvents;
+	}
 
-    private void subscribeToBlockBreakEvent() {
-        Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(e -> !e.isCancelled() && !ignoredEvents.contains(e))
-                .filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
-                .handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin.getCore());
-    }
+	private void subscribeToBlockBreakEvent() {
+		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
+				.filter(e -> !e.isCancelled() && !ignoredEvents.contains(e))
+				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToPlayerItemHeldEvent() {
-        // Switching pickaxes
-        Events.subscribe(PlayerItemHeldEvent.class, EventPriority.HIGHEST)
-                .handler(e -> {
+	private void subscribeToPlayerItemHeldEvent() {
+		// Switching pickaxes
+		Events.subscribe(PlayerItemHeldEvent.class, EventPriority.HIGHEST)
+				.handler(e -> {
 
-                    ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
-                    ItemStack previousItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
+					ItemStack newItem = e.getPlayer().getInventory().getItem(e.getNewSlot());
+					ItemStack previousItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 
-                    // Old item
-                    if (previousItem != null && this.plugin.getCore().isPickaxeSupported(previousItem.getType())) {
-                        this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), previousItem);
-                    }
+					// Old item
+					if (previousItem != null && this.plugin.getCore().isPickaxeSupported(previousItem.getType())) {
+						this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), previousItem);
+					}
 
-                    // New item
-                    if (newItem != null && this.plugin.getCore().isPickaxeSupported(newItem.getType())) {
-                        this.plugin.getEnchantsManager().handlePickaxeEquip(e.getPlayer(), newItem);
-                    }
+					// New item
+					if (newItem != null && this.plugin.getCore().isPickaxeSupported(newItem.getType())) {
+						this.plugin.getEnchantsManager().handlePickaxeEquip(e.getPlayer(), newItem);
+					}
 
-                }).bindWith(this.plugin.getCore());
-    }
+				}).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToPlayerInteractEvent() {
-        Events.subscribe(PlayerInteractEvent.class)
-                .filter(e -> e.getItem() != null && this.plugin.getCore().isPickaxeSupported(e.getItem().getType()))
-                .filter(e -> (this.plugin.getEnchantsConfig().getOpenEnchantMenuActions().contains(e.getAction())))
-                .handler(e -> {
+	private void subscribeToPlayerInteractEvent() {
+		Events.subscribe(PlayerInteractEvent.class)
+				.filter(e -> e.getItem() != null && this.plugin.getCore().isPickaxeSupported(e.getItem().getType()))
+				.filter(e -> (this.plugin.getEnchantsConfig().getOpenEnchantMenuActions().contains(e.getAction())))
+				.handler(e -> {
 
-                    e.setCancelled(true);
+					e.setCancelled(true);
 
-                    ItemStack pickAxe = e.getItem();
-                    int pickaxeSlot = InventoryUtils.getInventorySlot(e.getPlayer(), pickAxe);
-                    this.plugin.getCore().debug("Pickaxe slot is: " + pickaxeSlot, this.plugin);
+					ItemStack pickAxe = e.getItem();
+					int pickaxeSlot = InventoryUtils.getInventorySlot(e.getPlayer(), pickAxe);
+					this.plugin.getCore().debug("Pickaxe slot is: " + pickaxeSlot, this.plugin);
 
-                    new EnchantGUI(this.plugin, e.getPlayer(), pickAxe, pickaxeSlot).open();
-                }).bindWith(this.plugin.getCore());
-    }
+					new EnchantGUI(this.plugin, e.getPlayer(), pickAxe, pickaxeSlot).open();
+				}).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToPlayerDropItemEvent() {
-        // Dropping pickaxe
-        Events.subscribe(PlayerDropItemEvent.class, EventPriority.HIGHEST)
-                .handler(e -> {
-                    if (this.plugin.getCore().isPickaxeSupported(e.getItemDrop().getItemStack())) {
-                        this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), e.getItemDrop().getItemStack());
-                    }
-                }).bindWith(this.plugin.getCore());
-    }
+	private void subscribeToPlayerDropItemEvent() {
+		// Dropping pickaxe
+		Events.subscribe(PlayerDropItemEvent.class, EventPriority.HIGHEST)
+				.handler(e -> {
+					if (this.plugin.getCore().isPickaxeSupported(e.getItemDrop().getItemStack())) {
+						this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), e.getItemDrop().getItemStack());
+					}
+				}).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToPlayerJoinEvent() {
-        //First join pickaxe
-        Events.subscribe(PlayerJoinEvent.class)
-                .filter(e -> !e.getPlayer().hasPlayedBefore() && this.plugin.getEnchantsConfig().isFirstJoinPickaxeEnabled())
-                .handler(e -> {
-                    ItemStack firstJoinPickaxe = this.plugin.getEnchantsManager().createFirstJoinPickaxe(e.getPlayer());
-                    e.getPlayer().getInventory().addItem(firstJoinPickaxe);
-                }).bindWith(this.plugin.getCore());
-    }
+	private void subscribeToPlayerJoinEvent() {
+		//First join pickaxe
+		Events.subscribe(PlayerJoinEvent.class)
+				.filter(e -> !e.getPlayer().hasPlayedBefore() && this.plugin.getEnchantsConfig().isFirstJoinPickaxeEnabled())
+				.handler(e -> {
+					ItemStack firstJoinPickaxe = this.plugin.getEnchantsManager().createFirstJoinPickaxe(e.getPlayer());
+					e.getPlayer().getInventory().addItem(firstJoinPickaxe);
+				}).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToPlayerRespawnEvent() {
-        Events.subscribe(PlayerRespawnEvent.class, EventPriority.LOWEST)
-                .handler(e -> this.plugin.getRespawnManager().handleRespawn(e.getPlayer())).bindWith(this.plugin.getCore());
-    }
+	private void subscribeToPlayerRespawnEvent() {
+		Events.subscribe(PlayerRespawnEvent.class, EventPriority.LOWEST)
+				.handler(e -> this.plugin.getRespawnManager().handleRespawn(e.getPlayer())).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToInventoryClickEvent() {
-        //Grindstone disenchanting - disable
-        if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_14)) {
-            Events.subscribe(InventoryClickEvent.class)
-                    .filter(e -> e.getInventory() instanceof GrindstoneInventory)
-                    .handler(e -> {
-                        ItemStack item1 = e.getInventory().getItem(0);
-                        ItemStack item2 = e.getInventory().getItem(1);
-                        if (e.getSlot() == 2 && (this.plugin.getEnchantsManager().hasEnchants(item1) || this.plugin.getEnchantsManager().hasEnchants(item2))) {
-                            e.setCancelled(true);
-                        }
-                    }).bindWith(this.plugin.getCore());
-        }
+	private void subscribeToInventoryClickEvent() {
+		//Grindstone disenchanting - disable
+		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_14)) {
+			Events.subscribe(InventoryClickEvent.class)
+					.filter(e -> e.getInventory() instanceof GrindstoneInventory)
+					.handler(e -> {
+						ItemStack item1 = e.getInventory().getItem(0);
+						ItemStack item2 = e.getInventory().getItem(1);
+						if (e.getSlot() == 2 && (this.plugin.getEnchantsManager().hasEnchants(item1) || this.plugin.getEnchantsManager().hasEnchants(item2))) {
+							e.setCancelled(true);
+						}
+					}).bindWith(this.plugin.getCore());
+		}
 
-        Events.subscribe(InventoryClickEvent.class)
-                .filter(e -> e.getWhoClicked() instanceof Player)
-                .filter(e -> !(e.getSlotType().equals(InventoryType.SlotType.OUTSIDE)))
-                .handler(e -> {
-                    HumanEntity humanEntity = e.getWhoClicked();
-                    if (humanEntity instanceof Player) {
-                        Player p = (Player) humanEntity;
-                        if (e.getClickedInventory() != null) {
-                            if (e.getClickedInventory().getType() == InventoryType.PLAYER) {
-                                ItemStack pickItem = e.getCurrentItem();
-                                ItemStack replaceItem = e.getCursor();
-                                if (e.getClick().equals(ClickType.NUMBER_KEY)) {
-                                    int pickSlot = 0;
-                                    for (int i = 0; i < p.getInventory().getContents().length; i++) {
-                                        if (this.plugin.getCore().isPickaxeSupported(p.getInventory().getItem(i))) {
-                                            pickSlot = i;
-                                        }
-                                    }
-                                    if (this.plugin.getCore().isPickaxeSupported(pickItem)) {
-                                        this.plugin.getEnchantsManager().handlePickaxeEquip(p, pickItem);
-                                    }
-                                    if (!this.plugin.getCore().isPickaxeSupported(pickItem)) {
-                                        this.plugin.getEnchantsManager().handlePickaxeUnequip(p, p.getInventory().getItem(pickSlot));
-                                    }
-                                } else {
-                                    if (e.getSlot() == p.getInventory().getHeldItemSlot()) {
-                                        if (!this.plugin.getCore().isPickaxeSupported(pickItem)
-                                                && this.plugin.getCore().isPickaxeSupported(replaceItem)) {
-                                            this.plugin.getEnchantsManager().handlePickaxeEquip(p, replaceItem);
-                                        }
-                                        if (this.plugin.getCore().isPickaxeSupported(pickItem)) {
-                                            this.plugin.getEnchantsManager().handlePickaxeUnequip(p, pickItem);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+		Events.subscribe(InventoryClickEvent.class)
+				.filter(e -> e.getWhoClicked() instanceof Player)
+				.filter(e -> !(e.getSlotType().equals(InventoryType.SlotType.OUTSIDE)))
+				.handler(e -> {
+					HumanEntity humanEntity = e.getWhoClicked();
+					if (humanEntity instanceof Player) {
+						Player p = (Player) humanEntity;
+						if (e.getClickedInventory() != null) {
+							if (e.getClickedInventory().getType() == InventoryType.PLAYER) {
+								ItemStack pickItem = e.getCurrentItem();
+								ItemStack replaceItem = e.getCursor();
+								if (e.getClick().equals(ClickType.NUMBER_KEY)) {
+									int pickSlot = 0;
+									for (int i = 0; i < p.getInventory().getContents().length; i++) {
+										if (this.plugin.getCore().isPickaxeSupported(p.getInventory().getItem(i))) {
+											pickSlot = i;
+										}
+									}
+									if (this.plugin.getCore().isPickaxeSupported(pickItem)) {
+										this.plugin.getEnchantsManager().handlePickaxeEquip(p, pickItem);
+									}
+									if (!this.plugin.getCore().isPickaxeSupported(pickItem)) {
+										this.plugin.getEnchantsManager().handlePickaxeUnequip(p, p.getInventory().getItem(pickSlot));
+									}
+								} else {
+									if (e.getSlot() == p.getInventory().getHeldItemSlot()) {
+										if (!this.plugin.getCore().isPickaxeSupported(pickItem)
+												&& this.plugin.getCore().isPickaxeSupported(replaceItem)) {
+											this.plugin.getEnchantsManager().handlePickaxeEquip(p, replaceItem);
+										}
+										if (this.plugin.getCore().isPickaxeSupported(pickItem)) {
+											this.plugin.getEnchantsManager().handlePickaxeUnequip(p, pickItem);
+										}
+									}
+								}
+							}
+						}
+					}
 
-                }).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin.getCore());
 
-        Events.subscribe(InventoryClickEvent.class, EventPriority.MONITOR)
-                .filter(e -> e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
-                .filter(e -> e.getWhoClicked() instanceof Player)
-                .filter(e -> !e.isCancelled())
-                .handler(e -> {
-                    ItemStack item = e.getCurrentItem();
-                    if (this.plugin.getCore().isPickaxeSupported(item)) {
-                        this.plugin.getEnchantsManager().handlePickaxeUnequip((Player) e.getWhoClicked(), item);
-                    }
-                }).bindWith(this.plugin.getCore());
-    }
+		Events.subscribe(InventoryClickEvent.class, EventPriority.MONITOR)
+				.filter(e -> e.getAction().equals(InventoryAction.MOVE_TO_OTHER_INVENTORY))
+				.filter(e -> e.getWhoClicked() instanceof Player)
+				.filter(e -> !e.isCancelled())
+				.handler(e -> {
+					ItemStack item = e.getCurrentItem();
+					if (this.plugin.getCore().isPickaxeSupported(item)) {
+						this.plugin.getEnchantsManager().handlePickaxeUnequip((Player) e.getWhoClicked(), item);
+					}
+				}).bindWith(this.plugin.getCore());
+	}
 
-    private void subscribeToPlayerDeathEvent() {
-        Events.subscribe(PlayerDeathEvent.class, EventPriority.LOWEST)
-                .handler(e -> {
+	private void subscribeToPlayerDeathEvent() {
+		Events.subscribe(PlayerDeathEvent.class, EventPriority.LOWEST)
+				.handler(e -> {
 
-                    if (!this.plugin.getEnchantsConfig().isKeepPickaxesOnDeath()) {
-                        return;
-                    }
+					if (!this.plugin.getEnchantsConfig().isKeepPickaxesOnDeath()) {
+						return;
+					}
 
-                    List<ItemStack> pickaxes = e.getDrops().stream().filter(itemStack -> this.plugin.getCore().isPickaxeSupported(itemStack) &&
-                            this.plugin.getEnchantsManager().hasEnchants(itemStack)).collect(Collectors.toList());
-                    e.getDrops().removeAll(pickaxes);
+					List<ItemStack> pickaxes = e.getDrops().stream().filter(itemStack -> this.plugin.getCore().isPickaxeSupported(itemStack) &&
+							this.plugin.getEnchantsManager().hasEnchants(itemStack)).collect(Collectors.toList());
+					e.getDrops().removeAll(pickaxes);
 
-                    this.plugin.getRespawnManager().addRespawnItems(e.getEntity(), pickaxes);
+					this.plugin.getRespawnManager().addRespawnItems(e.getEntity(), pickaxes);
 
-                    if (pickaxes.size() > 0) {
-                        this.plugin.getCore().debug("Removed " + e.getEntity().getName() + "'s pickaxes from drops (" + pickaxes.size() + "). Will be given back on respawn.", this.plugin);
-                    } else {
-                        this.plugin.getCore().debug("No Pickaxes found for player " + e.getEntity().getName() + " (PlayerDeathEvent)", this.plugin);
-                    }
+					if (pickaxes.size() > 0) {
+						this.plugin.getCore().debug("Removed " + e.getEntity().getName() + "'s pickaxes from drops (" + pickaxes.size() + "). Will be given back on respawn.", this.plugin);
+					} else {
+						this.plugin.getCore().debug("No Pickaxes found for player " + e.getEntity().getName() + " (PlayerDeathEvent)", this.plugin);
+					}
 
-                }).bindWith(this.plugin.getCore());
-    }
+				}).bindWith(this.plugin.getCore());
+	}
 
-    private Optional<IWrappedFlag<WrappedState>> getWGFlag() {
-        return this.plugin.getCore().getWorldGuardWrapper().getFlag(Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.class);
-    }
+	private Optional<IWrappedFlag<WrappedState>> getWGFlag() {
+		return this.plugin.getCore().getWorldGuardWrapper().getFlag(Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.class);
+	}
 }

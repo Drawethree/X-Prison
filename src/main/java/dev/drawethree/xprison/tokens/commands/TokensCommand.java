@@ -10,31 +10,32 @@ import java.util.List;
 
 public abstract class TokensCommand implements Permissionable {
 
-    protected static final String PERMISSION_ROOT = "xprison.tokens.command.";
-    protected final CommandManager commandManager;
-    @Getter
-    private final String name;
-    @Getter
-    private final String[] aliases;
+	protected static final String PERMISSION_ROOT = "xprison.tokens.command.";
 
-    TokensCommand(CommandManager commandManager, String name, String... aliases) {
-        this.commandManager = commandManager;
-        this.name = name;
-        this.aliases = aliases;
-    }
+	@Getter
+	private final String name;
+	protected final CommandManager commandManager;
+	@Getter
+	private final String[] aliases;
 
-    public abstract boolean execute(CommandSender sender, ImmutableList<String> args);
+	TokensCommand(CommandManager commandManager, String name, String... aliases) {
+		this.commandManager = commandManager;
+		this.name = name;
+		this.aliases = aliases;
+	}
 
-    public abstract boolean canExecute(CommandSender sender);
+	public abstract boolean execute(CommandSender sender, ImmutableList<String> args);
 
-    public abstract String getUsage();
+	public abstract boolean canExecute(CommandSender sender);
 
-    @Override
-    public String getRequiredPermission() {
-        return PERMISSION_ROOT + this.name;
-    }
+	public abstract String getUsage();
 
-    public abstract List<String> getTabComplete(List<String> args);
+	@Override
+	public String getRequiredPermission() {
+		return PERMISSION_ROOT + this.name;
+	}
+
+	public abstract List<String> getTabComplete(List<String> args);
 
 
 }

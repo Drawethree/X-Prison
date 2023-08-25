@@ -9,35 +9,36 @@ import java.util.Map;
 
 public abstract class GangSubCommand {
 
-    @Getter
-    protected final GangCommand command;
-    protected final Map<String, GangSubCommand> subCommands;
-    @Getter
-    private final String[] aliases;
+	@Getter
+	protected final GangCommand command;
+	@Getter
+	private final String[] aliases;
 
-    public GangSubCommand(GangCommand command, String... aliases) {
-        this.command = command;
-        this.aliases = aliases;
-        this.subCommands = new HashMap<>();
-    }
+	protected final Map<String, GangSubCommand> subCommands;
 
-    public abstract boolean execute(CommandSender sender, List<String> args);
+	public GangSubCommand(GangCommand command, String... aliases) {
+		this.command = command;
+		this.aliases = aliases;
+		this.subCommands = new HashMap<>();
+	}
 
-    public abstract String getUsage();
+	public abstract boolean execute(CommandSender sender, List<String> args);
 
-    public abstract boolean canExecute(CommandSender sender);
+	public abstract String getUsage();
 
-    public abstract List<String> getTabComplete();
+	public abstract boolean canExecute(CommandSender sender);
 
-    protected void registerSubCommand(GangSubCommand subCommand) {
-        for (String alias : subCommand.getAliases()) {
-            this.subCommands.put(alias.toLowerCase(), subCommand);
-        }
-    }
+	public abstract List<String> getTabComplete();
 
-    protected GangSubCommand getSubCommand(String name) {
-        return subCommands.get(name.toLowerCase());
-    }
+	protected void registerSubCommand(GangSubCommand subCommand) {
+		for (String alias : subCommand.getAliases()) {
+			this.subCommands.put(alias.toLowerCase(), subCommand);
+		}
+	}
+
+	protected GangSubCommand getSubCommand(String name) {
+		return subCommands.get(name.toLowerCase());
+	}
 
 
 }

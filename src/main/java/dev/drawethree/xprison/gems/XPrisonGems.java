@@ -25,126 +25,130 @@ import java.util.HashMap;
 
 public final class XPrisonGems implements XPrisonModule {
 
-    public static final String MODULE_NAME = "Gems";
-    public static final String GEMS_ADMIN_PERM = "xprison.gems.admin";
+	public static final String MODULE_NAME = "Gems";
+	public static final String GEMS_ADMIN_PERM = "xprison.gems.admin";
 
-    @Getter
-    private static XPrisonGems instance;
-    @Getter
-    private final XPrison core;
-    @Getter
-    private FileManager.Config config;
-    @Getter
-    private XPrisonGemsAPI api;
-    @Getter
-    private GemsManager gemsManager;
-    @Getter
-    private GemsRepository gemsRepository;
+	@Getter
+	private static XPrisonGems instance;
 
-    @Getter
-    private GemsService gemsService;
+	@Getter
+	private FileManager.Config config;
 
-    private HashMap<String, String> messages;
+	@Getter
+	private XPrisonGemsAPI api;
 
-    private boolean enabled;
-    private CommandManager commandManager;
+	@Getter
+	private GemsManager gemsManager;
+	@Getter
+	private final XPrison core;
 
-    @Getter
-    private long commandCooldown;
+	@Getter
+	private GemsRepository gemsRepository;
 
-    public XPrisonGems(XPrison XPrison) {
-        instance = this;
-        this.core = XPrison;
-    }
+	@Getter
+	private GemsService gemsService;
 
+	private HashMap<String, String> messages;
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+	private boolean enabled;
+	private CommandManager commandManager;
 
-    @Override
-    public void reload() {
-        this.config.reload();
+	@Getter
+	private long commandCooldown;
 
-        this.loadMessages();
-        this.loadVariables();
-
-        this.gemsManager.reload();
-        this.commandManager.reload();
-    }
-
-    @Override
-    public void enable() {
-        this.enabled = true;
-        this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
-
-        this.loadVariables();
-        this.loadMessages();
-
-        this.gemsRepository = new GemsRepositoryImpl(this.core.getPluginDatabase());
-        this.gemsRepository.createTables();
-        this.gemsService = new GemsServiceImpl(this.gemsRepository);
-        this.gemsManager = new GemsManager(this);
-        this.commandManager = new CommandManager(this);
-        this.commandManager.enable();
-        this.api = new XPrisonGemsAPIImpl(this.gemsManager);
-
-        this.registerEvents();
-    }
-
-    private void loadVariables() {
-        this.commandCooldown = getConfig().get().getLong("gems-command-cooldown");
-    }
+	public XPrisonGems(XPrison XPrison) {
+		instance = this;
+		this.core = XPrison;
+	}
 
 
-    @Override
-    public void disable() {
-        this.gemsManager.stopUpdating();
-        this.gemsManager.savePlayerDataOnDisable();
-        this.enabled = false;
-    }
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
+	@Override
+	public void reload() {
+		this.config.reload();
 
-    @Override
-    public boolean isHistoryEnabled() {
-        return true;
-    }
+		this.loadMessages();
+		this.loadVariables();
 
-    @Override
-    public void resetPlayerData() {
-        this.gemsRepository.clearTableData();
-    }
+		this.gemsManager.reload();
+		this.commandManager.reload();
+	}
 
-    private void registerEvents() {
-        Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
-                .filter(e -> e.getItem() != null && e.getItem().getType() == this.gemsManager.getGemsItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
-                .handler(e -> {
-                    if (e.getItem().hasItemMeta()) {
-                        e.setCancelled(true);
-                        e.setUseInteractedBlock(Event.Result.DENY);
-                        boolean offHandClick = false;
-                        if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
-                            offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
-                        }
-                        this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
-                    }
-                }).bindWith(core);
-    }
+	@Override
+	public void enable() {
+		this.enabled = true;
+		this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
+
+		this.loadVariables();
+		this.loadMessages();
+
+		this.gemsRepository = new GemsRepositoryImpl(this.core.getPluginDatabase());
+		this.gemsRepository.createTables();
+		this.gemsService = new GemsServiceImpl(this.gemsRepository);
+		this.gemsManager = new GemsManager(this);
+		this.commandManager = new CommandManager(this);
+		this.commandManager.enable();
+		this.api = new XPrisonGemsAPIImpl(this.gemsManager);
+
+		this.registerEvents();
+	}
+
+	private void loadVariables() {
+		this.commandCooldown = getConfig().get().getLong("gems-command-cooldown");
+	}
 
 
-    private void loadMessages() {
-        this.messages = new HashMap<>();
-        for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
-            this.messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
-        }
-    }
+	@Override
+	public void disable() {
+		this.gemsManager.stopUpdating();
+		this.gemsManager.savePlayerDataOnDisable();
+		this.enabled = false;
+	}
 
-    public String getMessage(String key) {
-        return this.messages.get(key);
-    }
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
+
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public void resetPlayerData() {
+		this.gemsRepository.clearTableData();
+	}
+
+	private void registerEvents() {
+		Events.subscribe(PlayerInteractEvent.class, EventPriority.LOWEST)
+				.filter(e -> e.getItem() != null && e.getItem().getType() == this.gemsManager.getGemsItemMaterial() && (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR))
+				.handler(e -> {
+					if (e.getItem().hasItemMeta()) {
+						e.setCancelled(true);
+						e.setUseInteractedBlock(Event.Result.DENY);
+						boolean offHandClick = false;
+						if (MinecraftVersion.getRuntimeVersion().isAfter(MinecraftVersion.of(1, 8, 9))) {
+							offHandClick = e.getHand() == EquipmentSlot.OFF_HAND;
+						}
+						this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
+					}
+				}).bindWith(core);
+	}
+
+
+	private void loadMessages() {
+		this.messages = new HashMap<>();
+		for (String key : this.getConfig().get().getConfigurationSection("messages").getKeys(false)) {
+			this.messages.put(key, TextUtils.applyColor(this.getConfig().get().getString("messages." + key)));
+		}
+	}
+
+	public String getMessage(String key) {
+		return this.messages.get(key);
+	}
 }

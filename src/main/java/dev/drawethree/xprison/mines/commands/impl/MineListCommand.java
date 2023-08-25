@@ -11,30 +11,30 @@ import java.util.List;
 
 public class MineListCommand extends MineCommand {
 
-    public MineListCommand(XPrisonMines plugin) {
-        super(plugin, "list");
-    }
+	public MineListCommand(XPrisonMines plugin) {
+		super(plugin, "list");
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
-        if (sender instanceof Player) {
-            this.plugin.getManager().openMinesListGUI((Player) sender);
-        } else {
-            PlayerUtils.sendMessage(sender, "All mines:");
-            for (Mine mine : this.plugin.getManager().getMines()) {
-                PlayerUtils.sendMessage(sender, mine.getName());
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
+		if (sender instanceof Player) {
+			this.plugin.getManager().openMinesListGUI((Player) sender);
+		} else {
+			PlayerUtils.sendMessage(sender, "All mines:");
+			for (Mine mine : this.plugin.getManager().getMines()) {
+				PlayerUtils.sendMessage(sender, mine.getName());
+			}
+		}
+		return true;
+	}
 
-    @Override
-    public String getUsage() {
-        return "&cUsage: /mines list - Display all mines";
-    }
+	@Override
+	public String getUsage() {
+		return "&cUsage: /mines list - Display all mines";
+	}
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return sender.hasPermission(XPrisonMines.MINES_ADMIN_PERM);
+	}
 }

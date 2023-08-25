@@ -2,17 +2,17 @@ package dev.drawethree.xprison;
 
 public interface XPrisonModule {
 
-    void enable();
+	void enable();
 
-    void disable();
+	void disable();
 
-    void reload();
+	void reload();
 
-    boolean isEnabled();
+	boolean isEnabled();
 
-    String getName();
+	String getName();
 
-    boolean isHistoryEnabled();
+	boolean isHistoryEnabled();
 
-    void resetPlayerData();
+	void resetPlayerData();
 }

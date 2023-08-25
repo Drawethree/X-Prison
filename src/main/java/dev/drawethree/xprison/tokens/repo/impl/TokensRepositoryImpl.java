@@ -28,7 +28,7 @@ public class TokensRepositoryImpl implements TokensRepository {
 
     @Override
     public long getPlayerTokens(OfflinePlayer p) {
-        try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con, "SELECT * FROM " + TABLE_NAME_TOKENS + " WHERE " + TOKENS_UUID_COLNAME + "=?")) {
+        try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME_TOKENS + " WHERE " + TOKENS_UUID_COLNAME + "=?")) {
             statement.setString(1, p.getUniqueId().toString());
             try (ResultSet set = statement.executeQuery()) {
                 if (set.next()) {

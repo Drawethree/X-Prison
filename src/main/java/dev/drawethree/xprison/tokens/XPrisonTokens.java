@@ -22,120 +22,131 @@ import lombok.Getter;
 
 public final class XPrisonTokens implements XPrisonModule {
 
-    public static final String MODULE_NAME = "Tokens";
+	public static final String MODULE_NAME = "Tokens";
 
-    @Getter
-    private static XPrisonTokens instance;
-    @Getter
-    private final XPrison core;
-    @Getter
-    private BlockRewardsConfig blockRewardsConfig;
-    @Getter
-    private TokensConfig tokensConfig;
-    @Getter
-    private XPrisonTokensAPI api;
-    @Getter
-    private TokensManager tokensManager;
-    @Getter
-    private CommandManager commandManager;
-    @Getter
-    private TokensRepository tokensRepository;
-    @Getter
-    private TokensService tokensService;
-    @Getter
-    private BlocksRepository blocksRepository;
-    @Getter
-    private BlocksService blocksService;
-    private SavePlayerDataTask savePlayerDataTask;
+	@Getter
+	private static XPrisonTokens instance;
 
-    private boolean enabled;
+	@Getter
+	private BlockRewardsConfig blockRewardsConfig;
 
+	@Getter
+	private TokensConfig tokensConfig;
 
-    public XPrisonTokens(XPrison prisonCore) {
-        instance = this;
-        this.core = prisonCore;
-    }
+	@Getter
+	private XPrisonTokensAPI api;
 
+	@Getter
+	private TokensManager tokensManager;
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
+	@Getter
+	private CommandManager commandManager;
 
-    @Override
-    public void reload() {
-        this.tokensConfig.reload();
-        this.blockRewardsConfig.reload();
-        this.tokensManager.reload();
-        this.commandManager.reload();
-    }
+	@Getter
+	private TokensRepository tokensRepository;
+
+	@Getter
+	private TokensService tokensService;
+
+	@Getter
+	private BlocksRepository blocksRepository;
+
+	@Getter
+	private BlocksService blocksService;
+
+	@Getter
+	private final XPrison core;
+
+	private SavePlayerDataTask savePlayerDataTask;
+
+	private boolean enabled;
 
 
-    @Override
-    public void enable() {
-
-        this.tokensConfig = new TokensConfig(this);
-        this.blockRewardsConfig = new BlockRewardsConfig(this);
-
-        this.tokensConfig.load();
-        this.blockRewardsConfig.load();
-
-        this.tokensRepository = new TokensRepositoryImpl(this.core.getPluginDatabase());
-        this.tokensRepository.createTables();
-
-        this.tokensService = new TokensServiceImpl(this.tokensRepository);
-
-        this.blocksRepository = new BlocksRepositoryImpl(this.core.getPluginDatabase());
-        this.blocksRepository.createTables();
-
-        this.blocksService = new BlocksServiceImpl(this.blocksRepository);
-
-        this.tokensManager = new TokensManager(this);
-        this.tokensManager.enable();
-
-        this.commandManager = new CommandManager(this);
-        this.commandManager.enable();
-
-        this.savePlayerDataTask = new SavePlayerDataTask(this);
-        this.savePlayerDataTask.start();
-
-        this.registerListeners();
-
-        this.commandManager.enable();
-
-        this.api = new XPrisonTokensAPIImpl(this.tokensManager);
-
-        this.enabled = true;
-    }
-
-    private void registerListeners() {
-        new TokensListener(this).subscribeToEvents();
-    }
+	public XPrisonTokens(XPrison prisonCore) {
+		instance = this;
+		this.core = prisonCore;
+	}
 
 
-    @Override
-    public void disable() {
-        this.tokensManager.disable();
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-        this.savePlayerDataTask.stop();
+	@Override
+	public void reload() {
+		this.tokensConfig.reload();
+		this.blockRewardsConfig.reload();
+		this.tokensManager.reload();
+		this.commandManager.reload();
+	}
 
-        this.enabled = false;
-    }
 
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
+	@Override
+	public void enable() {
 
-    @Override
-    public boolean isHistoryEnabled() {
-        return true;
-    }
+		this.tokensConfig = new TokensConfig(this);
+		this.blockRewardsConfig = new BlockRewardsConfig(this);
 
-    @Override
-    public void resetPlayerData() {
-        this.tokensRepository.clearTableData();
-        this.blocksRepository.clearTableData();
-    }
+		this.tokensConfig.load();
+		this.blockRewardsConfig.load();
+
+		this.tokensRepository = new TokensRepositoryImpl(this.core.getPluginDatabase());
+		this.tokensRepository.createTables();
+
+		this.tokensService = new TokensServiceImpl(this.tokensRepository);
+
+		this.blocksRepository = new BlocksRepositoryImpl(this.core.getPluginDatabase());
+		this.blocksRepository.createTables();
+
+		this.blocksService = new BlocksServiceImpl(this.blocksRepository);
+
+		this.tokensManager = new TokensManager(this);
+		this.tokensManager.enable();
+
+		this.commandManager = new CommandManager(this);
+		this.commandManager.enable();
+
+		this.savePlayerDataTask = new SavePlayerDataTask(this);
+		this.savePlayerDataTask.start();
+
+		this.registerListeners();
+
+		this.commandManager.enable();
+
+		this.api = new XPrisonTokensAPIImpl(this.tokensManager);
+
+		this.enabled = true;
+	}
+
+	private void registerListeners() {
+		new TokensListener(this).subscribeToEvents();
+	}
+
+
+	@Override
+	public void disable() {
+		this.tokensManager.disable();
+
+		this.savePlayerDataTask.stop();
+
+		this.enabled = false;
+	}
+
+	@Override
+	public String getName() {
+		return MODULE_NAME;
+	}
+
+	@Override
+	public boolean isHistoryEnabled() {
+		return true;
+	}
+
+	@Override
+	public void resetPlayerData() {
+		this.tokensRepository.clearTableData();
+		this.blocksRepository.clearTableData();
+	}
 
 }

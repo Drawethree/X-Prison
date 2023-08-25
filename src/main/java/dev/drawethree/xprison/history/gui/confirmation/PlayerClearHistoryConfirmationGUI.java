@@ -8,21 +8,21 @@ import org.bukkit.entity.Player;
 
 public class PlayerClearHistoryConfirmationGUI extends ConfirmationGui {
 
-    private final OfflinePlayer target;
-    private XPrisonHistory plugin;
+	private final OfflinePlayer target;
+	private XPrisonHistory plugin;
 
-    public PlayerClearHistoryConfirmationGUI(Player player, OfflinePlayer target, XPrisonHistory plugin) {
-        super(player, "Clear " + target.getName() + "?");
-        this.target = target;
-        this.plugin = plugin;
-    }
+	public PlayerClearHistoryConfirmationGUI(Player player, OfflinePlayer target, XPrisonHistory plugin) {
+		super(player, "Clear " + target.getName() + "?");
+		this.target = target;
+		this.plugin = plugin;
+	}
 
-    @Override
-    public void confirm(boolean confirm) {
-        if (confirm) {
-            this.plugin.getHistoryManager().clearPlayerHistory(this.target);
-            PlayerUtils.sendMessage(this.getPlayer(), "&aYou have cleared history data of player &e" + target.getName());
-        }
-        this.close();
-    }
+	@Override
+	public void confirm(boolean confirm) {
+		if (confirm) {
+			this.plugin.getHistoryManager().clearPlayerHistory(this.target);
+			PlayerUtils.sendMessage(this.getPlayer(),"&aYou have cleared history data of player &e" + target.getName());
+		}
+		this.close();
+	}
 }

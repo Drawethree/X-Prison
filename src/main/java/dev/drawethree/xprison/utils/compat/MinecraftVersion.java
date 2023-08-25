@@ -8,192 +8,192 @@ import org.bukkit.Bukkit;
  */
 public final class MinecraftVersion {
 
-    /**
-     * The string representation of the version, for example V1_13
-     */
-    private static String serverVersion;
+	/**
+	 * The string representation of the version, for example V1_13
+	 */
+	private static String serverVersion;
 
-    /**
-     * The wrapper representation of the version
-     */
-    @Getter
-    private static V current;
+	/**
+	 * The wrapper representation of the version
+	 */
+	@Getter
+	private static V current;
 
-    // Initialize the version
-    static {
-        try {
+	/**
+	 * The version wrapper
+	 */
+	public enum V {
+		v1_20(20, false),
+		v1_19(19),
+		v1_18(18),
+		v1_17(17),
+		v1_16(16),
+		v1_15(15),
+		v1_14(14),
+		v1_13(13),
+		v1_12(12),
+		v1_11(11),
+		v1_10(10),
+		v1_9(9),
+		v1_8(8),
+		v1_7(7),
+		v1_6(6),
+		v1_5(5),
+		v1_4(4),
+		v1_3_AND_BELOW(3);
 
-            final String packageName = Bukkit.getServer() == null ? "" : Bukkit.getServer().getClass().getPackage().getName();
-            final String curr = packageName.substring(packageName.lastIndexOf('.') + 1);
-            final boolean hasGatekeeper = !"craftbukkit".equals(curr) && !"".equals(packageName);
+		/**
+		 * The numeric version (the second part of the 1.x number)
+		 */
+		private final int minorVersionNumber;
 
-            serverVersion = curr;
+		/**
+		 * Is this library tested with this Minecraft version?
+		 */
+		@Getter
+		private final boolean tested;
 
-            if (hasGatekeeper) {
-                int pos = 0;
+		/**
+		 * Creates new enum for a MC version that is tested
+		 *
+		 * @param version
+		 */
+		V(int version) {
+			this(version, true);
+		}
 
-                for (final char ch : curr.toCharArray()) {
-                    pos++;
+		/**
+		 * Creates new enum for a MC version
+		 *
+		 * @param version
+		 * @param tested
+		 */
+		V(int version, boolean tested) {
+			this.minorVersionNumber = version;
+			this.tested = tested;
+		}
 
-                    if (pos > 2 && ch == 'R')
-                        break;
-                }
+		/**
+		 * Attempts to get the version from number
+		 *
+		 * @param number
+		 * @return
+		 * @throws RuntimeException if number not found
+		 */
+		private static V parse(int number) {
+			for (final V v : values()) {
+				if (v.minorVersionNumber == number) {
+					return v;
+				}
+			}
+			return null;
+		}
 
-                final String numericVersion = curr.substring(1, pos - 2).replace("_", ".");
+		/**
+		 * @see java.lang.Enum#toString()
+		 */
+		@Override
+		public String toString() {
+			return "1." + this.minorVersionNumber;
+		}
+	}
 
-                int found = 0;
+	/**
+	 * Does the current Minecraft version equal the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean equals(V version) {
+		return compareWith(version) == 0;
+	}
 
-                for (final char ch : numericVersion.toCharArray())
-                    if (ch == '.')
-                        found++;
+	/**
+	 * Is the current Minecraft version older than the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean olderThan(V version) {
+		return compareWith(version) < 0;
+	}
 
-                current = V.parse(Integer.parseInt(numericVersion.split("\\.")[1]));
+	/**
+	 * Is the current Minecraft version newer than the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean newerThan(V version) {
+		return compareWith(version) > 0;
+	}
 
-            } else
-                current = V.v1_3_AND_BELOW;
+	/**
+	 * Is the current Minecraft version at equals or newer than the given version?
+	 *
+	 * @param version
+	 * @return
+	 */
+	public static boolean atLeast(V version) {
+		return equals(version) || newerThan(version);
+	}
 
-        } catch (final Throwable t) {
-            t.printStackTrace();
-        }
-    }
+	// Compares two versions by the number
+	private static int compareWith(V version) {
+		try {
+			return getCurrent().minorVersionNumber - version.minorVersionNumber;
 
-    /**
-     * Does the current Minecraft version equal the given version?
-     *
-     * @param version
-     * @return
-     */
-    public static boolean equals(V version) {
-        return compareWith(version) == 0;
-    }
+		} catch (final Throwable t) {
+			t.printStackTrace();
 
-    /**
-     * Is the current Minecraft version older than the given version?
-     *
-     * @param version
-     * @return
-     */
-    public static boolean olderThan(V version) {
-        return compareWith(version) < 0;
-    }
+			return 0;
+		}
+	}
 
-    /**
-     * Is the current Minecraft version newer than the given version?
-     *
-     * @param version
-     * @return
-     */
-    public static boolean newerThan(V version) {
-        return compareWith(version) > 0;
-    }
+	/**
+	 * Return the class versioning such as v1_14_R1
+	 *
+	 * @return
+	 */
+	public static String getServerVersion() {
+		return serverVersion.equals("craftbukkit") ? "" : serverVersion;
+	}
 
-    /**
-     * Is the current Minecraft version at equals or newer than the given version?
-     *
-     * @param version
-     * @return
-     */
-    public static boolean atLeast(V version) {
-        return equals(version) || newerThan(version);
-    }
+	// Initialize the version
+	static {
+		try {
 
-    // Compares two versions by the number
-    private static int compareWith(V version) {
-        try {
-            return getCurrent().minorVersionNumber - version.minorVersionNumber;
+			final String packageName = Bukkit.getServer() == null ? "" : Bukkit.getServer().getClass().getPackage().getName();
+			final String curr = packageName.substring(packageName.lastIndexOf('.') + 1);
+			final boolean hasGatekeeper = !"craftbukkit".equals(curr) && !"".equals(packageName);
 
-        } catch (final Throwable t) {
-            t.printStackTrace();
+			serverVersion = curr;
 
-            return 0;
-        }
-    }
+			if (hasGatekeeper) {
+				int pos = 0;
 
-    /**
-     * Return the class versioning such as v1_14_R1
-     *
-     * @return
-     */
-    public static String getServerVersion() {
-        return serverVersion.equals("craftbukkit") ? "" : serverVersion;
-    }
+				for (final char ch : curr.toCharArray()) {
+					pos++;
 
-    /**
-     * The version wrapper
-     */
-    public enum V {
-        v1_20(20, false),
-        v1_19(19),
-        v1_18(18),
-        v1_17(17),
-        v1_16(16),
-        v1_15(15),
-        v1_14(14),
-        v1_13(13),
-        v1_12(12),
-        v1_11(11),
-        v1_10(10),
-        v1_9(9),
-        v1_8(8),
-        v1_7(7),
-        v1_6(6),
-        v1_5(5),
-        v1_4(4),
-        v1_3_AND_BELOW(3);
+					if (pos > 2 && ch == 'R')
+						break;
+				}
 
-        /**
-         * The numeric version (the second part of the 1.x number)
-         */
-        private final int minorVersionNumber;
+				final String numericVersion = curr.substring(1, pos - 2).replace("_", ".");
 
-        /**
-         * Is this library tested with this Minecraft version?
-         */
-        @Getter
-        private final boolean tested;
+				int found = 0;
 
-        /**
-         * Creates new enum for a MC version that is tested
-         *
-         * @param version
-         */
-        V(int version) {
-            this(version, true);
-        }
+				for (final char ch : numericVersion.toCharArray())
+					if (ch == '.')
+						found++;
 
-        /**
-         * Creates new enum for a MC version
-         *
-         * @param version
-         * @param tested
-         */
-        V(int version, boolean tested) {
-            this.minorVersionNumber = version;
-            this.tested = tested;
-        }
+				current = V.parse(Integer.parseInt(numericVersion.split("\\.")[1]));
 
-        /**
-         * Attempts to get the version from number
-         *
-         * @param number
-         * @return
-         * @throws RuntimeException if number not found
-         */
-        private static V parse(int number) {
-            for (final V v : values()) {
-                if (v.minorVersionNumber == number) {
-                    return v;
-                }
-            }
-            return null;
-        }
+			} else
+				current = V.v1_3_AND_BELOW;
 
-        /**
-         * @see java.lang.Enum#toString()
-         */
-        @Override
-        public String toString() {
-            return "1." + this.minorVersionNumber;
-        }
-    }
+		} catch (final Throwable t) {
+			t.printStackTrace();
+		}
+	}
 }

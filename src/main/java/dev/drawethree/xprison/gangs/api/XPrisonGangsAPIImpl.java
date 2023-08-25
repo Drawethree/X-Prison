@@ -9,24 +9,24 @@ import java.util.Optional;
 
 public final class XPrisonGangsAPIImpl implements XPrisonGangsAPI {
 
-    private final GangsManager gangsManager;
+	private final GangsManager gangsManager;
 
-    public XPrisonGangsAPIImpl(GangsManager gangsManager) {
-        this.gangsManager = gangsManager;
-    }
+	public XPrisonGangsAPIImpl(GangsManager gangsManager) {
+		this.gangsManager = gangsManager;
+	}
 
-    @Override
-    public Optional<Gang> getPlayerGang(OfflinePlayer player) {
-        return this.gangsManager.getPlayerGang(player);
-    }
+	@Override
+	public Optional<Gang> getPlayerGang(OfflinePlayer player) {
+		return this.gangsManager.getPlayerGang(player);
+	}
 
-    @Override
-    public Optional<Gang> getByName(String name) {
-        return this.gangsManager.getGangWithName(name);
-    }
+	@Override
+	public Optional<Gang> getByName(String name) {
+		return this.gangsManager.getGangWithName(name);
+	}
 
-    @Override
-    public Collection<Gang> getAllGangs() {
-        return this.gangsManager.getAllGangs();
-    }
+	@Override
+	public Collection<Gang> getAllGangs() {
+		return this.gangsManager.getAllGangs();
+	}
 }

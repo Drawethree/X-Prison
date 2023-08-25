@@ -12,32 +12,32 @@ import java.util.stream.Collectors;
 
 public final class GangAdminRenameSubCommand extends GangSubCommand {
 
-    public GangAdminRenameSubCommand(GangCommand command) {
-        super(command, "rename");
-    }
+	public GangAdminRenameSubCommand(GangCommand command) {
+		super(command, "rename");
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
-        if (args.size() == 2) {
-            String oldGangName = args.get(0);
-            String newGangName = args.get(1);
-            return this.command.getPlugin().getGangsManager().forceRename(sender, oldGangName, newGangName);
-        }
-        return false;
-    }
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
+		if (args.size() == 2) {
+			String oldGangName = args.get(0);
+			String newGangName = args.get(1);
+			return this.command.getPlugin().getGangsManager().forceRename(sender, oldGangName, newGangName);
+		}
+		return false;
+	}
 
-    @Override
-    public String getUsage() {
-        return ChatColor.RED + "/gang admin rename <gang> <new_name>";
-    }
+	@Override
+	public String getUsage() {
+		return ChatColor.RED + "/gang admin rename <gang> <new_name>";
+	}
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return sender.hasPermission(GangsConstants.GANGS_ADMIN_PERM);
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return sender.hasPermission(GangsConstants.GANGS_ADMIN_PERM);
+	}
 
-    @Override
-    public List<String> getTabComplete() {
-        return this.command.getPlugin().getGangsManager().getAllGangs().stream().map(Gang::getName).collect(Collectors.toList());
-    }
+	@Override
+	public List<String> getTabComplete() {
+		return this.command.getPlugin().getGangsManager().getAllGangs().stream().map(Gang::getName).collect(Collectors.toList());
+	}
 }

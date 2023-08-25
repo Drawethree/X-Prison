@@ -12,32 +12,32 @@ import java.util.List;
 
 public final class GangLeaveSubCommand extends GangSubCommand {
 
-    public GangLeaveSubCommand(GangCommand command) {
-        super(command, "leave", "quit");
-    }
+	public GangLeaveSubCommand(GangCommand command) {
+		super(command, "leave", "quit");
+	}
 
-    @Override
-    public String getUsage() {
-        return ChatColor.RED + "/gang leave";
-    }
+	@Override
+	public String getUsage() {
+		return ChatColor.RED + "/gang leave";
+	}
 
-    @Override
-    public boolean execute(CommandSender sender, List<String> args) {
-        if (args.size() == 0 && sender instanceof Player) {
-            Player p = (Player) sender;
-            return this.command.getPlugin().getGangsManager().leaveGang(p, GangLeaveReason.LEAVE);
-        }
-        return false;
-    }
+	@Override
+	public boolean execute(CommandSender sender, List<String> args) {
+		if (args.size() == 0 && sender instanceof Player) {
+			Player p = (Player) sender;
+			return this.command.getPlugin().getGangsManager().leaveGang(p, GangLeaveReason.LEAVE);
+		}
+		return false;
+	}
 
 
-    @Override
-    public boolean canExecute(CommandSender sender) {
-        return true;
-    }
+	@Override
+	public boolean canExecute(CommandSender sender) {
+		return true;
+	}
 
-    @Override
-    public List<String> getTabComplete() {
-        return new ArrayList<>();
-    }
+	@Override
+	public List<String> getTabComplete() {
+		return new ArrayList<>();
+	}
 }

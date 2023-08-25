@@ -9,37 +9,38 @@ import org.bukkit.inventory.ItemStack;
 public final class FlyEnchant extends XPrisonEnchantment {
 
 
-    public FlyEnchant(XPrisonEnchants instance) {
-        super(instance, 8);
-    }
 
-    @Override
-    public void onEquip(Player p, ItemStack pickAxe, int level) {
-        p.setAllowFlight(true);
+	public FlyEnchant(XPrisonEnchants instance) {
+		super(instance, 8);
+	}
 
-    }
+	@Override
+	public void onEquip(Player p, ItemStack pickAxe, int level) {
+		p.setAllowFlight(true);
 
-    @Override
-    public void onUnequip(Player p, ItemStack pickAxe, int level) {
-        p.setAllowFlight(false);
-    }
+	}
 
-    @Override
-    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-    }
+	@Override
+	public void onUnequip(Player p, ItemStack pickAxe, int level) {
+		p.setAllowFlight(false);
+	}
 
-    @Override
-    public double getChanceToTrigger(int enchantLevel) {
-        return 100.0;
-    }
+	@Override
+	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+	}
 
-    @Override
-    public void reload() {
-        super.reload();
-    }
+	@Override
+	public double getChanceToTrigger(int enchantLevel) {
+		return 100.0;
+	}
 
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
-    }
+	@Override
+	public void reload() {
+		super.reload();
+	}
+
+	@Override
+	public String getAuthor() {
+		return "Drawethree";
+	}
 }

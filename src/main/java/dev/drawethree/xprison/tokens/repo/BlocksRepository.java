@@ -7,25 +7,25 @@ import java.util.UUID;
 
 public interface BlocksRepository {
 
-    void resetBlocksWeekly();
+	void resetBlocksWeekly();
 
-    void updateBlocks(OfflinePlayer player, long newAmount);
+	void updateBlocks(OfflinePlayer player, long newAmount);
 
-    void updateBlocksWeekly(OfflinePlayer player, long newAmount);
+	void updateBlocksWeekly(OfflinePlayer player, long newAmount);
 
-    long getPlayerBrokenBlocksWeekly(OfflinePlayer player);
+	long getPlayerBrokenBlocksWeekly(OfflinePlayer player);
 
-    void addIntoBlocks(OfflinePlayer player);
+	void addIntoBlocks(OfflinePlayer player);
 
-    void addIntoBlocksWeekly(OfflinePlayer player);
+	void addIntoBlocksWeekly(OfflinePlayer player);
 
-    long getPlayerBrokenBlocks(OfflinePlayer player);
+	long getPlayerBrokenBlocks(OfflinePlayer player);
 
-    Map<UUID, Long> getTopBlocksWeekly(int amountOfRecords);
+	Map<UUID, Long> getTopBlocksWeekly(int amountOfRecords);
 
-    Map<UUID, Long> getTopBlocks(int amountOfRecords);
+	Map<UUID, Long> getTopBlocks(int amountOfRecords);
 
-    void createTables();
+	void createTables();
 
-    void clearTableData();
+	void clearTableData();
 }

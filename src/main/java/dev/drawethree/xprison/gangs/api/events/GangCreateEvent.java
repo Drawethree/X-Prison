@@ -9,40 +9,43 @@ import org.bukkit.event.HandlerList;
 
 public final class GangCreateEvent extends XPrisonEvent implements Cancellable {
 
-    private static final HandlerList HANDLERS_LIST = new HandlerList();
-    @Getter
-    private final CommandSender creator;
-    @Getter
-    private final Gang gang;
-    private boolean cancelled;
+	private static final HandlerList HANDLERS_LIST = new HandlerList();
 
-    /**
-     * Fired when gang is created
-     *
-     * @param creator CommandSender who created the gang
-     * @param gang    Gang
-     */
-    public GangCreateEvent(CommandSender creator, Gang gang) {
-        this.creator = creator;
-        this.gang = gang;
-    }
+	private boolean cancelled;
 
-    public static HandlerList getHandlerList() {
-        return HANDLERS_LIST;
-    }
+	@Getter
+	private final CommandSender creator;
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+	@Getter
+	private final Gang gang;
 
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
-    }
+	/**
+	 * Fired when gang is created
+	 *
+	 * @param creator CommandSender who created the gang
+	 * @param gang    Gang
+	 */
+	public GangCreateEvent(CommandSender creator, Gang gang) {
+		this.creator = creator;
+		this.gang = gang;
+	}
 
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS_LIST;
-    }
+	public static HandlerList getHandlerList() {
+		return HANDLERS_LIST;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return cancelled;
+	}
+
+	@Override
+	public void setCancelled(boolean cancel) {
+		this.cancelled = cancel;
+	}
+
+	@Override
+	public HandlerList getHandlers() {
+		return HANDLERS_LIST;
+	}
 }

@@ -16,109 +16,109 @@ import java.util.stream.Collectors;
 
 public class EnchantsConfig {
 
-    private final XPrisonEnchants plugin;
-    private final FileManager.Config config;
+	private final XPrisonEnchants plugin;
+	private final FileManager.Config config;
 
-    private Map<String, String> messages;
+	private Map<String, String> messages;
 
-    private LevelFormat levelFormat;
-    private String excludedFormat;
-    private List<String> pickaxeLore;
-    private boolean allowEnchantsOutside;
-    private boolean firstJoinPickaxeEnabled;
-    private CompMaterial firstJoinPickaxeMaterial;
-    private List<String> firstJoinPickaxeEnchants;
-    private String firstJoinPickaxeName;
-    private boolean keepPickaxesOnDeath;
-    private boolean useUnbreakablePermission;
-    private List<Action> openEnchantMenuActions;
+	private LevelFormat levelFormat;
+	private String excludedFormat;
+	private List<String> pickaxeLore;
+	private boolean allowEnchantsOutside;
+	private boolean firstJoinPickaxeEnabled;
+	private CompMaterial firstJoinPickaxeMaterial;
+	private List<String> firstJoinPickaxeEnchants;
+	private String firstJoinPickaxeName;
+	private boolean keepPickaxesOnDeath;
+	private boolean useUnbreakablePermission;
+	private List<Action> openEnchantMenuActions;
 
-    public EnchantsConfig(XPrisonEnchants plugin) {
-        this.plugin = plugin;
-        this.config = plugin.getCore().getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
-    }
+	public EnchantsConfig(XPrisonEnchants plugin) {
+		this.plugin = plugin;
+		this.config = plugin.getCore().getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
+	}
 
-    public void reload() {
-        this.getConfig().reload();
-        this.load();
-    }
+	public void reload() {
+		this.getConfig().reload();
+		this.load();
+	}
 
-    public void load() {
-        this.loadVariables();
-        this.loadMessages();
-    }
+	public void load() {
+		this.loadVariables();
+		this.loadMessages();
+	}
 
-    private void loadVariables() {
-        this.levelFormat = LevelFormat.of(getYamlConfig().getString("Pickaxe.level-format", "NUMBER"));
-        this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
-        this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
-        this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s -> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
-        this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
-        this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
-        this.firstJoinPickaxeMaterial = CompMaterial.fromString(getYamlConfig().getString("first-join-pickaxe.material"));
-        this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");
-        this.firstJoinPickaxeName = getYamlConfig().getString("first-join-pickaxe.name");
-        this.keepPickaxesOnDeath = getYamlConfig().getBoolean("keep-pickaxes-on-death");
-        this.useUnbreakablePermission = getYamlConfig().getBoolean("use-unbreakable-permission");
-    }
+	private void loadVariables() {
+		this.levelFormat = LevelFormat.of(getYamlConfig().getString("Pickaxe.level-format", "NUMBER"));
+		this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
+		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
+		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
+		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
+		this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
+		this.firstJoinPickaxeMaterial = CompMaterial.fromString(getYamlConfig().getString("first-join-pickaxe.material"));
+		this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");
+		this.firstJoinPickaxeName = getYamlConfig().getString("first-join-pickaxe.name");
+		this.keepPickaxesOnDeath = getYamlConfig().getBoolean("keep-pickaxes-on-death");
+		this.useUnbreakablePermission = getYamlConfig().getBoolean("use-unbreakable-permission");
+	}
 
-    private void loadMessages() {
-        this.messages = new HashMap<>();
-        for (String key : getYamlConfig().getConfigurationSection("messages").getKeys(false)) {
-            messages.put(key, TextUtils.applyColor(getConfig().get().getString("messages." + key)));
-        }
-    }
+	private void loadMessages() {
+		this.messages = new HashMap<>();
+		for (String key : getYamlConfig().getConfigurationSection("messages").getKeys(false)) {
+			messages.put(key, TextUtils.applyColor(getConfig().get().getString("messages." + key)));
+		}
+	}
 
 
-    private FileManager.Config getConfig() {
-        return this.config;
-    }
+	private FileManager.Config getConfig() {
+		return this.config;
+	}
 
-    public YamlConfiguration getYamlConfig() {
-        return this.config.get();
-    }
+	public YamlConfiguration getYamlConfig() {
+		return this.config.get();
+	}
 
-    public String getMessage(String key) {
-        return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
-    }
+	public String getMessage(String key) {
+		return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
+	}
 
-    public LevelFormat getLevelFormat() {
-        return levelFormat;
-    }
+	public LevelFormat getLevelFormat() {
+		return levelFormat;
+	}
 
-    public String getExcludedFormat() {
-        return excludedFormat;
-    }
+	public String getExcludedFormat() {
+		return excludedFormat;
+	}
 
-    public List<String> getPickaxeLore() {
-        return pickaxeLore;
-    }
+	public List<String> getPickaxeLore() {
+		return pickaxeLore;
+	}
 
-    public boolean isFirstJoinPickaxeEnabled() {
-        return firstJoinPickaxeEnabled;
-    }
+	public boolean isFirstJoinPickaxeEnabled() {
+		return firstJoinPickaxeEnabled;
+	}
 
-    public CompMaterial getFirstJoinPickaxeMaterial() {
-        return firstJoinPickaxeMaterial;
-    }
+	public CompMaterial getFirstJoinPickaxeMaterial() {
+		return firstJoinPickaxeMaterial;
+	}
 
-    public List<String> getFirstJoinPickaxeEnchants() {
-        return firstJoinPickaxeEnchants;
-    }
+	public List<String> getFirstJoinPickaxeEnchants() {
+		return firstJoinPickaxeEnchants;
+	}
 
-    public String getFirstJoinPickaxeName() {
-        return firstJoinPickaxeName;
-    }
+	public String getFirstJoinPickaxeName() {
+		return firstJoinPickaxeName;
+	}
 
-    public boolean isKeepPickaxesOnDeath() {
-        return keepPickaxesOnDeath;
-    }
+	public boolean isKeepPickaxesOnDeath() {
+		return keepPickaxesOnDeath;
+	}
 
-    public boolean isUseUnbreakablePermission() {
-        return useUnbreakablePermission;
-    }
+	public boolean isUseUnbreakablePermission() {
+		return useUnbreakablePermission;
+	}
 
-    public List<Action> getOpenEnchantMenuActions() {
-        return openEnchantMenuActions;
-    }
+	public List<Action> getOpenEnchantMenuActions() {
+		return openEnchantMenuActions;
+	}
 }

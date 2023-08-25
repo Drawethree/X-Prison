@@ -7,21 +7,21 @@ import java.util.UUID;
 
 public interface BlocksService {
 
-    void resetBlocksWeekly();
+	void resetBlocksWeekly();
 
-    void setBlocks(OfflinePlayer player, long newAmount);
+	void setBlocks(OfflinePlayer player, long newAmount);
 
-    void setBlocksWeekly(OfflinePlayer player, long newAmount);
+	void setBlocksWeekly(OfflinePlayer player, long newAmount);
 
-    long getPlayerBrokenBlocksWeekly(OfflinePlayer player);
+	long getPlayerBrokenBlocksWeekly(OfflinePlayer player);
 
-    void createBlocks(OfflinePlayer player);
+	void createBlocks(OfflinePlayer player);
 
-    void createBlocksWeekly(OfflinePlayer player);
+	void createBlocksWeekly(OfflinePlayer player);
 
-    long getPlayerBrokenBlocks(OfflinePlayer player);
+	long getPlayerBrokenBlocks(OfflinePlayer player);
 
-    Map<UUID, Long> getTopBlocksWeekly(int amountOfRecords);
+	Map<UUID, Long> getTopBlocksWeekly(int amountOfRecords);
 
-    Map<UUID, Long> getTopBlocks(int amountOfRecords);
+	Map<UUID, Long> getTopBlocks(int amountOfRecords);
 }

@@ -11,9 +11,10 @@ import java.util.List;
 public abstract class GemsCommand implements Permissionable {
 
     protected static final String PERMISSION_ROOT = "xprison.gems.command.";
-    protected final CommandManager commandManager;
+
     @Getter
     private final String name;
+    protected final CommandManager commandManager;
     @Getter
     private final String[] aliases;
 

@@ -6,15 +6,15 @@ import org.bukkit.OfflinePlayer;
 
 public abstract class XPrisonPlayerEvent extends XPrisonEvent {
 
-    @Getter
-    protected OfflinePlayer player;
+	@Getter
+	protected OfflinePlayer player;
 
-    /**
-     * Abstract XPrisonPlayerEvent
-     *
-     * @param player Player
-     */
-    public XPrisonPlayerEvent(OfflinePlayer player) {
-        this.player = player;
-    }
+	/**
+	 * Abstract XPrisonPlayerEvent
+	 *
+	 * @param player Player
+	 */
+	public XPrisonPlayerEvent(OfflinePlayer player) {
+		this.player = player;
+	}
 }

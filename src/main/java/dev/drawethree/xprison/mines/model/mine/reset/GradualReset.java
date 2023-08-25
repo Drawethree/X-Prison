@@ -14,48 +14,48 @@ import java.util.Iterator;
 
 public class GradualReset extends ResetType {
 
-    private final int CHANGES_PER_TICK = 350;
+	private final int CHANGES_PER_TICK = 350;
 
-    GradualReset() {
-        super("Gradual");
-    }
+	GradualReset() {
+		super("Gradual");
+	}
 
-    @Override
-    public void reset(Mine paramMine, BlockPalette blockPalette) {
+	@Override
+	public void reset(Mine paramMine, BlockPalette blockPalette) {
 
-        if (blockPalette.isEmpty()) {
-            XPrison.getInstance().getLogger().warning("Reset for Mine " + paramMine.getName() + " aborted. Block palette is empty.");
-            return;
-        }
+		if (blockPalette.isEmpty()) {
+			XPrison.getInstance().getLogger().warning("Reset for Mine " + paramMine.getName() + " aborted. Block palette is empty.");
+			return;
+		}
 
-        this.schedule(paramMine, blockPalette, paramMine.getBlocksIterator());
-    }
+		this.schedule(paramMine, blockPalette, paramMine.getBlocksIterator());
+	}
 
 
-    private void schedule(final Mine mine, BlockPalette blockPalette, Iterator<Block> blocksIterator) {
-        Schedulers.sync().runLater(() -> {
-            int changes = 0;
-            RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
-            while (blocksIterator.hasNext() && changes <= CHANGES_PER_TICK) {
-                CompMaterial pick = selector.pick();
-                Block b = blocksIterator.next();
-                b.setType(pick.toMaterial());
-                if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
-                    try {
-                        Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
-                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                        e.printStackTrace();
-                    }
-                }
-                changes++;
-            }
-            if (blocksIterator.hasNext()) {
-                schedule(mine, blockPalette, blocksIterator);
-            } else {
-                mine.setResetting(false);
-                mine.updateCurrentBlocks();
-                mine.updateHolograms();
-            }
-        }, 1L);
-    }
+	private void schedule(final Mine mine, BlockPalette blockPalette, Iterator<Block> blocksIterator) {
+		Schedulers.sync().runLater(() -> {
+			int changes = 0;
+			RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
+			while (blocksIterator.hasNext() && changes <= CHANGES_PER_TICK) {
+				CompMaterial pick = selector.pick();
+				Block b = blocksIterator.next();
+				b.setType(pick.toMaterial());
+				if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+					try {
+						Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
+					} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+						e.printStackTrace();
+					}
+				}
+				changes++;
+			}
+			if (blocksIterator.hasNext()) {
+				schedule(mine, blockPalette, blocksIterator);
+			} else {
+				mine.setResetting(false);
+				mine.updateCurrentBlocks();
+				mine.updateHolograms();
+			}
+		}, 1L);
+	}
 }

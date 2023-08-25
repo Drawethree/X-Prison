@@ -7,11 +7,11 @@ import java.util.UUID;
 
 public interface PrestigeService {
 
-    void setPrestige(OfflinePlayer player, long prestige);
+	void setPrestige(OfflinePlayer player, long prestige);
 
-    void createPrestige(OfflinePlayer player);
+	void createPrestige(OfflinePlayer player);
 
-    long getPlayerPrestige(OfflinePlayer player);
+	long getPlayerPrestige(OfflinePlayer player);
 
-    Map<UUID, Long> getTopPrestiges(int amountOfRecords);
+	Map<UUID, Long> getTopPrestiges(int amountOfRecords);
 }

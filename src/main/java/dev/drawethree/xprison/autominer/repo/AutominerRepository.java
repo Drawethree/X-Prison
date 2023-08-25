@@ -5,13 +5,13 @@ import org.bukkit.entity.Player;
 
 public interface AutominerRepository {
 
-    int getPlayerAutoMinerTime(OfflinePlayer player);
+	int getPlayerAutoMinerTime(OfflinePlayer player);
 
-    void removeExpiredAutoMiners();
+	void removeExpiredAutoMiners();
 
-    void saveAutoMiner(Player p, int timeLeft);
+	void saveAutoMiner(Player p, int timeLeft);
 
-    void createTables();
+	void createTables();
 
-    void clearTableData();
+	void clearTableData();
 }
