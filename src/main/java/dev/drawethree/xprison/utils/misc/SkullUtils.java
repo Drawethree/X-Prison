@@ -37,7 +37,13 @@ public class SkullUtils {
 
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
 
-		GameProfile profile = new GameProfile(UUID.randomUUID(), "");
+		GameProfile profile;
+		try {
+			profile = new GameProfile(UUID.randomUUID(), null);
+		}
+		catch (Throwable t) {
+			profile = new GameProfile(UUID.randomUUID(), "X-Prison");
+		}
 
 		profile.getProperties().put("textures", new Property("textures", value));
 		Field profileField;
