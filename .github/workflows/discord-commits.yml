@@ -1,0 +1,19 @@
+name: Discord
+
+on:
+  - push
+
+jobs:
+  disord_test_message:
+    runs-on: ubuntu-latest
+    name: discord commits
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Send commit to Discord
+        uses: Sniddl/discord-commits@v1.6
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          template: "avatar-with-link"
+          message: "Nuevo commit en {{ github.context.payload.repository.name }}"
