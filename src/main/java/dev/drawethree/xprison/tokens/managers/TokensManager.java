@@ -7,6 +7,8 @@ import dev.drawethree.xprison.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.xprison.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.tokens.api.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.tokens.model.BlockReward;
+import dev.drawethree.xprison.utils.compat.CompMaterial;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
@@ -15,6 +17,7 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -24,6 +27,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -147,7 +151,8 @@ public class TokensManager {
 			if (executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), plugin.getTokensConfig().getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 			} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+				//PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+				p.getPlayer().sendActionBar(Component.text(this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount))));
 			} else if (cause == ReceiveCause.LUCKY_BLOCK && !this.hasOffTokenMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
 			}
@@ -290,13 +295,20 @@ public class TokensManager {
 		Events.callSync(event);
 	}
 
-	private ItemStack createTokenItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(
-						this.plugin.getTokensConfig().getTokenItem().clone())
+	private @NotNull ItemStack createTokenItem(long amount, int value) {
+		ItemStack item = MinecraftVersion.olderThan(MinecraftVersion.V.v1_13) ?
+				ItemStackBuilder.of(this.plugin.getTokensConfig().getTokenItem().clone())
+						.amount(value)
+						.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
+						.lore(this.plugin.getTokensConfig().getTokenItemLore())
+						.enchant(Enchantment.PROTECTION)
+						.flag(ItemFlag.HIDE_ENCHANTS)
+						.build() :
+				ItemStackBuilder.of(this.plugin.getTokensConfig().getTokenItem().clone())
 				.amount(value)
 				.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
 				.lore(this.plugin.getTokensConfig().getTokenItemLore())
-				.enchant(Enchantment.PROTECTION_ENVIRONMENTAL)
+				.enchant(Enchantment.getByName("PROTECTION_ENVIRONMENTAL"))
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
 		final PrisonItem prisonItem = new PrisonItem(item);

@@ -6,6 +6,7 @@ import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.gems.api.events.PlayerGemsLostEvent;
 import dev.drawethree.xprison.gems.api.events.PlayerGemsReceiveEvent;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
@@ -315,7 +316,8 @@ public class GemsManager {
 	}
 
 	private ItemStack createGemsItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+		ItemStack item = MinecraftVersion.olderThan(MinecraftVersion.V.v1_13) ? ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION, 1).flag(ItemFlag.HIDE_ENCHANTS).build() :
+				ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.getByName("PROTECTION_ENVIRONMENTAL")).flag(ItemFlag.HIDE_ENCHANTS).build();
 		final PrisonItem prisonItem = new PrisonItem(item);
 		prisonItem.setGems(amount);
 		prisonItem.load();

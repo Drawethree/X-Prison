@@ -13,6 +13,7 @@ import dev.drawethree.xprison.mines.model.mine.loader.MineFileLoader;
 import dev.drawethree.xprison.mines.model.mine.loader.MineLoader;
 import dev.drawethree.xprison.mines.model.mine.saver.MineFileSaver;
 import dev.drawethree.xprison.mines.model.mine.saver.MineSaver;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.location.LocationUtils;
 import dev.drawethree.xprison.utils.misc.TimeUtil;
@@ -41,7 +42,9 @@ import java.util.stream.Collectors;
 
 public class MineManager {
 
-	public static final ItemStack SELECTION_TOOL = ItemStackBuilder.of(Material.STICK).enchant(Enchantment.DURABILITY).name("&eMine Selection Tool").lore("&aRight-Click &fto set &aPosition 1 &7(MIN)", "&aLeft-Click &fto set &aPosition 2 &7(MAX)").build();
+	public static final ItemStack SELECTION_TOOL =
+			MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW) ? ItemStackBuilder.of(Material.STICK).enchant(Enchantment.UNBREAKING).name("&eMine Selection Tool").lore("&aRight-Click &fto set &aPosition 1 &7(MIN)", "&aLeft-Click &fto set &aPosition 2 &7(MAX)").build() :
+			ItemStackBuilder.of(Material.STICK).enchant(Enchantment.getByName("DURABILITY")).name("&eMine Selection Tool").lore("&aRight-Click &fto set &aPosition 1 &7(MIN)", "&aLeft-Click &fto set &aPosition 2 &7(MAX)").build();
 
 	private final MineLoader mineLoader;
 	private final MineSaver mineSaver;

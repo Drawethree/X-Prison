@@ -2,6 +2,7 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,7 +17,11 @@ public final class EfficiencyEnchant extends XPrisonEnchantment {
 	@Override
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		ItemMeta meta = pickAxe.getItemMeta();
-		meta.addEnchant(Enchantment.DIG_SPEED, level, true);
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+			meta.removeEnchant(Enchantment.EFFICIENCY);
+		} else {
+			meta.removeEnchant(Enchantment.getByName("DIG_SPEED"));
+		}
 		pickAxe.setItemMeta(meta);
 	}
 

@@ -2,6 +2,7 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,17 +21,25 @@ public final class HasteEnchant extends XPrisonEnchantment {
 			this.onUnequip(p, pickAxe, level);
 			return;
 		}
-		p.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, level - 1, true, true), true);
+		PotionEffect effect = new PotionEffect(PotionEffectType.HASTE, Integer.MAX_VALUE, level - 1, true, true);
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+			effect.apply(p);
+		} else {
+			p.addPotionEffect(new PotionEffect(PotionEffectType.getById(3), Integer.MAX_VALUE, level - 1, true, true), true);
+		}
 	}
 
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
-		p.removePotionEffect(PotionEffectType.FAST_DIGGING);
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+			p.removePotionEffect(PotionEffectType.HASTE);
+		} else {
+			p.removePotionEffect(PotionEffectType.getById(3));
+		}
 	}
 
 	@Override
 	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-
 	}
 
 	@Override
