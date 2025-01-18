@@ -253,6 +253,7 @@ public class EnchantsManager {
 	public ItemStack setEnchantLevel(Player player, ItemStack item, XPrisonEnchantment enchantment, int level) {
 
 		if (enchantment == null || item == null) {
+			this.plugin.getCore().debug("EnchantsManager::setEnchantLevel >> Enchantment or item is null.", this.plugin);
 			return item;
 		}
 
@@ -534,8 +535,9 @@ public class EnchantsManager {
 				XPrisonEnchantment enchantment = getEnchantsRepository().getEnchantByName(data[0]);
 				int level = Integer.parseInt(data[1]);
 				this.setEnchantLevel(player, item, enchantment, level);
+				enchantment.onEquip(player, item, level);
 			} catch (Exception e) {
-
+				this.plugin.getCore().debug("EnchantsManager::createFirstJoinPickaxe >> Error while parsing first join pickaxe enchant: " + s, this.plugin);
 			}
 		}
 
