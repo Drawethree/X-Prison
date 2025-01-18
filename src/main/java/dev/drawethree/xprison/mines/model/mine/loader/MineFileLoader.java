@@ -36,6 +36,7 @@ public class MineFileLoader implements MineLoader<File> {
 			BlockPalette palette = obj.get("blocks").isJsonNull() ? new BlockPalette() : BlockPalette.deserialize(obj.get("blocks"));
 
 			ResetType resetType = obj.get("reset-type").isJsonNull() ? ResetType.INSTANT : ResetType.of(obj.get("reset-type").getAsString());
+			long resetDelayPerCape = obj.get("reset-delay-per-cape").getAsLong();
 			double resetPercentage = obj.get("reset-percentage").getAsDouble();
 			int resetTime = obj.has("reset-time") ? obj.get("reset-time").getAsInt() : 10;
 			boolean broadcastReset = obj.get("broadcast-reset").isJsonNull() || obj.get("broadcast-reset").getAsBoolean();
@@ -56,7 +57,7 @@ public class MineFileLoader implements MineLoader<File> {
 				}
 			}
 
-			return new Mine(this.manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
+			return new Mine(this.manager, name, region, teleportLocation, palette, resetType, resetDelayPerCape, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
 		} catch (Exception e) {
 			this.manager.getPlugin().getCore().getLogger().warning("Unable to load mine " + file.getName() + "!");
 			e.printStackTrace();

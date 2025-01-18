@@ -10,7 +10,7 @@ import java.util.HashMap;
 public class FileManager {
 
 	private final JavaPlugin plugin;
-	private HashMap<String, Config> configs = new HashMap<String, Config>();
+	private final HashMap<String, Config> configs = new HashMap<String, Config>();
 
 	public FileManager(JavaPlugin plugin) {
 		this.plugin = plugin;
@@ -68,7 +68,7 @@ public class FileManager {
 			if ((this.config == null) || (this.file == null))
 				return this;
 			try {
-				if (config.getConfigurationSection("").getKeys(true).size() != 0)
+				if (!config.getConfigurationSection("").getKeys(true).isEmpty())
 					config.save(this.file);
 			} catch (IOException ex) {
 				ex.printStackTrace();

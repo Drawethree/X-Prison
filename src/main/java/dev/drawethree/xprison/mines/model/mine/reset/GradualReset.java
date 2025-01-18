@@ -12,7 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
+import java.util.*;
 
 public class GradualReset extends ResetType {
 
@@ -35,6 +35,52 @@ public class GradualReset extends ResetType {
 
 
 	private void schedule(final Mine mine, BlockPalette blockPalette, Iterator<Block> blocksIterator) {
+		Map<Integer, List<Block>> blocksByLayer = new HashMap<>();
+		while (blocksIterator.hasNext()) {
+			Block block = blocksIterator.next();
+			int y = block.getY();
+			blocksByLayer.computeIfAbsent(y, k -> new ArrayList<>()).add(block);
+		}
+
+		Iterator<Map.Entry<Integer, List<Block>>> layersIterator = blocksByLayer.entrySet().iterator();
+
+		Schedulers.sync().runLater(new Runnable() {
+			@Override
+			public void run() {
+				if (layersIterator.hasNext()) {
+					Map.Entry<Integer, List<Block>> layer = layersIterator.next();
+					List<Block> layerBlocks = layer.getValue();
+
+					RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
+					for (Block b : layerBlocks) {
+						CompMaterial pick = selector.pick();
+						b.setType(pick.toMaterial());
+						if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
+							try {
+								Material material = b.getType();
+								BlockData blockData = material.createBlockData();
+
+								if (blockData instanceof org.bukkit.block.data.Directional) {
+									org.bukkit.block.data.Directional directional = (org.bukkit.block.data.Directional) blockData;
+									directional.setFacing(org.bukkit.block.BlockFace.NORTH);
+								}
+
+								b.setBlockData(blockData);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}
+
+					Schedulers.sync().runLater(this, mine.getResetDelay());
+				} else {
+					mine.setResetting(false);
+					mine.updateCurrentBlocks();
+					mine.updateHolograms();
+				}
+			}
+		}, mine.getResetDelay());
+		/*
 		Schedulers.sync().runLater(() -> {
 			int changes = 0;
 			RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
@@ -68,5 +114,7 @@ public class GradualReset extends ResetType {
 				mine.updateHolograms();
 			}
 		}, 1L);
+
+		 */
 	}
 }

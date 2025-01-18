@@ -66,6 +66,10 @@ public class Mine implements GsonSerializable {
 
 	@Getter
 	@Setter
+	private long resetDelay;
+
+	@Getter
+	@Setter
 	private boolean resetting;
 
 	@Getter
@@ -102,6 +106,7 @@ public class Mine implements GsonSerializable {
 		this.blockPalette = new BlockPalette();
 		this.blockPalette.addToPalette(CompMaterial.STONE, 100.0);
 		this.resetType = ResetType.INSTANT;
+		this.resetDelay = 40;
 		this.resetPercentage = 50.0;
 		this.resetTime = 10;
 		this.broadcastReset = true;
@@ -111,13 +116,14 @@ public class Mine implements GsonSerializable {
 		this.startTicking();
 	}
 
-	public Mine(MineManager manager, String name, Region region, Point teleportLocation, BlockPalette palette, ResetType resetType, double resetPercentage, boolean broadcastReset, Hologram blocksLeftHologram, Hologram blocksMinedHologram, Hologram timedResetHologram, Map<PotionEffectType, Integer> mineEffect, int resetTime) {
+	public Mine(MineManager manager, String name, Region region, Point teleportLocation, BlockPalette palette, ResetType resetType, long resetDelay, double resetPercentage, boolean broadcastReset, Hologram blocksLeftHologram, Hologram blocksMinedHologram, Hologram timedResetHologram, Map<PotionEffectType, Integer> mineEffect, int resetTime) {
 		this.manager = manager;
 		this.name = name;
 		this.mineRegion = region;
 		this.teleportLocation = teleportLocation;
 		this.blockPalette = palette;
 		this.resetType = resetType;
+		this.resetDelay = resetDelay;
 		this.resetPercentage = resetPercentage;
 		this.broadcastReset = broadcastReset;
 		this.totalBlocks = this.calculateTotalBlocks();
@@ -277,6 +283,7 @@ public class Mine implements GsonSerializable {
 		builder.addIfAbsent("region", this.mineRegion);
 		builder.addIfAbsent("blocks", this.blockPalette);
 		builder.addIfAbsent("reset-type", this.resetType.getName());
+		builder.addIfAbsent("reset-delay-per-cape", this.resetDelay);
 		builder.addIfAbsent("reset-percentage", this.resetPercentage);
 		builder.addIfAbsent("reset-time", this.resetTime);
 		builder.addIfAbsent("broadcast-reset", this.broadcastReset);
@@ -361,6 +368,7 @@ public class Mine implements GsonSerializable {
 		private BlockPalette blockPalette;
 		private double resetPercentage;
 		private ResetType resetType;
+		private final long resetDelay;
 		private boolean broadcastReset;
 		private Hologram blocksMinedHologram;
 		private Hologram blocksLeftHologram;
@@ -375,6 +383,7 @@ public class Mine implements GsonSerializable {
 			this.blockPalette = new BlockPalette();
 			this.resetPercentage = 50;
 			this.resetType = ResetType.GRADUAL;
+			this.resetDelay = 40;
 			this.broadcastReset = true;
 			this.blocksMinedHologram = null;
 			this.blocksLeftHologram = null;
@@ -444,7 +453,7 @@ public class Mine implements GsonSerializable {
 		}
 
 		public Mine build() {
-			return new Mine(XPrisonMines.getInstance().getManager(), this.name, this.mineRegion, this.teleportLocation, this.blockPalette, this.resetType, this.resetPercentage, this.broadcastReset, this.blocksLeftHologram, this.blocksMinedHologram, this.timedResetHologram, this.mineEffects, this.timedReset);
+			return new Mine(XPrisonMines.getInstance().getManager(), this.name, this.mineRegion, this.teleportLocation, this.blockPalette, this.resetType, this.resetDelay, this.resetPercentage, this.broadcastReset, this.blocksLeftHologram, this.blocksMinedHologram, this.timedResetHologram, this.mineEffects, this.timedReset);
 		}
 
 	}
