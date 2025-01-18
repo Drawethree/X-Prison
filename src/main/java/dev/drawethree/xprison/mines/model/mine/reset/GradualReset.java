@@ -7,7 +7,9 @@ import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.random.RandomSelector;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
@@ -42,8 +44,17 @@ public class GradualReset extends ResetType {
 				b.setType(pick.toMaterial());
 				if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 					try {
-						Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
-					} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+						//Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
+						Material material = b.getType();
+						BlockData blockData = material.createBlockData();
+
+						if (blockData instanceof org.bukkit.block.data.Directional) {
+							org.bukkit.block.data.Directional directional = (org.bukkit.block.data.Directional) blockData;
+							directional.setFacing(org.bukkit.block.BlockFace.NORTH);
+						}
+
+						b.setBlockData(blockData);
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
