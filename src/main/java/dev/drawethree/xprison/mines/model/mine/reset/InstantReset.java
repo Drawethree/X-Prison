@@ -7,10 +7,9 @@ import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import me.lucko.helper.random.RandomSelector;
 import me.lucko.helper.serialize.Position;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
-
-import java.lang.reflect.InvocationTargetException;
-
+import org.bukkit.block.data.BlockData;
 
 public class InstantReset extends ResetType {
 
@@ -47,8 +46,17 @@ public class InstantReset extends ResetType {
 					b.setType(pick.toMaterial());
 					if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 						try {
-							Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
-						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+							//ANTES: Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
+                            Material material = b.getType();
+							BlockData blockData = material.createBlockData();
+
+							if (blockData instanceof org.bukkit.block.data.Directional) {
+								org.bukkit.block.data.Directional directional = (org.bukkit.block.data.Directional) blockData;
+								directional.setFacing(org.bukkit.block.BlockFace.NORTH);
+							}
+
+							b.setBlockData(blockData);
+						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
