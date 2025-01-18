@@ -18,9 +18,9 @@ public final class EfficiencyEnchant extends XPrisonEnchantment {
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		ItemMeta meta = pickAxe.getItemMeta();
 		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
-			meta.removeEnchant(Enchantment.EFFICIENCY);
+			meta.addEnchant(Enchantment.EFFICIENCY, level, true);
 		} else {
-			meta.removeEnchant(Enchantment.getByName("DIG_SPEED"));
+			meta.addEnchant(Enchantment.getByName("DIG_SPEED"), level, true);
 		}
 		pickAxe.setItemMeta(meta);
 	}

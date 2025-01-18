@@ -31,9 +31,9 @@ public final class FortuneEnchant extends XPrisonEnchantment {
     public void onEquip(Player p, @NotNull ItemStack pickAxe, int level) {
         ItemMeta meta = pickAxe.getItemMeta();
         if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
-            meta.removeEnchant(Enchantment.FORTUNE);
+            meta.addEnchant(Enchantment.FORTUNE, level, true);
         } else {
-            meta.removeEnchant(Enchantment.getByName("LOOT_BONUS_BLOCKS"));
+            meta.addEnchant(Enchantment.getByName("LOOT_BONUS_BLOCKS"), level, true);
         }
         pickAxe.setItemMeta(meta);
     }
