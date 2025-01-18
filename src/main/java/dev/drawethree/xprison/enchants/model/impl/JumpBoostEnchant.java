@@ -2,6 +2,8 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
@@ -19,12 +21,22 @@ public final class JumpBoostEnchant extends XPrisonEnchantment {
 			this.onUnequip(p, pickAxe, level);
 			return;
 		}
-		p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, level - 1, true, true), true);
+		PotionEffect effect = new PotionEffect(PotionEffectType.JUMP_BOOST, Integer.MAX_VALUE, level - 1, true, true);
+
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+			effect.apply(p);
+		} else {
+			p.addPotionEffect(new PotionEffect(PotionEffectType.getById(8), Integer.MAX_VALUE, level - 1, true, true), true);
+		}
 	}
 
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
-		p.removePotionEffect(PotionEffectType.JUMP);
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+			p.removePotionEffect(PotionEffectType.JUMP_BOOST);
+		} else {
+			p.removePotionEffect(PotionEffectType.getById(8));
+		}
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -17,7 +18,11 @@ public final class UnbreakingEnchant extends XPrisonEnchantment {
 	@Override
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		ItemMeta meta = pickAxe.getItemMeta();
-		meta.addEnchant(Enchantment.DURABILITY, level, true);
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+			meta.addEnchant(Enchantment.UNBREAKING, level, true);
+		} else {
+			meta.addEnchant(Enchantment.getByName("DURABILITY"), level, true);
+		}
 		pickAxe.setItemMeta(meta);
 	}
 

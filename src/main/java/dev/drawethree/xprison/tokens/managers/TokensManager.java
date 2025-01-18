@@ -7,6 +7,8 @@ import dev.drawethree.xprison.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.xprison.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.tokens.api.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.tokens.model.BlockReward;
+import dev.drawethree.xprison.utils.compat.CompMaterial;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
@@ -24,6 +26,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -290,13 +293,20 @@ public class TokensManager {
 		Events.callSync(event);
 	}
 
-	private ItemStack createTokenItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(
-						this.plugin.getTokensConfig().getTokenItem().clone())
+	private @NotNull ItemStack createTokenItem(long amount, int value) {
+		ItemStack item = MinecraftVersion.olderThan(MinecraftVersion.V.v1_13) ?
+				ItemStackBuilder.of(this.plugin.getTokensConfig().getTokenItem().clone())
+						.amount(value)
+						.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
+						.lore(this.plugin.getTokensConfig().getTokenItemLore())
+						.enchant(Enchantment.PROTECTION)
+						.flag(ItemFlag.HIDE_ENCHANTS)
+						.build() :
+				ItemStackBuilder.of(this.plugin.getTokensConfig().getTokenItem().clone())
 				.amount(value)
 				.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
 				.lore(this.plugin.getTokensConfig().getTokenItemLore())
-				.enchant(Enchantment.PROTECTION_ENVIRONMENTAL)
+				.enchant(Enchantment.getByName("PROTECTION_ENVIRONMENTAL"))
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
 		final PrisonItem prisonItem = new PrisonItem(item);

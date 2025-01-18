@@ -3,12 +3,16 @@ package dev.drawethree.xprison.enchants.model.impl;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,9 +28,13 @@ public final class FortuneEnchant extends XPrisonEnchantment {
     }
 
     @Override
-    public void onEquip(Player p, ItemStack pickAxe, int level) {
+    public void onEquip(Player p, @NotNull ItemStack pickAxe, int level) {
         ItemMeta meta = pickAxe.getItemMeta();
-        meta.removeEnchant(Enchantment.LOOT_BONUS_BLOCKS);
+        if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+            meta.removeEnchant(Enchantment.FORTUNE);
+        } else {
+            meta.removeEnchant(Enchantment.getByName("LOOT_BONUS_BLOCKS"));
+        }
         pickAxe.setItemMeta(meta);
     }
 
