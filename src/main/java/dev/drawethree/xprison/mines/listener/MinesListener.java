@@ -36,7 +36,7 @@ public class MinesListener {
 					}
 
 					if (mine.isResetting()) {
-						e.setCancelled(true);
+						//e.setCancelled(true);
 						return;
 					}
 
