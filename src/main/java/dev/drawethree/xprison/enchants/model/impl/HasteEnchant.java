@@ -22,9 +22,8 @@ public final class HasteEnchant extends XPrisonEnchantment {
 			return;
 		}
 		PotionEffect effect = new PotionEffect(PotionEffectType.HASTE, Integer.MAX_VALUE, level - 1, true, true);
-		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 			effect.apply(p);
-
 		} else {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.getById(3), Integer.MAX_VALUE, level - 1, true, true), true);
 		}
@@ -32,7 +31,7 @@ public final class HasteEnchant extends XPrisonEnchantment {
 
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
-		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 			p.removePotionEffect(PotionEffectType.HASTE);
 		} else {
 			p.removePotionEffect(PotionEffectType.getById(3));

@@ -19,7 +19,8 @@ public final class SpeedEnchant extends XPrisonEnchantment {
 			this.onUnequip(p, pickAxe, level);
 			return;
 		}
-		p.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, level - 1, true, true), true);
+		PotionEffect effect = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, level - 1, true, true);
+		effect.apply(p);
 	}
 
 	@Override

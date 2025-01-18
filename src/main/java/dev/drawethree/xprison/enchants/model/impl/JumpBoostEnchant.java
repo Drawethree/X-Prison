@@ -23,7 +23,7 @@ public final class JumpBoostEnchant extends XPrisonEnchantment {
 		}
 		PotionEffect effect = new PotionEffect(PotionEffectType.JUMP_BOOST, Integer.MAX_VALUE, level - 1, true, true);
 
-		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 			effect.apply(p);
 		} else {
 			p.addPotionEffect(new PotionEffect(PotionEffectType.getById(8), Integer.MAX_VALUE, level - 1, true, true), true);
@@ -32,7 +32,7 @@ public final class JumpBoostEnchant extends XPrisonEnchantment {
 
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
-		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_3_AND_BELOW)) {
+		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 			p.removePotionEffect(PotionEffectType.JUMP_BOOST);
 		} else {
 			p.removePotionEffect(PotionEffectType.getById(8));

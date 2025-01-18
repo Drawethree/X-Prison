@@ -19,7 +19,9 @@ public final class NightVisionEnchant extends XPrisonEnchantment {
 			this.onUnequip(p, pickAxe, level);
 			return;
 		}
-		p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, level - 1, true, true), true);
+		PotionEffect effect = new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, level - 1, true, true);
+		effect.apply(p);
+		//p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, level - 1, true, true), true);
 	}
 
 	@Override

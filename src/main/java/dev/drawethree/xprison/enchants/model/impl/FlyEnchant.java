@@ -17,7 +17,6 @@ public final class FlyEnchant extends XPrisonEnchantment {
 	@Override
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		p.setAllowFlight(true);
-
 	}
 
 	@Override
