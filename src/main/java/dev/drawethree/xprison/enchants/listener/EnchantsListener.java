@@ -65,11 +65,13 @@ public class EnchantsListener {
 
 					// Old item
 					if (previousItem != null && this.plugin.getCore().isPickaxeSupported(previousItem.getType())) {
+						this.plugin.getCore().debug("Unequipped pickaxe: " + previousItem.getType(), this.plugin);
 						this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), previousItem);
 					}
 
 					// New item
 					if (newItem != null && this.plugin.getCore().isPickaxeSupported(newItem.getType())) {
+						this.plugin.getCore().debug("Equipped pickaxe: " + newItem.getType(), this.plugin);
 						this.plugin.getEnchantsManager().handlePickaxeEquip(e.getPlayer(), newItem);
 					}
 
@@ -157,7 +159,7 @@ public class EnchantsListener {
 
 					this.plugin.getRespawnManager().addRespawnItems(e.getEntity(), pickaxes);
 
-					if (pickaxes.size() > 0) {
+					if (!pickaxes.isEmpty()) {
 						this.plugin.getCore().debug("Removed " + e.getEntity().getName() + "'s pickaxes from drops (" + pickaxes.size() + "). Will be given back on respawn.", this.plugin);
 					} else {
 						this.plugin.getCore().debug("No Pickaxes found for player " + e.getEntity().getName() + " (PlayerDeathEvent)", this.plugin);

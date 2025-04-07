@@ -9,6 +9,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 public final class JumpBoostEnchant extends XPrisonEnchantment {
 	public JumpBoostEnchant(XPrisonEnchants instance) {
@@ -23,20 +24,12 @@ public final class JumpBoostEnchant extends XPrisonEnchantment {
 		}
 		PotionEffect effect = new PotionEffect(PotionEffectType.JUMP_BOOST, Integer.MAX_VALUE, level - 1, true, true);
 
-		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
-			effect.apply(p);
-		} else {
-			p.addPotionEffect(new PotionEffect(PotionEffectType.getById(8), Integer.MAX_VALUE, level - 1, true, true), true);
-		}
+		effect.apply(p);
 	}
 
 	@Override
-	public void onUnequip(Player p, ItemStack pickAxe, int level) {
-		if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
-			p.removePotionEffect(PotionEffectType.JUMP_BOOST);
-		} else {
-			p.removePotionEffect(PotionEffectType.getById(8));
-		}
+	public void onUnequip(@NotNull Player p, ItemStack pickAxe, int level) {
+		p.removePotionEffect(PotionEffectType.JUMP_BOOST);
 	}
 
 	@Override

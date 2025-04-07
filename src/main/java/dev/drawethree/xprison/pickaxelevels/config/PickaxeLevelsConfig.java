@@ -6,6 +6,7 @@ import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -91,7 +92,7 @@ public class PickaxeLevelsConfig {
 		return this.config.get();
 	}
 
-	public String getMessage(String key) {
+	public String getMessage(@NotNull String key) {
 		return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
 	}
 

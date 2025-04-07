@@ -25,12 +25,15 @@ import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.codemc.worldguardwrapper.flag.WrappedState;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -70,7 +73,8 @@ public class EnchantsManager {
 		return this.applyLoreToPickaxe(player, item);
 	}
 
-	private ItemStack applyLoreToPickaxe(Player player, ItemStack item) {
+	@Contract("_, _ -> param2")
+	private @NotNull ItemStack applyLoreToPickaxe(Player player, @NotNull ItemStack item) {
 
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = new ArrayList<>();
@@ -230,7 +234,7 @@ public class EnchantsManager {
         }
     }
 
-	public void handleBlockBreak(BlockBreakEvent e, ItemStack pickAxe) {
+	public void handleBlockBreak(@NotNull BlockBreakEvent e, ItemStack pickAxe) {
 
 		this.addBlocksBrokenToItem(e.getPlayer(), 1);
 
@@ -243,7 +247,10 @@ public class EnchantsManager {
 	}
 
 	public void handlePickaxeEquip(Player p, ItemStack newItem) {
-        forEachEffectiveEnchant(p, newItem, (enchant, level) -> enchant.onEquip(p, newItem, level));
+        forEachEffectiveEnchant(p, newItem, (enchant, level) -> {
+			enchant.onEquip(p, newItem, level);
+			plugin.getCore().debug("EnchantsManager::handlePickaxeEquip >> " + enchant.getName() + " " + level + " for " + p.getName(), this.plugin);
+		});
 	}
 
 	public void handlePickaxeUnequip(Player p, ItemStack newItem) {
@@ -402,7 +409,7 @@ public class EnchantsManager {
 		});
 	}
 
-	public void buyMaxEnchant(XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
+	public void buyMaxEnchant(@NotNull XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
 		if (currentLevel >= enchantment.getMaxLevel()) {
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_max_level"));
@@ -515,7 +522,7 @@ public class EnchantsManager {
 		}
 	}
 
-	public ItemStack createFirstJoinPickaxe(Player player) {
+	public ItemStack createFirstJoinPickaxe(@NotNull Player player) {
 
 		String pickaxeName = this.plugin.getEnchantsConfig().getFirstJoinPickaxeName();
 		pickaxeName = pickaxeName.replace("%player%", player.getName());
@@ -526,6 +533,15 @@ public class EnchantsManager {
 
 		CompMaterial material = this.plugin.getEnchantsConfig().getFirstJoinPickaxeMaterial();
 		ItemStack item = ItemStackBuilder.of(material.toItem()).name(pickaxeName).build();
+		ItemMeta meta = item.getItemMeta();
+
+		if (meta != null) {
+			meta.setUnbreakable(true);
+			meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+			meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+			meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			item.setItemMeta(meta);
+		}
 
 		List<String> firstJoinPickaxeEnchants = this.plugin.getEnchantsConfig().getFirstJoinPickaxeEnchants();
 
@@ -556,7 +572,7 @@ public class EnchantsManager {
 
 	}
 
-	public void giveFirstJoinPickaxe(Player target) {
+	public void giveFirstJoinPickaxe(@NotNull Player target) {
 		target.getInventory().addItem(this.createFirstJoinPickaxe(target));
 	}
 }

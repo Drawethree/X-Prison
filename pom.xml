@@ -13,15 +13,14 @@
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>XPrison-${project.version}</finalName>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>16</source>
+                    <target>16</target>
                     <release>11</release>
                 </configuration>
             </plugin>
@@ -138,6 +137,13 @@
             <version>LATEST</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/libs/plugins/MineResetLite.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>internal</groupId>
+            <artifactId>rm</artifactId>
+            <version>LATEST</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/plugins/RealMines.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>be.maximvdw</groupId>

@@ -13,6 +13,8 @@ import dev.drawethree.xprison.utils.misc.MathUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
+import joserodpt.realmines.api.RealMinesAPI;
+import joserodpt.realmines.api.mine.task.MineResetTask;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Bukkit;
@@ -120,6 +122,11 @@ public final class NukeEnchant extends XPrisonEnchantment {
             plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
         }
 
+        var rmAPI = RealMinesAPI.getInstance();
+        if (rmAPI != null) {
+            rmAPI.getMineManager().findBlockUpdate(p, event, blocksAffected.get(0), false);
+            rmAPI.getMineResetTasksManager().getTasks().forEach(MineResetTask::startTimer);
+        }
         long timeEnd = Time.nowMillis();
         this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
     }

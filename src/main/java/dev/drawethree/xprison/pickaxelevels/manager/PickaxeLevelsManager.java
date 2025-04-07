@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,7 +83,7 @@ public class PickaxeLevelsManager {
 	}
 
 
-	public ItemStack findPickaxe(Player p) {
+	public ItemStack findPickaxe(@NotNull Player p) {
 		for (ItemStack i : p.getInventory()) {
 			if (i == null) {
 				continue;
@@ -160,7 +161,8 @@ public class PickaxeLevelsManager {
 
 		Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(pickaxe);
 
-		if (!currentLevelOptional.isPresent()) {
+		if (currentLevelOptional.isEmpty()) {
+			this.plugin.getCore().debug("Pickaxe level for " + player.getName() + " is empty, skipping level up", this.plugin);
 			return;
 		}
 

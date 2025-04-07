@@ -4,6 +4,7 @@ import dev.drawethree.xprison.database.SQLDatabase;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
 import dev.drawethree.xprison.tokens.repo.TokensRepository;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +28,7 @@ public class TokensRepositoryImpl implements TokensRepository {
     }
 
     @Override
-    public long getPlayerTokens(OfflinePlayer p) {
+    public long getPlayerTokens(@NotNull OfflinePlayer p) {
         try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME_TOKENS + " WHERE " + TOKENS_UUID_COLNAME + "=?")) {
             statement.setString(1, p.getUniqueId().toString());
             try (ResultSet set = statement.executeQuery()) {
@@ -42,7 +43,7 @@ public class TokensRepositoryImpl implements TokensRepository {
     }
 
     @Override
-    public void updateTokens(OfflinePlayer p, long amount) {
+    public void updateTokens(@NotNull OfflinePlayer p, long amount) {
         this.database.executeSql("UPDATE " + TABLE_NAME_TOKENS + " SET " + TOKENS_TOKENS_COLNAME + "=? WHERE " + TOKENS_UUID_COLNAME + "=?", amount, p.getUniqueId().toString());
     }
 
@@ -60,7 +61,7 @@ public class TokensRepositoryImpl implements TokensRepository {
     }
 
     @Override
-    public void addIntoTokens(OfflinePlayer player, long startingTokens) {
+    public void addIntoTokens(@NotNull OfflinePlayer player, long startingTokens) {
         String sql = database.getDatabaseType() == SQLDatabaseType.SQLITE ? "INSERT OR IGNORE INTO " + TABLE_NAME_TOKENS + " VALUES(?,?)" : "INSERT IGNORE INTO " + TABLE_NAME_TOKENS + " VALUES(?,?)";
         this.database.executeSql(sql, player.getUniqueId().toString(), startingTokens);
     }

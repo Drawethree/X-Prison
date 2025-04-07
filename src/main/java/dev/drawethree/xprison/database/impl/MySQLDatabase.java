@@ -7,6 +7,7 @@ import dev.drawethree.xprison.database.PooledSQLDatabase;
 import dev.drawethree.xprison.database.model.ConnectionProperties;
 import dev.drawethree.xprison.database.model.DatabaseCredentials;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
+import org.jetbrains.annotations.NotNull;
 
 public final class MySQLDatabase extends PooledSQLDatabase {
 
@@ -31,13 +32,13 @@ public final class MySQLDatabase extends PooledSQLDatabase {
         this.hikari = new HikariDataSource(hikari);
     }
 
-    private void applyCredentials(HikariConfig hikari, DatabaseCredentials credentials, ConnectionProperties connectionProperties) {
+    private void applyCredentials(@NotNull HikariConfig hikari, @NotNull DatabaseCredentials credentials, @NotNull ConnectionProperties connectionProperties) {
         hikari.setJdbcUrl("jdbc:mysql://" + credentials.getHost() + ":" + credentials.getPort() + "/" + credentials.getDatabaseName() + "?characterEncoding=" + connectionProperties.getCharacterEncoding());
         hikari.setUsername(credentials.getUserName());
         hikari.setPassword(credentials.getPassword());
     }
 
-    private void applyConnectionProperties(HikariConfig hikari, ConnectionProperties connectionProperties) {
+    private void applyConnectionProperties(@NotNull HikariConfig hikari, @NotNull ConnectionProperties connectionProperties) {
         hikari.setConnectionTimeout(connectionProperties.getConnectionTimeout());
         hikari.setIdleTimeout(connectionProperties.getIdleTimeout());
         hikari.setKeepaliveTime(connectionProperties.getKeepAliveTime());
@@ -48,7 +49,7 @@ public final class MySQLDatabase extends PooledSQLDatabase {
         hikari.setConnectionTestQuery(connectionProperties.getTestQuery());
     }
 
-    private void addDefaultDataSourceProperties(HikariConfig hikari) {
+    private void addDefaultDataSourceProperties(@NotNull HikariConfig hikari) {
         hikari.addDataSourceProperty("cachePrepStmts", true);
         hikari.addDataSourceProperty("prepStmtCacheSize", 250);
         hikari.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);

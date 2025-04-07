@@ -6,6 +6,7 @@ import dev.drawethree.xprison.pickaxelevels.api.XPrisonPickaxeLevelsAPI;
 import dev.drawethree.xprison.pickaxelevels.api.XPrisonPickaxeLevelsAPIImpl;
 import dev.drawethree.xprison.pickaxelevels.config.PickaxeLevelsConfig;
 import dev.drawethree.xprison.pickaxelevels.listener.PickaxeLevelsListener;
+import dev.drawethree.xprison.pickaxelevels.listener.PickaxeProtectionListener;
 import dev.drawethree.xprison.pickaxelevels.manager.PickaxeLevelsManager;
 import lombok.Getter;
 
@@ -53,6 +54,7 @@ public final class XPrisonPickaxeLevels implements XPrisonModule {
 
     private void registerListeners() {
         new PickaxeLevelsListener(this).register();
+        new PickaxeProtectionListener(this);
     }
 
     @Override

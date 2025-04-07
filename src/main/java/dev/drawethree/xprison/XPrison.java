@@ -47,6 +47,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.*;
@@ -398,7 +400,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 
 		economy = rsp.getProvider();
-		return economy != null;
+		return true;
 	}
 
 	public boolean isPickaxeSupported(Material m) {
@@ -409,7 +411,8 @@ public final class XPrison extends ExtendedJavaPlugin {
 		return item != null && isPickaxeSupported(item.getType());
 	}
 
-	public Collection<XPrisonModule> getModules() {
+	@Contract(pure = true)
+	public @NotNull Collection<XPrisonModule> getModules() {
 		return this.modules.values();
 	}
 
@@ -444,7 +447,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		try {
 			getWorldGuardWrapper().registerFlag(Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.class, WrappedState.DENY);
 		} catch (IllegalStateException e) {
-			// This happens during plugin reloads. Flag cannot be registered as WG was already loaded,
+			// This happens during plugin reloads. The Flag cannot be registered as WG was already loaded,
 			// so we can safely ignore this exception.
 		}
 	}

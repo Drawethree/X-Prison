@@ -6,6 +6,7 @@ import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.model.impl.*;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.apache.commons.lang.Validate;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class EnchantsRepository {
 		return enchantsById.get(id);
 	}
 
-	public XPrisonEnchantment getEnchantByName(String name) {
+	public XPrisonEnchantment getEnchantByName(@NotNull String name) {
 		return enchantsByName.get(name.toLowerCase());
 	}
 

@@ -16,10 +16,16 @@ public class GiveFirstJoinPickaxeCommand {
 
 	public void register() {
 		Commands.create()
-				.assertOp()
 				.handler(c -> {
 
-					if (c.args().size() == 0) {
+					if (c.sender() instanceof Player) {
+						if (!c.sender().isOp()){
+							PlayerUtils.sendMessage(c.sender(), "&cComando desconocido.");
+							return;
+						}
+					}
+
+					if (c.args().isEmpty()) {
 						PlayerUtils.sendMessage(c.sender(), "&c/givefirstjoinpickaxe <player>");
 						return;
 					}

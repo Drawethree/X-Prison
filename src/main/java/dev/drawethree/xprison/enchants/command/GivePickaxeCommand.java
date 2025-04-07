@@ -43,7 +43,8 @@ public class GivePickaxeCommand {
 						name = StringUtils.join(c.args().subList(2, c.args().size()), " ");
 					}
 
-					Map<XPrisonEnchantment, Integer> enchants = parseEnchantsFromInput(input);
+                    assert input != null;
+                    Map<XPrisonEnchantment, Integer> enchants = parseEnchantsFromInput(input);
 
 					this.plugin.getEnchantsManager().givePickaxe(target, enchants, name, c.sender());
 				}).registerAndBind(this.plugin.getCore(), "givepickaxe");
