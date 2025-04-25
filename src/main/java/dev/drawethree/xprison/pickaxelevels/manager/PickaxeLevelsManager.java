@@ -11,6 +11,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.lucko.helper.Schedulers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,9 @@ public class PickaxeLevelsManager {
 	}
 
 	public Optional<PickaxeLevel> getPickaxeLevel(ItemStack itemStack) {
-		if (itemStack == null || !this.plugin.getCore().isPickaxeSupported(itemStack.getType())) {
+		if (itemStack == null
+				|| !this.plugin.getCore().isPickaxeSupported(itemStack)
+				|| !itemStack.getPersistentDataContainer().has(new NamespacedKey(plugin.getCore(), "prison-pickaxe"))) {
 			return Optional.empty();
 		}
 
@@ -88,7 +91,7 @@ public class PickaxeLevelsManager {
 			if (i == null) {
 				continue;
 			}
-			if (this.plugin.getCore().isPickaxeSupported(i.getType())) {
+			if (this.plugin.getCore().isPickaxeSupported(i)) {
 				return i;
 			}
 		}

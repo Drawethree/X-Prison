@@ -121,13 +121,13 @@ public final class EnchantGUI extends Gui {
 				return;
 			}
 			if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
-				this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 100);
+				this.plugin.getEnchantsManager().buyEnchant(enchantment, gui, currentLevel, 100);
 				gui.redraw();
 			} else if (handler.getClick() == ClickType.LEFT) {
-				this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 1);
+				this.plugin.getEnchantsManager().buyEnchant(enchantment, gui, currentLevel, 1);
 				gui.redraw();
 			} else if (handler.getClick() == ClickType.RIGHT) {
-				this.plugin.getEnchantsManager().buyEnchnant(enchantment, gui, currentLevel, 10);
+				this.plugin.getEnchantsManager().buyEnchant(enchantment, gui, currentLevel, 10);
 				gui.redraw();
 			} else if (handler.getClick() == ClickType.DROP) {
 				this.plugin.getEnchantsManager().buyMaxEnchant(enchantment, gui, currentLevel);

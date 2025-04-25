@@ -6,6 +6,7 @@ import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.inventory.InventoryUtils;
 import me.lucko.helper.Events;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -15,12 +16,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.codemc.worldguardwrapper.flag.IWrappedFlag;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class EnchantsListener {
@@ -51,7 +55,7 @@ public class EnchantsListener {
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(e -> !e.isCancelled() && !ignoredEvents.contains(e))
-				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand()))
 				.handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin.getCore());
 	}
 
@@ -64,13 +68,13 @@ public class EnchantsListener {
 					ItemStack previousItem = e.getPlayer().getInventory().getItem(e.getPreviousSlot());
 
 					// Old item
-					if (previousItem != null && this.plugin.getCore().isPickaxeSupported(previousItem.getType())) {
+					if (this.plugin.getCore().isPickaxeSupported(previousItem)) {
 						this.plugin.getCore().debug("Unequipped pickaxe: " + previousItem.getType(), this.plugin);
 						this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), previousItem);
 					}
 
 					// New item
-					if (newItem != null && this.plugin.getCore().isPickaxeSupported(newItem.getType())) {
+					if (this.plugin.getCore().isPickaxeSupported(newItem)) {
 						this.plugin.getCore().debug("Equipped pickaxe: " + newItem.getType(), this.plugin);
 						this.plugin.getEnchantsManager().handlePickaxeEquip(e.getPlayer(), newItem);
 					}
@@ -80,13 +84,16 @@ public class EnchantsListener {
 
 	private void subscribeToPlayerInteractEvent() {
 		Events.subscribe(PlayerInteractEvent.class)
-				.filter(e -> e.getItem() != null && this.plugin.getCore().isPickaxeSupported(e.getItem().getType()))
+				.filter(e -> e.getItem() != null
+						&& this.plugin.getCore().isPickaxeSupported(e.getItem())
+						&& e.getItem().getPersistentDataContainer().has(new NamespacedKey(plugin.getCore(), "prison-pickaxe")))
 				.filter(e -> (this.plugin.getEnchantsConfig().getOpenEnchantMenuActions().contains(e.getAction())))
 				.handler(e -> {
 
 					e.setCancelled(true);
 
 					ItemStack pickAxe = e.getItem();
+
 					int pickaxeSlot = InventoryUtils.getInventorySlot(e.getPlayer(), pickAxe);
 					this.plugin.getCore().debug("Pickaxe slot is: " + pickaxeSlot, this.plugin);
 

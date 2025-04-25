@@ -33,7 +33,7 @@ public final class PickaxeLevelsListener {
 		Events.subscribe(PlayerItemHeldEvent.class)
 				.handler(e -> {
 					ItemStack item = e.getPlayer().getInventory().getItem(e.getNewSlot());
-					if (item != null && this.plugin.getCore().isPickaxeSupported(item.getType()) && this.plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isEmpty()) {
+					if (item != null && this.plugin.getCore().isPickaxeSupported(item) && this.plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isEmpty()) {
 						e.getPlayer().getInventory().setItem(e.getNewSlot(), this.plugin.getPickaxeLevelsManager().addDefaultPickaxeLevel(item, e.getPlayer()));
 					}
 				}).bindWith(this.plugin.getCore());
@@ -42,7 +42,7 @@ public final class PickaxeLevelsListener {
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(e -> !e.isCancelled())
-				.filter(e ->  this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.filter(e ->  this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand()))
 				.handler(e -> {
 					ItemStack pickaxe = e.getPlayer().getItemInHand();
 					Player player = e.getPlayer();

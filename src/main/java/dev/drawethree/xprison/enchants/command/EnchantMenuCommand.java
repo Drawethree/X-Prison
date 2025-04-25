@@ -39,6 +39,6 @@ public class EnchantMenuCommand {
 	}
 
 	private boolean validatePickaxe(ItemStack pickAxe) {
-		return pickAxe != null && this.plugin.getCore().isPickaxeSupported(pickAxe.getType());
+		return pickAxe != null && this.plugin.getCore().isPickaxeSupported(pickAxe);
 	}
 }

@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -30,11 +31,7 @@ public final class FortuneEnchant extends XPrisonEnchantment {
     @Override
     public void onEquip(Player p, @NotNull ItemStack pickAxe, int level) {
         ItemMeta meta = pickAxe.getItemMeta();
-        if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
-            meta.addEnchant(Enchantment.FORTUNE, level, true);
-        } else {
-            meta.addEnchant(Enchantment.getByName("LOOT_BONUS_BLOCKS"), level, true);
-        }
+        meta.addEnchant(Enchantment.FORTUNE, level, true);
         pickAxe.setItemMeta(meta);
     }
 
@@ -59,6 +56,8 @@ public final class FortuneEnchant extends XPrisonEnchantment {
         blackListedBlocks = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Blacklist").stream().map(CompMaterial::fromString).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
+    @NotNull
+    @Contract(pure = true)
     @Override
     public String getAuthor() {
         return "Drawethree";

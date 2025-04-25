@@ -2,6 +2,7 @@ package dev.drawethree.xprison.utils.text;
 
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import net.md_5.bungee.api.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class TextUtils {
 
 	private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
 
+	@NotNull
 	public static String applyColor(String message) {
 		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_16)) {
 			Matcher matcher = HEX_PATTERN.matcher(message);
@@ -26,7 +28,8 @@ public class TextUtils {
 		return ChatColor.translateAlternateColorCodes('&', message);
 	}
 
-	public static List<String> applyColor(List<String> list) {
+	@NotNull
+	public static List<String> applyColor(@NotNull List<String> list) {
 		List<String> returnVal = new ArrayList<>(list.size());
 		list.forEach(s -> returnVal.add(applyColor(s)));
 		return returnVal;

@@ -6,6 +6,7 @@ import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class ValueCommand {
 
@@ -41,10 +42,10 @@ public class ValueCommand {
 	}
 
 	private boolean validatePickaxe(ItemStack pickAxe) {
-		return pickAxe != null && this.plugin.getCore().isPickaxeSupported(pickAxe.getType());
+		return this.plugin.getCore().isPickaxeSupported(pickAxe);
 	}
 
-	private boolean checkCooldown(Player sender) {
+	private boolean checkCooldown(@NotNull Player sender) {
 		return (sender.isOp() || !getCooldownManager().hasValueCooldown(sender));
 	}
 

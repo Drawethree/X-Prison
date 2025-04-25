@@ -24,18 +24,21 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,8 +68,7 @@ public class EnchantsManager {
 	}
 
 	public ItemStack updatePickaxe(Player player, ItemStack item) {
-
-		if (item == null || !this.plugin.getCore().isPickaxeSupported(item.getType())) {
+		if (!this.plugin.getCore().isPickaxeSupported(item)) {
 			return item;
 		}
 
@@ -154,7 +156,10 @@ public class EnchantsManager {
 									.replace("%Enchant%", enchantment.getNameUncolor())
 									.replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
                         } else {
-							line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
+							line = this.plugin.getEnchantsConfig().getFormat()
+									.replace("%Enchant%", enchantment.getNameUncolor())
+									.replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
+							//line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
 						}
 						s = s.replace(matcher.group(), line);
 					} else {
@@ -274,7 +279,7 @@ public class EnchantsManager {
 		return setEnchantLevel(player, item, enchantment, 0);
 	}
 
-	public void buyEnchnant(XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
+	public void buyEnchant(@NotNull XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel, int addition) {
 
 		if (currentLevel >= enchantment.getMaxLevel()) {
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_max_level"));
@@ -305,9 +310,7 @@ public class EnchantsManager {
 
 		Events.callSync(event);
 
-		if (event.isCancelled()) {
-			return;
-		}
+		if (event.isCancelled()) return;
 
 		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost, LostCause.ENCHANT);
 
@@ -373,12 +376,11 @@ public class EnchantsManager {
 
 		this.lockedPlayers.add(gui.getPlayer().getUniqueId());
 
-
 		Schedulers.async().run(() -> {
-			int current = currentLevel;
-			int levelsToRefund = current;
+			int current = currentLevel; // Los niveles actuales
+			int levelsToRefund = current; // Los niveles a quitar
 
-			long totalRefunded = 0;
+			long totalRefunded = 0; // Los niveles quitados (0 por ahora)
 
 			while (gui.getPlayer().isOnline() && current > 0) {
 				totalRefunded += enchantment.getRefundForLevel(current);
@@ -395,10 +397,17 @@ public class EnchantsManager {
 			this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 
 			Schedulers.sync().run(() -> {
-				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				plugin.getCore().debug("EnchantsManager::disenchantMax >> Refund calculation took " + (Time.nowMillis() - System.currentTimeMillis()) + "ms", plugin);
+				plugin.getCore().debug("Final current" + " " + finalCurrent, plugin);
+
 				this.setEnchantLevel(gui.getPlayer(), gui.getPickAxe(), enchantment, finalCurrent);
-				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+
+				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
 				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), finalCurrent);
+
+				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
+				gui.getPlayer().updateInventory();
+
 				gui.redraw();
 			});
 
@@ -407,6 +416,7 @@ public class EnchantsManager {
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_refunded").replace("%amount%", String.format("%,d", levelsToRefund)).replace("%enchant%", enchantment.getName()));
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_tokens_back").replace("%tokens%", String.format("%,d", totalRefunded)));
 		});
+
 	}
 
 	public void buyMaxEnchant(@NotNull XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
@@ -533,15 +543,6 @@ public class EnchantsManager {
 
 		CompMaterial material = this.plugin.getEnchantsConfig().getFirstJoinPickaxeMaterial();
 		ItemStack item = ItemStackBuilder.of(material.toItem()).name(pickaxeName).build();
-		ItemMeta meta = item.getItemMeta();
-
-		if (meta != null) {
-			meta.setUnbreakable(true);
-			meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-			meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
-			meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-			item.setItemMeta(meta);
-		}
 
 		List<String> firstJoinPickaxeEnchants = this.plugin.getEnchantsConfig().getFirstJoinPickaxeEnchants();
 
@@ -557,7 +558,25 @@ public class EnchantsManager {
 			}
 		}
 
+		this.applyPersistentData(player, item);
+
 		return this.applyLoreToPickaxe(player, item);
+	}
+
+	private void applyPersistentData(Player player, @NotNull ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta == null) return;
+
+		PersistentDataContainer container = meta.getPersistentDataContainer();
+		container.set(new NamespacedKey(plugin.getCore(), "prison-pickaxe"), PersistentDataType.BOOLEAN, true);
+		container.set(new NamespacedKey(plugin.getCore(), "prison-player"), PersistentDataType.STRING, player.getUniqueId().toString());
+
+		item.setItemMeta(meta);
+
+		plugin.getCore().debug("EnchantsManager::applyPersistentData >> Pickaxe persistent data applied", plugin);
+		plugin.getCore().debug("Has prison-player key: " +
+				item.getItemMeta().getPersistentDataContainer().has(new NamespacedKey(plugin.getCore(), "prison-player"))
+				+ " " + item.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(plugin.getCore(), "prison-player"), PersistentDataType.STRING), plugin);
 	}
 
 	public boolean hasEnchants(ItemStack item) {

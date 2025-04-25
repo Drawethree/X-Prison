@@ -1,16 +1,13 @@
 package dev.drawethree.xprison.pickaxelevels.listener;
 
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.utils.player.PlayerUtils;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.Listener;
@@ -18,6 +15,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -38,8 +37,10 @@ public class PickaxeProtectionListener {
             @EventHandler
             public void onDrop(PlayerDropItemEvent e) {
                 ItemStack item = e.getItemDrop().getItemStack();
-                if (isProtectedPickaxe(item, e.getPlayer())) {
-                    e.setCancelled(true);
+                if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
+                    if (isTheirPickaxe(item, e.getPlayer())) {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }, plugin.getCore());
@@ -51,9 +52,10 @@ public class PickaxeProtectionListener {
                 if (!(e.getEntity() instanceof Player)) return;
                 Player player = (Player) e.getEntity();
                 ItemStack item = e.getItem().getItemStack();
-                if (isProtectedPickaxe(item, player)) return; // Ok
                 if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
-                    e.setCancelled(true);
+                    if (!isTheirPickaxe(item, player)) {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }, plugin.getCore());
@@ -69,7 +71,7 @@ public class PickaxeProtectionListener {
                 Player player = (Player) e.getWhoClicked();
 
                 if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
-                    if (!isProtectedPickaxe(item, player)) {
+                    if (!isTheirPickaxe(item, player)) {
                         e.setCancelled(true);
                     }
                 }
@@ -85,7 +87,7 @@ public class PickaxeProtectionListener {
                 Player player = (Player) e.getWhoClicked();
 
                 if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
-                    if (!isProtectedPickaxe(item, player)) {
+                    if (!isTheirPickaxe(item, player)) {
                         e.setCancelled(true);
                     }
                 }
@@ -98,7 +100,9 @@ public class PickaxeProtectionListener {
             public void onHopper(InventoryMoveItemEvent e) {
                 ItemStack item = e.getItem();
                 if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
-                    e.setCancelled(true);
+                    if (plugin.getCore().isPickaxeSupported(item)) {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }, plugin.getCore());
@@ -111,7 +115,7 @@ public class PickaxeProtectionListener {
 
                 ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
                 if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
-                    if (!isProtectedPickaxe(item, e.getPlayer())) {
+                    if (!isTheirPickaxe(item, e.getPlayer())) {
                         e.setCancelled(true);
                     }
                 }
@@ -126,8 +130,10 @@ public class PickaxeProtectionListener {
                     if (item == null || item.getItemMeta() == null) continue;
                     if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
                         Player player = (Player) e.getView().getPlayer();
-                        if (!isProtectedPickaxe(item, player)) {
-                            e.setResult(null);
+                        if (plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
+                            if (!isTheirPickaxe(item, player)) {
+                                e.setResult(null);
+                            }
                         }
                     }
                 }
@@ -135,9 +141,51 @@ public class PickaxeProtectionListener {
         }, plugin.getCore());
     }
 
-    private boolean isProtectedPickaxe(ItemStack item, Player player) {
-        if (item == null || item.getItemMeta() == null || !item.getItemMeta().hasDisplayName()) return false;
-        String displayName = LegacyComponentSerializer.legacySection().serialize(Objects.requireNonNull(item.getItemMeta().displayName()));
-        return displayName.contains(player.getName());
+    /**
+     * Check if the item is a valid pickaxe and if the player is the owner of the pickaxe
+     * @param item The item to check
+     * @param player The player to check
+     * @return True if the item is a valid pickaxe and the player is the owner of the pickaxe
+     */
+    private boolean isTheirPickaxe(ItemStack item, Player player) {
+        plugin.getCore().debug("Checking if item is their pickaxe", plugin);
+        if (item == null || item.getItemMeta() == null) {
+            plugin.getCore().debug("Item is null or has no meta", plugin);
+            return false;
+        }
+
+        if (!isPrisonPickaxe(item)) {
+            plugin.getCore().debug("Item is not a prison pickaxe", plugin);
+            return true;
+        }
+
+        if (!hasPlayerName(item, player)){
+            plugin.getCore().debug("Item does not have player name", plugin);
+            return false;
+        }
+
+        return hasPlayerName(item, player) && isPrisonPickaxe(item);
+    }
+    
+    private boolean hasPlayerName(@NotNull ItemStack item, @NotNull Player player) {
+
+        NamespacedKey key = new NamespacedKey(plugin.getCore(), "prison-player");
+        if (!item.getPersistentDataContainer().has(key, PersistentDataType.STRING)){
+            plugin.getCore().debug("Item does not have player name", plugin);
+            return false;
+        }
+        
+        String uuid = item.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        if (uuid == null){
+            plugin.getCore().debug("UUID is null", plugin);
+            return false;
+        }
+
+        plugin.getCore().debug("UUID is " + uuid, plugin);
+        return uuid.equals(player.getUniqueId().toString());
+    }
+
+    private boolean isPrisonPickaxe(@NotNull ItemStack item) {
+        return item.getPersistentDataContainer().has(new NamespacedKey(plugin.getCore(), "prison-pickaxe"));
     }
 }

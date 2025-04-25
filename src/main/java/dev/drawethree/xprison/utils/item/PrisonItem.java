@@ -4,6 +4,7 @@ import com.saicone.rtag.RtagItem;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class PrisonItem extends RtagItem {
         return enchants;
     }
 
-    public int getEnchantLevel(XPrisonEnchantment enchant) {
+    public int getEnchantLevel(@NotNull XPrisonEnchantment enchant) {
         return getOptional(MAIN, "enchants", String.valueOf(enchant.getId())).or(0);
     }
 

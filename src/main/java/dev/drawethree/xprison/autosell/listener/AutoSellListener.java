@@ -48,7 +48,7 @@ public class AutoSellListener {
     private void subscribeToBlockBreakEvent() {
 
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
-                .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+                .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand()))
                 .handler(e -> {
 
                     SellRegion sellRegion = this.plugin.getManager().getAutoSellRegion(e.getBlock().getLocation());

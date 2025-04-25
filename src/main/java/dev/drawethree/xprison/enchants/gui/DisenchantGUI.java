@@ -20,6 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,7 +78,6 @@ public final class DisenchantGUI extends Gui {
             }
         }
 
-
         if (HELP_ITEM_ENABLED) {
             this.setItem(HELP_ITEM_SLOT, HELP_ITEM);
         }
@@ -100,7 +100,7 @@ public final class DisenchantGUI extends Gui {
     }
 
 
-    private Item getRefundGuiItem(XPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
+    private Item getRefundGuiItem(@NotNull XPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
         Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : CompMaterial.BARRIER.toMaterial();
         ItemStackBuilder builder = ItemStackBuilder.of(m);
 

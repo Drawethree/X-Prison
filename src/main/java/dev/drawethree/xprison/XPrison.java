@@ -29,6 +29,7 @@ import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.Constants;
+import dev.drawethree.xprison.utils.PersistentActionBar;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
@@ -40,10 +41,13 @@ import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
@@ -267,14 +271,17 @@ public final class XPrison extends ExtendedJavaPlugin {
 		Events.subscribe(PlayerJoinEvent.class, EventPriority.LOW)
 				.handler(e -> {
 					this.nicknameService.updatePlayerNickname(e.getPlayer());
+					PersistentActionBar.start(e.getPlayer(), () -> this.getRanks().getRanksConfig().getMessage("actionbar-progress"), this);
 				}).bindWith(this);
+
+		Events.subscribe(PlayerQuitEvent.class, EventPriority.LOW).handler(playerQuitEvent -> PersistentActionBar.stop(playerQuitEvent.getPlayer())).bindWith(this);
 	}
 
 	private void startMetrics() {
 		new Metrics(this, Constants.METRICS_SERVICE_ID);
 	}
 
-	private void loadModule(XPrisonModule module) {
+	private void loadModule(@NotNull XPrisonModule module) {
 		if (module.isEnabled()) {
 			return;
 		}
@@ -283,7 +290,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	}
 
 	//Always unload via iterator!
-	private void unloadModule(XPrisonModule module) {
+	private void unloadModule(@NotNull XPrisonModule module) {
 		if (!module.isEnabled()) {
 			return;
 		}
@@ -302,7 +309,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 	}
 
-	public void reloadModule(XPrisonModule module) {
+	public void reloadModule(@NotNull XPrisonModule module) {
 		if (!module.isEnabled()) {
 			return;
 		}
@@ -318,9 +325,9 @@ public final class XPrison extends ExtendedJavaPlugin {
 		Commands.create()
 				.assertPermission("xprison.admin")
 				.handler(c -> {
-                    if (c.args().size() == 0 && c.sender() instanceof Player) {
+                    if (c.args().isEmpty() && c.sender() instanceof Player) {
                         new MainMenu(this, (Player) c.sender()).open();
-                    } else if (c.args().size() >= 1) {
+                    } else if (!c.args().isEmpty()) {
                         if ("reload".equalsIgnoreCase(c.rawArg(0))) {
                             final String name = c.args().size() >= 2 ? c.rawArg(1).trim().toLowerCase().replace("-", "") : "all";
                             switch (name) {
@@ -364,14 +371,14 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 		if (this.pluginDatabase != null) {
 			if (this.pluginDatabase instanceof SQLDatabase) {
-				SQLDatabase sqlDatabase = (SQLDatabase) this.pluginDatabase;
+				SQLDatabase sqlDatabase = this.pluginDatabase;
 				sqlDatabase.close();
 			}
 		}
 	}
 
 
-	public boolean isModuleEnabled(String moduleName) {
+	public boolean isModuleEnabled(@NotNull String moduleName) {
 		XPrisonModule module = this.modules.get(moduleName.toLowerCase());
 		return module != null && module.isEnabled();
 	}
@@ -403,12 +410,8 @@ public final class XPrison extends ExtendedJavaPlugin {
 		return true;
 	}
 
-	public boolean isPickaxeSupported(Material m) {
-		return this.supportedPickaxes.contains(m);
-	}
-
 	public boolean isPickaxeSupported(ItemStack item) {
-		return item != null && isPickaxeSupported(item.getType());
+		return item != null && this.supportedPickaxes.contains(item.getType());
 	}
 
 	@Contract(pure = true)

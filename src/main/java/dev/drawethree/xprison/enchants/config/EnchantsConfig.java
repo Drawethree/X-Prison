@@ -5,8 +5,10 @@ import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.LevelFormat;
 import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
+import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.block.Action;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,19 +23,31 @@ public class EnchantsConfig {
 
 	private Map<String, String> messages;
 
-	private LevelFormat levelFormat;
-	private String excludedFormat;
-	private List<String> pickaxeLore;
+	@Getter
+    private LevelFormat levelFormat;
+	@Getter
+    private String format;
+	@Getter
+    private String excludedFormat;
+	@Getter
+    private List<String> pickaxeLore;
 	private boolean allowEnchantsOutside;
-	private boolean firstJoinPickaxeEnabled;
-	private CompMaterial firstJoinPickaxeMaterial;
-	private List<String> firstJoinPickaxeEnchants;
-	private String firstJoinPickaxeName;
-	private boolean keepPickaxesOnDeath;
-	private boolean useUnbreakablePermission;
-	private List<Action> openEnchantMenuActions;
+	@Getter
+    private boolean firstJoinPickaxeEnabled;
+	@Getter
+    private CompMaterial firstJoinPickaxeMaterial;
+	@Getter
+    private List<String> firstJoinPickaxeEnchants;
+	@Getter
+    private String firstJoinPickaxeName;
+	@Getter
+    private boolean keepPickaxesOnDeath;
+	@Getter
+    private boolean useUnbreakablePermission;
+	@Getter
+    private List<Action> openEnchantMenuActions;
 
-	public EnchantsConfig(XPrisonEnchants plugin) {
+	public EnchantsConfig(@NotNull XPrisonEnchants plugin) {
 		this.plugin = plugin;
 		this.config = plugin.getCore().getFileManager().getConfig("enchants.yml").copyDefaults(true).save();
 	}
@@ -50,6 +64,7 @@ public class EnchantsConfig {
 
 	private void loadVariables() {
 		this.levelFormat = LevelFormat.of(getYamlConfig().getString("Pickaxe.level-format", "NUMBER"));
+		this.format = getYamlConfig().getString("Pickaxe.format", "&7[&c+&7] &8%Enchant% %Level%");
 		this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
 		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
 		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
@@ -78,47 +93,7 @@ public class EnchantsConfig {
 		return this.config.get();
 	}
 
-	public String getMessage(String key) {
+	public String getMessage(@NotNull String key) {
 		return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
-	}
-
-	public LevelFormat getLevelFormat() {
-		return levelFormat;
-	}
-
-	public String getExcludedFormat() {
-		return excludedFormat;
-	}
-
-	public List<String> getPickaxeLore() {
-		return pickaxeLore;
-	}
-
-	public boolean isFirstJoinPickaxeEnabled() {
-		return firstJoinPickaxeEnabled;
-	}
-
-	public CompMaterial getFirstJoinPickaxeMaterial() {
-		return firstJoinPickaxeMaterial;
-	}
-
-	public List<String> getFirstJoinPickaxeEnchants() {
-		return firstJoinPickaxeEnchants;
-	}
-
-	public String getFirstJoinPickaxeName() {
-		return firstJoinPickaxeName;
-	}
-
-	public boolean isKeepPickaxesOnDeath() {
-		return keepPickaxesOnDeath;
-	}
-
-	public boolean isUseUnbreakablePermission() {
-		return useUnbreakablePermission;
-	}
-
-	public List<Action> getOpenEnchantMenuActions() {
-		return openEnchantMenuActions;
 	}
 }

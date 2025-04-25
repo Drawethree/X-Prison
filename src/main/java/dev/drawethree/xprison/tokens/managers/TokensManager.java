@@ -151,8 +151,8 @@ public class TokensManager {
 			if (executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), plugin.getTokensConfig().getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 			} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
-				//PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
-				p.getPlayer().sendActionBar(Component.text(this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount))));
+				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+				//p.getPlayer().sendActionBar(Component.text(this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount))));
 			} else if (cause == ReceiveCause.LUCKY_BLOCK && !this.hasOffTokenMessages(p.getPlayer())) {
 				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
 			}

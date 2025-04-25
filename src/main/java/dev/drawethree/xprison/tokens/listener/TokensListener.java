@@ -36,7 +36,7 @@ public class TokensListener {
 	private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(e -> !e.isCancelled())
-				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
+				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand()))
 				.filter(e -> {
 					final List<String> whitelist = this.plugin.getTokensConfig().getWorldWhitelist();
 					return whitelist.isEmpty() || whitelist.contains(e.getBlock().getWorld().getName());

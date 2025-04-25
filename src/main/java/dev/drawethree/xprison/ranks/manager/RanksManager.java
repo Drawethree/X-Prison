@@ -238,13 +238,14 @@ public class RanksManager {
             if (arePrestigesEnabled()) {
                 return getPrestigeManager().getPrestigeProgress(player);
             }
+
             return 100;
         }
 
         Rank current = this.getPlayerRank(player);
         Optional<Rank> nextRankOptional = this.getNextRank(current.getId());
 
-        if (!nextRankOptional.isPresent()) {
+        if (nextRankOptional.isEmpty()) {
             return 100;
         }
 
