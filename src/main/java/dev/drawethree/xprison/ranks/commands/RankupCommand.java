@@ -16,7 +16,7 @@ public class RankupCommand {
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getRanksManager().buyNextRank(c.sender());
 					}
 				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
