@@ -188,7 +188,7 @@ public class RanksManager {
         this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
 
         PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
-        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.getRanksConfig().getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix())));
+        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.getRanksConfig().getMessage("rank_up_broadcast").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix())));
         return true;
     }
 
