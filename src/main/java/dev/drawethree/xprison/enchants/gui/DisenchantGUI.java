@@ -121,9 +121,9 @@ public final class DisenchantGUI extends Gui {
             } else if (handler.getClick() == ClickType.RIGHT) {
                 this.plugin.getEnchantsManager().disenchant(enchantment, gui, level, 10);
                 gui.redraw();
-            } else if (handler.getClick() == ClickType.DROP) {
-                this.plugin.getEnchantsManager().disenchantMax(enchantment, gui, level);
-            }
+            } //else if (handler.getClick() == ClickType.DROP) { // Desactivado por ahora...
+                //this.plugin.getEnchantsManager().disenchantMax(enchantment, gui, level);
+            //}
         }, ClickType.MIDDLE, ClickType.SHIFT_RIGHT, ClickType.LEFT, ClickType.RIGHT, ClickType.DROP).build() : builder.buildConsumer(handler -> handler.getWhoClicked().sendMessage(this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant")));
     }
 
