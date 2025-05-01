@@ -5,6 +5,7 @@ import dev.drawethree.xprison.enchants.gui.EnchantGUI;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.inventory.InventoryUtils;
+import lombok.Getter;
 import me.lucko.helper.Events;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -30,7 +31,8 @@ import java.util.stream.Collectors;
 public class EnchantsListener {
 
 	private final XPrisonEnchants plugin;
-	private final List<BlockBreakEvent> ignoredEvents = new ArrayList<>();
+	@Getter
+    private final List<BlockBreakEvent> ignoredEvents = new ArrayList<>();
 
 	public EnchantsListener(XPrisonEnchants plugin) {
 		this.plugin = plugin;
@@ -48,11 +50,7 @@ public class EnchantsListener {
 		this.subscribeToBlockBreakEvent();
 	}
 
-	public List<BlockBreakEvent> getIgnoredEvents() {
-		return ignoredEvents;
-	}
-
-	private void subscribeToBlockBreakEvent() {
+    private void subscribeToBlockBreakEvent() {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(e -> !e.isCancelled() && !ignoredEvents.contains(e))
 				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand()))
