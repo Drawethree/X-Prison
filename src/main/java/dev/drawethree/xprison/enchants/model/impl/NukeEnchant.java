@@ -14,7 +14,7 @@ import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import joserodpt.realmines.api.RealMinesAPI;
-import joserodpt.realmines.api.mine.task.MineResetTask;
+import joserodpt.realmines.api.mine.RMine;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
 import org.bukkit.Bukkit;
@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,8 +125,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
 
         var rmAPI = RealMinesAPI.getInstance();
         if (rmAPI != null) {
-            rmAPI.getMineManager().findBlockUpdate(p, event, blocksAffected.get(0), false);
-            rmAPI.getMineResetTasksManager().getTasks().forEach(MineResetTask::startTimer);
+            rmAPI.getMineManager().getMine(RegionUtils.getMineRomanName(b.getLocation())).reset(RMine.ResetCause.PLUGIN);
         }
         long timeEnd = Time.nowMillis();
         this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
@@ -134,6 +134,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
     private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
+        if (fortuneLevel == 0) return;
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {
@@ -154,12 +155,13 @@ public final class NukeEnchant extends XPrisonEnchantment {
             if (this.removeBlocks) {
                 block.setType(Material.AIR, true);
             }
-
         }
+
         this.giveEconomyRewardsToPlayer(p, totalDeposit);
     }
 
-    private List<Block> getAffectedBlocks(Block b, IWrappedRegion region) {
+    @NotNull
+    private List<Block> getAffectedBlocks(Block b, @NotNull IWrappedRegion region) {
         List<Block> blocksAffected = new ArrayList<>();
         ICuboidSelection selection = (ICuboidSelection) region.getSelection();
         for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
@@ -188,13 +190,13 @@ public final class NukeEnchant extends XPrisonEnchantment {
 
         if (plugin.isAutoSellModuleEnabled()) {
             plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
-        }
-
-        if (message != null || !message.isEmpty()) {
-            PlayerUtils.sendMessage(p,message.replace("%money%", MathUtils.formatNumber(total)));
+            if (message != null || !message.isEmpty()) {
+                PlayerUtils.sendMessage(p,message.replace("%money%", MathUtils.formatNumber(total)));
+            }
         }
     }
 
+    @NotNull
     private NukeTriggerEvent callNukeTriggerEvent(Player p, IWrappedRegion region, Block startBlock, List<Block> affectedBlocks) {
         NukeTriggerEvent event = new NukeTriggerEvent(p, region, startBlock, affectedBlocks);
         Events.callSync(event);

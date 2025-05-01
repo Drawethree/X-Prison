@@ -153,6 +153,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
     private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
+        if (fortuneLevel == 0) return;
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {

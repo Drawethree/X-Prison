@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +117,8 @@ public final class LayerEnchant extends XPrisonEnchantment {
         this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
     }
 
-    private List<Block> getAffectedBlocks(Block startBlock, IWrappedRegion region) {
+    @NotNull
+    private List<Block> getAffectedBlocks(Block startBlock, @NotNull IWrappedRegion region) {
         List<Block> blocksAffected = new ArrayList<>();
         ICuboidSelection selection = (ICuboidSelection) region.getSelection();
         for (int x = selection.getMinimumPoint().getBlockX(); x <= selection.getMaximumPoint().getBlockX(); x++) {
@@ -131,9 +133,10 @@ public final class LayerEnchant extends XPrisonEnchantment {
         return blocksAffected;
     }
 
-    private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
+    private void handleAffectedBlocks(@NotNull Player p, IWrappedRegion region, @NotNull List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
+        if (fortuneLevel == 0) return;
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {
