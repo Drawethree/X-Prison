@@ -246,15 +246,15 @@ public class TokensManager {
 		});
 	}
 
-	public synchronized long getPlayerTokens(OfflinePlayer p) {
+	public synchronized long getPlayerTokens(@NotNull OfflinePlayer p) {
 		if (!p.isOnline()) {
-			return this.plugin.getTokensManager().getPlayerTokens(p);
+			return this.plugin.getTokensService().getTokens(p);
 		} else {
 			return tokensCache.getOrDefault(p.getUniqueId(), (long) 0);
 		}
 	}
 
-	public synchronized long getPlayerBrokenBlocks(OfflinePlayer p) {
+	public synchronized long getPlayerBrokenBlocks(@NotNull OfflinePlayer p) {
 		if (!p.isOnline()) {
 			return this.plugin.getBlocksService().getPlayerBrokenBlocks(p);
 		} else {
@@ -262,7 +262,7 @@ public class TokensManager {
 		}
 	}
 
-	public synchronized long getPlayerBrokenBlocksWeekly(OfflinePlayer p) {
+	public synchronized long getPlayerBrokenBlocksWeekly(@NotNull OfflinePlayer p) {
 		if (!p.isOnline()) {
 			return this.plugin.getBlocksService().getPlayerBrokenBlocksWeekly(p);
 		} else {
