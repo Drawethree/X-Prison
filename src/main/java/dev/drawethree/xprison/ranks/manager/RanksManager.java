@@ -9,11 +9,13 @@ import dev.drawethree.xprison.ranks.api.events.PlayerRankUpEvent;
 import dev.drawethree.xprison.ranks.model.Rank;
 import dev.drawethree.xprison.utils.misc.ProgressBar;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
+import dev.drawethree.xprison.utils.text.TextUtils;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Players;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -187,8 +189,14 @@ public class RanksManager {
 
         this.onlinePlayersRanks.put(p.getUniqueId(), toBuy.getId());
 
-        PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("rank_up").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix()));
-        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', this.plugin.getRanksConfig().getMessage("rank_up_broadcast").replace("%Rank-1%", currentRank.getPrefix()).replace("%Rank-2%", toBuy.getPrefix())));
+        PlayerUtils.sendMessage(p, this.plugin.getRanksConfig().getMessage("rank_up")
+                .replace("%Rank-1%", currentRank.getPrefix())
+                .replace("%Rank-2%", toBuy.getPrefix()));
+        String broadcastMessage = this.plugin.getRanksConfig().getMessage("rank_up_broadcast")
+                .replace("%player%", p.getName())
+                .replace("%Rank-1%", currentRank.getPrefix())
+                .replace("%Rank-2%", toBuy.getPrefix());
+        Bukkit.broadcast(Component.text(PlaceholderAPI.setPlaceholders(p ,TextUtils.applyColor(broadcastMessage))));
         return true;
     }
 
