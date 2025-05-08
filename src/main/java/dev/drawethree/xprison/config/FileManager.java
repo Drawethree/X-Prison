@@ -17,7 +17,7 @@ public class FileManager {
 	}
 
 	/**
-	 * Get the config by the name(Don't forget the .yml)
+	 * Get the config by the name (Don't forget the .yml)
 	 *
 	 * @param name
 	 * @return

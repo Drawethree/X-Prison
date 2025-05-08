@@ -100,7 +100,6 @@ public final class XPrisonEnchants implements XPrisonModule {
 
 		this.api = new XPrisonEnchantsAPIImpl(this.enchantsManager, this.enchantsRepository);
 
-
 		this.enabled = true;
 	}
 

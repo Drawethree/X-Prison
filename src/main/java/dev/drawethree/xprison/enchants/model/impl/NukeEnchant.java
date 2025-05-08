@@ -61,7 +61,10 @@ public final class NukeEnchant extends XPrisonEnchantment {
     }
 
     @Override
-    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+    public void onBlockBreak(@NotNull BlockBreakEvent e, int enchantLevel) {
+        int fortuneLevel = EnchantUtils.getItemFortuneLevel(e.getPlayer().getItemInHand());
+        if (fortuneLevel == 0) return;
+
         double chance = getChanceToTrigger(enchantLevel);
 
         if (chance < ThreadLocalRandom.current().nextDouble(100)) {
@@ -134,7 +137,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
     private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
-        if (fortuneLevel == 0) return;
+
         boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {

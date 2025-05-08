@@ -52,7 +52,13 @@ public final class LayerEnchant extends XPrisonEnchantment {
     }
 
     @Override
-    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
+    public void onBlockBreak(@NotNull BlockBreakEvent e, int enchantLevel) {
+        int fortuneLevel = EnchantUtils.getItemFortuneLevel(e.getPlayer().getItemInHand());
+        if (fortuneLevel == 0){
+            plugin.getCore().debug("LayerEnchant::onBlockBreak >> Player has no fortune level.", this.plugin);
+            return;
+        }
+
         double chance = getChanceToTrigger(enchantLevel);
 
         if (chance < ThreadLocalRandom.current().nextDouble(100)) {
