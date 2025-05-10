@@ -105,7 +105,7 @@ public final class DisenchantGUI extends Gui {
         ItemStackBuilder builder = ItemStackBuilder.of(m);
 
         if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
-            builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
+            builder = ItemStackBuilder.of(SkullUtils.getTextureHead(enchantment.getBase64()));
         }
 
         builder.name(enchantment.isRefundEnabled() ? enchantment.getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
@@ -143,7 +143,7 @@ public final class DisenchantGUI extends Gui {
             String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.Base64", null);
 
             if (base64 != null) {
-                HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+                HELP_ITEM = ItemStackBuilder.of(SkullUtils.getTextureHead(base64))
                         .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
             } else {
                 HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.material")).toMaterial())

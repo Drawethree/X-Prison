@@ -76,9 +76,9 @@ public final class FortuneEnchant extends XPrisonEnchantment {
 
     private int getBonusMultiplier(int level, int maxLevel) {
         if (level >= maxLevel / 2) { // Mitad o más
-            return 4 + (int)(Math.random() * 3); // 4, 5 o 6
+            return 4 + (int)(Math.random() * 2); // 4, 5 o 6
         } else {
-            return 2 + (int)(Math.random() * 2); // 2 o 3
+            return 2 + (int)(Math.random() * 1); // 2 o 3
         }
     }
 

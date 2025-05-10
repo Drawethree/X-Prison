@@ -109,7 +109,7 @@ public final class EnchantGUI extends Gui {
 		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getMaterial());
 
 		if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
-			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
+			builder = ItemStackBuilder.of(SkullUtils.getTextureHead(enchantment.getBase64()));
 		}
 
 		builder.name(enchantment.getGuiName());
@@ -151,7 +151,7 @@ public final class EnchantGUI extends Gui {
 			String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.Base64", null);
 
 			if (base64 != null) {
-				DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+				DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getTextureHead(base64))
 						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
 			} else {
 				DISENCHANT_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.material")).toMaterial())
@@ -165,7 +165,7 @@ public final class EnchantGUI extends Gui {
 			String base64 = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.Base64", null);
 
 			if (base64 != null) {
-				HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
+				HELP_ITEM = ItemStackBuilder.of(SkullUtils.getTextureHead(base64))
 						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
 			} else {
 				HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.material")).toMaterial())
