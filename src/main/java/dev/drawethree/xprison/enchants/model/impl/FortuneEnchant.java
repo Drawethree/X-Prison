@@ -59,32 +59,30 @@ public final class FortuneEnchant extends XPrisonEnchantment {
             return;
         }
 
-        if (!dropType.isItem()){
+        if (!dropType.isItem()) {
             plugin.getCore().debug("Fortune enchantment failed: Block is not an item", plugin);
             return;
         }
 
-        block.setType(Material.AIR); // Rompe el bloque
+        block.setType(Material.AIR);
 
         int baseAmount = 1;
-        int bonus = getBonusMultiplier(enchantLevel, super.getMaxLevel()); // Random según nivel
+        int bonus = getBonusMultiplier(enchantLevel);
 
         ItemStack drop = new ItemStack(dropType, baseAmount + bonus);
-        //block.getWorld().dropItemNaturally(block.getLocation(), drop); Los tira al inventario pero mejor que los de directamente
         e.getPlayer().getInventory().addItem(drop);
     }
 
-    private int getBonusMultiplier(int level, int maxLevel) {
-        if (level >= maxLevel / 2) { // Mitad o más
-            return 4 + (int)(Math.random() * 2); // 4, 5 o 6
-        } else {
-            return 2 + (int)(Math.random() * 1); // 2 o 3
-        }
+    private int getBonusMultiplier(int level) {
+        // Suave hasta 5x como máximo en nivel 100
+        double multiplier = 1 + (Math.log(level + 1) / Math.log(100 + 1)) * 4; // Escala logarítmica
+        return (int) Math.floor(multiplier) - 1; // Bonus extra sobre base 1
     }
 
     @Override
     public double getChanceToTrigger(int enchantLevel) {
-        return chance * enchantLevel;
+        // Empieza bajo, sube suave hasta 75% en nivel 100
+        return Math.min(75, enchantLevel * 0.75); // Ej: nivel 100 → 75% chance
     }
 
     @Override

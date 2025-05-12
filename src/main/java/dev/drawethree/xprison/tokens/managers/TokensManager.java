@@ -7,7 +7,6 @@ import dev.drawethree.xprison.tokens.api.events.PlayerTokensLostEvent;
 import dev.drawethree.xprison.tokens.api.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.tokens.api.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.tokens.model.BlockReward;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
@@ -17,7 +16,6 @@ import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -222,6 +220,15 @@ public class TokensManager {
 		});
 	}
 
+	/**
+	 * Withdraws a specified number of tokens from the executing player's account and converts
+	 * them into token items, which are added to their inventory. If the tokens cannot fit in
+	 * the inventory, they are refunded back into the player's account.
+	 *
+	 * @param executor The player executing the withdrawal.
+	 * @param amount The number of token units to withdraw.
+	 * @param value The value of each token unit being withdrawn.
+	 */
 	public void withdrawTokens(Player executor, long amount, int value) {
 		Schedulers.async().run(() -> {
 			long totalAmount = amount * value;
