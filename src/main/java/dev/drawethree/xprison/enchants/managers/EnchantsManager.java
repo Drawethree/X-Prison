@@ -251,7 +251,7 @@ public class EnchantsManager {
         forEachEffectiveEnchant(e.getPlayer(), pickAxe, (enchant, level) -> enchant.onBlockBreak(e, level));
 	}
 
-	public void handlePickaxeEquip(Player p, ItemStack newItem) {
+	public void handlePickaxeEquip(@NotNull Player p, ItemStack newItem) {
         forEachEffectiveEnchant(p, newItem, (enchant, level) -> {
 			enchant.onEquip(p, newItem, level);
 			plugin.getCore().debug("EnchantsManager::handlePickaxeEquip >> " + enchant.getName() + " " + level + " for " + p.getName(), this.plugin);
