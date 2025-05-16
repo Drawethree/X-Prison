@@ -70,13 +70,7 @@ public final class FortuneEnchant extends XPrisonEnchantment {
         int bonus = getBonusMultiplier(enchantLevel);
 
         ItemStack drop = new ItemStack(dropType, baseAmount + bonus);
-        if (e.getBlock().getDrops().add(drop)){
-            plugin.getCore().debug("Fortune enchantment drop added: " + drop + ". Data: " + drop.getType().name() + " - " + drop.getAmount(), plugin);
-        } else {
-            plugin.getCore().debug("Fortune enchantment drop failed: " + drop + ". Data: " + drop.getType().name() + " - " + drop.getAmount(), plugin);
-        }
-        block.breakNaturally();
-        //e.getPlayer().getInventory().addItem(drop);
+        e.getPlayer().getInventory().addItem(drop);
     }
 
     private int getBonusMultiplier(int level) {
