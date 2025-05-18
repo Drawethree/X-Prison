@@ -241,6 +241,8 @@ public class EnchantsManager {
 
 	public void handleBlockBreak(@NotNull BlockBreakEvent e, ItemStack pickAxe) {
 
+		if (plugin.getEnchantsConfig().getYamlConfig().getStringList("world.disabled-worlds").contains(e.getPlayer().getWorld().getName())) return;
+
 		this.addBlocksBrokenToItem(e.getPlayer(), 1);
 
 		if (RegionUtils.getRegionWithHighestPriorityAndFlag(e.getBlock().getLocation(), Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.ALLOW) == null) {
@@ -252,13 +254,15 @@ public class EnchantsManager {
 	}
 
 	public void handlePickaxeEquip(@NotNull Player p, ItemStack newItem) {
+		if (plugin.getEnchantsConfig().getYamlConfig().getStringList("world.disabled-worlds").contains(p.getWorld().getName())) return;
         forEachEffectiveEnchant(p, newItem, (enchant, level) -> {
 			enchant.onEquip(p, newItem, level);
 			plugin.getCore().debug("EnchantsManager::handlePickaxeEquip >> " + enchant.getName() + " " + level + " for " + p.getName(), this.plugin);
 		});
 	}
 
-	public void handlePickaxeUnequip(Player p, ItemStack newItem) {
+	public void handlePickaxeUnequip(@NotNull Player p, ItemStack newItem) {
+		if (plugin.getEnchantsConfig().getYamlConfig().getStringList("world.disabled-worlds").contains(p.getWorld().getName())) return;
         forEachEffectiveEnchant(p, newItem, (enchant, level) -> enchant.onUnequip(p, newItem, level));
 	}
 
@@ -333,7 +337,7 @@ public class EnchantsManager {
 
 	public void disenchant(XPrisonEnchantment enchantment, DisenchantGUI gui, int currentLevel, int substraction) {
 
-		if (currentLevel <= 0) {
+		if (currentLevel <= 1) {
 			PlayerUtils.sendMessage(gui.getPlayer(), plugin.getEnchantsConfig().getMessage("enchant_no_level"));
 			return;
 		}

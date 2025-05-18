@@ -36,6 +36,10 @@ keep-pickaxes-on-death: true
 use-unbreakable-permission: false
 # Action to open Enchanting menu while holding pickaxe. For multiple, separate them with ',' (LEFT_CLICK_BLOCK,RIGHT_CLICK_BLOCK,LEFT_CLICK_AIR,RIGHT_CLICK_AIR,PHYSICAL)
 open-enchant-menu-action: "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK"
+world:
+  # Worlds where UPC Enchants are disabled
+  disabled-worlds:
+    - world_the_end
 # Enchant Menu Settings
 enchant_menu:
   # GUI Name
