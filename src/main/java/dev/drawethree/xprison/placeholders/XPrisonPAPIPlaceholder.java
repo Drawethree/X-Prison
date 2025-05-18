@@ -13,7 +13,10 @@ import dev.drawethree.xprison.utils.misc.MathUtils;
 import dev.drawethree.xprison.utils.misc.TimeUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 /**
@@ -94,6 +97,21 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 	@Override
 	public String getVersion() {
 		return plugin.getDescription().getVersion();
+	}
+
+	public static @NotNull String formatMoney(BigDecimal value) {
+		value = value.setScale(2, RoundingMode.HALF_UP);
+
+		String[] suffixes = {"", "k", "M", "B", "T", "Q", "Qi", "Sx", "Sp", "Oc", "No", "Dc"};
+		BigDecimal thousand = new BigDecimal("1000");
+		int index = 0;
+
+		while (value.compareTo(thousand) >= 0 && index < suffixes.length - 1) {
+			value = value.divide(thousand, 2, RoundingMode.HALF_UP);
+			index++;
+		}
+
+		return value.toPlainString() + suffixes[index];
 	}
 
 	/**
@@ -204,9 +222,13 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "tokens_formatted":
 			case "tokens_3":
 				return MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(player));
+			case "tokens_4":
+				return MathUtils.formatNumberNoDecimals(plugin.getTokens().getTokensManager().getPlayerTokens(player));
 			case "gems_formatted":
 			case "gems_3":
 				return MathUtils.formatNumber(plugin.getGems().getGemsManager().getPlayerGems(player));
+			case "gems_4":
+				return MathUtils.formatNumberNoDecimals(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "rankup_progress":
 				return String.format("%d%%", plugin.getRanks().getRanksManager().getRankupProgress(player));
 			case "rankup_progress_bar":
