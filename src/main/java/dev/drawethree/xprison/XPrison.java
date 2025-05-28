@@ -127,7 +127,6 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 		this.registerMainEvents();
 		this.registerMainCommand();
-		this.startMetrics();
 
 		SkullUtils.init();
 	}
@@ -275,9 +274,6 @@ public final class XPrison extends ExtendedJavaPlugin {
 		Events.subscribe(PlayerQuitEvent.class, EventPriority.LOW).handler(playerQuitEvent -> PersistentActionBar.stop(playerQuitEvent.getPlayer())).bindWith(this);
 	}
 
-	private void startMetrics() {
-		new Metrics(this, Constants.METRICS_SERVICE_ID);
-	}
 
 	private void loadModule(@NotNull XPrisonModule module) {
 		if (module.isEnabled()) {
