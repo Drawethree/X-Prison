@@ -1,13 +1,13 @@
 name: X-Prison
 version: ${project.version}
 main: dev.drawethree.xprison.XPrison
+description: A fully-featured prison plugin for Minecraft servers modified by reussy to GamesMadeInPola.
 depend: [ Vault, WorldGuard, WorldEdit, helper ]
 softdepend:
   - PlaceholderAPI
   - MVdWPlaceholderAPI
   - Multiverse-Core
   - UltraBackpacks
-authors: [ Drawethree ]
+authors: [ Drawethree, reussy ]
 api-version: 1.13
 load: POSTWORLD
-website: www.drawethree.dev
