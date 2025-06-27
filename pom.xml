@@ -49,7 +49,7 @@
         <project.java.version>17</project.java.version>
         <org.spigotmc.spigot-api.version>1.21.6-R0.1-SNAPSHOT</org.spigotmc.spigot-api.version>
         <com.mojang.authlib.version>6.0.54</com.mojang.authlib.version>
-        <com.saicone.rtag.version>1.4.2</com.saicone.rtag.version>
+        <com.saicone.rtag.version>1.5.11</com.saicone.rtag.version>
         <com.github.cryptomorin.XSeries.version>13.3.1</com.github.cryptomorin.XSeries.version>
         <org.bstats.version>3.0.2</org.bstats.version>
         <org.codemc.worldguardwrapper.version>1.2.1-SNAPSHOT</org.codemc.worldguardwrapper.version>

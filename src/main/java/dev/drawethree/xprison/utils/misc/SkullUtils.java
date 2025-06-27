@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.utils.misc;
 
-import com.cryptomorin.xseries.XMaterial;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.cryptomorin.xseries.profiles.builder.XSkull;
+import com.cryptomorin.xseries.profiles.objects.ProfileInputType;
+import com.cryptomorin.xseries.profiles.objects.Profileable;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import org.bukkit.OfflinePlayer;
@@ -29,38 +29,16 @@ public class SkullUtils {
 
 
 	public static void init() {
-		//nothing here, just to make sure the class gets loaded on start.
+
 	}
 
 	public static ItemStack getCustomTextureHead(String value) {
-		ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
-
-		SkullMeta meta = (SkullMeta) head.getItemMeta();
-
-		GameProfile profile;
-		try {
-			profile = new GameProfile(UUID.randomUUID(), null);
-		}
-		catch (Throwable t) {
-			profile = new GameProfile(UUID.randomUUID(), "X-Prison");
-		}
-
-		profile.getProperties().put("textures", new Property("textures", value));
-		Field profileField;
-		try {
-			profileField = meta.getClass().getDeclaredField("profile");
-			profileField.setAccessible(true);
-			profileField.set(meta, profile);
-		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-			e.printStackTrace();
-		}
-		head.setItemMeta(meta);
-		return head;
+		return XSkull.createItem().profile(Profileable.of(ProfileInputType.BASE64, value)).apply();
 	}
 
 
 	public static ItemStack createPlayerHead(OfflinePlayer player, String displayName, List<String> lore) {
-		ItemStack baseItem = XMaterial.PLAYER_HEAD.parseItem();
+		ItemStack baseItem = XSkull.createItem().profile(Profileable.of(player)).apply();
 		SkullMeta meta = (SkullMeta) baseItem.getItemMeta();
 
 		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_13)) {
