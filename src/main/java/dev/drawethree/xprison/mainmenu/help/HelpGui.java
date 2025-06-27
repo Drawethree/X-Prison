@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mainmenu.help;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -47,13 +47,13 @@ public class HelpGui extends Gui {
 			MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			populator = LAYOUT_RED.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			//AutoMiner
@@ -67,7 +67,7 @@ public class HelpGui extends Gui {
 				new AutoSellHelpGui(this.getPlayer()).open();
 			}));
 			//Enchants
-			this.setItem(13, ItemStackBuilder.of(CompMaterial.ENCHANTED_BOOK.toItem()).name("&e&lEnchants").lore("&7Click to see detailed info", "&7about Enchants feature.").build(() -> {
+			this.setItem(13, ItemStackBuilder.of(XMaterial.ENCHANTED_BOOK.parseItem()).name("&e&lEnchants").lore("&7Click to see detailed info", "&7about Enchants feature.").build(() -> {
 				this.close();
 				new EnchantsHelpGui(this.getPlayer()).open();
 			}));
@@ -92,7 +92,7 @@ public class HelpGui extends Gui {
 				new PrestigesHelpGui(this.getPlayer()).open();
 			}));
 			//PickaxeLevels
-			this.setItem(21, ItemStackBuilder.of(CompMaterial.EXPERIENCE_BOTTLE.toItem()).name("&e&lPickaxe Levels").lore("&7Click to see detailed info", "&7about Pickaxe leveling feature.").build(() -> {
+			this.setItem(21, ItemStackBuilder.of(XMaterial.EXPERIENCE_BOTTLE.parseItem()).name("&e&lPickaxe Levels").lore("&7Click to see detailed info", "&7about Pickaxe leveling feature.").build(() -> {
 				this.close();
 				new PickaxeLevelsHelpGui(this.getPlayer()).open();
 			}));
@@ -112,7 +112,7 @@ public class HelpGui extends Gui {
 				new MinesHelpGui(this.getPlayer()).open();
 			}));
 			//History
-			this.setItem(25, ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name("&e&lHistory").lore("&7Click to see detailed info", "&7about History feature.").build(() -> {
+			this.setItem(25, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lHistory").lore("&7Click to see detailed info", "&7about History feature.").build(() -> {
 				this.close();
 				new HistoryHelpGui(this.getPlayer()).open();
 			}));

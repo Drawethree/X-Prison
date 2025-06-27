@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.autosell.command;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.autosell.gui.AllSellRegionsGui;
 import dev.drawethree.xprison.autosell.model.SellRegion;
 import dev.drawethree.xprison.autosell.utils.AutoSellContants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
@@ -38,7 +38,7 @@ public class SellPriceCommand {
                         return;
                     }
 
-                    CompMaterial type = this.parseMaterialFromCommandContext(c);
+                    XMaterial type = this.parseMaterialFromCommandContext(c);
                     double price = this.parsePriceFromCommandContext(c);
 
                     if (!validateMaterial(type)) {
@@ -98,7 +98,7 @@ public class SellPriceCommand {
         return price > 0.0;
     }
 
-    private boolean validateMaterial(CompMaterial type) {
+    private boolean validateMaterial(XMaterial type) {
         return type != null;
     }
 
@@ -113,16 +113,16 @@ public class SellPriceCommand {
         return context.args().size() == 1 || context.args().size() == 2 || context.args().size() == 3;
     }
 
-    private CompMaterial parseMaterialFromCommandContext(CommandContext<Player> c) {
-        CompMaterial material = null;
+    private XMaterial parseMaterialFromCommandContext(CommandContext<Player> c) {
+        XMaterial material = null;
         if (c.args().size() == 1) {
             if (c.sender().getItemInHand() == null) {
                 PlayerUtils.sendMessage(c.sender(), "&cPlease hold some item!");
             } else {
-                material = CompMaterial.fromItem(c.sender().getItemInHand());
+                material = XMaterial.matchXMaterial(c.sender().getItemInHand());
             }
         } else if (c.args().size() == 2) {
-            material = CompMaterial.fromString(c.rawArg(0));
+            material = XMaterial.matchXMaterial(c.rawArg(0)).get();
         }
         return material;
     }

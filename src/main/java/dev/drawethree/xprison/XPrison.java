@@ -1,5 +1,6 @@
 package dev.drawethree.xprison;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.github.lalyos.jfiglet.FigletFont;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
@@ -29,7 +30,6 @@ import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Getter;
@@ -145,7 +145,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	}
 
 	private void initVariables() {
-		this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(CompMaterial::fromString).map(CompMaterial::getMaterial).collect(Collectors.toList());
+		this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(XMaterial::valueOf).map(XMaterial::get).collect(Collectors.toList());
 
 		for (Material m : this.supportedPickaxes) {
 			this.getLogger().info("Added support for pickaxe: " + m);

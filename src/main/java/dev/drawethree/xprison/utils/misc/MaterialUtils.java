@@ -1,34 +1,34 @@
 package dev.drawethree.xprison.utils.misc;
 
-import dev.drawethree.xprison.utils.compat.CompMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 public class MaterialUtils {
 
 	public static ItemStack getSmeltedFormAsItemStack(Block block) {
-		CompMaterial material = CompMaterial.fromBlock(block);
+		XMaterial material = XMaterial.matchXMaterial(block.getType());
 		switch (material) {
 			case STONE:
-				return CompMaterial.COBBLESTONE.toItem();
+				return XMaterial.COBBLESTONE.parseItem();
 			case COAL_ORE:
-				return CompMaterial.COAL.toItem();
+				return XMaterial.COAL.parseItem();
 			case DIAMOND_ORE:
-				return CompMaterial.DIAMOND.toItem();
+				return XMaterial.DIAMOND.parseItem();
 			case EMERALD_ORE:
-				return CompMaterial.EMERALD.toItem();
+				return XMaterial.EMERALD.parseItem();
 			case REDSTONE_ORE:
-				return CompMaterial.REDSTONE.toItem();
+				return XMaterial.REDSTONE.parseItem();
 			case GOLD_ORE:
-				return CompMaterial.GOLD_INGOT.toItem();
+				return XMaterial.GOLD_INGOT.parseItem();
 			case IRON_ORE:
-				return CompMaterial.IRON_INGOT.toItem();
+				return XMaterial.IRON_INGOT.parseItem();
 			case NETHER_QUARTZ_ORE:
-				return CompMaterial.QUARTZ.toItem();
+				return XMaterial.QUARTZ.parseItem();
 			case LAPIS_ORE:
-				return CompMaterial.LAPIS_LAZULI.toItem();
+				return XMaterial.LAPIS_LAZULI.parseItem();
 			default:
-				return material.toItem();
+				return material.parseItem();
 		}
 	}
 

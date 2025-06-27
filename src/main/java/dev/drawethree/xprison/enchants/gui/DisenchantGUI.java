@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.enchants.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.utils.GuiUtils;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
@@ -101,7 +101,7 @@ public final class DisenchantGUI extends Gui {
 
 
     private Item getRefundGuiItem(XPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
-        Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : CompMaterial.BARRIER.toMaterial();
+        Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : XMaterial.BARRIER.get();
         ItemStackBuilder builder = ItemStackBuilder.of(m);
 
         if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
@@ -134,7 +134,7 @@ public final class DisenchantGUI extends Gui {
         GUI_LINES = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("disenchant_menu.lines");
 
         EMPTY_SLOT_ITEM = ItemStackBuilder.
-                of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.empty_slots")).toItem()).buildItem().build();
+                of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.empty_slots")).parseItem()).buildItem().build();
 
         HELP_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("disenchant_menu.help_item.enabled", true);
         PICKAXE_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("disenchant_menu.pickaxe_enabled", true);
@@ -146,7 +146,7 @@ public final class DisenchantGUI extends Gui {
                 HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
                         .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
             } else {
-                HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.material")).toMaterial())
+                HELP_ITEM = ItemStackBuilder.of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.material")).parseItem())
                         .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
             }
             HELP_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("disenchant_menu.help_item.slot");

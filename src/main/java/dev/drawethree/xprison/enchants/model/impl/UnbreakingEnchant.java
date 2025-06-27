@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.cryptomorin.xseries.XEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import org.bukkit.enchantments.Enchantment;
@@ -17,7 +18,7 @@ public final class UnbreakingEnchant extends XPrisonEnchantment {
 	@Override
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		ItemMeta meta = pickAxe.getItemMeta();
-		meta.addEnchant(Enchantment.DURABILITY, level, true);
+		meta.addEnchant(XEnchantment.UNBREAKING.get(), level, true);
 		pickAxe.setItemMeta(meta);
 	}
 

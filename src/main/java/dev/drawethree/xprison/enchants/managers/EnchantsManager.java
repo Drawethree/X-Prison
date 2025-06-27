@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.enchants.managers;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.saicone.rtag.util.ServerInstance;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
@@ -13,7 +14,6 @@ import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
 import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
@@ -523,8 +523,8 @@ public class EnchantsManager {
 			pickaxeName = PlaceholderAPI.setPlaceholders(player, pickaxeName);
 		}
 
-		CompMaterial material = this.plugin.getEnchantsConfig().getFirstJoinPickaxeMaterial();
-		ItemStack item = ItemStackBuilder.of(material.toItem()).name(pickaxeName).build();
+		XMaterial material = this.plugin.getEnchantsConfig().getFirstJoinPickaxeMaterial();
+		ItemStack item = ItemStackBuilder.of(material.parseItem()).name(pickaxeName).build();
 
 		List<String> firstJoinPickaxeEnchants = this.plugin.getEnchantsConfig().getFirstJoinPickaxeEnchants();
 

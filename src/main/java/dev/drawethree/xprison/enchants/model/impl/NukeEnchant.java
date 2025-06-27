@@ -1,5 +1,7 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.cryptomorin.xseries.XItemStack;
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.api.events.NukeTriggerEvent;
@@ -8,7 +10,6 @@ import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.Mine;
 import dev.drawethree.xprison.multipliers.enums.MultiplierType;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.MathUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -140,7 +141,8 @@ public final class NukeEnchant extends XPrisonEnchantment {
             if (autoSellPlayerEnabled) {
                 totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
             } else {
-                ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(amplifier);
+                ItemStack itemToGive = XMaterial.matchXMaterial(block.getType()).parseItem();
+                itemToGive.setAmount(amplifier);
                 p.getInventory().addItem(itemToGive);
             }
 

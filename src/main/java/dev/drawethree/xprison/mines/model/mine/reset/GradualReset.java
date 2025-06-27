@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.mines.model.mine.reset;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.mines.model.mine.BlockPalette;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.random.RandomSelector;
@@ -35,11 +35,11 @@ public class GradualReset extends ResetType {
 	private void schedule(final Mine mine, BlockPalette blockPalette, Iterator<Block> blocksIterator) {
 		Schedulers.sync().runLater(() -> {
 			int changes = 0;
-			RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
+			RandomSelector<XMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
 			while (blocksIterator.hasNext() && changes <= CHANGES_PER_TICK) {
-				CompMaterial pick = selector.pick();
+				XMaterial pick = selector.pick();
 				Block b = blocksIterator.next();
-				b.setType(pick.toMaterial());
+				b.setType(pick.get());
 				if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 					try {
 						Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());

@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.tokens.managers;
 
+import com.cryptomorin.xseries.XEnchantment;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
@@ -296,7 +297,7 @@ public class TokensManager {
 				.amount(value)
 				.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
 				.lore(this.plugin.getTokensConfig().getTokenItemLore())
-				.enchant(Enchantment.PROTECTION_ENVIRONMENTAL)
+				.enchant(XEnchantment.PROTECTION.get())
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
 		final PrisonItem prisonItem = new PrisonItem(item);

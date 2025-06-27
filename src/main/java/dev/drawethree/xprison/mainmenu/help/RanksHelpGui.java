@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mainmenu.help;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -40,13 +40,13 @@ public class RanksHelpGui extends Gui {
 			MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			populator = LAYOUT_RED.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			//Info

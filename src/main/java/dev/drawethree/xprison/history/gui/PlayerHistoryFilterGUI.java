@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.history.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrisonModule;
 import dev.drawethree.xprison.history.XPrisonHistory;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.scheme.MenuPopulator;
@@ -41,20 +41,20 @@ public class PlayerHistoryFilterGUI extends Gui {
 			MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			populator = LAYOUT_RED.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			for (XPrisonModule module : this.plugin.getCore().getModules()) {
 				if (!module.isHistoryEnabled()) {
 					continue;
 				}
-				this.addItem(ItemStackBuilder.of(CompMaterial.HOPPER.toItem()).name("&e" + module.getName()).lore("&7Show only history related to this module.").build(() -> {
+				this.addItem(ItemStackBuilder.of(XMaterial.HOPPER.parseItem()).name("&e" + module.getName()).lore("&7Show only history related to this module.").build(() -> {
 					this.close();
 					this.plugin.getHistoryManager().openPlayerHistoryGui(this.getPlayer(), this.target, historyLine -> historyLine.getModule().equalsIgnoreCase(module.getName()));
 				}));

@@ -1,9 +1,8 @@
 package dev.drawethree.xprison.mines.migration.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.mines.migration.model.MinesMigration;
-import dev.drawethree.xprison.mines.migration.model.impl.MineResetLiteMigration;
 import dev.drawethree.xprison.mines.migration.utils.MinesMigrationUtils;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -41,12 +40,7 @@ public final class AllMinesMigrationGui extends Gui {
 	}
 
 	private void populateAvailableMigrations() {
-		try {
-			MinesMigration migration = new MineResetLiteMigration();
-			this.addItem(createItemForMigration(migration));
-		} catch (NoClassDefFoundError e) {
-
-		}
+		//TODO: Not supporting any migrations at the moment!
 	}
 
 	private Item createItemForMigration(MinesMigration migration) {
@@ -57,13 +51,13 @@ public final class AllMinesMigrationGui extends Gui {
 		MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
 
 		while (populator.hasSpace()) {
-			populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+			populator.accept(ItemStackBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 		}
 
 		populator = LAYOUT_RED.newPopulator(this);
 
 		while (populator.hasSpace()) {
-			populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+			populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 		}
 	}
 }

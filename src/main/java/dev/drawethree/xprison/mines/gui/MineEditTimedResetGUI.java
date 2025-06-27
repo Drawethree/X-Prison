@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -21,29 +21,29 @@ public class MineEditTimedResetGUI extends Gui {
 
 	@Override
 	public void redraw() {
-		this.setItem(4, ItemStackBuilder.of(CompMaterial.CLOCK.toItem()).name("&eReset Time (minutes)").lore(" ", "&7Current reset time of", String.format("&7this mine is &b%,d minutes.", this.currentTime)).buildItem().build());
+		this.setItem(4, ItemStackBuilder.of(XMaterial.CLOCK.parseItem()).name("&eReset Time (minutes)").lore(" ", "&7Current reset time of", String.format("&7this mine is &b%,d minutes.", this.currentTime)).buildItem().build());
 
 		// +
 
-		this.setItem(19, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+1.0").build(() -> {
+		this.setItem(19, ItemStackBuilder.of(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()).name("&a+1.0").build(() -> {
 			handleTimeAddition(1);
 		}));
-		this.setItem(20, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+2.0").build(() -> {
+		this.setItem(20, ItemStackBuilder.of(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()).name("&a+2.0").build(() -> {
 			handleTimeAddition(2);
 		}));
-		this.setItem(21, ItemStackBuilder.of(CompMaterial.GREEN_STAINED_GLASS_PANE.toItem()).name("&a+5.0").build(() -> {
+		this.setItem(21, ItemStackBuilder.of(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()).name("&a+5.0").build(() -> {
 			handleTimeAddition(5);
 		}));
 
 		// -
 
-		this.setItem(23, ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name("&c-1.0").build(() -> {
+		this.setItem(23, ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name("&c-1.0").build(() -> {
 			handleTimeAddition(-1);
 		}));
-		this.setItem(24, ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name("&c-2.0").build(() -> {
+		this.setItem(24, ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name("&c-2.0").build(() -> {
 			handleTimeAddition(-2);
 		}));
-		this.setItem(25, ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name("&c-5.0").build(() -> {
+		this.setItem(25, ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name("&c-5.0").build(() -> {
 			handleTimeAddition(-5);
 		}));
 
@@ -53,7 +53,7 @@ public class MineEditTimedResetGUI extends Gui {
 			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
 		}));
 
-		this.setItem(40, ItemStackBuilder.of(CompMaterial.GREEN_WOOL.toItem()).name("&aSave").lore("&7Click to save the current reset time.").build(() -> {
+		this.setItem(40, ItemStackBuilder.of(XMaterial.GREEN_WOOL.parseItem()).name("&aSave").lore("&7Click to save the current reset time.").build(() -> {
 			this.close();
 			this.mine.setResetTime(this.currentTime);
 			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();

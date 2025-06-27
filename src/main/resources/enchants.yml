@@ -41,7 +41,7 @@ enchant_menu:
   # GUI Name
   title: "&7Enchants Menu"
   # Filler items
-  empty_slots: STAINED_GLASS_PANE:7
+  empty_slots: GRAY_STAINED_GLASS_PANE
   # Number of GUI rows
   lines: 6
   # Slot where player's pickaxe should be displayed
@@ -98,7 +98,7 @@ disenchant_menu:
   # GUI Name
   title: "&7Disenchant Menu"
   # Filler items
-  empty_slots: STAINED_GLASS_PANE:7
+  empty_slots: GRAY_STAINED_GLASS_PANE
   # Number of GUI rows
   lines: 6
   # Player's pickaxe GUI slot

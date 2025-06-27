@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.mainmenu.reload;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.mainmenu.confirmation.ReloadModuleConfirmationGui;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -50,13 +50,13 @@ public class ReloadSelectionGui extends Gui {
 			MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			populator = LAYOUT_RED.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			//AutoMiner
@@ -70,7 +70,7 @@ public class ReloadSelectionGui extends Gui {
 			}));
 
 			//Enchants
-			this.setItem(13, ItemStackBuilder.of(CompMaterial.ENCHANTED_BOOK.toItem()).name("&e&lEnchants").lore("&7Click to reload this module.").build(() -> {
+			this.setItem(13, ItemStackBuilder.of(XMaterial.ENCHANTED_BOOK.parseItem()).name("&e&lEnchants").lore("&7Click to reload this module.").build(() -> {
 				new ReloadModuleConfirmationGui(this.getPlayer(), this.core.getEnchants()).open();
 			}));
 
@@ -95,7 +95,7 @@ public class ReloadSelectionGui extends Gui {
 			}));
 
 			//PickaxeLevels
-			this.setItem(21, ItemStackBuilder.of(CompMaterial.EXPERIENCE_BOTTLE.toItem()).name("&e&lPickaxe Levels").lore("&7Click to reload this module.").build(() -> {
+			this.setItem(21, ItemStackBuilder.of(XMaterial.EXPERIENCE_BOTTLE.parseItem()).name("&e&lPickaxe Levels").lore("&7Click to reload this module.").build(() -> {
 				new ReloadModuleConfirmationGui(this.getPlayer(), this.core.getPickaxeLevels()).open();
 			}));
 
@@ -115,12 +115,12 @@ public class ReloadSelectionGui extends Gui {
 			}));
 
 			//History
-			this.setItem(25, ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name("&e&lHistory").lore("&7Click to reset this module", "&7player data.").build(() -> {
+			this.setItem(25, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lHistory").lore("&7Click to reset this module", "&7player data.").build(() -> {
 				new ReloadModuleConfirmationGui(this.getPlayer(), this.core.getHistory()).open();
 			}));
 
 			//All Modules
-			this.setItem(31, ItemStackBuilder.of(CompMaterial.REDSTONE_BLOCK.toItem()).name("&e&lReload All Modules").lore("&7Click to reload all modules.").build(() -> {
+			this.setItem(31, ItemStackBuilder.of(XMaterial.REDSTONE_BLOCK.parseItem()).name("&e&lReload All Modules").lore("&7Click to reload all modules.").build(() -> {
 				new ReloadModuleConfirmationGui(this.getPlayer(), null).open();
 			}));
 

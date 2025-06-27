@@ -1,11 +1,11 @@
 package dev.drawethree.xprison.mainmenu;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.history.gui.PlayerHistoryGUI;
 import dev.drawethree.xprison.mainmenu.reload.ReloadSelectionGui;
 import dev.drawethree.xprison.mainmenu.reset.ResetSelectionGui;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -59,13 +59,13 @@ public class MainMenu extends Gui {
 			MenuPopulator populator = LAYOUT_WHITE.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.WHITE_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.WHITE_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
 			populator = LAYOUT_RED.newPopulator(this);
 
 			while (populator.hasSpace()) {
-				populator.accept(ItemStackBuilder.of(CompMaterial.RED_STAINED_GLASS_PANE.toItem()).name(" ").buildItem().build());
+				populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 		}
 
@@ -102,7 +102,7 @@ public class MainMenu extends Gui {
 		}));
 
 		//Players History
-		this.setItem(31, ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name("&e&lPlayers History").lore("&7Click to see players history.").build(() -> {
+		this.setItem(31, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lPlayers History").lore("&7Click to see players history.").build(() -> {
 			if (!this.getPlayer().hasPermission("xprison.mainmenu.history")) {
 				return;
 			}

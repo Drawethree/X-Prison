@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.mines.model.mine.reset;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.mines.model.mine.BlockPalette;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import me.lucko.helper.random.RandomSelector;
 import me.lucko.helper.serialize.Position;
@@ -26,7 +26,7 @@ public class InstantReset extends ResetType {
 			return;
 		}
 
-		RandomSelector<CompMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
+		RandomSelector<XMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
 
 		Position min = mine.getMineRegion().getMin();
 		Position max = mine.getMineRegion().getMax();
@@ -43,8 +43,8 @@ public class InstantReset extends ResetType {
 			for (int y = minY; y <= maxY; y++) {
 				for (int z = minZ; z <= maxZ; z++) {
 					Block b = min.toLocation().getWorld().getBlockAt(x, y, z);
-					CompMaterial pick = selector.pick();
-					b.setType(pick.toMaterial());
+					XMaterial pick = selector.pick();
+					b.setType(pick.get());
 					if (MinecraftVersion.olderThan(MinecraftVersion.V.v1_13)) {
 						try {
 							Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());

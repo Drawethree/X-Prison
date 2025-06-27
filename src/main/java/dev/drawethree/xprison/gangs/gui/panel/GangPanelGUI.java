@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.gangs.gui.panel;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
 import dev.drawethree.xprison.gangs.model.Gang;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.Services;
 import me.lucko.helper.menu.Gui;
@@ -47,7 +47,7 @@ public final class GangPanelGUI extends Gui {
 	private void populateLayout() {
 		MenuPopulator populator = LAYOUT.newPopulator(this);
 		while (populator.hasSpace()) {
-			populator.accept(ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("&a").buildItem().build());
+			populator.accept(ItemStackBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()).name("&a").buildItem().build());
 		}
 	}
 
@@ -72,11 +72,11 @@ public final class GangPanelGUI extends Gui {
 	}
 
 	private Item createManageInvitesItem() {
-		return ItemStackBuilder.of(CompMaterial.PLAYER_HEAD.toItem()).name("&eManage Invites").lore("&7Click to manage pending invites.").build(this::openManageInvitesGui);
+		return ItemStackBuilder.of(XMaterial.PLAYER_HEAD.parseItem()).name("&eManage Invites").lore("&7Click to manage pending invites.").build(this::openManageInvitesGui);
 	}
 
 	private Item createDisbandGangItem() {
-		return ItemStackBuilder.of(CompMaterial.BARRIER.toItem()).name("&cDisband Gang").lore("&7Click to disband your gang.").build(this::openDisbandGangGui);
+		return ItemStackBuilder.of(XMaterial.BARRIER.parseItem()).name("&cDisband Gang").lore("&7Click to disband your gang.").build(this::openDisbandGangGui);
 	}
 
 	private void openDisbandGangGui() {
@@ -85,7 +85,7 @@ public final class GangPanelGUI extends Gui {
 	}
 
 	private Item createManageMembersItem() {
-		return ItemStackBuilder.of(CompMaterial.PLAYER_HEAD.toItem()).name("&eManage Members").lore("&7Click to manage your gang members.").build(this::openManageMembersGui);
+		return ItemStackBuilder.of(XMaterial.PLAYER_HEAD.parseItem()).name("&eManage Members").lore("&7Click to manage your gang members.").build(this::openManageMembersGui);
 	}
 
 	private void openManageMembersGui() {
@@ -99,7 +99,7 @@ public final class GangPanelGUI extends Gui {
 	}
 
 	private Item createGangRenameItem() {
-		return ItemStackBuilder.of(CompMaterial.OAK_SIGN.toItem()).name("&eRename Gang").lore("&7Click to rename your gang.").build(() -> {
+		return ItemStackBuilder.of(XMaterial.OAK_SIGN.parseItem()).name("&eRename Gang").lore("&7Click to rename your gang.").build(() -> {
 			SignPromptFactory factory = Services.load(SignPromptFactory.class);
 			factory.openPrompt(this.getPlayer(), Arrays.asList("", "§e^ ^ ^", "§7Enter gang name", ""), responseHandler -> {
 				if (responseHandler.get(0).isEmpty()) {
@@ -114,7 +114,7 @@ public final class GangPanelGUI extends Gui {
 	private Item createGangInfoItem() {
 		int gangTopPosition = getGangTopPosition();
 
-		return ItemStackBuilder.of(CompMaterial.BOOK.toItem()).name("&eGang Info").lore(
+		return ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&eGang Info").lore(
 				" ",
 				String.format("&8» &e%s &7Gang", this.gang.getName()),
 				String.format("&8» &7Owner: &e%s", this.gang.getOwnerOffline().getName()),
