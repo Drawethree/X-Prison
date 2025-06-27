@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.mines.model.mine;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonElement;
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.managers.MineManager;
 import dev.drawethree.xprison.mines.model.mine.reset.ResetType;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import me.lucko.helper.Schedulers;
@@ -100,7 +100,7 @@ public class Mine implements GsonSerializable {
 		this.mineRegion = region;
 		this.teleportLocation = null;
 		this.blockPalette = new BlockPalette();
-		this.blockPalette.addToPalette(CompMaterial.STONE, 100.0);
+		this.blockPalette.addToPalette(XMaterial.STONE, 100.0);
 		this.resetType = ResetType.INSTANT;
 		this.resetPercentage = 50.0;
 		this.resetTime = 10;

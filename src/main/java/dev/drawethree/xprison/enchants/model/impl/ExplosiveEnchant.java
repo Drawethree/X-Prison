@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.api.events.ExplosionTriggerEvent;
@@ -11,7 +12,6 @@ import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.block.CuboidExplosionBlockProvider;
 import dev.drawethree.xprison.utils.block.ExplosionBlockProvider;
 import dev.drawethree.xprison.utils.block.SpheroidExplosionBlockProvider;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
@@ -166,7 +166,8 @@ public final class ExplosiveEnchant extends XPrisonEnchantment {
             if (autoSellPlayerEnabled) {
                 totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
             } else {
-                ItemStack itemToGive = CompMaterial.fromBlock(block).toItem(amplifier);
+                ItemStack itemToGive = XMaterial.matchXMaterial(block.getType()).parseItem();
+                itemToGive.setAmount(amplifier);
                 p.getInventory().addItem(itemToGive);
             }
             block.setType(Material.AIR, true);

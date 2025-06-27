@@ -1,11 +1,11 @@
 package dev.drawethree.xprison.autosell.utils;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.model.SellRegion;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 
 import java.util.Comparator;
 
-public class SellPriceComparator implements Comparator<CompMaterial> {
+public class SellPriceComparator implements Comparator<XMaterial> {
 
 	private final SellRegion region;
 
@@ -14,7 +14,7 @@ public class SellPriceComparator implements Comparator<CompMaterial> {
 	}
 
 	@Override
-	public int compare(CompMaterial o1, CompMaterial o2) {
+	public int compare(XMaterial o1, XMaterial o2) {
 		double sellPrice1 = region.getSellPriceForMaterial(o1);
 		double sellPrice2 = region.getSellPriceForMaterial(o2);
 		return Double.compare(sellPrice1, sellPrice2);

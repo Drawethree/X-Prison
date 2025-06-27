@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -19,9 +19,9 @@ public class MineBlocksGUI extends Gui {
 	@Override
 	public void redraw() {
 		this.clearItems();
-		for (CompMaterial material : this.mine.getBlockPalette().getMaterials()) {
+		for (XMaterial material : this.mine.getBlockPalette().getMaterials()) {
 			double chance = this.mine.getBlockPalette().getPercentage(material);
-			this.addItem(ItemStackBuilder.of(material.toItem()).name(material.name()).lore(" ", "&7Chance of spawning this blocks", String.format("&7is &b%,.2f%%", chance), " ", "&aLeft-Click &7to edit the chance", "&aRight-Click &7to remove.").build(() -> {
+			this.addItem(ItemStackBuilder.of(material.parseItem()).name(material.name()).lore(" ", "&7Chance of spawning this blocks", String.format("&7is &b%,.2f%%", chance), " ", "&aLeft-Click &7to edit the chance", "&aRight-Click &7to remove.").build(() -> {
 				this.mine.getBlockPalette().removeFromPalette(material);
 				this.redraw();
 			}, () -> {

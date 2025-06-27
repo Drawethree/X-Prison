@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.utils.misc;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import org.bukkit.OfflinePlayer;
@@ -33,7 +33,7 @@ public class SkullUtils {
 	}
 
 	public static ItemStack getCustomTextureHead(String value) {
-		ItemStack head = CompMaterial.PLAYER_HEAD.toItem();
+		ItemStack head = XMaterial.PLAYER_HEAD.parseItem();
 
 		SkullMeta meta = (SkullMeta) head.getItemMeta();
 
@@ -60,7 +60,7 @@ public class SkullUtils {
 
 
 	public static ItemStack createPlayerHead(OfflinePlayer player, String displayName, List<String> lore) {
-		ItemStack baseItem = CompMaterial.PLAYER_HEAD.toItem();
+		ItemStack baseItem = XMaterial.PLAYER_HEAD.parseItem();
 		SkullMeta meta = (SkullMeta) baseItem.getItemMeta();
 
 		if (MinecraftVersion.atLeast(MinecraftVersion.V.v1_13)) {

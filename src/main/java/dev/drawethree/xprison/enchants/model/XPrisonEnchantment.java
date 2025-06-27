@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.enchants.model;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
 import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -50,7 +50,7 @@ public abstract class XPrisonEnchantment implements Refundable {
 		this.name = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Name"));
 		this.nameUncolor = this.name.replaceAll("§.", "");
 		this.guiName = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".GuiName"));
-		this.material = CompMaterial.fromString(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Material")).toMaterial();
+		this.material = XMaterial.valueOf(this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Material")).get();
 		this.description = TextUtils.applyColor(this.plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Description"));
 		this.enabled = this.plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Enabled");
 		this.guiSlot = this.plugin.getEnchantsConfig().getYamlConfig().getInt("enchants." + id + ".InGuiSlot");

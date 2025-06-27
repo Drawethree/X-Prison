@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.mines.commands.impl;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.commands.MineCommand;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -42,7 +42,7 @@ public class MineAddBlockCommand extends MineCommand {
 			return true;
 		}
 
-		CompMaterial material = CompMaterial.fromItem(inHand);
+		XMaterial material = XMaterial.matchXMaterial(inHand);
 		mine.getBlockPalette().addToPalette(material, 0.0);
 		PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_block_added").replace("%block%", material.name()).replace("%mine%", mine.getName()));
 		return true;

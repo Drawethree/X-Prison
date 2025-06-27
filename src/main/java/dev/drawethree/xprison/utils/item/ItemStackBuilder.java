@@ -25,6 +25,8 @@
 
 package dev.drawethree.xprison.utils.item;
 
+import com.cryptomorin.xseries.XItemFlag;
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.utils.annotation.NonnullByDefault;
@@ -52,7 +54,7 @@ import java.util.function.Consumer;
 public final class ItemStackBuilder {
 	private static final ItemFlag[] ALL_FLAGS = new ItemFlag[]{
 			ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES,
-			ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS,
+			ItemFlag.HIDE_UNBREAKABLE, XItemFlag.HIDE_ADDITIONAL_TOOLTIP.get(),
 			ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON
 	};
 

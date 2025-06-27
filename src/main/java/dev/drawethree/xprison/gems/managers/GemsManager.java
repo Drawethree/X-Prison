@@ -1,11 +1,12 @@
 package dev.drawethree.xprison.gems.managers;
 
+import com.cryptomorin.xseries.XEnchantment;
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.api.enums.LostCause;
 import dev.drawethree.xprison.api.enums.ReceiveCause;
 import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.gems.api.events.PlayerGemsLostEvent;
 import dev.drawethree.xprison.gems.api.events.PlayerGemsReceiveEvent;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
@@ -19,7 +20,6 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -80,7 +80,7 @@ public class GemsManager {
 		this.displayGemsMessages = plugin.getConfig().get().getBoolean("display-gems-messages");
 		this.gemsItemDisplayName = plugin.getConfig().get().getString("gems.item.name");
 		this.gemsItemLore = plugin.getConfig().get().getStringList("gems.item.lore");
-		this.gemsItem = CompMaterial.fromString(plugin.getConfig().get().getString("gems.item.material")).toItem();
+		this.gemsItem = XMaterial.valueOf(plugin.getConfig().get().getString("gems.item.material")).parseItem();
 		this.startingGems = plugin.getConfig().get().getLong("starting-gems");
 	}
 
@@ -315,7 +315,7 @@ public class GemsManager {
 	}
 
 	private ItemStack createGemsItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(Enchantment.PROTECTION_ENVIRONMENTAL).flag(ItemFlag.HIDE_ENCHANTS).build();
+		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(XEnchantment.PROTECTION.get()).flag(ItemFlag.HIDE_ENCHANTS).build();
 		final PrisonItem prisonItem = new PrisonItem(item);
 		prisonItem.setGems(amount);
 		prisonItem.load();

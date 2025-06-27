@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.enchants.config;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.LevelFormat;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.block.Action;
@@ -26,7 +26,7 @@ public class EnchantsConfig {
 	private List<String> pickaxeLore;
 	private boolean allowEnchantsOutside;
 	private boolean firstJoinPickaxeEnabled;
-	private CompMaterial firstJoinPickaxeMaterial;
+	private XMaterial firstJoinPickaxeMaterial;
 	private List<String> firstJoinPickaxeEnchants;
 	private String firstJoinPickaxeName;
 	private boolean keepPickaxesOnDeath;
@@ -55,7 +55,7 @@ public class EnchantsConfig {
 		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
 		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
 		this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
-		this.firstJoinPickaxeMaterial = CompMaterial.fromString(getYamlConfig().getString("first-join-pickaxe.material"));
+		this.firstJoinPickaxeMaterial = XMaterial.matchXMaterial(getYamlConfig().getString("first-join-pickaxe.material")).get();
 		this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");
 		this.firstJoinPickaxeName = getYamlConfig().getString("first-join-pickaxe.name");
 		this.keepPickaxesOnDeath = getYamlConfig().getBoolean("keep-pickaxes-on-death");
@@ -98,7 +98,7 @@ public class EnchantsConfig {
 		return firstJoinPickaxeEnabled;
 	}
 
-	public CompMaterial getFirstJoinPickaxeMaterial() {
+	public XMaterial getFirstJoinPickaxeMaterial() {
 		return firstJoinPickaxeMaterial;
 	}
 

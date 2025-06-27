@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.autosell.manager;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.autosell.api.events.XPrisonAutoSellEvent;
 import dev.drawethree.xprison.autosell.api.events.XPrisonSellAllEvent;
@@ -8,7 +9,6 @@ import dev.drawethree.xprison.autosell.model.SellRegion;
 import dev.drawethree.xprison.autosell.utils.AutoSellContants;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.multipliers.enums.MultiplierType;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.economy.EconomyUtils;
 import dev.drawethree.xprison.utils.inventory.InventoryUtils;
 import dev.drawethree.xprison.utils.misc.MaterialUtils;
@@ -89,7 +89,7 @@ public class AutoSellManager {
 
         String permRequired = config.getString("regions." + regionName + ".permission");
 
-        Map<CompMaterial, Double> sellPrices = this.loadSellPricesForRegion(config, regionName);
+        Map<XMaterial, Double> sellPrices = this.loadSellPricesForRegion(config, regionName);
 
         SellRegion sellRegion = new SellRegion(region, world, permRequired, sellPrices);
         this.regionsAutoSell.put(regionName, sellRegion);
@@ -109,11 +109,11 @@ public class AutoSellManager {
         return optRegion.orElse(null);
     }
 
-    private Map<CompMaterial, Double> loadSellPricesForRegion(YamlConfiguration config, String regionName) {
-        Map<CompMaterial, Double> sellPrices = new HashMap<>();
+    private Map<XMaterial, Double> loadSellPricesForRegion(YamlConfiguration config, String regionName) {
+        Map<XMaterial, Double> sellPrices = new HashMap<>();
 
         for (String item : config.getConfigurationSection("regions." + regionName + ".items").getKeys(false)) {
-            CompMaterial type = CompMaterial.valueOf(item);
+            XMaterial type = XMaterial.valueOf(item);
             double sellPrice = config.getDouble("regions." + regionName + ".items." + item);
             sellPrices.put(type, sellPrice);
         }
@@ -310,7 +310,7 @@ public class AutoSellManager {
         if (this.plugin.getAutoSellConfig().isAutoSmelt()) {
             toGive = MaterialUtils.getSmeltedFormAsItemStack(block);
         } else {
-            toGive = CompMaterial.fromBlock(block).toItem();
+            toGive = XMaterial.matchXMaterial(block.getType()).parseItem();
         }
         toGive.setAmount(amount);
         return toGive;
@@ -374,7 +374,7 @@ public class AutoSellManager {
     }
 
     public double getPriceForBlock(String regionName, Block block) {
-        CompMaterial material = CompMaterial.fromBlock(block);
+        XMaterial material = XMaterial.matchXMaterial(block.getType());
         SellRegion region = regionsAutoSell.get(regionName);
         if (region != null) {
             return region.getSellPriceForMaterial(material);
@@ -383,7 +383,7 @@ public class AutoSellManager {
     }
 
     public double getPriceForBlock(Block block) {
-        CompMaterial material = CompMaterial.fromBlock(block);
+        XMaterial material = XMaterial.matchXMaterial(block.getType());
         SellRegion region = getAutoSellRegion(block.getLocation());
         if (region != null) {
             return region.getSellPriceForMaterial(material);

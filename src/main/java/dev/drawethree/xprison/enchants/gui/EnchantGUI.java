@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.enchants.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.utils.GuiUtils;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -140,7 +140,7 @@ public final class EnchantGUI extends Gui {
 		GUI_ITEM_LORE = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.item.lore");
 		GUI_TITLE = TextUtils.applyColor(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.title"));
 		EMPTY_SLOT_ITEM = ItemStackBuilder.
-				of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.empty_slots")).toItem()).buildItem().build();
+				of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.empty_slots")).parseItem()).buildItem().build();
 		GUI_LINES = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.lines");
 
 		HELP_ITEM_ENABLED = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getBoolean("enchant_menu.help_item.enabled", true);
@@ -154,7 +154,7 @@ public final class EnchantGUI extends Gui {
 				DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
 						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
 			} else {
-				DISENCHANT_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.material")).toMaterial())
+				DISENCHANT_ITEM = ItemStackBuilder.of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.material")).parseItem())
 						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
 			}
 			DISENCHANT_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.disenchant_item.slot");
@@ -168,7 +168,7 @@ public final class EnchantGUI extends Gui {
 				HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
 						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
 			} else {
-				HELP_ITEM = ItemStackBuilder.of(CompMaterial.fromString(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.material")).toMaterial())
+				HELP_ITEM = ItemStackBuilder.of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.material")).parseItem())
 						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
 			}
 

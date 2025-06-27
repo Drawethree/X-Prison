@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -41,7 +41,7 @@ public class MineEffectsGUI extends Gui {
 		boolean enabled = this.mine.isEffectEnabled(type);
 
 		if (enabled) {
-			return ItemStackBuilder.of(CompMaterial.GLOWSTONE_DUST.toItem()).name("&7" + type.getName() + " &aENABLED &b(" + this.mine.getEffectLevel(type) + ")").lore("&aShift-Left-Click &7to &aincrease.", "&aShift-Right-Click &7to &cdecrease.", "&aClick &7to disable.").buildItem().bind(event -> {
+			return ItemStackBuilder.of(XMaterial.GLOWSTONE_DUST.parseItem()).name("&7" + type.getName() + " &aENABLED &b(" + this.mine.getEffectLevel(type) + ")").lore("&aShift-Left-Click &7to &aincrease.", "&aShift-Right-Click &7to &cdecrease.", "&aClick &7to disable.").buildItem().bind(event -> {
 				switch (event.getClick()) {
 					case LEFT:
 						this.mine.disableEffect(type);
@@ -56,7 +56,7 @@ public class MineEffectsGUI extends Gui {
 				this.redraw();
 			}, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT).build();
 		} else {
-			return ItemStackBuilder.of(CompMaterial.GUNPOWDER.toItem()).name("&7" + type.getName() + " &cDISABLED").lore("&aClick &7to enable.").build(() -> {
+			return ItemStackBuilder.of(XMaterial.GUNPOWDER.parseItem()).name("&7" + type.getName() + " &cDISABLED").lore("&aClick &7to enable.").build(() -> {
 				this.mine.enableEffect(type);
 				this.redraw();
 			});

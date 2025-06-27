@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.gangs.gui.panel;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
 import dev.drawethree.xprison.gangs.model.Gang;
 import dev.drawethree.xprison.gangs.model.GangInvitation;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -45,7 +45,7 @@ public final class ManageGangInvitesGui extends Gui {
 	private void populateLayout() {
 		MenuPopulator populator = LAYOUT.newPopulator(this);
 		while (populator.hasSpace()) {
-			populator.accept(ItemStackBuilder.of(CompMaterial.BLACK_STAINED_GLASS_PANE.toItem()).name("&a").buildItem().build());
+			populator.accept(ItemStackBuilder.of(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem()).name("&a").buildItem().build());
 		}
 	}
 
@@ -58,7 +58,7 @@ public final class ManageGangInvitesGui extends Gui {
 		String statusColor = invitation.getInvitedPlayer().isOnline() ? "&a" : "&c";
 		String status = invitation.getInvitedPlayer().isOnline() ? "Online" : "Offline";
 
-		return ItemStackBuilder.of(CompMaterial.PLAYER_HEAD.toItem())
+		return ItemStackBuilder.of(XMaterial.PLAYER_HEAD.parseItem())
 				.name(statusColor + invitation.getInvitedPlayer().getName())
 				.lore(
 						" ",

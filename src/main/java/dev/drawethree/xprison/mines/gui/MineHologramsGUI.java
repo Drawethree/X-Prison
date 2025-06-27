@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.mines.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.mines.model.mine.HologramType;
 import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -19,21 +19,21 @@ public class MineHologramsGUI extends Gui {
 
 	@Override
 	public void redraw() {
-		this.setItem(0, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eBlocks Mined Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
+		this.setItem(0, ItemStackBuilder.of(XMaterial.NAME_TAG.parseItem()).name("&eBlocks Mined Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
 			this.close();
 			this.mine.getManager().deleteHologram(this.mine, HologramType.BLOCKS_MINED, this.getPlayer());
 		}, () -> {
 			this.close();
 			this.mine.getManager().createHologram(this.mine, HologramType.BLOCKS_MINED, this.getPlayer());
 		}));
-		this.setItem(1, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eBlocks Left Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
+		this.setItem(1, ItemStackBuilder.of(XMaterial.NAME_TAG.parseItem()).name("&eBlocks Left Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
 			this.close();
 			this.mine.getManager().deleteHologram(this.mine, HologramType.BLOCKS_LEFT, this.getPlayer());
 		}, () -> {
 			this.close();
 			this.mine.getManager().createHologram(this.mine, HologramType.BLOCKS_LEFT, this.getPlayer());
 		}));
-		this.setItem(2, ItemStackBuilder.of(CompMaterial.NAME_TAG.toItem()).name("&eTimed Reset Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
+		this.setItem(2, ItemStackBuilder.of(XMaterial.NAME_TAG.parseItem()).name("&eTimed Reset Hologram").lore(" ", "&aLeft-Click &7to spawn on your location.", "&aRight-Click &7to remove.").build(() -> {
 			this.close();
 			this.mine.getManager().deleteHologram(this.mine, HologramType.TIMED_RESET, this.getPlayer());
 		}, () -> {

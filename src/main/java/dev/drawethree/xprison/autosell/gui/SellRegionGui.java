@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.autosell.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.autosell.model.SellRegion;
 import dev.drawethree.xprison.autosell.utils.SellPriceComparator;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -35,16 +35,16 @@ public final class SellRegionGui extends Gui {
 	}
 
 	private void setActionItems() {
-		for (CompMaterial material : this.sellRegion.getSellingMaterialsSorted(new SellPriceComparator(sellRegion))) {
+		for (XMaterial material : this.sellRegion.getSellingMaterialsSorted(new SellPriceComparator(sellRegion))) {
 			this.addItemForMaterial(material);
 		}
 	}
 
 
-	private void addItemForMaterial(CompMaterial material) {
+	private void addItemForMaterial(XMaterial material) {
 		double price = this.sellRegion.getSellPriceForMaterial(material);
 
-		this.addItem(ItemStackBuilder.of(material.toItem()).name(material.name()).lore(" ", String.format("&7Sell Price: &2$&a%,.2f", price), " ", "&aLeft-Click &7to edit the price", "&aRight-Click &7to remove.").build(() -> {
+		this.addItem(ItemStackBuilder.of(material.parseItem()).name(material.name()).lore(" ", String.format("&7Sell Price: &2$&a%,.2f", price), " ", "&aLeft-Click &7to edit the price", "&aRight-Click &7to remove.").build(() -> {
 			this.deleteSellPrice(material);
 			this.redraw();
 		}, () -> {
@@ -52,7 +52,7 @@ public final class SellRegionGui extends Gui {
 		}));
 	}
 
-	private void deleteSellPrice(CompMaterial material) {
+	private void deleteSellPrice(XMaterial material) {
 		this.sellRegion.removeSellPrice(material);
 		XPrisonAutoSell.getInstance().getAutoSellConfig().saveSellRegion(sellRegion);
 	}

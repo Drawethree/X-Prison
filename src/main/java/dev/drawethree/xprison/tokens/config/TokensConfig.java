@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.tokens.config;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -66,12 +66,12 @@ public class TokensConfig {
 		this.luckyBlockRewards = new HashMap<>();
 
 		for (String key : configuration.getConfigurationSection("lucky-blocks").getKeys(false)) {
-			CompMaterial material = CompMaterial.fromString(key);
+			XMaterial material = XMaterial.valueOf(key);
 			List<String> rewards = configuration.getStringList("lucky-blocks." + key);
 			if (rewards.isEmpty()) {
 				continue;
 			}
-			this.luckyBlockRewards.put(material.toMaterial(), rewards);
+			this.luckyBlockRewards.put(material.get(), rewards);
 		}
 
 		this.topPlayersAmount = configuration.getInt("top_players_amount");
@@ -84,7 +84,7 @@ public class TokensConfig {
 		this.savePlayerDataInterval = configuration.getInt("player_data_save_interval");
 		this.tokenItemDisplayName = configuration.getString("tokens.item.name");
 		this.tokenItemLore = configuration.getStringList("tokens.item.lore");
-		this.tokenItem = CompMaterial.fromString(configuration.getString("tokens.item.material")).toItem();
+		this.tokenItem = XMaterial.valueOf(configuration.getString("tokens.item.material")).parseItem();
 		this.startingTokens = configuration.getLong("starting-tokens");
 		this.tokensCommandAliases = configuration.getStringList("tokens-command-aliases").toArray(new String[0]);
 		this.tokensTopCommandAliases = configuration.getStringList("tokens-top-command-aliases").toArray(new String[0]);

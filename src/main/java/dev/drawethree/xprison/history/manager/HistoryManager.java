@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.history.manager;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrisonModule;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
@@ -10,7 +11,6 @@ import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
-import dev.drawethree.xprison.utils.compat.CompMaterial;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import me.lucko.helper.menu.Item;
@@ -70,7 +70,7 @@ public class HistoryManager {
 	}
 
 	private Item getEmptyHistoryItem() {
-		return ItemStackBuilder.of(CompMaterial.BARRIER.toItem()).name("&4&lNo History").lore("&cNo history is present for this player.").buildItem().build();
+		return ItemStackBuilder.of(XMaterial.BARRIER.parseItem()).name("&4&lNo History").lore("&cNo history is present for this player.").buildItem().build();
 	}
 
 	private HistoryLine createHistoryLineObject(OfflinePlayer player, XPrisonModule module, String context) {
@@ -106,7 +106,7 @@ public class HistoryManager {
 			case XPrisonMultipliers.MODULE_NAME:
 				return SkullUtils.COIN_SKULL.clone();
 			case XPrisonGems.MODULE_NAME:
-				return ItemStackBuilder.of(CompMaterial.EMERALD.toItem()).build();
+				return ItemStackBuilder.of(XMaterial.EMERALD.parseItem()).build();
 			case XPrisonGangs.MODULE_NAME:
 				return SkullUtils.GANG_SKULL.clone();
 			case XPrisonPrestiges
@@ -117,9 +117,9 @@ public class HistoryManager {
 				return SkullUtils.DIAMOND_R_SKULL.clone();
 			case XPrisonAutoMiner
 					.MODULE_NAME:
-				return ItemStackBuilder.of(CompMaterial.DIAMOND_PICKAXE.toItem()).build();
+				return ItemStackBuilder.of(XMaterial.DIAMOND_PICKAXE.parseItem()).build();
 			default:
-				return ItemStackBuilder.of(CompMaterial.BOOK.toItem()).build();
+				return ItemStackBuilder.of(XMaterial.BOOK.parseItem()).build();
 		}
 
 	}

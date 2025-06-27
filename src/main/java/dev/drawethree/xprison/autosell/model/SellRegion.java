@@ -1,6 +1,6 @@
 package dev.drawethree.xprison.autosell.model;
 
-import dev.drawethree.xprison.utils.compat.CompMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,7 +24,7 @@ public class SellRegion {
 
     @Getter
     private final String permissionRequired;
-    private final Map<CompMaterial, Double> sellPrices;
+    private final Map<XMaterial, Double> sellPrices;
 
 
     public SellRegion(IWrappedRegion region, World world) {
@@ -34,19 +34,19 @@ public class SellRegion {
         this.sellPrices = new HashMap<>();
     }
 
-    public double getSellPriceForMaterial(CompMaterial material) {
+    public double getSellPriceForMaterial(XMaterial material) {
         return sellPrices.getOrDefault(material, 0.0);
     }
 
-    public Set<CompMaterial> getSellingMaterials() {
+    public Set<XMaterial> getSellingMaterials() {
         return this.sellPrices.keySet();
     }
 
-    public Set<CompMaterial> getSellingMaterialsSorted(Comparator<CompMaterial> comparator) {
+    public Set<XMaterial> getSellingMaterialsSorted(Comparator<XMaterial> comparator) {
         return this.sellPrices.keySet().stream().sorted(comparator).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public void addSellPrice(CompMaterial material, double price) {
+    public void addSellPrice(XMaterial material, double price) {
         this.sellPrices.put(material, price);
     }
 
@@ -62,7 +62,7 @@ public class SellRegion {
     }
 
     public double getPriceForItem(ItemStack item) {
-        CompMaterial material = CompMaterial.fromItem(item);
+        XMaterial material = XMaterial.matchXMaterial(item);
         return item.getAmount() * this.sellPrices.getOrDefault(material, 0.0);
     }
 
@@ -92,11 +92,11 @@ public class SellRegion {
         return itemsToSell;
     }
 
-    public boolean sellsMaterial(CompMaterial material) {
+    public boolean sellsMaterial(XMaterial material) {
         return this.sellPrices.containsKey(material);
     }
 
-    public void removeSellPrice(CompMaterial material) {
+    public void removeSellPrice(XMaterial material) {
         this.sellPrices.remove(material);
     }
 }
