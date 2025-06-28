@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.gui.panel;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -24,12 +24,12 @@ public final class ManageGangMembersGui extends Gui {
 			.mask("111111111");
 
 	private final XPrisonGangs plugin;
-	private final Gang gang;
+	private final GangImpl gangImpl;
 
-	public ManageGangMembersGui(XPrisonGangs plugin, Gang gang, Player player) {
+	public ManageGangMembersGui(XPrisonGangs plugin, GangImpl gangImpl, Player player) {
 		super(player, 6, "Gang Members");
 		this.plugin = plugin;
-		this.gang = gang;
+		this.gangImpl = gangImpl;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public final class ManageGangMembersGui extends Gui {
 	}
 
 	private void populateButtons() {
-		this.gang.getMembersOffline().forEach(player -> this.addItem(createGangMemberItem(player)));
+		this.gangImpl.getMembersOffline().forEach(player -> this.addItem(createGangMemberItem(player)));
 	}
 
 	private Item createGangMemberItem(OfflinePlayer player) {
@@ -60,12 +60,12 @@ public final class ManageGangMembersGui extends Gui {
 				.lore(
 						" ",
 						"&8» &7Online Status: " + statusColor + status,
-						"&8» &7Role: &e" + (gang.isOwner(player) ? "Owner" : "Member"),
+						"&8» &7Role: &e" + (gangImpl.isOwner(player) ? "Owner" : "Member"),
 						" ",
 						"&7Right-Click to &cKICK"
 				)
 				.build(ClickType.RIGHT, () -> {
-					this.plugin.getGangsManager().kickPlayerFromGang(this.gang, player);
+					this.plugin.getGangsManager().kickPlayerFromGang(this.gangImpl, player);
 					redraw();
 				});
 	}

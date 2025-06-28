@@ -2,8 +2,9 @@ package dev.drawethree.xprison.enchants.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.enchants.model.RefundableEnchant;
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.utils.GuiUtils;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
@@ -90,28 +91,36 @@ public final class DisenchantGUI extends Gui {
 
         for (XPrisonEnchantment enchantment : allEnchants) {
 
-            if (!enchantment.isRefundEnabled() || !enchantment.isEnabled()) {
+            if (!(enchantment instanceof RefundableEnchant)){
                 continue;
             }
 
+            RefundableEnchant refundableEnchant = (RefundableEnchant) enchantment;
+
+            if (!refundableEnchant.isRefundEnabled()) {
+                continue;
+            }
+
+
             int level = XPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment);
-            this.setItem(enchantment.getRefundGuiSlot(), getRefundGuiItem(enchantment, this, level));
+            this.setItem(refundableEnchant.getRefundGuiSlot(), getRefundGuiItem(enchantment, this, level));
         }
     }
 
 
     private Item getRefundGuiItem(XPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
-        Material m = enchantment.isRefundEnabled() ? enchantment.getMaterial() : XMaterial.BARRIER.get();
+        RefundableEnchant refundableEnchant = (RefundableEnchant) enchantment;
+        Material m = refundableEnchant.isRefundEnabled() ? enchantment.getGuiMaterial() : XMaterial.BARRIER.get();
         ItemStackBuilder builder = ItemStackBuilder.of(m);
 
-        if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
-            builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
+        if (enchantment.getGuiBase64() != null && !enchantment.getGuiBase64().isEmpty()) {
+            builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getGuiBase64()));
         }
 
-        builder.name(enchantment.isRefundEnabled() ? enchantment.getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
-        builder.lore(enchantment.isRefundEnabled() ? GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, level) : new ArrayList<>());
+        builder.name(refundableEnchant.isRefundEnabled() ? enchantment.getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
+        builder.lore(refundableEnchant.isRefundEnabled() ? GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, level) : new ArrayList<>());
 
-        return enchantment.isRefundEnabled() ? builder.buildItem().bind(handler -> {
+        return refundableEnchant.isRefundEnabled() ? builder.buildItem().bind(handler -> {
             if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
                 this.plugin.getEnchantsManager().disenchant(enchantment, gui, level, 100);
                 gui.redraw();

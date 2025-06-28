@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
-import com.cryptomorin.xseries.XBlock;
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class FortuneEnchant extends XPrisonEnchantment {
+public final class FortuneEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
 
     private static List<XMaterial> blackListedBlocks;
 
@@ -34,11 +34,6 @@ public final class FortuneEnchant extends XPrisonEnchantment {
 
     @Override
     public void onUnequip(Player p, ItemStack pickAxe, int level) {
-
-    }
-
-    @Override
-    public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
     }
 

@@ -1,15 +1,15 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XPotion;
+import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-public final class JumpBoostEnchant extends XPrisonEnchantment {
+public final class JumpBoostEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
 	public JumpBoostEnchant(XPrisonEnchants instance) {
 		super(instance, 6);
 	}
@@ -26,11 +26,6 @@ public final class JumpBoostEnchant extends XPrisonEnchantment {
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
 		p.removePotionEffect(XPotion.JUMP_BOOST.get());
-	}
-
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-
 	}
 
 	@Override

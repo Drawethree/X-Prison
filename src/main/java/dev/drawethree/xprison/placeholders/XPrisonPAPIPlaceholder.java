@@ -1,14 +1,12 @@
 package dev.drawethree.xprison.placeholders;
 
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.multipliers.model.Multiplier;
+import dev.drawethree.xprison.api.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.xprison.api.ranks.model.Rank;
 import dev.drawethree.xprison.autominer.utils.AutoMinerUtils;
-import dev.drawethree.xprison.gangs.model.Gang;
-import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.multipliers.multiplier.GlobalMultiplier;
-import dev.drawethree.xprison.multipliers.multiplier.Multiplier;
-import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplier;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
-import dev.drawethree.xprison.ranks.model.Rank;
+import dev.drawethree.xprison.gangs.model.GangImpl;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.misc.MathUtils;
 import dev.drawethree.xprison.utils.misc.TimeUtil;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -116,22 +114,22 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 		if (identifier.startsWith("mine_")) {
 
 			String mineName = identifier.replace("mine_", "").split("_")[0];
-			Mine mine = plugin.getMines().getManager().getMineByName(mineName);
+			MineImpl mineImpl = plugin.getMines().getManager().getMineByName(mineName);
 
-			if (mine == null) {
+			if (mineImpl == null) {
 				return null;
 			}
 
 			String placeholder = identifier.replace("mine_" + mineName + "_", "");
 			switch (placeholder.toLowerCase()) {
 				case "blocks_left": {
-					return String.format("%,d", mine.getCurrentBlocks());
+					return String.format("%,d", mineImpl.getCurrentBlocks());
 				}
 				case "blocks_left_percentage": {
-					return String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D);
+					return String.format("%,.2f", (double) mineImpl.getCurrentBlocks() / mineImpl.getTotalBlocks() * 100.0D);
 				}
 				case "reset_time": {
-					return TimeUtil.getTime(mine.getSecondsToNextReset());
+					return TimeUtil.getTime(mineImpl.getSecondsToNextReset());
 				}
 			}
 		} else if (identifier.startsWith("token_has_")) {
@@ -150,16 +148,16 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "blocks_2":
 				return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
 			case "multiplier_sell": {
-				PlayerMultiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(player);
-				if (sellMulti == null || sellMulti.isExpired()) {
+				Multiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(player);
+				if (sellMulti == null || !sellMulti.isActive()) {
 					return String.format("%.2f", 0.0);
 				} else {
 					return String.format("%.2f", (1.0 + sellMulti.getMultiplier()));
 				}
 			}
 			case "multiplier_token": {
-				PlayerMultiplier tokenMulti = plugin.getMultipliers().getApi().getTokenMultiplier(player);
-				if (tokenMulti == null || tokenMulti.isExpired()) {
+				Multiplier tokenMulti = plugin.getMultipliers().getApi().getTokenMultiplier(player);
+				if (tokenMulti == null || !tokenMulti.isActive()) {
 					return String.format("%.2f", 0.0);
 				} else {
 					return String.format("%.2f", (1.0 + tokenMulti.getMultiplier()));
@@ -174,18 +172,18 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				}
 			}
 			case "multiplier_global_sell": {
-				GlobalMultiplier sellMulti = plugin.getMultipliers().getApi().getGlobalSellMultiplier();
-				return String.format("%.2f", sellMulti.isExpired() ? 0.0 : sellMulti.getMultiplier());
+				Multiplier sellMulti = plugin.getMultipliers().getApi().getGlobalSellMultiplier();
+				return String.format("%.2f", !sellMulti.isActive() ? 0.0 : sellMulti.getMultiplier());
 			}
 			case "multiplier_global_token": {
-				GlobalMultiplier tokenMulti = plugin.getMultipliers().getApi().getGlobalTokenMultiplier();
-				return String.format("%.2f", tokenMulti.isExpired() ? 0.0 : tokenMulti.getMultiplier());
+				Multiplier tokenMulti = plugin.getMultipliers().getApi().getGlobalTokenMultiplier();
+				return String.format("%.2f", !tokenMulti.isActive() ? 0.0 : tokenMulti.getMultiplier());
 			}
 			case "rank":
 				return plugin.getRanks().getApi().getPlayerRank(player).getPrefix();
 			case "next_rank": {
 				Optional<Rank> nextRank = plugin.getRanks().getApi().getNextPlayerRank(player);
-				return !nextRank.isPresent() ? "" : nextRank.get().getPrefix();
+				return nextRank.isEmpty() ? "" : nextRank.get().getPrefix();
 			}
 			case "next_rank_cost_raw":
 				return String.valueOf(plugin.getRanks().getRanksManager().getNextRankCost(player));
@@ -227,11 +225,11 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return this.plugin.getPickaxeLevels().getApi().getProgressBar(player);
 			case "gang_name":
 			case "gang": {
-				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				return optionalGang.map(gang -> this.plugin.getGangs().getConfig().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getConfig().getPlaceholder("gang-without"));
 			}
 			case "gang_value": {
-				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				if (optionalGang.isPresent()) {
 					return String.format("%,d", optionalGang.get().getValue());
 				} else {
@@ -241,23 +239,23 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "gang_has_gang":
 				return this.plugin.getGangs().getGangsManager().getPlayerGang(player).isPresent() ? "Yes" : "No";
 			case "gang_is_leader": {
-				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				return optionalGang.map(gang -> gang.isOwner(player) ? "Yes" : "No").orElse("");
 			}
 			case "gang_leader_name": {
-				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				if (optionalGang.isPresent()) {
 					return optionalGang.get().getOwnerOffline().getName();
 				}
 				return "";
 			}
 			case "gang_members_amount": {
-				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				// +1 because of leader
 				return optionalGang.map(gang -> String.valueOf(gang.getMembersOffline().size() + 1)).orElse("");
 			}
 			case "gang_members_online": {
-				Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
+				Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(player);
 				return optionalGang.map(gang -> String.valueOf(gang.getOnlinePlayers().size())).orElse("");
 			}
 			default:

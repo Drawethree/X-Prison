@@ -2,7 +2,7 @@ package dev.drawethree.xprison.ranks.config;
 
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
-import dev.drawethree.xprison.ranks.model.Rank;
+import dev.drawethree.xprison.ranks.model.RankImpl;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,14 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+
 public class RanksConfig {
 
 	private final XPrisonRanks plugin;
 	private final FileManager.Config config;
-	private final Map<Integer, Rank> ranksById;
+	private final Map<Integer, RankImpl> ranksById;
 	private Map<String, String> messages;
-	private Rank defaultRank;
-	private Rank maxRank;
+	private RankImpl defaultRankImpl;
+	private RankImpl maxRankImpl;
 	private boolean useTokensCurrency;
 	private String progressBarDelimiter;
 	private int progressBarLength;
@@ -57,18 +59,18 @@ public class RanksConfig {
 				String prefix = TextUtils.applyColor(configuration.getString(rootPath + "Prefix"));
 				long cost = configuration.getLong(rootPath + "Cost");
 				List<String> commands = configuration.getStringList(rootPath + "CMD");
-				Rank rank = new Rank(id, cost, prefix, commands);
-				this.ranksById.put(id, rank);
+				RankImpl rankImpl = new RankImpl(id, cost, prefix, commands);
+				this.ranksById.put(id, rankImpl);
 
 				if (!defaultSet) {
-					this.defaultRank = rank;
+					this.defaultRankImpl = rankImpl;
 					defaultSet = true;
 				}
 
-				this.maxRank = rank;
+				this.maxRankImpl = rankImpl;
 			}
 		}
-		this.plugin.getCore().getLogger().info(String.format("Loaded %d ranks!", ranksById.keySet().size()));
+		info(String.format("&aLoaded &e%d Ranks.", ranksById.keySet().size()));
 	}
 
 	public void load() {
@@ -84,7 +86,7 @@ public class RanksConfig {
 		this.useTokensCurrency = configuration.getBoolean("use_tokens_currency");
 		this.progressBarDelimiter = configuration.getString("progress-bar-delimiter");
 		this.progressBarLength = configuration.getInt("progress-bar-length");
-		this.plugin.getCore().getLogger().info("Using " + (useTokensCurrency ? "Tokens" : "Money") + " currency for Ranks.");
+		info("&fUsing &e" + (useTokensCurrency ? "Tokens" : "Money") + " &fcurrency for Ranks.");
 	}
 
 	private FileManager.Config getConfig() {
@@ -95,12 +97,12 @@ public class RanksConfig {
 		return this.config.get();
 	}
 
-	public Rank getMaxRank() {
-		return maxRank;
+	public RankImpl getMaxRank() {
+		return maxRankImpl;
 	}
 
-	public Rank getDefaultRank() {
-		return defaultRank;
+	public RankImpl getDefaultRank() {
+		return defaultRankImpl;
 	}
 
 	public String getProgressBarDelimiter() {
@@ -111,7 +113,7 @@ public class RanksConfig {
 		return progressBarLength;
 	}
 
-	public Rank getRankById(int id) {
+	public RankImpl getRankById(int id) {
 		return this.ranksById.get(id);
 	}
 

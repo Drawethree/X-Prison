@@ -36,7 +36,7 @@ public class SellAllCommand {
 
     private IWrappedRegion parseRegionFromCommandContext(CommandContext<Player> c) {
         IWrappedRegion region = null;
-        if (c.args().size() == 0) {
+        if (c.args().isEmpty()) {
             region = RegionUtils.getRegionWithHighestPriority(c.sender().getLocation());
         } else if (c.args().size() == 1) {
             String regionName = c.rawArg(0);

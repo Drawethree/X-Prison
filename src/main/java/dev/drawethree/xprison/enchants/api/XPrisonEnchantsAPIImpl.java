@@ -1,7 +1,8 @@
 package dev.drawethree.xprison.enchants.api;
 
+import dev.drawethree.xprison.api.enchants.XPrisonEnchantsAPI;
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.managers.EnchantsManager;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,6 +27,11 @@ public final class XPrisonEnchantsAPIImpl implements XPrisonEnchantsAPI {
 	@Override
 	public boolean hasEnchant(ItemStack item, XPrisonEnchantment enchant) {
 		return getEnchantLevel(item, enchant) != 0;
+	}
+
+	@Override
+	public boolean hasEnchant(ItemStack itemStack, XPrisonEnchantment xPrisonEnchantment, int level) {
+		return getEnchantLevel(itemStack, xPrisonEnchantment) == level;
 	}
 
 	@Override

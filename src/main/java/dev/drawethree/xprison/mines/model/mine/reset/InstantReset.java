@@ -1,15 +1,17 @@
 package dev.drawethree.xprison.mines.model.mine.reset;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.mines.model.mine.BlockPalette;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.BlockPaletteImpl;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import me.lucko.helper.random.RandomSelector;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.block.Block;
 
 import java.lang.reflect.InvocationTargetException;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
 
 
 public class InstantReset extends ResetType {
@@ -19,17 +21,17 @@ public class InstantReset extends ResetType {
 	}
 
 	@Override
-	public void reset(Mine mine, BlockPalette blockPalette) {
+	public void reset(MineImpl mineImpl, BlockPaletteImpl blockPaletteImpl) {
 
-		if (blockPalette.isEmpty()) {
-			XPrison.getInstance().getLogger().warning("Reset for Mine " + mine.getName() + " aborted. Block palette is empty.");
+		if (blockPaletteImpl.isEmpty()) {
+			warning("Reset for Mine " + mineImpl.getName() + " aborted. Block palette is empty.");
 			return;
 		}
 
-		RandomSelector<XMaterial> selector = RandomSelector.weighted(blockPalette.getValidMaterials(), blockPalette::getPercentage);
+		RandomSelector<XMaterial> selector = RandomSelector.weighted(blockPaletteImpl.getValidMaterials(), blockPaletteImpl::getPercentage);
 
-		Position min = mine.getMineRegion().getMin();
-		Position max = mine.getMineRegion().getMax();
+		Position min = mineImpl.getMineRegion().getMin();
+		Position max = mineImpl.getMineRegion().getMax();
 
 		int minX = (int) Math.min(min.getX(), max.getX());
 		int minY = (int) Math.min(min.getY(), max.getY());
@@ -49,14 +51,15 @@ public class InstantReset extends ResetType {
 						try {
 							Block.class.getMethod("setData", byte.class).invoke(b, pick.getData());
 						} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+							error("Exception happened during Instant Reset");
 							e.printStackTrace();
 						}
 					}
 				}
 			}
 		}
-		mine.setResetting(false);
-		mine.updateCurrentBlocks();
-		mine.updateHolograms();
+		mineImpl.setResetting(false);
+		mineImpl.updateCurrentBlocks();
+		mineImpl.updateHolograms();
 	}
 }

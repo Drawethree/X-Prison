@@ -33,6 +33,6 @@ public class AutoMinerCommand {
 	}
 
 	private boolean validateArguments(CommandContext<Player> c) {
-		return c.args().size() == 0;
+		return c.args().isEmpty();
 	}
 }

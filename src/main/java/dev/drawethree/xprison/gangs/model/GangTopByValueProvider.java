@@ -16,11 +16,11 @@ public final class GangTopByValueProvider implements GangTopProvider {
 	}
 
 	@Override
-	public List<Gang> provide() {
-		return getAllGangs().stream().sorted(Comparator.comparingLong(Gang::getValue).reversed()).collect(Collectors.toList());
+	public List<GangImpl> provide() {
+		return getAllGangs().stream().sorted(Comparator.comparingLong(GangImpl::getValue).reversed()).collect(Collectors.toList());
 	}
 
-	private Collection<Gang> getAllGangs() {
+	private Collection<GangImpl> getAllGangs() {
 		return manager.getAllGangs();
 	}
 }

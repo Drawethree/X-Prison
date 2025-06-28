@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.multipliers.api;
 
+import dev.drawethree.xprison.api.multipliers.XPrisonMultipliersAPI;
+import dev.drawethree.xprison.api.multipliers.model.Multiplier;
+import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
+import dev.drawethree.xprison.api.multipliers.model.PlayerMultiplier;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
-import dev.drawethree.xprison.multipliers.enums.MultiplierType;
-import dev.drawethree.xprison.multipliers.multiplier.GlobalMultiplier;
-import dev.drawethree.xprison.multipliers.multiplier.Multiplier;
-import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplier;
 import org.bukkit.entity.Player;
 
 public final class XPrisonMultipliersAPIImpl implements XPrisonMultipliersAPI {
@@ -17,12 +17,12 @@ public final class XPrisonMultipliersAPIImpl implements XPrisonMultipliersAPI {
 	}
 
 	@Override
-	public GlobalMultiplier getGlobalSellMultiplier() {
+	public Multiplier getGlobalSellMultiplier() {
 		return plugin.getGlobalSellMultiplier();
 	}
 
 	@Override
-	public GlobalMultiplier getGlobalTokenMultiplier() {
+	public Multiplier getGlobalTokenMultiplier() {
 		return plugin.getGlobalTokenMultiplier();
 	}
 
@@ -37,7 +37,7 @@ public final class XPrisonMultipliersAPIImpl implements XPrisonMultipliersAPI {
 	}
 
 	@Override
-	public Multiplier getRankMultiplier(Player p) {
+	public PlayerMultiplier getRankMultiplier(Player p) {
 		return plugin.getRankMultiplier(p);
 	}
 
@@ -48,24 +48,24 @@ public final class XPrisonMultipliersAPIImpl implements XPrisonMultipliersAPI {
 		switch (type) {
 			case SELL:
 				PlayerMultiplier sellMulti = this.getSellMultiplier(p);
-				if (sellMulti != null && !sellMulti.isExpired()) {
+				if (sellMulti != null && sellMulti.isActive()) {
 					toReturn += sellMulti.getMultiplier();
 				}
-				if (!this.getGlobalSellMultiplier().isExpired()) {
+				if (this.getGlobalSellMultiplier().isActive()) {
 					toReturn += this.getGlobalSellMultiplier().getMultiplier();
 				}
 				break;
 			case TOKENS:
 				PlayerMultiplier tokenMulti = this.getTokenMultiplier(p);
-				if (tokenMulti != null && !tokenMulti.isExpired()) {
+				if (tokenMulti != null && tokenMulti.isActive()) {
 					toReturn += tokenMulti.getMultiplier();
 				}
-				if (!this.getGlobalTokenMultiplier().isExpired()) {
+				if (this.getGlobalTokenMultiplier().isActive()) {
 					toReturn += this.getGlobalSellMultiplier().getMultiplier();
 				}
 				break;
 		}
-		Multiplier rankMulti = this.getRankMultiplier(p);
+		PlayerMultiplier rankMulti = this.getRankMultiplier(p);
 		toReturn += rankMulti == null ? 0.0 : rankMulti.getMultiplier();
 		return toReturn;
 	}

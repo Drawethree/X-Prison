@@ -1,8 +1,9 @@
 package dev.drawethree.xprison.pickaxelevels.manager;
 
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.ProgressBar;
@@ -26,23 +27,23 @@ public class PickaxeLevelsManager {
 		this.plugin = plugin;
 	}
 
-	public Optional<PickaxeLevel> getNextPickaxeLevel(PickaxeLevel currentLevel) {
+	public Optional<PickaxeLevelImpl> getNextPickaxeLevel(PickaxeLevelImpl currentLevel) {
 		if (currentLevel == null || currentLevel == getMaxLevel()) {
 			return Optional.empty();
 		}
 		return this.getPickaxeLevel(currentLevel.getLevel() + 1);
 	}
 
-	private PickaxeLevel getMaxLevel() {
+	private PickaxeLevelImpl getMaxLevel() {
 		return this.plugin.getPickaxeLevelsConfig().getMaxLevel();
 	}
 
 
-	public Optional<PickaxeLevel> getPickaxeLevel(int level) {
+	public Optional<PickaxeLevelImpl> getPickaxeLevel(int level) {
 		return this.plugin.getPickaxeLevelsConfig().getPickaxeLevel(level);
 	}
 
-	public Optional<PickaxeLevel> getPickaxeLevel(ItemStack itemStack) {
+	public Optional<PickaxeLevelImpl> getPickaxeLevel(ItemStack itemStack) {
 		if (itemStack == null || !this.plugin.getCore().isPickaxeSupported(itemStack.getType())) {
 			return Optional.empty();
 		}
@@ -51,7 +52,7 @@ public class PickaxeLevelsManager {
 		return level != null ? this.getPickaxeLevel(level) : Optional.of(getDefaultLevel());
 	}
 
-	private PickaxeLevel getDefaultLevel() {
+	private PickaxeLevelImpl getDefaultLevel() {
 		return this.plugin.getPickaxeLevelsConfig().getDefaultLevel();
 	}
 
@@ -101,17 +102,17 @@ public class PickaxeLevelsManager {
 
 	public String getProgressBar(ItemStack item) {
 
-		Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(item);
+		Optional<PickaxeLevelImpl> currentLevelOptional = this.getPickaxeLevel(item);
 
 		double current = 0;
 		double required = 1;
 
 		if (currentLevelOptional.isPresent()) {
-			PickaxeLevel currentLevel = currentLevelOptional.get();
-			Optional<PickaxeLevel> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
+			PickaxeLevelImpl currentLevel = currentLevelOptional.get();
+			Optional<PickaxeLevelImpl> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
 			current = this.getBlocksBroken(item) - currentLevel.getBlocksRequired();
 			if (nextLevelOptional.isPresent()) {
-				PickaxeLevel nextLevel = nextLevelOptional.get();
+				PickaxeLevelImpl nextLevel = nextLevelOptional.get();
 				required = nextLevel.getBlocksRequired() - currentLevel.getBlocksRequired();
 			}
 		}
@@ -135,7 +136,7 @@ public class PickaxeLevelsManager {
 		return this.plugin.getPickaxeLevelsConfig().getProgressBarLength();
 	}
 
-	public void giveRewards(PickaxeLevel level, Player p) {
+	public void giveRewards(PickaxeLevelImpl level, Player p) {
 		if (!Bukkit.isPrimaryThread()) {
 			Schedulers.sync().run(() -> level.getRewards().forEach(s -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()))));
 		} else {
@@ -150,7 +151,7 @@ public class PickaxeLevelsManager {
 		return level.getDisplayName().replace("%player%", p.getName());
 	}
 
-	public Optional<PickaxeLevel> getPickaxeLevel(Player player) {
+	public Optional<PickaxeLevelImpl> getPickaxeLevel(Player player) {
 		ItemStack item = this.findPickaxe(player);
 		return this.getPickaxeLevel(item);
 	}
@@ -158,19 +159,19 @@ public class PickaxeLevelsManager {
 	public void updatePickaxeLevel(Player player, ItemStack pickaxe) {
 		long currentBlocks = this.plugin.getPickaxeLevelsManager().getBlocksBroken(pickaxe);
 
-		Optional<PickaxeLevel> currentLevelOptional = this.getPickaxeLevel(pickaxe);
+		Optional<PickaxeLevelImpl> currentLevelOptional = this.getPickaxeLevel(pickaxe);
 
 		if (!currentLevelOptional.isPresent()) {
 			return;
 		}
 
-		PickaxeLevel currentLevel = currentLevelOptional.get();
-		Optional<PickaxeLevel> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
+		PickaxeLevelImpl currentLevel = currentLevelOptional.get();
+		Optional<PickaxeLevelImpl> nextLevelOptional = this.getNextPickaxeLevel(currentLevel);
 
-		List<PickaxeLevel> toGive = new ArrayList<>();
+		List<PickaxeLevelImpl> toGive = new ArrayList<>();
 
 		while (nextLevelOptional.isPresent()) {
-			PickaxeLevel nextLevel = nextLevelOptional.get();
+			PickaxeLevelImpl nextLevel = nextLevelOptional.get();
 			if (currentBlocks < nextLevel.getBlocksRequired()) {
 				break;
 			}

@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.enchants.command;
 
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
@@ -24,7 +24,7 @@ public class GivePickaxeCommand {
 				.assertOp()
 				.handler(c -> {
 
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						PlayerUtils.sendMessage(c.sender(), "&c/givepickaxe <player> <[enchant1]=[level1],[enchant2]=[level2],...[enchantX]=[levelX]> <pickaxe_name>");
 						return;
 					}

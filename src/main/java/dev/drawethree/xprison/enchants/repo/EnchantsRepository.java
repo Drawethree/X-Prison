@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.enchants.repo;
 
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.model.impl.*;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.apache.commons.lang.Validate;
@@ -10,6 +10,9 @@ import org.apache.commons.lang.Validate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
 
 public class EnchantsRepository {
 
@@ -53,10 +56,10 @@ public class EnchantsRepository {
 
 		enchantsById.values().forEach(XPrisonEnchantment::reload);
 
-		XPrison.getInstance().getLogger().info(TextUtils.applyColor("&aSuccessfully reloaded all enchants."));
+		info(TextUtils.applyColor("&aReloaded all enchants."));
 	}
 
-	public void loadDefaultEnchantments() {
+	public void registerDefaultEnchants() {
 		register(new EfficiencyEnchant(this.plugin));
 		register(new UnbreakingEnchant(this.plugin));
 		register(new FortuneEnchant(this.plugin));
@@ -89,7 +92,7 @@ public class EnchantsRepository {
 	public boolean register(XPrisonEnchantment enchantment) {
 
 		if (enchantsById.containsKey(enchantment.getId()) || enchantsByName.containsKey(enchantment.getRawName())) {
-			XPrison.getInstance().getLogger().warning(TextUtils.applyColor("&cUnable to register enchant " + enchantment.getName() + "&c created by " + enchantment.getAuthor() + ". That enchant is already registered."));
+			warning(TextUtils.applyColor("Unable to register enchant " + enchantment.getName() + " created by " + enchantment.getAuthor() + ". That enchant is already registered."));
 			return false;
 		}
 
@@ -98,21 +101,21 @@ public class EnchantsRepository {
 		enchantsById.put(enchantment.getId(), enchantment);
 		enchantsByName.put(enchantment.getRawName().toLowerCase(), enchantment);
 
-		XPrison.getInstance().getLogger().info(TextUtils.applyColor("&aSuccessfully registered enchant " + enchantment.getName() + "&a created by " + enchantment.getAuthor()));
+		info(TextUtils.applyColor("&aRegistered enchant " + enchantment.getName() + "&a created by &e" + enchantment.getAuthor()));
 		return true;
 	}
 
 	public boolean unregister(XPrisonEnchantment enchantment) {
 
 		if (!enchantsById.containsKey(enchantment.getId()) && !enchantsByName.containsKey(enchantment.getRawName())) {
-			XPrison.getInstance().getLogger().warning(TextUtils.applyColor("&cUnable to unregister enchant " + enchantment.getName() + "&c created by " + enchantment.getAuthor() + ". That enchant is not registered."));
+			warning(TextUtils.applyColor("Unable to unregister enchant " + enchantment.getName() + " created by " + enchantment.getAuthor() + ". That enchant is not registered."));
 			return false;
 		}
 
 		enchantsById.remove(enchantment.getId());
 		enchantsByName.remove(enchantment.getRawName());
 
-		XPrison.getInstance().getLogger().info(TextUtils.applyColor("&aSuccessfully unregistered enchant " + enchantment.getName() + "&a created by " + enchantment.getAuthor()));
+		info(TextUtils.applyColor("&aUnregistered enchant " + enchantment.getName() + "&a created by &e" + enchantment.getAuthor()));
 		return true;
 	}
 }

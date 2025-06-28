@@ -2,6 +2,8 @@ package dev.drawethree.xprison;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.github.lalyos.jfiglet.FigletFont;
+import dev.drawethree.xprison.api.XPrisonAPI;
+import dev.drawethree.xprison.api.XPrisonAPIImpl;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.config.FileManager;
@@ -20,7 +22,6 @@ import dev.drawethree.xprison.migrator.ItemMigrator;
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import dev.drawethree.xprison.nicknames.repo.NicknameRepository;
-import dev.drawethree.xprison.nicknames.repo.impl.NicknameRepositoryImpl;
 import dev.drawethree.xprison.nicknames.service.NicknameService;
 import dev.drawethree.xprison.nicknames.service.impl.NicknameServiceImpl;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
@@ -30,6 +31,7 @@ import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.Constants;
+import dev.drawethree.xprison.utils.log.XPrisonLogger;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Getter;
@@ -52,13 +54,15 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.*;
+
 @Getter
 public final class XPrison extends ExtendedJavaPlugin {
 
 	private static XPrison instance;
 
 	private boolean debugMode;
-	private Map<String, XPrisonModule> modules;
+	private Map<String, XPrisonModuleAbstract> modules;
 	private SQLDatabase pluginDatabase;
 	private Economy economy;
 	private FileManager fileManager;
@@ -74,23 +78,19 @@ public final class XPrison extends ExtendedJavaPlugin {
 	private XPrisonGangs gangs;
 	private XPrisonMines mines;
 	private XPrisonHistory history;
-
 	private ItemMigrator itemMigrator;
-
 	private List<Material> supportedPickaxes;
-
 	private NicknameService nicknameService;
-
 
 	@Override
 	protected void load() {
 		instance = this;
+		XPrisonLogger.setLogger(this.getLogger());
 		registerWGFlag();
 	}
 
 	@Override
 	protected void enable() {
-
 		this.printOnEnableMessage();
 		this.modules = new LinkedHashMap<>();
 		this.fileManager = new FileManager(this);
@@ -103,16 +103,17 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 
 		if (!this.setupEconomy()) {
-			this.getLogger().warning("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin...");
+			warning("Economy provider for Vault not found! Economy provider is strictly required. Disabling plugin...");
 			this.getServer().getPluginManager().disablePlugin(this);
 			return;
 		} else {
-			this.getLogger().info("Economy provider for Vault found - " + this.getEconomy().getName());
+			info("&fEconomy provider for Vault found - &e" + this.getEconomy().getName());
 		}
 
 		this.initVariables();
 		this.initModules();
 		this.loadModules();
+		this.initApi();
 
 		this.itemMigrator = new ItemMigrator(this);
 		this.itemMigrator.reload();
@@ -128,18 +129,23 @@ public final class XPrison extends ExtendedJavaPlugin {
 		SkullUtils.init();
 	}
 
+	private void initApi() {
+		XPrisonAPI.setInstance(new XPrisonAPIImpl(this));
+	}
+
 	private void printOnEnableMessage() {
 		try {
-			this.getLogger().info(FigletFont.convertOneLine("X-PRISON"));
-			this.getLogger().info(this.getDescription().getVersion());
-			this.getLogger().info("By: " + this.getDescription().getAuthors());
-			this.getLogger().info("Website: " + this.getDescription().getWebsite());
+			info("\n\n" + FigletFont.convertOneLine("X-PRISON"));
+			info(this.getDescription().getVersion());
+			info("&fBy: &e" + this.getDescription().getAuthors());
+			info("&fWebsite: &e" + this.getDescription().getWebsite());
+			info("&fDiscord Support: &e" + Constants.DISCORD_LINK);
 		} catch (IOException ignored) {
 		}
 	}
 
 	private void initNicknameService() {
-		NicknameRepository nicknameRepository = new NicknameRepositoryImpl(this.getPluginDatabase());
+		NicknameRepository nicknameRepository = new NicknameRepository(this.getPluginDatabase());
 		nicknameRepository.createTables();
 		this.nicknameService = new NicknameServiceImpl(nicknameRepository);
 	}
@@ -148,7 +154,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.supportedPickaxes = this.getConfig().getStringList("supported-pickaxes").stream().map(XMaterial::valueOf).map(XMaterial::get).collect(Collectors.toList());
 
 		for (Material m : this.supportedPickaxes) {
-			this.getLogger().info("Added support for pickaxe: " + m);
+			info("&fAdded support for pickaxe: &e" + m);
 		}
 	}
 
@@ -175,7 +181,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 		if (this.getConfig().getBoolean("modules.autosell")) {
 			if (isUltraBackpacksEnabled()) {
-				this.getLogger().info("Module AutoSell will not be loaded because selling system is handled by UltraBackpacks.");
+				info("&fModule &eAutoSell &fwill &cNOT BE LOADED &fbecause selling system is handled by &eUltraBackpacks&f.");
 			} else {
 				this.loadModule(autoSell);
 			}
@@ -196,7 +202,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 		if (this.getConfig().getBoolean("modules.pickaxe_levels")) {
 			if (!this.isModuleEnabled("Enchants")) {
-				this.getLogger().warning(TextUtils.applyColor("&cX-Prison - Module 'Pickaxe Levels' requires to have enchants module enabled."));
+				warning("Module 'Pickaxe Levels' requires to have enchants module enabled.");
 			} else {
 				this.loadModule(pickaxeLevels);
 			}
@@ -213,20 +219,20 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 			if ("sqlite".equalsIgnoreCase(databaseType)) {
 				this.pluginDatabase = new SQLiteDatabase(this, connectionProperties);
-				this.getLogger().info("Using SQLite (local) database.");
+				info("&fUsing &aSQLite DB.");
 			} else if ("mysql".equalsIgnoreCase(databaseType)) {
 				DatabaseCredentials credentials = DatabaseCredentials.fromConfig(this.getConfig());
 				this.pluginDatabase = new MySQLDatabase(this, credentials, connectionProperties);
-				this.getLogger().info("Using MySQL (remote) database.");
+				info("&fUsing &aMySQL DB.");
 			} else {
-				this.getLogger().warning(String.format("Error! Unknown database type: %s. Disabling plugin.", databaseType));
+				warning(String.format("Error! Unknown database type: %s. Disabling plugin.", databaseType));
 				this.getServer().getPluginManager().disablePlugin(this);
 				return false;
 			}
 
 			this.pluginDatabase.connect();
 		} catch (Exception e) {
-			this.getLogger().warning("Could not maintain Database Connection. Disabling plugin.");
+			error("Could not maintain Database Connection. Disabling plugin.");
 			e.printStackTrace();
 			return false;
 		}
@@ -273,40 +279,40 @@ public final class XPrison extends ExtendedJavaPlugin {
 		new Metrics(this, Constants.METRICS_SERVICE_ID);
 	}
 
-	private void loadModule(XPrisonModule module) {
+	private void loadModule(XPrisonModuleAbstract module) {
 		if (module.isEnabled()) {
 			return;
 		}
 		module.enable();
-		this.getLogger().info(TextUtils.applyColor(String.format("&aX-Prison - Module %s loaded.", module.getName())));
+		info(String.format("&aModule &e%s &aloaded.", module.getName()));
 	}
 
 	//Always unload via iterator!
-	private void unloadModule(XPrisonModule module) {
+	private void unloadModule(XPrisonModuleAbstract module) {
 		if (!module.isEnabled()) {
 			return;
 		}
 		module.disable();
-		this.getLogger().info(TextUtils.applyColor(String.format("&aX-Prison - Module %s unloaded.", module.getName())));
+		info(String.format("&cModule &e%s &cunloaded.", module.getName()));
 	}
 
-	public void debug(String msg, XPrisonModule module) {
+	public void debug(String msg, XPrisonModuleAbstract module) {
 		if (!this.debugMode) {
 			return;
 		}
 		if (module != null) {
-			this.getLogger().info(String.format("[%s] %s", module.getName(), TextUtils.applyColor(msg)));
+			info(String.format("&7[&e%s&7] &f%s", module.getName(), TextUtils.applyColor(msg)));
 		} else {
-			this.getLogger().info(TextUtils.applyColor(msg));
+			info(TextUtils.applyColor(msg));
 		}
 	}
 
-	public void reloadModule(XPrisonModule module) {
+	public void reloadModule(XPrisonModuleAbstract module) {
 		if (!module.isEnabled()) {
 			return;
 		}
 		module.reload();
-		this.getLogger().info(TextUtils.applyColor(String.format("X-Prison - Module %s reloaded.", module.getName())));
+		info(String.format("&aModule &e%s &areloaded.", module.getName()));
 	}
 
 	private void registerMainCommand() {
@@ -317,7 +323,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		Commands.create()
 				.assertPermission("xprison.admin")
 				.handler(c -> {
-                    if (c.args().size() == 0 && c.sender() instanceof Player) {
+                    if (c.args().isEmpty() && c.sender() instanceof Player) {
                         new MainMenu(this, (Player) c.sender()).open();
                     } else if (c.args().size() >= 1) {
                         if ("reload".equalsIgnoreCase(c.rawArg(0))) {
@@ -335,7 +341,7 @@ public final class XPrison extends ExtendedJavaPlugin {
                                     c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded item migrator"));
                                     break;
                                 default:
-                                    final XPrisonModule module = modules.get(name);
+                                    final XPrisonModuleAbstract module = modules.get(name);
                                     if (module != null) {
                                         reloadModule(module);
                                         c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded &f" + name + " &amodule"));
@@ -354,7 +360,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	@Override
 	protected void disable() {
 
-		Iterator<XPrisonModule> it = this.modules.values().iterator();
+		Iterator<XPrisonModuleAbstract> it = this.modules.values().iterator();
 
 		while (it.hasNext()) {
 			this.unloadModule(it.next());
@@ -371,7 +377,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 
 	public boolean isModuleEnabled(String moduleName) {
-		XPrisonModule module = this.modules.get(moduleName.toLowerCase());
+		XPrisonModuleAbstract module = this.modules.get(moduleName.toLowerCase());
 		return module != null && module.isEnabled();
 	}
 
@@ -410,7 +416,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		return item != null && isPickaxeSupported(item.getType());
 	}
 
-	public Collection<XPrisonModule> getModules() {
+	public Collection<XPrisonModuleAbstract> getModules() {
 		return this.modules.values();
 	}
 

@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.multipliers.repo.impl;
 
+import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.database.SQLDatabase;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
-import dev.drawethree.xprison.multipliers.enums.MultiplierType;
-import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplier;
+import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplierBase;
 import dev.drawethree.xprison.multipliers.repo.MultipliersRepository;
 import me.lucko.helper.time.Time;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 
 
 	@Override
-	public PlayerMultiplier getSellMultiplier(Player player) {
+	public PlayerMultiplierBase getSellMultiplier(Player player) {
 		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME + " WHERE " + MULTIPLIERS_UUID_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
@@ -42,7 +42,7 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 					double multiplier = set.getDouble(MULTIPLIERS_MULTIPLIER_COLNAME);
 					long endTime = set.getLong(MULTIPLIERS_TIMELEFT_COLNAME);
 					if (endTime > Time.nowMillis()) {
-						return new PlayerMultiplier(player.getUniqueId(), multiplier, endTime, MultiplierType.SELL);
+						return new PlayerMultiplierBase(player.getUniqueId(), multiplier, endTime, MultiplierType.SELL);
 					}
 				}
 			}
@@ -53,7 +53,7 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 	}
 
 	@Override
-	public PlayerMultiplier getTokenMultiplier(Player player) {
+	public PlayerMultiplierBase getTokenMultiplier(Player player) {
 		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME_TOKEN + " WHERE " + MULTIPLIERS_TOKEN_UUID_COLNAME + "=?")) {
 			statement.setString(1, player.getUniqueId().toString());
 			try (ResultSet set = statement.executeQuery()) {
@@ -61,7 +61,7 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 					double multiplier = set.getDouble(MULTIPLIERS_TOKEN_MULTIPLIER_COLNAME);
 					long endTime = set.getLong(MULTIPLIERS_TOKEN_TIMELEFT_COLNAME);
 					if (endTime > Time.nowMillis()) {
-						return new PlayerMultiplier(player.getUniqueId(), multiplier, endTime, MultiplierType.TOKENS);
+						return new PlayerMultiplierBase(player.getUniqueId(), multiplier, endTime, MultiplierType.TOKENS);
 					}
 				}
 			}
@@ -96,7 +96,7 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 	}
 
 	@Override
-	public void saveSellMultiplier(Player player, PlayerMultiplier multiplier) {
+	public void saveSellMultiplier(Player player, PlayerMultiplierBase multiplier) {
 
 		if (multiplier == null || !multiplier.isValid()) {
 			this.deleteSellMultiplier(player);
@@ -147,7 +147,7 @@ public class MultipliersRepositoryImpl implements MultipliersRepository {
 	}
 
 	@Override
-	public void saveTokenMultiplier(Player player, PlayerMultiplier multiplier) {
+	public void saveTokenMultiplier(Player player, PlayerMultiplierBase multiplier) {
 
 		if (multiplier == null || !multiplier.isValid()) {
 			this.deleteTokenMultiplier(player);

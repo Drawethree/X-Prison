@@ -15,7 +15,7 @@ public class PrestigeCommand {
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
-                    if (c.args().size() == 0) {
+                    if (c.args().isEmpty()) {
                         this.plugin.getPrestigeManager().buyNextPrestige(c.sender());
                     }
                 }).registerAndBind(this.plugin.getCore(), "prestige");

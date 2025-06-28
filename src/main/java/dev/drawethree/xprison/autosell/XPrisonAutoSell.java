@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.autosell;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.autosell.api.XPrisonAutoSellAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.autosell.XPrisonAutoSellAPI;
 import dev.drawethree.xprison.autosell.api.XPrisonAutoSellAPIImpl;
 import dev.drawethree.xprison.autosell.command.AutoSellCommand;
 import dev.drawethree.xprison.autosell.command.SellAllCommand;
@@ -14,7 +14,7 @@ import dev.drawethree.xprison.autosell.model.AutoSellBroadcastTask;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import lombok.Getter;
 
-public final class XPrisonAutoSell implements XPrisonModule {
+public final class XPrisonAutoSell implements XPrisonModuleAbstract {
 
 	public static final String MODULE_NAME = "Auto Sell";
 
@@ -99,10 +99,6 @@ public final class XPrisonAutoSell implements XPrisonModule {
 	@Override
 	public boolean isHistoryEnabled() {
 		return false;
-	}
-
-	@Override
-	public void resetPlayerData() {
 	}
 
 }

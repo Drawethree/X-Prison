@@ -1,12 +1,14 @@
 package dev.drawethree.xprison.tokens.managers;
 
 import com.cryptomorin.xseries.XEnchantment;
-import dev.drawethree.xprison.api.enums.LostCause;
-import dev.drawethree.xprison.api.enums.ReceiveCause;
+
+import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
+import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
+import dev.drawethree.xprison.api.tokens.events.PlayerTokensLostEvent;
+import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;
+import dev.drawethree.xprison.api.tokens.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
-import dev.drawethree.xprison.tokens.api.events.PlayerTokensLostEvent;
-import dev.drawethree.xprison.tokens.api.events.PlayerTokensReceiveEvent;
-import dev.drawethree.xprison.tokens.api.events.XPrisonBlockBreakEvent;
+
 import dev.drawethree.xprison.tokens.model.BlockReward;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
@@ -21,7 +23,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +31,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
 public class TokensManager {
 
@@ -84,7 +88,7 @@ public class TokensManager {
 		tokensCache.clear();
 		blocksCache.clear();
 		blocksCacheWeekly.clear();
-		this.plugin.getCore().getLogger().info("Saved online player tokens, blocks broken and weekly blocks broken.");
+		info("&aTokens, Blocks Broken and Weekly Blocks Broken saved.");
 
 	}
 
@@ -488,8 +492,11 @@ public class TokensManager {
 							}
 							long tokens = topTokens.get(uuid);
 							PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%tokens%", String.format("%,d", tokens)));
-						} catch (Exception e) {
+						} catch (IndexOutOfBoundsException e) {
 							break;
+						} catch (Exception e) {
+							error("Exception during sending TokensTop to " + sender.getName());
+							e.printStackTrace();
 						}
 					}
 				} else {
@@ -527,8 +534,11 @@ public class TokensManager {
 				}
 				long blocks = top.get(uuid);
 				PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%blocks%", String.format("%,d", blocks)));
-			} catch (Exception e) {
+			} catch (IndexOutOfBoundsException e) {
 				break;
+			} catch (Exception e) {
+				error("Exception during sending BlocksTop to " + sender.getName());
+				e.printStackTrace();
 			}
 		}
 	}

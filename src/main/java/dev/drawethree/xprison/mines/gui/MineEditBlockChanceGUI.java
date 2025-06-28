@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -9,16 +9,16 @@ import org.bukkit.entity.Player;
 
 public class MineEditBlockChanceGUI extends Gui {
 
-	private final Mine mine;
+	private final MineImpl mineImpl;
 	private final XMaterial material;
 
 	private double currentChance;
 
-	public MineEditBlockChanceGUI(Player player, Mine mine, XMaterial material) {
+	public MineEditBlockChanceGUI(Player player, MineImpl mineImpl, XMaterial material) {
 		super(player, 5, "Editing Block Chance");
-		this.mine = mine;
+		this.mineImpl = mineImpl;
 		this.material = material;
-		this.currentChance = mine.getBlockPalette().getPercentage(this.material);
+		this.currentChance = mineImpl.getBlockPaletteImpl().getPercentage(this.material);
 	}
 
 	@Override
@@ -90,16 +90,16 @@ public class MineEditBlockChanceGUI extends Gui {
 
 		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to all blocks.").build(() -> {
 			this.close();
-			new MineBlocksGUI(this.mine, this.getPlayer()).open();
+			new MineBlocksGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
 		this.setItem(40, ItemStackBuilder.of(XMaterial.GREEN_WOOL.parseItem()).name("&aSave").lore("&7Click to save the current chance.").build(() -> {
 			this.close();
-			if (this.mine.getBlockPalette().getTotalPercentage() - this.mine.getBlockPalette().getPercentage(this.material) + this.currentChance > 100.0) {
-				this.currentChance = 100 - (this.mine.getBlockPalette().getTotalPercentage() - this.mine.getBlockPalette().getPercentage(this.material));
+			if (this.mineImpl.getBlockPaletteImpl().getTotalPercentage() - this.mineImpl.getBlockPaletteImpl().getPercentage(this.material) + this.currentChance > 100.0) {
+				this.currentChance = 100 - (this.mineImpl.getBlockPaletteImpl().getTotalPercentage() - this.mineImpl.getBlockPaletteImpl().getPercentage(this.material));
 			}
-			this.mine.getBlockPalette().setPercentage(this.material, this.currentChance);
-			new MineBlocksGUI(this.mine, this.getPlayer()).open();
+			this.mineImpl.getBlockPaletteImpl().setPercentage(this.material, this.currentChance);
+			new MineBlocksGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
 	}

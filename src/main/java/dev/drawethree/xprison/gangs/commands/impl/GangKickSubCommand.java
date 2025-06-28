@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.commands.impl;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
@@ -29,7 +29,7 @@ public final class GangKickSubCommand extends GangSubCommand {
 	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 1 && sender instanceof Player) {
 			Player p = (Player) sender;
-			Optional<Gang> gang = this.command.getPlugin().getGangsManager().getPlayerGang(p);
+			Optional<GangImpl> gang = this.command.getPlugin().getGangsManager().getPlayerGang(p);
 
 			if (!gang.isPresent()) {
 				PlayerUtils.sendMessage(p, this.command.getPlugin().getConfig().getMessage("not-in-gang"));

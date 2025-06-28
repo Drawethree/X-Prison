@@ -2,11 +2,12 @@ package dev.drawethree.xprison.gems.managers;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.api.enums.LostCause;
-import dev.drawethree.xprison.api.enums.ReceiveCause;
+
+import dev.drawethree.xprison.api.gems.events.PlayerGemsLostEvent;
+import dev.drawethree.xprison.api.gems.events.PlayerGemsReceiveEvent;
+import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
+import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.gems.XPrisonGems;
-import dev.drawethree.xprison.gems.api.events.PlayerGemsLostEvent;
-import dev.drawethree.xprison.gems.api.events.PlayerGemsReceiveEvent;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
@@ -29,6 +30,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
 public class GemsManager {
 
@@ -122,7 +126,7 @@ public class GemsManager {
 			this.plugin.getGemsService().setGems(Players.getOfflineNullable(uuid), gemsCache.getOrDefault(uuid, 0L));
 		}
 		gemsCache.clear();
-		this.plugin.getCore().getLogger().info("Saved online players gems.");
+		info("Gems saved.");
 	}
 
 	private void addIntoTable(Player player) {
@@ -360,8 +364,11 @@ public class GemsManager {
 					}
 					long gems = top10Gems.get(uuid);
 					PlayerUtils.sendMessage(sender, TOP_FORMAT_GEMS.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%amount%", String.format("%,d", gems)));
-				} catch (ArrayIndexOutOfBoundsException e) {
+				} catch (IndexOutOfBoundsException e) {
 					break;
+				} catch (Exception e) {
+					error("Exception during sending GemsTop to " + sender.getName());
+					e.printStackTrace();
 				}
 			}
 			PlayerUtils.sendMessage(sender, SPACER_LINE_BOTTOM);

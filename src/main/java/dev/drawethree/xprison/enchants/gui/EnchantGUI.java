@@ -2,8 +2,9 @@ package dev.drawethree.xprison.enchants.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.enchants.utils.GuiUtils;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
@@ -106,17 +107,17 @@ public final class EnchantGUI extends Gui {
 
 	private Item getGuiItem(XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
-		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getMaterial());
+		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getGuiMaterial());
 
-		if (enchantment.getBase64() != null && !enchantment.getBase64().isEmpty()) {
-			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getBase64()));
+		if (enchantment.getGuiBase64() != null && !enchantment.getGuiBase64().isEmpty()) {
+			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getGuiBase64()));
 		}
 
 		builder.name(enchantment.getGuiName());
 		builder.lore(GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, currentLevel));
 
 		return builder.buildItem().bind(handler -> {
-			if (!enchantment.canBeBought(gui.getPickAxe())) {
+			if (!EnchantUtils.canBeBought(enchantment, gui.getPickAxe())) {
 				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
 				return;
 			}

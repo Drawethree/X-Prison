@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.history.repo.impl;
 
 import dev.drawethree.xprison.database.SQLDatabase;
-import dev.drawethree.xprison.history.model.HistoryLine;
+import dev.drawethree.xprison.history.model.HistoryLineImpl;
 import dev.drawethree.xprison.history.repo.HistoryRepository;
 import org.bukkit.OfflinePlayer;
 
@@ -31,8 +31,8 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 	}
 
 	@Override
-	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
-		List<HistoryLine> returnList = new ArrayList<>();
+	public List<HistoryLineImpl> getPlayerHistory(OfflinePlayer player) {
+		List<HistoryLineImpl> returnList = new ArrayList<>();
 		try (Connection con = this.database.getConnection(); PreparedStatement statement = database.prepareStatement(con,"SELECT * FROM " + TABLE_NAME + " where ?=?")) {
 			statement.setString(1, HISTORY_PLAYER_UUID_COLNAME);
 			statement.setString(2, player.getUniqueId().toString());
@@ -45,7 +45,7 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 					String context = set.getString(HISTORY_CONTEXT_COLNAME);
 					Date createdAt = set.getDate(HISTORY_CREATED_AT_COLNAME);
 
-					HistoryLine line = HistoryLine.builder()
+					HistoryLineImpl line = HistoryLineImpl.builder()
 							.uuid(recordId)
 							.playerUuid(playerUuid)
 							.module(moduleName)
@@ -62,7 +62,7 @@ public final class HistoryRepositoryImpl implements HistoryRepository {
 	}
 
 	@Override
-	public void addHistoryLine(OfflinePlayer player, HistoryLine history) {
+	public void addHistoryLine(OfflinePlayer player, HistoryLineImpl history) {
 		this.database.executeSqlAsync("INSERT INTO " + TABLE_NAME + " values(?,?,?,?,?)", history.getUuid().toString(), history.getPlayerUuid().toString(), history.getModule(), history.getContext(), history.getCreatedAt());
 	}
 

@@ -1,25 +1,25 @@
 package dev.drawethree.xprison.gangs.repo;
 
-import dev.drawethree.xprison.gangs.model.Gang;
-import dev.drawethree.xprison.gangs.model.GangInvitation;
+import dev.drawethree.xprison.gangs.model.GangImpl;
+import dev.drawethree.xprison.gangs.model.GangInvitationImpl;
 
 import java.util.List;
 
 public interface GangsRepository {
 
-	void updateGang(Gang g);
+	void updateGang(GangImpl g);
 
-	void deleteGang(Gang g);
+	void deleteGang(GangImpl g);
 
-	void createGang(Gang g);
+	void createGang(GangImpl g);
 
-	List<Gang> getAllGangs();
+	List<GangImpl> getAllGangs();
 
-	List<GangInvitation> getGangInvitations(Gang gang);
+	List<GangInvitationImpl> getGangInvitations(GangImpl gangImpl);
 
-	void createGangInvitation(GangInvitation gangInvitation);
+	void createGangInvitation(GangInvitationImpl gangInvitationImpl);
 
-	void deleteGangInvitation(GangInvitation gangInvitation);
+	void deleteGangInvitation(GangInvitationImpl gangInvitationImpl);
 
 	void createTables();
 

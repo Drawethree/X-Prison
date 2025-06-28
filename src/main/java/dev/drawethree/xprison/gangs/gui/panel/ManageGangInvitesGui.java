@@ -2,8 +2,8 @@ package dev.drawethree.xprison.gangs.gui.panel;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
-import dev.drawethree.xprison.gangs.model.Gang;
-import dev.drawethree.xprison.gangs.model.GangInvitation;
+import dev.drawethree.xprison.gangs.model.GangImpl;
+import dev.drawethree.xprison.gangs.model.GangInvitationImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -27,12 +27,12 @@ public final class ManageGangInvitesGui extends Gui {
 			.mask("111111111");
 
 	private final XPrisonGangs plugin;
-	private final Gang gang;
+	private final GangImpl gangImpl;
 
-	public ManageGangInvitesGui(XPrisonGangs plugin, Gang gang, Player player) {
+	public ManageGangInvitesGui(XPrisonGangs plugin, GangImpl gangImpl, Player player) {
 		super(player, 6, "Pending Invites");
 		this.plugin = plugin;
-		this.gang = gang;
+		this.gangImpl = gangImpl;
 	}
 
 	@Override
@@ -50,10 +50,10 @@ public final class ManageGangInvitesGui extends Gui {
 	}
 
 	private void populateButtons() {
-		this.gang.getPendingInvites().forEach(gangInvitation -> this.addItem(createInviteItem(gangInvitation)));
+		this.gangImpl.getPendingInvitations().forEach(gangInvitation -> this.addItem(createInviteItem(gangInvitation)));
 	}
 
-	private Item createInviteItem(GangInvitation invitation) {
+	private Item createInviteItem(GangInvitationImpl invitation) {
 
 		String statusColor = invitation.getInvitedPlayer().isOnline() ? "&a" : "&c";
 		String status = invitation.getInvitedPlayer().isOnline() ? "Online" : "Offline";
@@ -69,7 +69,7 @@ public final class ManageGangInvitesGui extends Gui {
 						"&7Right-click to &cCancel"
 				)
 				.build(ClickType.RIGHT, () -> {
-					this.gang.removeInvitation(invitation);
+					this.gangImpl.removeInvitation(invitation);
 					redraw();
 				});
 	}

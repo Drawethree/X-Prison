@@ -10,7 +10,6 @@ import java.util.UUID;
 public class TokensServiceImpl implements TokensService {
 
 	private final TokensRepository repository;
-	private TokensRepository tokensRepository;
 
 	public TokensServiceImpl(TokensRepository repository) {
 

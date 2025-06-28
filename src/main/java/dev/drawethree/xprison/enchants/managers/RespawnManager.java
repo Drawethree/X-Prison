@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.enchants.managers;
 
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -11,12 +10,10 @@ import java.util.UUID;
 
 public class RespawnManager {
 
-	private final XPrisonEnchants plugin;
 	private final Map<UUID, List<ItemStack>> respawnItems;
 
 
-	public RespawnManager(XPrisonEnchants plugin) {
-		this.plugin = plugin;
+	public RespawnManager() {
 		this.respawnItems = new HashMap<>();
 	}
 

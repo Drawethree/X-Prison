@@ -1,14 +1,15 @@
 package dev.drawethree.xprison.autosell.manager;
 
 import com.cryptomorin.xseries.XMaterial;
+import dev.drawethree.xprison.api.autosell.events.XPrisonAutoSellEvent;
+import dev.drawethree.xprison.api.autosell.events.XPrisonSellAllEvent;
+import dev.drawethree.xprison.api.autosell.model.AutoSellItemStack;
+import dev.drawethree.xprison.api.autosell.model.SellRegion;
+import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.api.events.XPrisonAutoSellEvent;
-import dev.drawethree.xprison.autosell.api.events.XPrisonSellAllEvent;
-import dev.drawethree.xprison.autosell.model.AutoSellItemStack;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.autosell.utils.AutoSellContants;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
-import dev.drawethree.xprison.multipliers.enums.MultiplierType;
 import dev.drawethree.xprison.utils.economy.EconomyUtils;
 import dev.drawethree.xprison.utils.inventory.InventoryUtils;
 import dev.drawethree.xprison.utils.misc.MaterialUtils;
@@ -30,6 +31,9 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
+
 public class AutoSellManager {
 
     private static final CooldownMap<Player> INVENTORY_FULL_COOLDOWN_MAP = CooldownMap.create(Cooldown.of(2, TimeUnit.SECONDS));
@@ -37,7 +41,7 @@ public class AutoSellManager {
     private final XPrisonAutoSell plugin;
     private final Map<UUID, Double> lastEarnings;
     private final Map<UUID, Long> lastItems;
-    private final Map<String, SellRegion> regionsAutoSell;
+    private final Map<String, SellRegionImpl> regionsAutoSell;
     private final List<UUID> enabledAutoSellPlayers;
     private final Map<String, Set<String>> notLoadedSellRegions;
 
@@ -74,8 +78,8 @@ public class AutoSellManager {
         World world = Bukkit.getWorld(worldName);
 
         if (world == null) {
-            this.plugin.getCore().getLogger().warning("There is no such World named " + worldName + "! Perhaps its no loaded yet?");
-            this.plugin.getCore().getLogger().warning("Postponing loading of region " + regionName + ".");
+            warning("There is no such World named " + worldName + "! Perhaps its no loaded yet?");
+            warning("Postponing loading of region " + regionName + ".");
             this.postponeLoadingOfSellRegion(worldName, regionName);
             return false;
         }
@@ -83,7 +87,7 @@ public class AutoSellManager {
         IWrappedRegion region = this.validateWrappedRegion(regionName, world);
 
         if (region == null) {
-            this.plugin.getCore().getLogger().warning("There is no such WorldGuard region named " + regionName + " in world " + world.getName());
+            warning("There is no such WorldGuard region named " + regionName + " in world " + world.getName());
             return false;
         }
 
@@ -91,10 +95,10 @@ public class AutoSellManager {
 
         Map<XMaterial, Double> sellPrices = this.loadSellPricesForRegion(config, regionName);
 
-        SellRegion sellRegion = new SellRegion(region, world, permRequired, sellPrices);
-        this.regionsAutoSell.put(regionName, sellRegion);
+        SellRegionImpl sellRegionImpl = new SellRegionImpl(region, world, permRequired, sellPrices);
+        this.regionsAutoSell.put(regionName, sellRegionImpl);
 
-        this.plugin.getCore().getLogger().info("Loaded auto-sell region named '" + regionName + "'");
+        info("&aLoaded Auto-Sell region &e'" + regionName + "'");
         return true;
     }
 
@@ -137,15 +141,15 @@ public class AutoSellManager {
 
         this.plugin.getCore().debug("User " + sender.getName() + " ran /sellall in region " + region.getId(), this.plugin);
 
-        SellRegion sellRegion = regionsAutoSell.get(region.getId());
+        SellRegionImpl sellRegionImpl = regionsAutoSell.get(region.getId());
 
-        if (!checkIfPlayerCanSellInSellRegion(sender, sellRegion)) {
+        if (!checkIfPlayerCanSellInSellRegion(sender, sellRegionImpl)) {
             return;
         }
 
-        Map<AutoSellItemStack, Double> itemsToSell = sellRegion.previewInventorySell(sender);
+        Map<AutoSellItemStack, Double> itemsToSell = sellRegionImpl.previewInventorySell(sender);
 
-        XPrisonSellAllEvent event = this.callSellAllEvent(sender, sellRegion, itemsToSell);
+        XPrisonSellAllEvent event = this.callSellAllEvent(sender, sellRegionImpl, itemsToSell);
 
         if (event.isCancelled()) {
             return;
@@ -174,8 +178,8 @@ public class AutoSellManager {
         return totalAmount;
     }
 
-    private XPrisonSellAllEvent callSellAllEvent(Player sender, SellRegion sellRegion, Map<AutoSellItemStack, Double> sellItems) {
-        XPrisonSellAllEvent event = new XPrisonSellAllEvent(sender, sellRegion, sellItems);
+    private XPrisonSellAllEvent callSellAllEvent(Player sender, SellRegionImpl sellRegionImpl, Map<AutoSellItemStack, Double> sellItems) {
+        XPrisonSellAllEvent event = new XPrisonSellAllEvent(sender, sellRegionImpl, sellItems);
 
         Events.call(event);
 
@@ -186,8 +190,8 @@ public class AutoSellManager {
         return event;
     }
 
-    private XPrisonAutoSellEvent callAutoSellEvent(Player player, SellRegion sellRegion, Map<AutoSellItemStack, Double> itemsToSell) {
-        XPrisonAutoSellEvent event = new XPrisonAutoSellEvent(player, sellRegion, itemsToSell);
+    private XPrisonAutoSellEvent callAutoSellEvent(Player player, SellRegionImpl sellRegionImpl, Map<AutoSellItemStack, Double> itemsToSell) {
+        XPrisonAutoSellEvent event = new XPrisonAutoSellEvent(player, sellRegionImpl, itemsToSell);
 
         Events.call(event);
 
@@ -198,9 +202,9 @@ public class AutoSellManager {
         return event;
     }
 
-    private boolean checkIfPlayerCanSellInSellRegion(Player sender, SellRegion sellRegion) {
-        if (!sellRegion.canPlayerSellInRegion(sender)) {
-            PlayerUtils.sendMessage(sender, this.plugin.getAutoSellConfig().getMessage("no_permission_sell").replace("%perm%", sellRegion.getPermissionRequired()));
+    private boolean checkIfPlayerCanSellInSellRegion(Player sender, SellRegionImpl sellRegionImpl) {
+        if (!sellRegionImpl.canPlayerSellInRegion(sender)) {
+            PlayerUtils.sendMessage(sender, this.plugin.getAutoSellConfig().getMessage("no_permission_sell").replace("%perm%", sellRegionImpl.getPermissionRequired()));
             return false;
         }
         return true;
@@ -240,8 +244,8 @@ public class AutoSellManager {
         return lastEarnings.getOrDefault(player.getUniqueId(), 0.0);
     }
 
-    public double getPriceForItem(String regionName, ItemStack item) {
-        SellRegion region = regionsAutoSell.get(regionName);
+    public double getPriceForItem(SellRegion sellRegion, ItemStack item) {
+        SellRegionImpl region = regionsAutoSell.get(sellRegion.getRegion().getId());
         if (region != null) {
             return region.getPriceForItem(item);
         }
@@ -253,11 +257,15 @@ public class AutoSellManager {
     }
 
     public Collection<SellRegion> getAutoSellRegions() {
+        return Collections.unmodifiableList(new ArrayList<>(this.regionsAutoSell.values()));
+    }
+
+    public Collection<SellRegionImpl> getAutoSellRegionsImpl() {
         return this.regionsAutoSell.values();
     }
 
-    public SellRegion getAutoSellRegion(Location location) {
-        for (SellRegion region : this.regionsAutoSell.values()) {
+    public SellRegionImpl getAutoSellRegion(Location location) {
+        for (SellRegionImpl region : this.regionsAutoSell.values()) {
             if (region.contains(location)) {
                 return region;
             }
@@ -283,12 +291,12 @@ public class AutoSellManager {
         return player.hasPermission(AutoSellContants.AUTOSELL_PERMISSION) && !hasAutoSellEnabled(player);
     }
 
-    public SellRegion getSellRegionFromWrappedRegion(IWrappedRegion region) {
+    public SellRegionImpl getSellRegionFromWrappedRegion(IWrappedRegion region) {
         return regionsAutoSell.getOrDefault(region.getId(), null);
     }
 
-    public void updateSellRegion(SellRegion sellRegion) {
-        this.regionsAutoSell.put(sellRegion.getRegion().getId(), sellRegion);
+    public void updateSellRegion(SellRegionImpl sellRegionImpl) {
+        this.regionsAutoSell.put(sellRegionImpl.getRegion().getId(), sellRegionImpl);
     }
 
     public boolean givePlayerItem(Player player, Block block) {
@@ -334,15 +342,15 @@ public class AutoSellManager {
 
     public boolean autoSellBlock(Player player, Block block) {
 
-        SellRegion sellRegion = this.getAutoSellRegion(block.getLocation());
+        SellRegionImpl sellRegionImpl = this.getAutoSellRegion(block.getLocation());
 
-        if (sellRegion == null) {
+        if (sellRegionImpl == null) {
             return false;
         }
 
-        Map<AutoSellItemStack, Double> itemsToSell = sellRegion.previewItemsSell(Arrays.asList(createItemStackToGive(player, block)));
+        Map<AutoSellItemStack, Double> itemsToSell = sellRegionImpl.previewItemsSell(Arrays.asList(createItemStackToGive(player, block)));
 
-        XPrisonAutoSellEvent event = this.callAutoSellEvent(player, sellRegion, itemsToSell);
+        XPrisonAutoSellEvent event = this.callAutoSellEvent(player, sellRegionImpl, itemsToSell);
 
         if (event.isCancelled()) {
             return false;
@@ -375,7 +383,7 @@ public class AutoSellManager {
 
     public double getPriceForBlock(String regionName, Block block) {
         XMaterial material = XMaterial.matchXMaterial(block.getType());
-        SellRegion region = regionsAutoSell.get(regionName);
+        SellRegionImpl region = regionsAutoSell.get(regionName);
         if (region != null) {
             return region.getSellPriceForMaterial(material);
         }
@@ -384,7 +392,7 @@ public class AutoSellManager {
 
     public double getPriceForBlock(Block block) {
         XMaterial material = XMaterial.matchXMaterial(block.getType());
-        SellRegion region = getAutoSellRegion(block.getLocation());
+        SellRegionImpl region = getAutoSellRegion(block.getLocation());
         if (region != null) {
             return region.getSellPriceForMaterial(material);
         }
@@ -398,7 +406,7 @@ public class AutoSellManager {
         this.notLoadedSellRegions.put(world.getName(), regionNames);
     }
 
-    public SellRegion getSellRegionByName(String name) {
+    public SellRegionImpl getSellRegionByName(String name) {
         return regionsAutoSell.get(name);
     }
 

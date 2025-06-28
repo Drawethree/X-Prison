@@ -1,14 +1,15 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
-import com.cryptomorin.xseries.XItemStack;
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
+import dev.drawethree.xprison.api.enchants.events.NukeTriggerEvent;
+import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
+import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
+import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.api.events.NukeTriggerEvent;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
-import dev.drawethree.xprison.mines.model.mine.Mine;
-import dev.drawethree.xprison.multipliers.enums.MultiplierType;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.misc.MathUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
@@ -28,10 +29,9 @@ import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public final class NukeEnchant extends XPrisonEnchantment {
+public final class NukeEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private boolean countBlocksBroken;
@@ -49,23 +49,7 @@ public final class NukeEnchant extends XPrisonEnchantment {
     }
 
     @Override
-    public void onEquip(Player p, ItemStack pickAxe, int level) {
-
-    }
-
-    @Override
-    public void onUnequip(Player p, ItemStack pickAxe, int level) {
-
-    }
-
-    @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        double chance = getChanceToTrigger(enchantLevel);
-
-        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
-            return;
-        }
-
         long startTime = Time.nowMillis();
         final Player p = e.getPlayer();
         final Block b = e.getBlock();
@@ -106,10 +90,10 @@ public final class NukeEnchant extends XPrisonEnchantment {
         }
 
         if (!this.useEvents && this.plugin.isMinesModuleEnabled() && removeBlocks) {
-            Mine mine = plugin.getCore().getMines().getApi().getMineAtLocation(e.getBlock().getLocation());
+            MineImpl mineImpl = plugin.getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
 
-            if (mine != null) {
-                mine.handleBlockBreak(blocksAffected);
+            if (mineImpl != null) {
+                mineImpl.handleBlockBreak(blocksAffected);
             }
         }
 

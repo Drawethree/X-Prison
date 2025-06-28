@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.gangs.listener;
 
 import dev.drawethree.xprison.gangs.XPrisonGangs;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import org.bukkit.entity.Player;
@@ -61,7 +61,7 @@ public class GangsListener {
 				.filter(e -> this.plugin.getGangsManager().hasGangChatEnabled(e.getPlayer()))
 				.handler(e -> {
 
-					Optional<Gang> gangOptional = this.plugin.getGangsManager().getPlayerGang(e.getPlayer());
+					Optional<GangImpl> gangOptional = this.plugin.getGangsManager().getPlayerGang(e.getPlayer());
 
 					if (!gangOptional.isPresent()) {
 						this.plugin.getGangsManager().disableGangChat(e.getPlayer());
@@ -71,10 +71,10 @@ public class GangsListener {
 					e.setCancelled(true);
 					e.getRecipients().clear();
 
-					Gang gang = gangOptional.get();
+					GangImpl gangImpl = gangOptional.get();
 
-					for (Player p : gang.getOnlinePlayers()) {
-						PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-chat-format").replace("%player%", e.getPlayer().getName()).replace("%message%", e.getMessage()).replace("%gang%", gang.getName()));
+					for (Player p : gangImpl.getOnlinePlayers()) {
+						PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-chat-format").replace("%player%", e.getPlayer().getName()).replace("%message%", e.getMessage()).replace("%gang%", gangImpl.getName()));
 					}
 				}).bindWith(this.plugin.getCore());
 	}

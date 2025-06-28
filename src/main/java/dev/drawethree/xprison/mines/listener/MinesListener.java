@@ -2,7 +2,7 @@ package dev.drawethree.xprison.mines.listener;
 
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.managers.MineManager;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import me.lucko.helper.Events;
 import me.lucko.helper.serialize.Position;
 import org.bukkit.event.EventPriority;
@@ -29,18 +29,18 @@ public class MinesListener {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGH)
 				.filter(e -> !e.isCancelled())
 				.handler(e -> {
-					Mine mine = this.plugin.getManager().getMineAtLocation(e.getBlock().getLocation());
+					MineImpl mineImpl = this.plugin.getManager().getMineAtLocation(e.getBlock().getLocation());
 
-					if (mine == null) {
+					if (mineImpl == null) {
 						return;
 					}
 
-					if (mine.isResetting()) {
+					if (mineImpl.isResetting()) {
 						e.setCancelled(true);
 						return;
 					}
 
-					mine.handleBlockBreak(Arrays.asList(e.getBlock()));
+					mineImpl.handleBlockBreak(Arrays.asList(e.getBlock()));
 				}).bindWith(this.plugin.getCore());
 	}
 

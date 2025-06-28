@@ -1,7 +1,10 @@
 package dev.drawethree.xprison.mines.api;
 
+import dev.drawethree.xprison.api.mines.XPrisonMinesAPI;
+import dev.drawethree.xprison.api.mines.model.Mine;
+import dev.drawethree.xprison.api.mines.model.MineSelection;
 import dev.drawethree.xprison.mines.XPrisonMines;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import org.bukkit.Location;
 
 public final class XPrisonMinesAPIImpl implements XPrisonMinesAPI {
@@ -13,12 +16,27 @@ public final class XPrisonMinesAPIImpl implements XPrisonMinesAPI {
 	}
 
 	@Override
-	public Mine getMineByName(String name) {
+	public MineImpl getMineByName(String name) {
 		return this.plugin.getManager().getMineByName(name);
 	}
 
 	@Override
-	public Mine getMineAtLocation(Location loc) {
+	public MineImpl getMineAtLocation(Location loc) {
 		return this.plugin.getManager().getMineAtLocation(loc);
+	}
+
+	@Override
+	public Mine createMine(MineSelection mineSelection, String name) {
+		return this.plugin.getManager().createMine(mineSelection,name);
+	}
+
+	@Override
+	public boolean deleteMine(Mine mine) {
+		return this.plugin.getManager().deleteMine(mine);
+	}
+
+	@Override
+	public void resetMine(Mine mine) {
+		this.plugin.getManager().resetMine(mine);
 	}
 }

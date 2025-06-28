@@ -1,15 +1,15 @@
 package dev.drawethree.xprison.autosell.utils;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 
 import java.util.Comparator;
 
 public class SellPriceComparator implements Comparator<XMaterial> {
 
-	private final SellRegion region;
+	private final SellRegionImpl region;
 
-	public SellPriceComparator(SellRegion region) {
+	public SellPriceComparator(SellRegionImpl region) {
 		this.region = region;
 	}
 

@@ -1,17 +1,15 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
+import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-public final class PrestigeFinderEnchant extends XPrisonEnchantment {
+public final class PrestigeFinderEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private String commandToExecute;
@@ -25,21 +23,7 @@ public final class PrestigeFinderEnchant extends XPrisonEnchantment {
     }
 
     @Override
-    public void onEquip(Player p, ItemStack pickAxe, int level) {
-
-    }
-
-    @Override
-    public void onUnequip(Player p, ItemStack pickAxe, int level) {
-
-    }
-
-    @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        double chance = getChanceToTrigger(enchantLevel);
-        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
-            return;
-        }
         int levels = (int) createExpression(enchantLevel).evaluate();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandToExecute.replace("%player%", e.getPlayer().getName()).replace("%amount%", String.valueOf(levels)));
     }

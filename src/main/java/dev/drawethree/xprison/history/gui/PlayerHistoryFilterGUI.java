@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.history.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.XPrisonModule;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
 import dev.drawethree.xprison.history.XPrisonHistory;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
@@ -50,7 +50,7 @@ public class PlayerHistoryFilterGUI extends Gui {
 				populator.accept(ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name(" ").buildItem().build());
 			}
 
-			for (XPrisonModule module : this.plugin.getCore().getModules()) {
+			for (XPrisonModuleAbstract module : this.plugin.getCore().getModules()) {
 				if (!module.isHistoryEnabled()) {
 					continue;
 				}

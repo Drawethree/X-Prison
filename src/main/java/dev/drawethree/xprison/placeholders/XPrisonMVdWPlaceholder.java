@@ -2,23 +2,21 @@ package dev.drawethree.xprison.placeholders;
 
 import be.maximvdw.placeholderapi.PlaceholderAPI;
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.multipliers.model.Multiplier;
+import dev.drawethree.xprison.api.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.xprison.api.ranks.model.Rank;
 import dev.drawethree.xprison.autominer.utils.AutoMinerUtils;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.mines.XPrisonMines;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
-import dev.drawethree.xprison.multipliers.multiplier.GlobalMultiplier;
-import dev.drawethree.xprison.multipliers.multiplier.Multiplier;
-import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplier;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
-import dev.drawethree.xprison.ranks.model.Rank;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.misc.MathUtils;
 import dev.drawethree.xprison.utils.misc.TimeUtil;
@@ -96,17 +94,17 @@ public class XPrisonMVdWPlaceholder {
 		}
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_name", event -> {
-			Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			return optionalGang.map(gang -> this.plugin.getGangs().getConfig().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getConfig().getPlaceholder("gang-without"));
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang", event -> {
-			Optional<Gang> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = this.plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			return optionalGang.map(gang -> this.plugin.getGangs().getConfig().getPlaceholder("gang-in-gang").replace("%gang%", gang.getName())).orElseGet(() -> this.plugin.getGangs().getConfig().getPlaceholder("gang-without"));
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_value", event -> {
-			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			if (optionalGang.isPresent()) {
 				return String.format("%,d", optionalGang.get().getValue());
 			} else {
@@ -116,23 +114,23 @@ public class XPrisonMVdWPlaceholder {
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_has_gang", event -> plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer()).isPresent() ? "Yes" : "No");
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_is_leader", event -> {
-			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			return optionalGang.map(gang -> gang.isOwner(event.getPlayer()) ? "Yes" : "No").orElse("");
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_leader_name", event -> {
-			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			if (optionalGang.isPresent()) {
 				return optionalGang.get().getOwnerOffline().getName();
 			}
 			return "";
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_members_amount", event -> {
-			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			// +1 because of leader
 			return optionalGang.map(gang -> String.valueOf(gang.getMembersOffline().size() + 1)).orElse("");
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_gang_members_online", event -> {
-			Optional<Gang> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
+			Optional<GangImpl> optionalGang = plugin.getGangs().getGangsManager().getPlayerGang(event.getPlayer());
 			return optionalGang.map(gang -> String.valueOf(gang.getOnlinePlayers().size())).orElse("");
 		});
 	}
@@ -147,7 +145,7 @@ public class XPrisonMVdWPlaceholder {
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_next_rank", event -> {
 			Optional<Rank> nextRank = plugin.getRanks().getApi().getNextPlayerRank(event.getPlayer());
-			if (!nextRank.isPresent()) {
+			if (nextRank.isEmpty()) {
 				return "";
 			} else {
 				return nextRank.get().getPrefix();
@@ -167,8 +165,8 @@ public class XPrisonMVdWPlaceholder {
 		}
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_multiplier_sell", event -> {
-			PlayerMultiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(event.getPlayer());
-			if (sellMulti == null || sellMulti.isExpired()) {
+			Multiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(event.getPlayer());
+			if (sellMulti == null || !sellMulti.isActive()) {
 				return String.format("%.2f", 0.0);
 			} else {
 				return String.format("%.2f", (1.0 + sellMulti.getMultiplier()));
@@ -176,8 +174,8 @@ public class XPrisonMVdWPlaceholder {
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_multiplier_token", event -> {
-			PlayerMultiplier tokenMulti = plugin.getMultipliers().getApi().getTokenMultiplier(event.getPlayer());
-			if (tokenMulti == null || tokenMulti.isExpired()) {
+			Multiplier tokenMulti = plugin.getMultipliers().getApi().getTokenMultiplier(event.getPlayer());
+			if (tokenMulti == null || !tokenMulti.isActive()) {
 				return String.format("%.2f", 0.0);
 			} else {
 				return String.format("%.2f", (1.0 + tokenMulti.getMultiplier()));
@@ -185,12 +183,12 @@ public class XPrisonMVdWPlaceholder {
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_multiplier_global_sell", event -> {
-			GlobalMultiplier sellMulti = plugin.getMultipliers().getApi().getGlobalSellMultiplier();
-			return String.format("%.2f", sellMulti.isExpired() ? 0.0 : sellMulti.getMultiplier());
+			Multiplier sellMulti = plugin.getMultipliers().getApi().getGlobalSellMultiplier();
+			return String.format("%.2f", !sellMulti.isActive() ? 0.0 : sellMulti.getMultiplier());
 		});
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_multiplier_global_token", event -> {
-			GlobalMultiplier tokenMulti = plugin.getMultipliers().getApi().getGlobalTokenMultiplier();
-			return String.format("%.2f", tokenMulti.isExpired() ? 0.0 : tokenMulti.getMultiplier());
+			Multiplier tokenMulti = plugin.getMultipliers().getApi().getGlobalTokenMultiplier();
+			return String.format("%.2f", !tokenMulti.isActive() ? 0.0 : tokenMulti.getMultiplier());
 		});
 
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_multiplier_rank", event -> {
@@ -238,10 +236,10 @@ public class XPrisonMVdWPlaceholder {
 			return;
 		}
 
-		for (Mine mine : this.plugin.getMines().getManager().getMines()) {
-			PlaceholderAPI.registerPlaceholder(plugin, "xprison_mine_" + mine.getName() + "_blocks_left", event -> String.format("%,d", mine.getCurrentBlocks()));
-			PlaceholderAPI.registerPlaceholder(plugin, "xprison_mine_" + mine.getName() + "_blocks_left_percentage", event -> String.format("%,.2f", (double) mine.getCurrentBlocks() / mine.getTotalBlocks() * 100.0D));
-			PlaceholderAPI.registerPlaceholder(plugin, "xprison_mine_" + mine.getName() + "_reset_time", event -> TimeUtil.getTime(mine.getSecondsToNextReset()));
+		for (MineImpl mineImpl : this.plugin.getMines().getManager().getMines()) {
+			PlaceholderAPI.registerPlaceholder(plugin, "xprison_mine_" + mineImpl.getName() + "_blocks_left", event -> String.format("%,d", mineImpl.getCurrentBlocks()));
+			PlaceholderAPI.registerPlaceholder(plugin, "xprison_mine_" + mineImpl.getName() + "_blocks_left_percentage", event -> String.format("%,.2f", (double) mineImpl.getCurrentBlocks() / mineImpl.getTotalBlocks() * 100.0D));
+			PlaceholderAPI.registerPlaceholder(plugin, "xprison_mine_" + mineImpl.getName() + "_reset_time", event -> TimeUtil.getTime(mineImpl.getSecondsToNextReset()));
 		}
 	}
 

@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import me.lucko.helper.menu.Item;
@@ -12,11 +12,11 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MineEffectsGUI extends Gui {
 
-	private Mine mine;
+	private MineImpl mineImpl;
 
-	public MineEffectsGUI(Mine mine, Player player) {
+	public MineEffectsGUI(MineImpl mineImpl, Player player) {
 		super(player, 3, "Player effects");
-		this.mine = mine;
+		this.mineImpl = mineImpl;
 	}
 
 	@Override
@@ -33,31 +33,31 @@ public class MineEffectsGUI extends Gui {
 
 		this.setItem(26, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to panel").build(() -> {
 			this.close();
-			new MinePanelGUI(this.mine, this.getPlayer()).open();
+			new MinePanelGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 	}
 
 	private Item getItemForEffect(PotionEffectType type) {
-		boolean enabled = this.mine.isEffectEnabled(type);
+		boolean enabled = this.mineImpl.isEffectEnabled(type);
 
 		if (enabled) {
-			return ItemStackBuilder.of(XMaterial.GLOWSTONE_DUST.parseItem()).name("&7" + type.getName() + " &aENABLED &b(" + this.mine.getEffectLevel(type) + ")").lore("&aShift-Left-Click &7to &aincrease.", "&aShift-Right-Click &7to &cdecrease.", "&aClick &7to disable.").buildItem().bind(event -> {
+			return ItemStackBuilder.of(XMaterial.GLOWSTONE_DUST.parseItem()).name("&7" + type.getName() + " &aENABLED &b(" + this.mineImpl.getEffectLevel(type) + ")").lore("&aShift-Left-Click &7to &aincrease.", "&aShift-Right-Click &7to &cdecrease.", "&aClick &7to disable.").buildItem().bind(event -> {
 				switch (event.getClick()) {
 					case LEFT:
-						this.mine.disableEffect(type);
+						this.mineImpl.disableEffect(type);
 						break;
 					case SHIFT_LEFT:
-						this.mine.increaseEffect(type);
+						this.mineImpl.increaseEffect(type);
 						break;
 					case SHIFT_RIGHT:
-						this.mine.decreaseEffect(type);
+						this.mineImpl.decreaseEffect(type);
 						break;
 				}
 				this.redraw();
 			}, ClickType.LEFT, ClickType.SHIFT_RIGHT, ClickType.SHIFT_LEFT).build();
 		} else {
 			return ItemStackBuilder.of(XMaterial.GUNPOWDER.parseItem()).name("&7" + type.getName() + " &cDISABLED").lore("&aClick &7to enable.").build(() -> {
-				this.mine.enableEffect(type);
+				this.mineImpl.enableEffect(type);
 				this.redraw();
 			});
 		}

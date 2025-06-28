@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.gangs.commands.impl;
 
+import dev.drawethree.xprison.api.gangs.enums.GangCreateResult;
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.enums.GangCreateResult;
 import dev.drawethree.xprison.gangs.utils.GangsConstants;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

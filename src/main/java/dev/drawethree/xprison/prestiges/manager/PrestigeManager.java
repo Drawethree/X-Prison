@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.prestiges.manager;
 
-import dev.drawethree.xprison.api.enums.LostCause;
+import dev.drawethree.xprison.api.prestiges.events.PlayerPrestigeEvent;
+import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
 import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
-import dev.drawethree.xprison.prestiges.api.events.PlayerPrestigeEvent;
 import dev.drawethree.xprison.prestiges.config.PrestigeConfig;
-import dev.drawethree.xprison.prestiges.model.Prestige;
+import dev.drawethree.xprison.prestiges.model.PrestigeImpl;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
 import dev.drawethree.xprison.ranks.manager.RanksManager;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
 public class PrestigeManager {
 
@@ -40,7 +43,7 @@ public class PrestigeManager {
         for (UUID uuid : this.onlinePlayersPrestige.keySet()) {
             this.plugin.getPrestigeService().setPrestige(Players.getOfflineNullable(uuid), onlinePlayersPrestige.get(uuid));
         }
-        this.plugin.getCore().getLogger().info("Saved online players prestiges.");
+        info("&aPrestiges saved.");
     }
 
     private void loadAllData() {
@@ -75,7 +78,7 @@ public class PrestigeManager {
         });
     }
 
-    private double calculateNextPrestigeCost(Prestige origin) {
+    private double calculateNextPrestigeCost(PrestigeImpl origin) {
 
         if (!this.getConfig().isIncreaseCostEnabled()) {
             return origin.getCost();
@@ -89,24 +92,24 @@ public class PrestigeManager {
     }
 
 
-    public Prestige getNextPrestige(Prestige prestige) {
+    public PrestigeImpl getNextPrestige(PrestigeImpl prestigeImpl) {
         if (this.getConfig().isUnlimitedPrestiges()) {
-            return new Prestige(prestige.getId() + 1, this.calculateNextPrestigeCost(prestige), this.getConfig().getUnlimitedPrestigePrefix().replace("%prestige%", String.format("%,d", prestige.getId() + 1)), this.getConfig().getUnlimitedPrestigesRewards().getOrDefault(prestige.getId() + 1, null));
+            return new PrestigeImpl(prestigeImpl.getId() + 1, this.calculateNextPrestigeCost(prestigeImpl), this.getConfig().getUnlimitedPrestigePrefix().replace("%prestige%", String.format("%,d", prestigeImpl.getId() + 1)), this.getConfig().getUnlimitedPrestigesRewards().getOrDefault(prestigeImpl.getId() + 1, null));
         }
-        return this.getConfig().getPrestigeById().getOrDefault(prestige.getId() + 1, null);
+        return this.getConfig().getPrestigeById().getOrDefault(prestigeImpl.getId() + 1, null);
     }
 
-    public Prestige getPrestigeById(long id) {
+    public PrestigeImpl getPrestigeById(long id) {
         if (this.getConfig().isUnlimitedPrestiges()) {
-            return new Prestige(id, id * this.getConfig().getIncreaseCostBy(), this.getConfig().getUnlimitedPrestigePrefix().replace("%prestige%", String.format("%,d", id)), this.getConfig().getUnlimitedPrestigesRewards().getOrDefault(id, null));
+            return new PrestigeImpl(id, id * this.getConfig().getIncreaseCostBy(), this.getConfig().getUnlimitedPrestigePrefix().replace("%prestige%", String.format("%,d", id)), this.getConfig().getUnlimitedPrestigesRewards().getOrDefault(id, null));
         }
         return this.getConfig().getPrestigeById().getOrDefault(id, null);
     }
 
-    public synchronized Prestige getPlayerPrestige(Player p) {
+    public synchronized PrestigeImpl getPlayerPrestige(Player p) {
         if (this.getConfig().isUnlimitedPrestiges()) {
             long prestige = this.onlinePlayersPrestige.getOrDefault(p.getUniqueId(), 0L);
-            return new Prestige(prestige, this.calculatePrestigeCost(prestige), this.getConfig().getUnlimitedPrestigePrefix().replace("%prestige%", String.format("%,d", prestige)), null);
+            return new PrestigeImpl(prestige, this.calculatePrestigeCost(prestige), this.getConfig().getUnlimitedPrestigePrefix().replace("%prestige%", String.format("%,d", prestige)), null);
         } else {
             return this.getConfig().getPrestigeById().getOrDefault(this.onlinePlayersPrestige.get(p.getUniqueId()), this.getConfig().getPrestigeById().get(0L));
         }
@@ -139,7 +142,7 @@ public class PrestigeManager {
 
     private boolean completeTransaction(Player p, double cost) {
 		if (this.getConfig().isUseTokensCurrency()) {
-            this.plugin.getCore().getTokens().getApi().removeTokens(p, (long) cost, LostCause.RANKUP);
+            this.plugin.getCore().getTokens().getApi().remove(p, (long) cost, LostCause.RANKUP);
             return true;
         } else {
             return this.plugin.getCore().getEconomy().withdrawPlayer(p, cost).transactionSuccess();
@@ -167,8 +170,8 @@ public class PrestigeManager {
             return false;
         }
 
-        Prestige currentPrestige = this.getPlayerPrestige(p);
-        Prestige toBuy = getNextPrestige(currentPrestige);
+        PrestigeImpl currentPrestigeImpl = this.getPlayerPrestige(p);
+        PrestigeImpl toBuy = getNextPrestige(currentPrestigeImpl);
 
         if (!this.isTransactionAllowed(p, toBuy.getCost())) {
             if (this.getConfig().isUseTokensCurrency()) {
@@ -179,7 +182,7 @@ public class PrestigeManager {
             return false;
         }
 
-        PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestige, toBuy);
+        PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, currentPrestigeImpl, toBuy);
 
         Events.call(event);
 
@@ -215,8 +218,11 @@ public class PrestigeManager {
                         }
                         long prestige = topPrestige.get(uuid);
                         PlayerUtils.sendMessage(sender, rawContent.replace("%position%", String.valueOf(i + 1)).replace("%player%", name).replace("%prestige%", String.format("%,d", prestige)));
-                    } catch (Exception e) {
+                    } catch (IndexOutOfBoundsException e) {
                         break;
+                    } catch (Exception e) {
+                        error("Exception during sending PrestigeTop to " + sender.getName());
+                        e.printStackTrace();
                     }
                 }
             } else {
@@ -238,17 +244,17 @@ public class PrestigeManager {
                 return;
             }
 
-            Prestige startPrestige = this.getPlayerPrestige(p);
+            PrestigeImpl startPrestigeImpl = this.getPlayerPrestige(p);
 
-            Prestige currentPrestige = startPrestige;
+            PrestigeImpl currentPrestigeImpl = startPrestigeImpl;
 
-            Prestige nextPrestige = this.getNextPrestige(startPrestige);
+            PrestigeImpl nextPrestigeImpl = this.getNextPrestige(startPrestigeImpl);
 
-            if (!this.isTransactionAllowed(p, nextPrestige.getCost())) {
+            if (!this.isTransactionAllowed(p, nextPrestigeImpl.getCost())) {
                 if (this.getConfig().isUseTokensCurrency()) {
-                    PlayerUtils.sendMessage(p, this.getConfig().getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+                    PlayerUtils.sendMessage(p, this.getConfig().getMessage("not_enough_tokens_prestige").replace("%cost%", String.format("%,.0f", nextPrestigeImpl.getCost())));
                 } else {
-                    PlayerUtils.sendMessage(p, this.getConfig().getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestige.getCost())));
+                    PlayerUtils.sendMessage(p, this.getConfig().getMessage("not_enough_money_prestige").replace("%cost%", String.format("%,.0f", nextPrestigeImpl.getCost())));
                 }
                 return;
             }
@@ -256,38 +262,38 @@ public class PrestigeManager {
             PlayerUtils.sendMessage(p, this.getConfig().getMessage("max_prestige_started"));
 
             this.prestigingPlayers.add(p.getUniqueId());
-            while (p.isOnline() && !isMaxPrestige(p) && this.isTransactionAllowed(p, nextPrestige.getCost())) {
+            while (p.isOnline() && !isMaxPrestige(p) && this.isTransactionAllowed(p, nextPrestigeImpl.getCost())) {
 
                 if (areRanksEnabled() && !getRankManager().isMaxRank(p)) {
                     break;
                 }
 
-                doPrestige(p, nextPrestige);
-                currentPrestige = nextPrestige;
-                nextPrestige = this.getNextPrestige(nextPrestige);
+                doPrestige(p, nextPrestigeImpl);
+                currentPrestigeImpl = nextPrestigeImpl;
+                nextPrestigeImpl = this.getNextPrestige(nextPrestigeImpl);
             }
 
-            PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, startPrestige, currentPrestige);
+            PlayerPrestigeEvent event = new PlayerPrestigeEvent(p, startPrestigeImpl, currentPrestigeImpl);
 
             Events.callSync(event);
 
             this.prestigingPlayers.remove(p.getUniqueId());
 
-            if (startPrestige.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
-                PlayerUtils.sendMessage(p, this.getConfig().getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestige.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
+            if (startPrestigeImpl.getId() < this.onlinePlayersPrestige.get(p.getUniqueId())) {
+                PlayerUtils.sendMessage(p, this.getConfig().getMessage("max_prestige_done").replace("%start_prestige%", String.format("%,d", startPrestigeImpl.getId())).replace("%prestige%", String.format("%,d", this.onlinePlayersPrestige.get(p.getUniqueId()))));
             }
         });
     }
 
-    private void doPrestige(Player p, Prestige nextPrestige) {
+    private void doPrestige(Player p, PrestigeImpl nextPrestigeImpl) {
 
-        if (!this.completeTransaction(p, nextPrestige.getCost())) {
+        if (!this.completeTransaction(p, nextPrestigeImpl.getCost())) {
             return;
         }
 
-        this.onlinePlayersPrestige.put(p.getUniqueId(), nextPrestige.getId());
+        this.onlinePlayersPrestige.put(p.getUniqueId(), nextPrestigeImpl.getId());
 
-        givePrestigeRewards(nextPrestige,p);
+        givePrestigeRewards(nextPrestigeImpl,p);
 
         List<String> rewardsPerPrestige = this.getConfig().getUnlimitedPrestigesRewardPerPrestige();
         if (rewardsPerPrestige != null) {
@@ -313,21 +319,21 @@ public class PrestigeManager {
             return;
         }
 
-        Prestige startPrestige = this.getPlayerPrestige(target);
+        PrestigeImpl startPrestigeImpl = this.getPlayerPrestige(target);
 
         long maxPrestige = this.getConfig().isUnlimitedPrestiges() ? this.getConfig().getUnlimitedPrestigeMax() : this.getConfig().getMaxPrestige().getId();
-        if (startPrestige.getId() + amount > maxPrestige) {
+        if (startPrestigeImpl.getId() + amount > maxPrestige) {
             this.onlinePlayersPrestige.put(target.getUniqueId(), maxPrestige);
         } else {
             this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) + amount);
         }
 
-        Prestige currentPrestige = this.getPlayerPrestige(target);
+        PrestigeImpl currentPrestigeImpl = this.getPlayerPrestige(target);
 
-        long prestigeGained = currentPrestige.getId() - startPrestige.getId();
+        long prestigeGained = currentPrestigeImpl.getId() - startPrestigeImpl.getId();
 
         for (int i = 0; i < prestigeGained; i++) {
-            Prestige toGive = this.getPrestigeById(currentPrestige.getId() + 1 + i);
+            PrestigeImpl toGive = this.getPrestigeById(currentPrestigeImpl.getId() + 1 + i);
 
             if (toGive == null) {
                 break;
@@ -345,7 +351,7 @@ public class PrestigeManager {
             }
         }
 
-        PlayerPrestigeEvent event = new PlayerPrestigeEvent(target, startPrestige, currentPrestige);
+        PlayerPrestigeEvent event = new PlayerPrestigeEvent(target, startPrestigeImpl, currentPrestigeImpl);
 
         Events.callSync(event);
 
@@ -373,9 +379,9 @@ public class PrestigeManager {
             return;
         }
 
-        Prestige currentPrestige = this.getPlayerPrestige(target);
+        PrestigeImpl currentPrestigeImpl = this.getPlayerPrestige(target);
 
-        if (currentPrestige.getId() - amount < 0) {
+        if (currentPrestigeImpl.getId() - amount < 0) {
             this.onlinePlayersPrestige.put(target.getUniqueId(), 0L);
         } else {
             this.onlinePlayersPrestige.put(target.getUniqueId(), this.onlinePlayersPrestige.get(target.getUniqueId()) - amount);
@@ -390,10 +396,10 @@ public class PrestigeManager {
             return 100;
         }
 
-        Prestige current = this.getPlayerPrestige(player);
-        Prestige next = this.getNextPrestige(current);
+        PrestigeImpl current = this.getPlayerPrestige(player);
+        PrestigeImpl next = this.getNextPrestige(current);
 
-        double currentBalance = this.getConfig().isUseTokensCurrency() ? this.plugin.getCore().getTokens().getApi().getPlayerTokens(player) : this.plugin.getCore().getEconomy().getBalance(player);
+        double currentBalance = this.getConfig().isUseTokensCurrency() ? this.plugin.getCore().getTokens().getApi().getAmount(player) : this.plugin.getCore().getEconomy().getBalance(player);
 
         int progress = (int) ((currentBalance / next.getCost()) * 100);
 
@@ -419,19 +425,19 @@ public class PrestigeManager {
         return this.prestigingPlayers.contains(sender.getUniqueId());
     }
 
-    public void givePrestigeRewards(Prestige prestige, Player p) {
-        if (prestige.getCommandsToExecute() != null) {
+    public void givePrestigeRewards(PrestigeImpl prestigeImpl, Player p) {
+        if (prestigeImpl.getCommandsToExecute() != null) {
             if (!Bukkit.isPrimaryThread()) {
-                Schedulers.sync().run(() -> executeCommands(prestige, p));
+                Schedulers.sync().run(() -> executeCommands(prestigeImpl, p));
             } else {
-                executeCommands(prestige, p);
+                executeCommands(prestigeImpl, p);
             }
         }
     }
 
-    private void executeCommands(Prestige prestige, Player p) {
-        for (String cmd : prestige.getCommandsToExecute()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prestige.getPrefix()));
+    private void executeCommands(PrestigeImpl prestigeImpl, Player p) {
+        for (String cmd : prestigeImpl.getCommandsToExecute()) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", p.getName()).replace("%Prestige%", prestigeImpl.getPrefix()));
         }
     }
 

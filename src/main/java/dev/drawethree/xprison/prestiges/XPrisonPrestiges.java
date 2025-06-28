@@ -1,8 +1,9 @@
 package dev.drawethree.xprison.prestiges;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.prestiges.api.XPrisonPrestigesAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.prestiges.XPrisonPrestigesAPI;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.prestiges.api.XPrisonPrestigesAPIImpl;
 import dev.drawethree.xprison.prestiges.commands.MaxPrestigeCommand;
 import dev.drawethree.xprison.prestiges.commands.PrestigeAdminCommand;
@@ -19,7 +20,7 @@ import dev.drawethree.xprison.prestiges.task.SavePlayerDataTask;
 import lombok.Getter;
 
 @Getter
-public final class XPrisonPrestiges implements XPrisonModule {
+public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Prestiges";
 

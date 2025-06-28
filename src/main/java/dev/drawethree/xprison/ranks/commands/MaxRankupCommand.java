@@ -18,7 +18,7 @@ public class MaxRankupCommand {
 				.assertPermission(PERMISSION_REQUIRED, this.plugin.getRanksConfig().getMessage("no_permission"))
 				.assertPlayer()
 				.handler(c -> {
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getRanksManager().buyMaxRank(c.sender());
 					}
 				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);

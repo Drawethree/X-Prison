@@ -2,7 +2,7 @@ package dev.drawethree.xprison.prestiges.config;
 
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
-import dev.drawethree.xprison.prestiges.model.Prestige;
+import dev.drawethree.xprison.prestiges.model.PrestigeImpl;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,15 +12,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+
 public class PrestigeConfig {
 
     private final XPrisonPrestiges plugin;
     private final FileManager.Config config;
-    private Prestige maxPrestige;
+    private PrestigeImpl maxPrestigeImpl;
     private String unlimitedPrestigePrefix;
     private List<String> prestigeTopFormat;
     private List<String> unlimitedPrestigesRewardPerPrestige;
-    private Map<Long, Prestige> prestigeById;
+    private Map<Long, PrestigeImpl> prestigeById;
     private Map<String, String> messages;
     private Map<Long, List<String>> unlimitedPrestigesRewards;
     private int topPlayersAmount;
@@ -60,18 +63,18 @@ public class PrestigeConfig {
         this.prestigeById.clear();
 
         if (this.unlimitedPrestiges) {
-            this.plugin.getCore().getLogger().info(String.format("Loaded %,d prestiges.", this.unlimitedPrestigeMax));
+            info(String.format("&aLoaded &e%,d Prestiges.", this.unlimitedPrestigeMax));
         } else {
             for (String key : configuration.getConfigurationSection("Prestige").getKeys(false)) {
                 long id = Long.parseLong(key);
                 String prefix = TextUtils.applyColor(configuration.getString("Prestige." + key + ".Prefix"));
                 long cost = configuration.getLong("Prestige." + key + ".Cost");
                 List<String> commands = configuration.getStringList("Prestige." + key + ".CMD");
-                Prestige p = new Prestige(id, cost, prefix, commands);
+                PrestigeImpl p = new PrestigeImpl(id, cost, prefix, commands);
                 this.prestigeById.put(id, p);
-                this.maxPrestige = p;
+                this.maxPrestigeImpl = p;
             }
-            this.plugin.getCore().getLogger().info(String.format("Loaded %,d prestiges!", this.prestigeById.keySet().size()));
+            info(String.format("&aLoaded &e%,d Prestiges.", this.prestigeById.keySet().size()));
         }
     }
 
@@ -100,7 +103,7 @@ public class PrestigeConfig {
         this.savePlayerDataInterval = configuration.getInt("player_data_save_interval");
         this.resetRankAfterPrestige = configuration.getBoolean("reset_rank_after_prestige");
         this.useTokensCurrency = configuration.getBoolean("use_tokens_currency");
-        this.plugin.getCore().getLogger().info("Using " + (useTokensCurrency ? "Tokens" : "Money") + " currency for Prestiges.");
+        info("&fUsing &e" + (useTokensCurrency ? "Tokens" : "Money") + " &fcurrency for Prestiges.");
 
     }
 
@@ -123,6 +126,7 @@ public class PrestigeConfig {
                     this.unlimitedPrestigesRewards.put(id, rewards);
                 }
             } catch (Exception e) {
+                error("Exception during loading unlimited prestige rewards for key " + key);
                 e.printStackTrace();
             }
         }
@@ -137,8 +141,8 @@ public class PrestigeConfig {
         return this.config.get();
     }
 
-    public Prestige getMaxPrestige() {
-        return maxPrestige;
+    public PrestigeImpl getMaxPrestige() {
+        return maxPrestigeImpl;
     }
 
     public String getUnlimitedPrestigePrefix() {
@@ -153,7 +157,7 @@ public class PrestigeConfig {
         return unlimitedPrestigesRewardPerPrestige;
     }
 
-    public Map<Long, Prestige> getPrestigeById() {
+    public Map<Long, PrestigeImpl> getPrestigeById() {
         return prestigeById;
     }
 

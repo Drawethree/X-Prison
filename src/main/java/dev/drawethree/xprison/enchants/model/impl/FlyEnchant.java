@@ -1,14 +1,13 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class FlyEnchant extends XPrisonEnchantment {
-
-
+public final class FlyEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
 
 	public FlyEnchant(XPrisonEnchants instance) {
 		super(instance, 8);
@@ -17,16 +16,11 @@ public final class FlyEnchant extends XPrisonEnchantment {
 	@Override
 	public void onEquip(Player p, ItemStack pickAxe, int level) {
 		p.setAllowFlight(true);
-
 	}
 
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
 		p.setAllowFlight(false);
-	}
-
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 	}
 
 	@Override

@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.enchants;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.enchants.XPrisonEnchantsAPI;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.enchants.api.XPrisonEnchantsAPI;
 import dev.drawethree.xprison.enchants.api.XPrisonEnchantsAPIImpl;
 import dev.drawethree.xprison.enchants.command.*;
 import dev.drawethree.xprison.enchants.config.EnchantsConfig;
@@ -20,7 +20,7 @@ import lombok.Getter;
 import me.lucko.helper.utils.Players;
 import org.bukkit.entity.Player;
 
-public final class XPrisonEnchants implements XPrisonModule {
+public final class XPrisonEnchants implements XPrisonModuleAbstract {
 
 
 	public static final String MODULE_NAME = "Enchants";
@@ -81,8 +81,8 @@ public final class XPrisonEnchants implements XPrisonModule {
 		this.enchantsConfig = new EnchantsConfig(this);
 		this.enchantsConfig.load();
 
-		this.cooldownManager = new CooldownManager(this);
-		this.respawnManager = new RespawnManager(this);
+		this.cooldownManager = new CooldownManager();
+		this.respawnManager = new RespawnManager();
 
 		this.enchantsManager = new EnchantsManager(this);
 		this.enchantsManager.enable();
@@ -93,7 +93,7 @@ public final class XPrisonEnchants implements XPrisonModule {
 		this.registerCommands();
 
 		this.enchantsRepository = new EnchantsRepository(this);
-		this.enchantsRepository.loadDefaultEnchantments();
+		this.enchantsRepository.registerDefaultEnchants();
 
 		EnchantGUI.init();
 		DisenchantGUI.init();
@@ -140,10 +140,6 @@ public final class XPrisonEnchants implements XPrisonModule {
 	@Override
 	public boolean isHistoryEnabled() {
 		return false;
-	}
-
-	@Override
-	public void resetPlayerData() {
 	}
 
 	public boolean isAutoSellModuleEnabled() {

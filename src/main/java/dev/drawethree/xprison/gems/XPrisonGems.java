@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.gems;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.gems.XPrisonGemsAPI;
 import dev.drawethree.xprison.config.FileManager;
-import dev.drawethree.xprison.gems.api.XPrisonGemsAPI;
 import dev.drawethree.xprison.gems.api.XPrisonGemsAPIImpl;
 import dev.drawethree.xprison.gems.managers.CommandManager;
 import dev.drawethree.xprison.gems.managers.GemsManager;
@@ -11,6 +11,7 @@ import dev.drawethree.xprison.gems.repo.GemsRepository;
 import dev.drawethree.xprison.gems.repo.impl.GemsRepositoryImpl;
 import dev.drawethree.xprison.gems.service.GemsService;
 import dev.drawethree.xprison.gems.service.impl.GemsServiceImpl;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Getter;
 import me.lucko.helper.Events;
@@ -23,7 +24,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
 
-public final class XPrisonGems implements XPrisonModule {
+public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Gems";
 	public static final String GEMS_ADMIN_PERM = "xprison.gems.admin";

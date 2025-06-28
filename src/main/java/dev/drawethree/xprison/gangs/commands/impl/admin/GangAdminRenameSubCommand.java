@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.commands.impl.admin;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.gangs.utils.GangsConstants;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +38,6 @@ public final class GangAdminRenameSubCommand extends GangSubCommand {
 
 	@Override
 	public List<String> getTabComplete() {
-		return this.command.getPlugin().getGangsManager().getAllGangs().stream().map(Gang::getName).collect(Collectors.toList());
+		return this.command.getPlugin().getGangsManager().getAllGangs().stream().map(GangImpl::getName).collect(Collectors.toList());
 	}
 }

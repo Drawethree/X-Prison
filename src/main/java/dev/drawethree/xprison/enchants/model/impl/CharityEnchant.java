@@ -1,7 +1,9 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
+import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
@@ -9,34 +11,23 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-public final class CharityEnchant extends XPrisonEnchantment {
+public final class CharityEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private String amountToGiveExpression;
+    private boolean messagesEnabled;
 
     public CharityEnchant(XPrisonEnchants instance) {
         super(instance, 11);
         this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
         this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+        this.messagesEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Messages-Enabled", true);
     }
 
     @Override
     public String getAuthor() {
         return "Drawethree";
-    }
-
-    @Override
-    public void onEquip(Player p, ItemStack pickAxe, int level) {
-
-    }
-
-    @Override
-    public void onUnequip(Player p, ItemStack pickAxe, int level) {
-
     }
 
     @Override
@@ -46,18 +37,12 @@ public final class CharityEnchant extends XPrisonEnchantment {
             return;
         }
 
-        double chance = getChanceToTrigger(enchantLevel);
-
-        if (chance < ThreadLocalRandom.current().nextDouble(100)) {
-            return;
-        }
-
         long amount = (long) createExpression(enchantLevel).evaluate();
 
         for (Player p : Players.all()) {
             plugin.getCore().getEconomy().depositPlayer(p, amount);
 
-            if (!this.isMessagesEnabled()) {
+            if (!messagesEnabled) {
                 continue;
             }
 
@@ -80,6 +65,8 @@ public final class CharityEnchant extends XPrisonEnchantment {
         super.reload();
         this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
         this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+        this.messagesEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Messages-Enabled", true);
+
     }
 
     private Expression createExpression(int level) {

@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.model.mine.reset;
 
-import dev.drawethree.xprison.mines.model.mine.BlockPalette;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.BlockPaletteImpl;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import lombok.Getter;
 
 public abstract class ResetType {
@@ -26,5 +26,5 @@ public abstract class ResetType {
 		return null;
 	}
 
-	public abstract void reset(Mine paramMine, BlockPalette blockPalette);
+	public abstract void reset(MineImpl paramMineImpl, BlockPaletteImpl blockPaletteImpl);
 }
