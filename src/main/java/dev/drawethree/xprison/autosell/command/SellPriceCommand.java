@@ -3,7 +3,7 @@ package dev.drawethree.xprison.autosell.command;
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.autosell.gui.AllSellRegionsGui;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.autosell.utils.AutoSellContants;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -58,16 +58,16 @@ public class SellPriceCommand {
                         return;
                     }
 
-                    SellRegion sellRegion = this.getSellRegionFromWrappedRegion(wrappedRegion);
+                    SellRegionImpl sellRegionImpl = this.getSellRegionFromWrappedRegion(wrappedRegion);
 
-                    if (sellRegion == null) {
-                        sellRegion = new SellRegion(wrappedRegion, c.sender().getWorld());
+                    if (sellRegionImpl == null) {
+                        sellRegionImpl = new SellRegionImpl(wrappedRegion, c.sender().getWorld());
                     }
 
-                    sellRegion.addSellPrice(type, price);
+                    sellRegionImpl.addSellPrice(type, price);
 
-                    this.plugin.getManager().updateSellRegion(sellRegion);
-                    this.plugin.getAutoSellConfig().saveSellRegion(sellRegion);
+                    this.plugin.getManager().updateSellRegion(sellRegionImpl);
+                    this.plugin.getAutoSellConfig().saveSellRegion(sellRegionImpl);
 
                     PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, wrappedRegion.getId()));
 
@@ -82,11 +82,11 @@ public class SellPriceCommand {
         return "editor".equalsIgnoreCase(c.rawArg(0));
     }
 
-    private SellRegion getSellRegionByName(String name) {
+    private SellRegionImpl getSellRegionByName(String name) {
         return this.plugin.getManager().getSellRegionByName(name);
     }
 
-    private SellRegion getSellRegionFromWrappedRegion(IWrappedRegion region) {
+    private SellRegionImpl getSellRegionFromWrappedRegion(IWrappedRegion region) {
         return this.plugin.getManager().getSellRegionFromWrappedRegion(region);
     }
 

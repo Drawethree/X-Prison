@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.commands.impl.value;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.gangs.utils.GangsConstants;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+
 public final class GangValueRemoveSubCommand extends GangSubCommand {
 	public GangValueRemoveSubCommand(GangCommand command) {
 		super(command, "remove");
@@ -22,7 +24,7 @@ public final class GangValueRemoveSubCommand extends GangSubCommand {
 	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 2) {
 			try {
-				Optional<Gang> gang = this.command.getPlugin().getGangsManager().getGangWithName(args.get(0));
+				Optional<GangImpl> gang = this.command.getPlugin().getGangsManager().getGangWithName(args.get(0));
 
 				if (!gang.isPresent()) {
 					gang = this.command.getPlugin().getGangsManager().getPlayerGang(Players.getOfflineNullable(args.get(0)));
@@ -38,7 +40,8 @@ public final class GangValueRemoveSubCommand extends GangSubCommand {
 
 				return this.command.getPlugin().getGangsManager().modifyValue(sender, gang.get(), amount, operation);
 			} catch (Exception e) {
-				sender.sendMessage("§cInternal error.");
+				sender.sendMessage("§cInternal error. Check console for log details.");
+				e.printStackTrace();
 				return false;
 			}
 		}
@@ -57,6 +60,6 @@ public final class GangValueRemoveSubCommand extends GangSubCommand {
 
 	@Override
 	public List<String> getTabComplete() {
-		return this.command.getPlugin().getGangsManager().getAllGangs().stream().map(Gang::getName).collect(Collectors.toList());
+		return this.command.getPlugin().getGangsManager().getAllGangs().stream().map(GangImpl::getName).collect(Collectors.toList());
 	}
 }

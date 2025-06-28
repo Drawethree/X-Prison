@@ -19,7 +19,7 @@ public class GiveFirstJoinPickaxeCommand {
 				.assertOp()
 				.handler(c -> {
 
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						PlayerUtils.sendMessage(c.sender(), "&c/givefirstjoinpickaxe <player>");
 						return;
 					}

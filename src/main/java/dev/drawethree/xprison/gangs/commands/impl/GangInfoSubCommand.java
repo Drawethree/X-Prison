@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.commands.impl;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import me.lucko.helper.utils.Players;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -53,7 +53,7 @@ public final class GangInfoSubCommand extends GangSubCommand {
 	public List<String> getTabComplete() {
 		List<String> tabComplete = new ArrayList<>();
 		tabComplete.addAll(Players.all().stream().map(Player::getName).collect(Collectors.toList()));
-		tabComplete.addAll(this.command.getPlugin().getGangsManager().getAllGangs().stream().map(Gang::getName).collect(Collectors.toList()));
+		tabComplete.addAll(this.command.getPlugin().getGangsManager().getAllGangs().stream().map(GangImpl::getName).collect(Collectors.toList()));
 		return tabComplete;
 	}
 }

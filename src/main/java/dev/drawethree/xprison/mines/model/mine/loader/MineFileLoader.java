@@ -3,8 +3,8 @@ package dev.drawethree.xprison.mines.model.mine.loader;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.drawethree.xprison.mines.managers.MineManager;
-import dev.drawethree.xprison.mines.model.mine.BlockPalette;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.BlockPaletteImpl;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.mines.model.mine.reset.ResetType;
 import me.lucko.helper.gson.GsonProvider;
 import me.lucko.helper.hologram.Hologram;
@@ -17,6 +17,9 @@ import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
+
 public class MineFileLoader implements MineLoader<File> {
 
 	private final MineManager manager;
@@ -26,14 +29,14 @@ public class MineFileLoader implements MineLoader<File> {
 	}
 
 	@Override
-	public Mine load(File file) {
+	public MineImpl load(File file) {
 		try (FileReader reader = new FileReader(file)) {
 			JsonObject obj = GsonProvider.readObject(reader);
 
 			String name = obj.get("name").getAsString();
 			Point teleportLocation = obj.get("teleport-location").isJsonNull() ? null : Point.deserialize(obj.get("teleport-location"));
 			Region region = obj.get("region").isJsonNull() ? null : Region.deserialize(obj.get("region"));
-			BlockPalette palette = obj.get("blocks").isJsonNull() ? new BlockPalette() : BlockPalette.deserialize(obj.get("blocks"));
+			BlockPaletteImpl palette = obj.get("blocks").isJsonNull() ? new BlockPaletteImpl() : BlockPaletteImpl.deserialize(obj.get("blocks"));
 
 			ResetType resetType = obj.get("reset-type").isJsonNull() ? ResetType.INSTANT : ResetType.of(obj.get("reset-type").getAsString());
 			double resetPercentage = obj.get("reset-percentage").getAsDouble();
@@ -56,9 +59,9 @@ public class MineFileLoader implements MineLoader<File> {
 				}
 			}
 
-			return new Mine(this.manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
+			return new MineImpl(this.manager, name, region, teleportLocation, palette, resetType, resetPercentage, broadcastReset, blocksLeftHologram, blocksMinedHologram, timedResetHologram, mineEffects, resetTime);
 		} catch (Exception e) {
-			this.manager.getPlugin().getCore().getLogger().warning("Unable to load mine " + file.getName() + "!");
+			error("Unable to load mine " + file.getName() + "!");
 			e.printStackTrace();
 		}
 		return null;

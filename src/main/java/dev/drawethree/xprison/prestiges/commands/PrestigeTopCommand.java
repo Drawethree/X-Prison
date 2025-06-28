@@ -15,7 +15,7 @@ public class PrestigeTopCommand {
     public void register() {
         Commands.create()
                 .handler(c -> {
-                    if (c.args().size() == 0) {
+                    if (c.args().isEmpty()) {
                         this.plugin.getPrestigeManager().sendPrestigeTop(c.sender());
                     }
                 }).registerAndBind(this.plugin.getCore(), "prestigetop");

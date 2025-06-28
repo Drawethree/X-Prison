@@ -1,7 +1,9 @@
 package dev.drawethree.xprison.autosell.api;
 
+import dev.drawethree.xprison.api.autosell.XPrisonAutoSellAPI;
+import dev.drawethree.xprison.api.autosell.model.SellRegion;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,8 +26,8 @@ public final class XPrisonAutoSellAPIImpl implements XPrisonAutoSellAPI {
 	}
 
 	@Override
-	public double getPriceForItem(String regionName, ItemStack item) {
-		return plugin.getManager().getPriceForItem(regionName, item);
+	public double getPriceForItem(SellRegion sellRegion, ItemStack itemStack) {
+		return plugin.getManager().getPriceForItem(sellRegion, itemStack);
 	}
 
 	@Override
@@ -49,7 +51,7 @@ public final class XPrisonAutoSellAPIImpl implements XPrisonAutoSellAPI {
 	}
 
 	@Override
-	public SellRegion getSellRegionAtLocation(Location location) {
+	public SellRegionImpl getSellRegionAtLocation(Location location) {
 		return plugin.getManager().getAutoSellRegion(location);
 	}
 }

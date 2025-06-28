@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.autosell.gui;
 
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGui;
@@ -29,19 +29,19 @@ public final class AllSellRegionsGui {
 		builder.nextPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&aNext Page").lore("&7Click to see next page.").build());
 		builder.previousPageItem((pageInfo) -> ItemStackBuilder.of(Material.ARROW).name("&aPrevious Page").lore("&7Click to see previous page.").build());
 
-		Collection<SellRegion> regions = getSellRegions();
+		Collection<SellRegionImpl> regions = getSellRegions();
 		PaginatedGui gui = builder.build(player, paginatedGui -> regions.stream().map(sellRegion -> buildItemForSellRegion(sellRegion, player)).collect(Collectors.toList()));
 		gui.open();
 	}
 
-	private static Item buildItemForSellRegion(SellRegion sellRegion, Player player) {
+	private static Item buildItemForSellRegion(SellRegionImpl sellRegionImpl, Player player) {
 		return ItemStackBuilder.of(Material.DIAMOND_PICKAXE)
-				.name(sellRegion.getRegion().getId())
+				.name(sellRegionImpl.getRegion().getId())
 				.lore(" ", "&7Click to edit sell prices.", " ")
-				.build(() -> new SellRegionGui(sellRegion, player).open());
+				.build(() -> new SellRegionGui(sellRegionImpl, player).open());
 	}
 
-	private static Collection<SellRegion> getSellRegions() {
-		return XPrisonAutoSell.getInstance().getManager().getAutoSellRegions();
+	private static Collection<SellRegionImpl> getSellRegions() {
+		return XPrisonAutoSell.getInstance().getManager().getAutoSellRegionsImpl();
 	}
 }

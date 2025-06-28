@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.autominer;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.autominer.api.XPrisonAutoMinerAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.autominer.XPrisonAutoMinerAPI;
 import dev.drawethree.xprison.autominer.api.XPrisonAutoMinerAPIImpl;
 import dev.drawethree.xprison.autominer.command.AdminAutoMinerCommand;
 import dev.drawethree.xprison.autominer.command.AutoMinerCommand;
@@ -13,9 +13,10 @@ import dev.drawethree.xprison.autominer.repo.AutominerRepository;
 import dev.drawethree.xprison.autominer.repo.impl.AutominerRepositoryImpl;
 import dev.drawethree.xprison.autominer.service.AutominerService;
 import dev.drawethree.xprison.autominer.service.impl.AutominerServiceImpl;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import lombok.Getter;
 
-public final class XPrisonAutoMiner implements XPrisonModule {
+public final class XPrisonAutoMiner implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Auto Miner";
 

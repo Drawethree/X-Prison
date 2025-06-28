@@ -1,14 +1,15 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public final class NightVisionEnchant extends XPrisonEnchantment {
+public final class NightVisionEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
 	public NightVisionEnchant(XPrisonEnchants instance) {
 		super(instance, 7);
 	}
@@ -25,11 +26,6 @@ public final class NightVisionEnchant extends XPrisonEnchantment {
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
 		p.removePotionEffect(PotionEffectType.NIGHT_VISION);
-	}
-
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-
 	}
 
 	@Override

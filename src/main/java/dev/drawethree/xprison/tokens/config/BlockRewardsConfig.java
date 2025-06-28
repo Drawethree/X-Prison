@@ -11,6 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+
 public class BlockRewardsConfig {
 
 	private final XPrisonTokens plugin;
@@ -54,7 +56,7 @@ public class BlockRewardsConfig {
 				this.blockRewards.put(blocksNeeded, reward);
 			}
 		}
-		this.plugin.getCore().getLogger().info("Loaded " + this.blockRewards.keySet().size() + " Block Rewards!");
+		info("&aLoaded &e" + this.blockRewards.keySet().size() + " Block Rewards");
 	}
 
 	public Map<Long, BlockReward> getBlockRewards() {

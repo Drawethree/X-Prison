@@ -64,7 +64,7 @@ public class CommandManager {
         Commands.create()
                 .tabHandler(this::createTabHandler)
                 .handler(c -> {
-                    if (c.args().size() == 0 && c.sender() instanceof Player) {
+                    if (c.args().isEmpty() && c.sender() instanceof Player) {
                         this.plugin.getGemsManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
                         return;
                     }
@@ -87,7 +87,7 @@ public class CommandManager {
                 .registerAndBind(this.plugin.getCore(), this.gemsCommandAliases);
         Commands.create()
                 .handler(c -> {
-                    if (c.args().size() == 0) {
+                    if (c.args().isEmpty()) {
                         this.plugin.getGemsManager().sendGemsTop(c.sender());
                     }
                 }).registerAndBind(this.plugin.getCore(), this.gemsTopCommandAliases);

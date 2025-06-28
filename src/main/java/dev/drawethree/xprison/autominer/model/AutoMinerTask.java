@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.autominer.model;
 
 import com.cryptomorin.xseries.messages.ActionBar;
-import dev.drawethree.xprison.autominer.api.events.PlayerAutomineEvent;
+import dev.drawethree.xprison.api.autominer.events.PlayerAutomineEvent;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.scheduler.Task;
 import org.bukkit.Bukkit;
@@ -15,10 +15,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class AutoMinerTask implements Runnable {
 
 	private final AtomicInteger counter;
-	private final AutoMinerRegion region;
+	private final AutoMinerRegionImpl region;
 	private Task task;
 
-	public AutoMinerTask(AutoMinerRegion region) {
+	public AutoMinerTask(AutoMinerRegionImpl region) {
 		this.region = region;
 		this.counter = new AtomicInteger(0);
 	}

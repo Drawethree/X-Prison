@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.gangs;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.gangs.api.XPrisonGangsAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.gangs.XPrisonGangsAPI;
 import dev.drawethree.xprison.gangs.api.XPrisonGangsAPIImpl;
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.config.GangsConfig;
@@ -15,9 +15,10 @@ import dev.drawethree.xprison.gangs.repo.GangsRepository;
 import dev.drawethree.xprison.gangs.repo.impl.GangsRepositoryImpl;
 import dev.drawethree.xprison.gangs.service.GangsService;
 import dev.drawethree.xprison.gangs.service.impl.GangsServiceImpl;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import lombok.Getter;
 
-public final class XPrisonGangs implements XPrisonModule {
+public final class XPrisonGangs implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Gangs";
 

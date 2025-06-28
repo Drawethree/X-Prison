@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.commands.impl;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -28,7 +28,7 @@ public final class GangAcceptSubCommand extends GangSubCommand {
 		if (sender instanceof Player && args.size() == 1) {
 
 			String gangName = args.get(0);
-			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(gangName);
+			Optional<GangImpl> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(gangName);
 
 			if (!gangOptional.isPresent()) {
 				PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));

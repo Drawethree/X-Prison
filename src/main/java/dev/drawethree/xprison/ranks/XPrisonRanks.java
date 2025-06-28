@@ -1,8 +1,9 @@
 package dev.drawethree.xprison.ranks;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.ranks.api.XPrisonRanksAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.ranks.XPrisonRanksAPI;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.ranks.api.XPrisonRanksAPIImpl;
 import dev.drawethree.xprison.ranks.commands.MaxRankupCommand;
 import dev.drawethree.xprison.ranks.commands.RankupCommand;
@@ -17,7 +18,7 @@ import dev.drawethree.xprison.ranks.service.impl.RanksServiceImpl;
 import lombok.Getter;
 
 @Getter
-public final class XPrisonRanks implements XPrisonModule {
+public final class XPrisonRanks implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Ranks";
 

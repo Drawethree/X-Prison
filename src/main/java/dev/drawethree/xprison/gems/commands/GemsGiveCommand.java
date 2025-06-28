@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.gems.commands;
 
 import com.google.common.collect.ImmutableList;
-import dev.drawethree.xprison.api.enums.ReceiveCause;
+import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.gems.managers.CommandManager;
 import dev.drawethree.xprison.utils.player.PlayerUtils;

@@ -1,8 +1,9 @@
 package dev.drawethree.xprison.tokens;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.tokens.api.XPrisonTokensAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.tokens.XPrisonTokensAPI;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.tokens.api.XPrisonTokensAPIImpl;
 import dev.drawethree.xprison.tokens.config.BlockRewardsConfig;
 import dev.drawethree.xprison.tokens.config.TokensConfig;
@@ -20,7 +21,7 @@ import dev.drawethree.xprison.tokens.service.impl.TokensServiceImpl;
 import dev.drawethree.xprison.tokens.task.SavePlayerDataTask;
 import lombok.Getter;
 
-public final class XPrisonTokens implements XPrisonModule {
+public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Tokens";
 

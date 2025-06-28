@@ -3,7 +3,7 @@ package dev.drawethree.xprison.gangs.commands.impl;
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
 import dev.drawethree.xprison.gangs.gui.panel.DisbandGangGUI;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -29,21 +29,21 @@ public final class GangDisbandSubCommand extends GangSubCommand {
 		if (sender instanceof Player && args.size() == 0) {
 
 			Player player = (Player) sender;
-			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getPlayerGang(player);
+			Optional<GangImpl> gangOptional = this.command.getPlugin().getGangsManager().getPlayerGang(player);
 
 			if (!gangOptional.isPresent()) {
 				PlayerUtils.sendMessage(player, this.command.getPlugin().getConfig().getMessage("not-in-gang"));
 				return false;
 			}
 
-			Gang gang = gangOptional.get();
+			GangImpl gangImpl = gangOptional.get();
 
-			if (!gang.isOwner(player)) {
+			if (!gangImpl.isOwner(player)) {
 				PlayerUtils.sendMessage(player, this.command.getPlugin().getConfig().getMessage("gang-not-owner"));
 				return false;
 			}
 
-			new DisbandGangGUI(this.command.getPlugin(), player, gang).open();
+			new DisbandGangGUI(this.command.getPlugin(), player, gangImpl).open();
 		}
 		return false;
 	}

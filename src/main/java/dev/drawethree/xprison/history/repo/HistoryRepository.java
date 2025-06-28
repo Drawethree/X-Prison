@@ -1,15 +1,15 @@
 package dev.drawethree.xprison.history.repo;
 
-import dev.drawethree.xprison.history.model.HistoryLine;
+import dev.drawethree.xprison.history.model.HistoryLineImpl;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 
 public interface HistoryRepository {
 
-	List<HistoryLine> getPlayerHistory(OfflinePlayer player);
+	List<HistoryLineImpl> getPlayerHistory(OfflinePlayer player);
 
-	void addHistoryLine(OfflinePlayer player, HistoryLine history);
+	void addHistoryLine(OfflinePlayer player, HistoryLineImpl history);
 
 	void deleteHistory(OfflinePlayer target);
 

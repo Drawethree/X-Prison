@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.autosell.listener;
 
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -50,9 +50,9 @@ public class AutoSellListener {
                 .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
 
-                    SellRegion sellRegion = this.plugin.getManager().getAutoSellRegion(e.getBlock().getLocation());
+                    SellRegionImpl sellRegionImpl = this.plugin.getManager().getAutoSellRegion(e.getBlock().getLocation());
 
-                    if (sellRegion == null) {
+                    if (sellRegionImpl == null) {
                         return;
                     }
 

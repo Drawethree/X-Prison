@@ -1,16 +1,23 @@
 package dev.drawethree.xprison.history;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.autominer.api.events.PlayerAutoMinerTimeModifyEvent;
-import dev.drawethree.xprison.autominer.api.events.PlayerAutomineEvent;
-import dev.drawethree.xprison.gangs.api.events.GangCreateEvent;
-import dev.drawethree.xprison.gangs.api.events.GangDisbandEvent;
-import dev.drawethree.xprison.gangs.api.events.GangJoinEvent;
-import dev.drawethree.xprison.gangs.api.events.GangLeaveEvent;
-import dev.drawethree.xprison.gems.api.events.PlayerGemsLostEvent;
-import dev.drawethree.xprison.gems.api.events.PlayerGemsReceiveEvent;
-import dev.drawethree.xprison.history.api.XPrisonHistoryAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+
+
+import dev.drawethree.xprison.api.autominer.events.PlayerAutoMinerTimeModifyEvent;
+import dev.drawethree.xprison.api.autominer.events.PlayerAutomineEvent;
+import dev.drawethree.xprison.api.gangs.events.GangCreateEvent;
+import dev.drawethree.xprison.api.gangs.events.GangDisbandEvent;
+import dev.drawethree.xprison.api.gangs.events.GangJoinEvent;
+import dev.drawethree.xprison.api.gangs.events.GangLeaveEvent;
+import dev.drawethree.xprison.api.gems.events.PlayerGemsLostEvent;
+import dev.drawethree.xprison.api.gems.events.PlayerGemsReceiveEvent;
+import dev.drawethree.xprison.api.history.XPrisonHistoryAPI;
+import dev.drawethree.xprison.api.multipliers.events.PlayerMultiplierReceiveEvent;
+import dev.drawethree.xprison.api.prestiges.events.PlayerPrestigeEvent;
+import dev.drawethree.xprison.api.ranks.events.PlayerRankUpEvent;
+import dev.drawethree.xprison.api.tokens.events.PlayerTokensLostEvent;
+import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.history.api.XPrisonHistoryAPIImpl;
 import dev.drawethree.xprison.history.gui.PlayerHistoryGUI;
 import dev.drawethree.xprison.history.manager.HistoryManager;
@@ -18,11 +25,7 @@ import dev.drawethree.xprison.history.repo.HistoryRepository;
 import dev.drawethree.xprison.history.repo.impl.HistoryRepositoryImpl;
 import dev.drawethree.xprison.history.service.HistoryService;
 import dev.drawethree.xprison.history.service.impl.HistoryServiceImpl;
-import dev.drawethree.xprison.multipliers.api.events.PlayerMultiplierReceiveEvent;
-import dev.drawethree.xprison.prestiges.api.events.PlayerPrestigeEvent;
-import dev.drawethree.xprison.ranks.api.events.PlayerRankUpEvent;
-import dev.drawethree.xprison.tokens.api.events.PlayerTokensLostEvent;
-import dev.drawethree.xprison.tokens.api.events.PlayerTokensReceiveEvent;
+import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.utils.misc.TimeUtil;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import lombok.Getter;
@@ -33,7 +36,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
-public final class XPrisonHistory implements XPrisonModule {
+public final class XPrisonHistory implements XPrisonModuleAbstract, PlayerDataHolder {
 
 	private static final String MODULE_NAME = "History";
 	@Getter
@@ -74,20 +77,20 @@ public final class XPrisonHistory implements XPrisonModule {
 		Events.subscribe(PlayerGemsReceiveEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
-					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGems(), String.format("&a&l+%,d GEMS &f(%s). &7Current Gems: &e%,d", e.getAmount(), e.getCause().name(), this.core.getGems().getApi().getPlayerGems(e.getPlayer())));
+					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGems(), String.format("&a&l+%,d GEMS &f(%s). &7Current Gems: &e%,d", e.getAmount(), e.getCause().name(), this.core.getGems().getApi().getAmount(e.getPlayer())));
 				}).bindWith(this.core);
 		Events.subscribe(PlayerGemsLostEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
-					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGems(), String.format("&c&l-%,d GEMS &f(%s). &7Current Gems: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getPlayerTokens(e.getPlayer())));
+					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGems(), String.format("&c&l-%,d GEMS &f(%s). &7Current Gems: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getAmount(e.getPlayer())));
 				}).bindWith(this.core);
 		Events.subscribe(PlayerTokensReceiveEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
-					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getTokens(), String.format("&a&l+%,d TOKENS &f(%s).&7Current Tokens: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getPlayerTokens(e.getPlayer())));
+					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getTokens(), String.format("&a&l+%,d TOKENS &f(%s).&7Current Tokens: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getAmount(e.getPlayer())));
 				}).bindWith(this.core);
 		Events.subscribe(PlayerTokensLostEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
-					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getTokens(), String.format("&c&l-%,d TOKENS &f(%s).&7Current Tokens: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getPlayerTokens(e.getPlayer())));
+					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getTokens(), String.format("&c&l-%,d TOKENS &f(%s).&7Current Tokens: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getAmount(e.getPlayer())));
 				}).bindWith(this.core);
 		Events.subscribe(PlayerRankUpEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
@@ -112,8 +115,8 @@ public final class XPrisonHistory implements XPrisonModule {
 		Events.subscribe(GangCreateEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
-					if (e.getCreator() instanceof Player) {
-						this.historyManager.createPlayerHistoryLine((OfflinePlayer) e.getCreator(), this.core.getGangs(), String.format("Created Gang: &e%s", e.getGang().getName()));
+					if (e.getGangLeader() instanceof Player) {
+						this.historyManager.createPlayerHistoryLine(e.getGangLeader(), this.core.getGangs(), String.format("Created Gang: &e%s", e.getGang().getName()));
 					}
 				}).bindWith(this.core);
 		Events.subscribe(GangDisbandEvent.class, EventPriority.MONITOR)

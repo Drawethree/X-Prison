@@ -1,11 +1,14 @@
 package dev.drawethree.xprison.history.api;
 
-import dev.drawethree.xprison.XPrisonModule;
+import dev.drawethree.xprison.api.XPrisonModule;
+import dev.drawethree.xprison.api.history.XPrisonHistoryAPI;
+import dev.drawethree.xprison.api.history.model.HistoryLine;
 import dev.drawethree.xprison.history.XPrisonHistory;
-import dev.drawethree.xprison.history.model.HistoryLine;
 import org.bukkit.OfflinePlayer;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class XPrisonHistoryAPIImpl implements XPrisonHistoryAPI {
 
@@ -21,7 +24,12 @@ public final class XPrisonHistoryAPIImpl implements XPrisonHistoryAPI {
 	}
 
 	@Override
-	public void createHistoryLine(OfflinePlayer player, XPrisonModule module, String context) {
-		this.plugin.getHistoryManager().createPlayerHistoryLine(player, module, context);
+	public Collection<HistoryLine> getPlayerHistory(OfflinePlayer offlinePlayer, XPrisonModule xPrisonModule) {
+		return getPlayerHistory(offlinePlayer).stream().filter(historyLine -> historyLine.getModule().equals(xPrisonModule.getName())).collect(Collectors.toList());
+	}
+
+	@Override
+	public HistoryLine createHistoryLine(OfflinePlayer player, XPrisonModule module, String context) {
+		return this.plugin.getHistoryManager().createPlayerHistoryLine(player, module, context);
 	}
 }

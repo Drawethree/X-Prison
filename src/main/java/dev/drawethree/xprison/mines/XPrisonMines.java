@@ -1,9 +1,9 @@
 package dev.drawethree.xprison.mines;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.mines.XPrisonMinesAPI;
 import dev.drawethree.xprison.config.FileManager;
-import dev.drawethree.xprison.mines.api.XPrisonMinesAPI;
 import dev.drawethree.xprison.mines.api.XPrisonMinesAPIImpl;
 import dev.drawethree.xprison.mines.commands.MineCommand;
 import dev.drawethree.xprison.mines.commands.impl.*;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class XPrisonMines implements XPrisonModule {
+public class XPrisonMines implements XPrisonModuleAbstract {
 
 	public static final String MODULE_NAME = "Mines";
 
@@ -91,10 +91,6 @@ public class XPrisonMines implements XPrisonModule {
 		return false;
 	}
 
-	@Override
-	public void resetPlayerData() {
-	}
-
 	private void loadMessages() {
 		this.messages = new HashMap<>();
 		for (String key : this.config.get().getConfigurationSection("messages").getKeys(false)) {
@@ -127,7 +123,7 @@ public class XPrisonMines implements XPrisonModule {
 		Commands.create()
 				.handler(c -> {
 
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
+					if (c.args().isEmpty() && c.sender() instanceof Player) {
 						this.getCommand("help").execute(c.sender(), c.args());
 						return;
 					}

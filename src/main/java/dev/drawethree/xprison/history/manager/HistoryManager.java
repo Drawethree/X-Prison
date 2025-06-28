@@ -1,12 +1,14 @@
 package dev.drawethree.xprison.history.manager;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.XPrisonModule;
+
+import dev.drawethree.xprison.api.XPrisonModule;
+import dev.drawethree.xprison.api.history.model.HistoryLine;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
 import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.history.XPrisonHistory;
-import dev.drawethree.xprison.history.model.HistoryLine;
+import dev.drawethree.xprison.history.model.HistoryLineImpl;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import dev.drawethree.xprison.prestiges.XPrisonPrestiges;
 import dev.drawethree.xprison.ranks.XPrisonRanks;
@@ -36,35 +38,40 @@ public class HistoryManager {
 		this.plugin = plugin;
 	}
 
-	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
+	public List<HistoryLineImpl> getPlayerHistoryImpl(OfflinePlayer player) {
 		return this.plugin.getHistoryService().getPlayerHistory(player);
 	}
 
-	public void createPlayerHistoryLine(OfflinePlayer player, XPrisonModule module, String context) {
-		HistoryLine history = createHistoryLineObject(player, module, context);
+	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
+		return Collections.unmodifiableList(new ArrayList<>(getPlayerHistoryImpl(player)));
+	}
+
+	public HistoryLine createPlayerHistoryLine(OfflinePlayer player, XPrisonModule module, String context) {
+		HistoryLineImpl history = createHistoryLineObject(player, module, context);
 		this.plugin.getHistoryService().createHistoryLine(player, history);
+		return history;
 	}
 
 	public void clearPlayerHistory(OfflinePlayer target) {
 		this.plugin.getHistoryService().deleteHistory(target);
 	}
 
-	public void openPlayerHistoryGui(Player sender, OfflinePlayer target, Predicate<HistoryLine> filter) {
+	public void openPlayerHistoryGui(Player sender, OfflinePlayer target, Predicate<HistoryLineImpl> filter) {
 		PaginatedGuiBuilder builder = PaginatedGuiBuilder.create();
 		builder.lines(6);
 		builder.title("History: " + target.getName());
 		builder.nextPageSlot(53);
 		builder.previousPageSlot(45);
 		builder.build(sender, gui -> {
-			Stream<HistoryLine> historyLinesStream = getPlayerHistory(target).stream();
+			Stream<HistoryLineImpl> historyLinesStream = getPlayerHistoryImpl(target).stream();
 			if (filter != null) {
 				historyLinesStream = historyLinesStream.filter(filter);
 			}
-			List<HistoryLine> historyLines = historyLinesStream.sorted(Comparator.comparing(HistoryLine::getCreatedAt).reversed()).collect(Collectors.toList());
-			if (historyLines.isEmpty()) {
+			List<HistoryLineImpl> historyLineImpls = historyLinesStream.sorted(Comparator.comparing(HistoryLineImpl::getCreatedAt).reversed()).collect(Collectors.toList());
+			if (historyLineImpls.isEmpty()) {
 				return Collections.singletonList(getEmptyHistoryItem());
 			} else {
-				return historyLines.stream().map(this::createHistoryLineGuiItem).collect(Collectors.toList());
+				return historyLineImpls.stream().map(this::createHistoryLineGuiItem).collect(Collectors.toList());
 			}
 		}).open();
 	}
@@ -73,12 +80,12 @@ public class HistoryManager {
 		return ItemStackBuilder.of(XMaterial.BARRIER.parseItem()).name("&4&lNo History").lore("&cNo history is present for this player.").buildItem().build();
 	}
 
-	private HistoryLine createHistoryLineObject(OfflinePlayer player, XPrisonModule module, String context) {
+	private HistoryLineImpl createHistoryLineObject(OfflinePlayer player, XPrisonModule module, String context) {
 		Validate.notNull(player, "Player cannot be null!");
 		Validate.notNull(module, "Module cannot be null!");
 		Validate.notNull(context, "Context cannot be null!");
 
-		HistoryLine history = new HistoryLine();
+		HistoryLineImpl history = new HistoryLineImpl();
 		history.setCreatedAt(new Date());
 		history.setContext(context);
 		history.setPlayerUuid(player.getUniqueId());
@@ -87,7 +94,7 @@ public class HistoryManager {
 		return history;
 	}
 
-	private Item createHistoryLineGuiItem(HistoryLine line) {
+	private Item createHistoryLineGuiItem(HistoryLineImpl line) {
 		return ItemStackBuilder
 				.of(getIconForModule(line.getModule()))
 				.name("&e" + line.getModule())

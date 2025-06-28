@@ -18,7 +18,7 @@ public class AutoSellCommand {
                 .assertPlayer()
                 .assertPermission(AutoSellContants.AUTOSELL_PERMISSION, this.plugin.getAutoSellConfig().getMessage("no_permission_autosell_toggle"))
                 .handler(c -> {
-                    if (c.args().size() == 0) {
+                    if (c.args().isEmpty()) {
                         this.plugin.getManager().toggleAutoSell(c.sender());
                     }
                 }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);

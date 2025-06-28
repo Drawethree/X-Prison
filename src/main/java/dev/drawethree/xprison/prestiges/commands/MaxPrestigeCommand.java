@@ -17,7 +17,7 @@ public class MaxPrestigeCommand {
                 .assertPermission("xprison.prestiges.maxprestige", this.plugin.getPrestigeConfig().getMessage("no_permission"))
                 .assertPlayer()
                 .handler(c -> {
-                    if (c.args().size() == 0) {
+                    if (c.args().isEmpty()) {
 
                         if (this.plugin.getPrestigeManager().isPrestiging(c.sender())) {
                             return;

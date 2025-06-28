@@ -5,7 +5,7 @@ import dev.drawethree.xprison.gangs.commands.impl.*;
 import dev.drawethree.xprison.gangs.commands.impl.admin.GangAdminSubCommand;
 import dev.drawethree.xprison.gangs.commands.impl.value.GangValueSubCommand;
 import dev.drawethree.xprison.gangs.gui.panel.GangPanelGUI;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import lombok.Getter;
 import me.lucko.helper.Commands;
@@ -53,10 +53,10 @@ public class GangCommand {
 				.tabHandler(this::createTabHandler)
 				.handler(c -> {
 
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 
 						if (c.sender() instanceof Player) {
-							Optional<Gang> optionalGang = this.getPlugin().getGangsManager().getPlayerGang((Player) c.sender());
+							Optional<GangImpl> optionalGang = this.getPlugin().getGangsManager().getPlayerGang((Player) c.sender());
 							optionalGang.ifPresent(gang -> openGangPanelGui(gang, (Player) c.sender()));
 							return;
 						} else if (c.sender() instanceof ConsoleCommandSender) {
@@ -111,7 +111,7 @@ public class GangCommand {
 		return subCommands.get(arg.toLowerCase());
 	}
 
-	private void openGangPanelGui(Gang gang, Player player) {
-		new GangPanelGUI(this.plugin, gang, player).open();
+	private void openGangPanelGui(GangImpl gangImpl, Player player) {
+		new GangPanelGUI(this.plugin, gangImpl, player).open();
 	}
 }

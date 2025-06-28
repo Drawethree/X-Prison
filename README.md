@@ -30,7 +30,7 @@ I am accepting pull requests!
 * [_tokens.yml_](https://github.com/Drawethree/X-Prison/wiki/tokens.yml)
 * [_pickaxe-levels.yml_](https://github.com/Drawethree/X-Prison/wiki/pickaxe-levels.yml)
 * [_gangs.yml_](https://github.com/Drawethree/X-Prison/wiki/gangs.yml)
-* [_mines.yml_](https://github.com/Drawethree/X-Prison/wiki/mines.yml)
+* [_mines.yml_](https://github.com/Drawethree/X-Prison/wiki/mineImpls.yml)
 
 
 ### Support

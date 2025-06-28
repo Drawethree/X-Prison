@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.commands.impl.admin;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.gangs.utils.GangsConstants;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
@@ -24,7 +24,7 @@ public final class GangAdminJoinSubCommand extends GangSubCommand {
 	public boolean execute(CommandSender sender, List<String> args) {
 		if (args.size() == 2) {
 			Player target = Players.getNullable(args.get(0));
-			Optional<Gang> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(1));
+			Optional<GangImpl> gangOptional = this.command.getPlugin().getGangsManager().getGangWithName(args.get(1));
 
 			if (!gangOptional.isPresent()) {
 				PlayerUtils.sendMessage(sender, this.command.getPlugin().getConfig().getMessage("gang-not-exists"));

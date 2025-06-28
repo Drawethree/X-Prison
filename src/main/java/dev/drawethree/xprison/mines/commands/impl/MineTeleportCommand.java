@@ -2,7 +2,7 @@ package dev.drawethree.xprison.mines.commands.impl;
 
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.commands.MineCommand;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,19 +26,19 @@ public class MineTeleportCommand extends MineCommand {
 			return false;
 		}
 
-		Mine mine = this.plugin.getManager().getMineByName(args.get(0));
+		MineImpl mineImpl = this.plugin.getManager().getMineByName(args.get(0));
 
-		if (mine == null) {
+		if (mineImpl == null) {
 			PlayerUtils.sendMessage(sender, this.plugin.getMessage("mine_not_exists").replace("%mine%", args.get(0)));
 			return true;
 		}
 
-		if (!mine.canTeleport((Player) sender)) {
+		if (!mineImpl.canTeleport((Player) sender)) {
 			PlayerUtils.sendMessage(sender, this.plugin.getMessage("no_permission"));
 			return true;
 		}
 
-		this.plugin.getManager().teleportToMine((Player) sender, mine);
+		this.plugin.getManager().teleportToMine((Player) sender, mineImpl);
 		return true;
 	}
 

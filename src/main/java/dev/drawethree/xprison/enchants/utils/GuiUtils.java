@@ -1,6 +1,8 @@
 package dev.drawethree.xprison.enchants.utils;
 
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +18,14 @@ public class GuiUtils {
         List<String> newList = new ArrayList<>();
         for (String s : guiItemLore) {
             if (s.contains("%description%")) {
-                newList.addAll(enchantment.getDescription());
+                newList.addAll(enchantment.getGuiDescription());
                 continue;
             }
             newList.add(s
-                    .replace("%refund%", String.format("%,d", enchantment.getRefundForLevel(currentLevel)))
-                    .replace("%cost%", String.format("%,d", enchantment.getCost() + (enchantment.getIncreaseCost() * currentLevel)))
+                    .replace("%refund%", String.format("%,d", EnchantUtils.getRefundForLevel(enchantment, currentLevel)))
+                    .replace("%cost%", String.format("%,d", enchantment.getBaseCost() + (enchantment.getIncreaseCost() * currentLevel)))
                     .replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel()))
-                    .replace("%chance%", String.format("%,.2f", enchantment.getChanceToTrigger(currentLevel)))
+                    .replace("%chance%", String.format("%,.2f", enchantment instanceof ChanceBasedEnchant ? ((ChanceBasedEnchant) enchantment).getChanceToTrigger(currentLevel) : 100.00F))
                     .replace("%current_level%", String.format("%,d", currentLevel))
                     .replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
         }

@@ -10,6 +10,9 @@ import dev.drawethree.xprison.database.model.SQLDatabaseType;
 import java.io.File;
 import java.io.IOException;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
+
 public final class SQLiteDatabase extends PooledSQLDatabase {
 
     private static final String FILE_NAME = "playerdata.db";
@@ -57,7 +60,7 @@ public final class SQLiteDatabase extends PooledSQLDatabase {
         try {
             dbFile.createNewFile();
         } catch (IOException e) {
-            this.plugin.getLogger().warning(String.format("Unable to create %s", FILE_NAME));
+            error(String.format("Unable to create file %s", FILE_NAME));
             e.printStackTrace();
         }
     }

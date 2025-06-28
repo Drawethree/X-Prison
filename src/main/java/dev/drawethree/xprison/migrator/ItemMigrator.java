@@ -18,6 +18,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashSet;
 import java.util.Map;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+
 public class ItemMigrator implements Listener {
 
     private static final String MAIN = "upc";
@@ -74,6 +76,7 @@ public class ItemMigrator implements Listener {
                     }
                 }
             } catch (Throwable t) {
+                error("Exception happened during item migration!");
                 t.printStackTrace();
             }
         }, 80L);
@@ -91,6 +94,7 @@ public class ItemMigrator implements Listener {
                 e.setCurrentItem(item);
             }
         } catch (Throwable t) {
+            error("Exception happened during item migration!");
             t.printStackTrace();
         }
     }

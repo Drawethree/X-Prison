@@ -2,7 +2,7 @@ package dev.drawethree.xprison.mines.commands.impl;
 
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.commands.MineCommand;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,8 +21,8 @@ public class MineListCommand extends MineCommand {
 			this.plugin.getManager().openMinesListGUI((Player) sender);
 		} else {
 			PlayerUtils.sendMessage(sender, "All mines:");
-			for (Mine mine : this.plugin.getManager().getMines()) {
-				PlayerUtils.sendMessage(sender, mine.getName());
+			for (MineImpl mineImpl : this.plugin.getManager().getMines()) {
+				PlayerUtils.sendMessage(sender, mineImpl.getName());
 			}
 		}
 		return true;

@@ -1,6 +1,6 @@
 package dev.drawethree.xprison.multipliers.service.impl;
 
-import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplier;
+import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplierBase;
 import dev.drawethree.xprison.multipliers.repo.MultipliersRepository;
 import dev.drawethree.xprison.multipliers.service.MultipliersService;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ public class MultipliersServiceImpl implements MultipliersService {
 	}
 
 	@Override
-	public void setSellMultiplier(Player player, PlayerMultiplier multiplier) {
+	public void setSellMultiplier(Player player, PlayerMultiplierBase multiplier) {
 		this.repository.saveSellMultiplier(player, multiplier);
 	}
 
@@ -24,7 +24,7 @@ public class MultipliersServiceImpl implements MultipliersService {
 	}
 
 	@Override
-	public void setTokenMultiplier(Player player, PlayerMultiplier multiplier) {
+	public void setTokenMultiplier(Player player, PlayerMultiplierBase multiplier) {
 		this.repository.saveTokenMultiplier(player, multiplier);
 	}
 
@@ -34,12 +34,12 @@ public class MultipliersServiceImpl implements MultipliersService {
 	}
 
 	@Override
-	public PlayerMultiplier getSellMultiplier(Player player) {
+	public PlayerMultiplierBase getSellMultiplier(Player player) {
 		return this.repository.getSellMultiplier(player);
 	}
 
 	@Override
-	public PlayerMultiplier getTokenMultiplier(Player player) {
+	public PlayerMultiplierBase getTokenMultiplier(Player player) {
 		return this.repository.getTokenMultiplier(player);
 	}
 

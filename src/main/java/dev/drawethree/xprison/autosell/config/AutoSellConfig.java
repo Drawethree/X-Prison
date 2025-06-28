@@ -2,7 +2,7 @@ package dev.drawethree.xprison.autosell.config;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -98,7 +98,7 @@ public class AutoSellConfig {
         return inventoryFullNotificationMessage;
     }
 
-    public void saveSellRegion(SellRegion region) {
+    public void saveSellRegion(SellRegionImpl region) {
         this.getConfig().set("regions." + region.getRegion().getId() + ".world", region.getWorld().getName());
         for (XMaterial material : region.getSellingMaterials()) {
             double sellPrice = region.getSellPriceForMaterial(material);

@@ -2,17 +2,21 @@ package dev.drawethree.xprison.enchants.managers;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.saicone.rtag.util.ServerInstance;
-import dev.drawethree.xprison.api.enums.LostCause;
-import dev.drawethree.xprison.api.enums.ReceiveCause;
+import dev.drawethree.xprison.api.enchants.events.XPrisonPlayerEnchantEvent;
+import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
+import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
+import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
+import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+
+import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
+import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.api.events.XPrisonPlayerEnchantEvent;
 import dev.drawethree.xprison.enchants.gui.DisenchantGUI;
 import dev.drawethree.xprison.enchants.gui.EnchantGUI;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;
@@ -33,9 +37,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
 
 public class EnchantsManager {
 
@@ -77,8 +84,8 @@ public class EnchantsManager {
 
 		boolean pickaxeLevels = this.plugin.getCore().isModuleEnabled(XPrisonPickaxeLevels.MODULE_NAME);
 
-		PickaxeLevel currentLevel = null;
-		PickaxeLevel nextLevel = null;
+		PickaxeLevelImpl currentLevel = null;
+		PickaxeLevelImpl nextLevel = null;
 		String pickaxeProgressBar = "";
 
 		if (pickaxeLevels) {
@@ -147,7 +154,7 @@ public class EnchantsManager {
                         final String line;
                         if (player.hasPermission(EXCLUDE_PERMISSION + enchantment.getRawName())) {
                             line = this.plugin.getEnchantsConfig().getExcludedFormat()
-									.replace("%Enchant%", enchantment.getNameUncolor())
+									.replace("%Enchant%", enchantment.getNameWithoutColor())
 									.replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
                         } else {
 							line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
@@ -239,15 +246,36 @@ public class EnchantsManager {
 			return;
 		}
 
-        forEachEffectiveEnchant(e.getPlayer(), pickAxe, (enchant, level) -> enchant.onBlockBreak(e, level));
+		forEachEffectiveEnchant(e.getPlayer(), pickAxe, (enchant, level) -> {
+			if (enchant instanceof BlockBreakEnchant breakEnchant) {
+
+				double chance = 100.0; // Default: always triggers
+
+				if (breakEnchant instanceof ChanceBasedEnchant chanceEnchant) {
+					chance = chanceEnchant.getChanceToTrigger(level);
+				}
+
+				if (ThreadLocalRandom.current().nextDouble(100) < chance) {
+					breakEnchant.onBlockBreak(e, level);
+				}
+			}
+		});
 	}
 
 	public void handlePickaxeEquip(Player p, ItemStack newItem) {
-        forEachEffectiveEnchant(p, newItem, (enchant, level) -> enchant.onEquip(p, newItem, level));
+		forEachEffectiveEnchant(p, newItem, (enchant, level) -> {
+			if (enchant instanceof EquipabbleEnchantment equippable) {
+				equippable.onEquip(p, newItem, level);
+			}
+		});
 	}
 
 	public void handlePickaxeUnequip(Player p, ItemStack newItem) {
-        forEachEffectiveEnchant(p, newItem, (enchant, level) -> enchant.onUnequip(p, newItem, level));
+		forEachEffectiveEnchant(p, newItem, (enchant, level) -> {
+			if (enchant instanceof EquipabbleEnchantment equippable) {
+				equippable.onUnequip(p, newItem, level);
+			}
+		});
 	}
 
 	public ItemStack setEnchantLevel(Player player, ItemStack item, XPrisonEnchantment enchantment, int level) {
@@ -283,7 +311,7 @@ public class EnchantsManager {
 		long startTime = Time.nowMillis();
 
 		for (int j = 0; j < addition; j++) {
-			totalCost += enchantment.getCostOfLevel(currentLevel + j + 1);
+			totalCost += EnchantUtils.getCostOfLevel(enchantment,currentLevel + j + 1);
 		}
 
 		this.plugin.getCore().debug(String.format("Calculation of levels %,d - %,d of %s enchant took %dms", currentLevel + 1, currentLevel + addition + 1, enchantment.getRawName(), Time.nowMillis() - startTime), this.plugin);
@@ -301,12 +329,15 @@ public class EnchantsManager {
 			return;
 		}
 
-		plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost, LostCause.ENCHANT);
+		plugin.getCore().getTokens().getApi().remove(gui.getPlayer(), totalCost, LostCause.ENCHANT);
 
 		this.setEnchantLevel(gui.getPlayer(), gui.getPickAxe(), enchantment, currentLevel + addition);
 
-		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
-		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + addition);
+		if (enchantment instanceof EquipabbleEnchantment) {
+			((EquipabbleEnchantment) enchantment).onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+			((EquipabbleEnchantment) enchantment).onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + addition);
+		}
+
 
 		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
@@ -335,15 +366,17 @@ public class EnchantsManager {
 		long totalRefunded = 0;
 
 		for (int j = 0; j < substraction; j++) {
-			totalRefunded += enchantment.getRefundForLevel(currentLevel - j);
+			totalRefunded += EnchantUtils.getRefundForLevel(enchantment,currentLevel - j);
 		}
 
 		plugin.getCore().getTokens().getTokensManager().giveTokens(gui.getPlayer(), totalRefunded, null, ReceiveCause.REFUND);
 
 		this.setEnchantLevel(gui.getPlayer(), gui.getPickAxe(), enchantment, currentLevel - substraction);
 
-		enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
-		enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel - substraction);
+		if (enchantment instanceof EquipabbleEnchantment) {
+			((EquipabbleEnchantment) enchantment).onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+			((EquipabbleEnchantment) enchantment).onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel - substraction);
+		}
 
 		gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 
@@ -373,7 +406,7 @@ public class EnchantsManager {
 			long totalRefunded = 0;
 
 			while (gui.getPlayer().isOnline() && current > 0) {
-				totalRefunded += enchantment.getRefundForLevel(current);
+				totalRefunded += EnchantUtils.getRefundForLevel(enchantment, current);
 				current--;
 			}
 
@@ -387,10 +420,15 @@ public class EnchantsManager {
 			this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 
 			Schedulers.sync().run(() -> {
-				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				if (enchantment instanceof EquipabbleEnchantment) {
+					((EquipabbleEnchantment) enchantment).onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				}
+
 				this.setEnchantLevel(gui.getPlayer(), gui.getPickAxe(), enchantment, finalCurrent);
 				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
-				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), finalCurrent);
+				if (enchantment instanceof EquipabbleEnchantment) {
+					((EquipabbleEnchantment) enchantment).onEquip(gui.getPlayer(), gui.getPickAxe(), finalCurrent);
+				}
 				gui.redraw();
 			});
 
@@ -419,9 +457,9 @@ public class EnchantsManager {
 			int levelsToBuy = 0;
 			long totalCost = 0;
 
-			while (gui.getPlayer().isOnline() && (currentLevel + levelsToBuy + 1) <= enchantment.getMaxLevel() && this.plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost + enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1))) {
+			while (gui.getPlayer().isOnline() && (currentLevel + levelsToBuy + 1) <= enchantment.getMaxLevel() && this.plugin.getCore().getTokens().getApi().hasEnough(gui.getPlayer(), totalCost + EnchantUtils.getCostOfLevel(enchantment,currentLevel + levelsToBuy + 1))) {
 				levelsToBuy += 1;
-				totalCost += enchantment.getCostOfLevel(currentLevel + levelsToBuy + 1);
+				totalCost += EnchantUtils.getCostOfLevel(enchantment,currentLevel + levelsToBuy + 1);
 			}
 
 			if (!gui.getPlayer().isOnline()) {
@@ -444,15 +482,19 @@ public class EnchantsManager {
 				return;
 			}
 
-			plugin.getCore().getTokens().getApi().removeTokens(gui.getPlayer(), totalCost, LostCause.ENCHANT);
+			plugin.getCore().getTokens().getApi().remove(gui.getPlayer(), totalCost, LostCause.ENCHANT);
 
 			int finalLevelsToBuy = levelsToBuy;
 
 			this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
 			Schedulers.sync().run(() -> {
-				enchantment.onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				if (enchantment instanceof EquipabbleEnchantment) {
+					((EquipabbleEnchantment) enchantment).onUnequip(gui.getPlayer(), gui.getPickAxe(), currentLevel);
+				}
 				this.setEnchantLevel(gui.getPlayer(), gui.getPickAxe(), enchantment, currentLevel + finalLevelsToBuy);
-				enchantment.onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + finalLevelsToBuy);
+				if (enchantment instanceof EquipabbleEnchantment) {
+					((EquipabbleEnchantment) enchantment).onEquip(gui.getPlayer(), gui.getPickAxe(), currentLevel + finalLevelsToBuy);
+				}
 				gui.getPlayer().getInventory().setItem(gui.getPickaxePlayerInventorySlot(), gui.getPickAxe());
 				gui.redraw();
 			});
@@ -476,7 +518,7 @@ public class EnchantsManager {
 
 		for (XPrisonEnchantment enchantment : playerEnchants.keySet()) {
 			for (int i = 1; i <= playerEnchants.get(enchantment); i++) {
-				sum += enchantment.getCostOfLevel(i);
+				sum += EnchantUtils.getCostOfLevel(enchantment, i);
 			}
 		}
 		return sum;
@@ -535,7 +577,8 @@ public class EnchantsManager {
 				int level = Integer.parseInt(data[1]);
 				this.setEnchantLevel(player, item, enchantment, level);
 			} catch (Exception e) {
-
+				error("Exception during loading of first join pickaxe enchants.");
+				e.printStackTrace();
 			}
 		}
 

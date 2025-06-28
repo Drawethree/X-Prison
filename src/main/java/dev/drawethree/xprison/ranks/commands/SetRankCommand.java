@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.ranks.commands;
 
 import dev.drawethree.xprison.ranks.XPrisonRanks;
-import dev.drawethree.xprison.ranks.model.Rank;
+import dev.drawethree.xprison.ranks.model.RankImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
 import org.bukkit.entity.Player;
@@ -25,7 +25,7 @@ public class SetRankCommand {
 				.handler(c -> {
 					if (c.args().size() == 2) {
 						Player target = c.arg(0).parseOrFail(Player.class);
-						Optional<Rank> rankOptional = this.plugin.getRanksManager().getRankById(c.arg(1).parseOrFail(Integer.class));
+						Optional<RankImpl> rankOptional = this.plugin.getRanksManager().getRankById(c.arg(1).parseOrFail(Integer.class));
 
 						if (!rankOptional.isPresent()) {
 							PlayerUtils.sendMessage(c.sender(), "&cInvalid rank id provided.");

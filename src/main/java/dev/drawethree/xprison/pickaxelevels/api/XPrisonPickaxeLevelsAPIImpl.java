@@ -1,7 +1,9 @@
 package dev.drawethree.xprison.pickaxelevels.api;
 
+import dev.drawethree.xprison.api.pickaxelevels.XPrisonPickaxeLevelsAPI;
+import dev.drawethree.xprison.api.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.pickaxelevels.manager.PickaxeLevelsManager;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,17 +19,17 @@ public final class XPrisonPickaxeLevelsAPIImpl implements XPrisonPickaxeLevelsAP
 
 	@Override
 	public Optional<PickaxeLevel> getPickaxeLevel(ItemStack item) {
-		return this.manager.getPickaxeLevel(item);
+		return this.manager.getPickaxeLevel(item).map(levelImpl -> levelImpl);
 	}
 
 	@Override
 	public Optional<PickaxeLevel> getPickaxeLevel(Player player) {
-		return this.manager.getPickaxeLevel(player);
+		return this.manager.getPickaxeLevel(player).map(levelImpl -> levelImpl);
 	}
 
 	@Override
 	public Optional<PickaxeLevel> getPickaxeLevel(int level) {
-		return this.manager.getPickaxeLevel(level);
+		return this.manager.getPickaxeLevel(level).map(levelImpl -> levelImpl);
 	}
 
 	@Override

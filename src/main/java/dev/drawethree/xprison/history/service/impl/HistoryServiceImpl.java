@@ -1,6 +1,6 @@
 package dev.drawethree.xprison.history.service.impl;
 
-import dev.drawethree.xprison.history.model.HistoryLine;
+import dev.drawethree.xprison.history.model.HistoryLineImpl;
 import dev.drawethree.xprison.history.repo.HistoryRepository;
 import dev.drawethree.xprison.history.service.HistoryService;
 import org.bukkit.OfflinePlayer;
@@ -16,12 +16,12 @@ public class HistoryServiceImpl implements HistoryService {
 	}
 
 	@Override
-	public List<HistoryLine> getPlayerHistory(OfflinePlayer player) {
+	public List<HistoryLineImpl> getPlayerHistory(OfflinePlayer player) {
 		return repository.getPlayerHistory(player);
 	}
 
 	@Override
-	public void createHistoryLine(OfflinePlayer player, HistoryLine history) {
+	public void createHistoryLine(OfflinePlayer player, HistoryLineImpl history) {
 		repository.addHistoryLine(player, history);
 	}
 

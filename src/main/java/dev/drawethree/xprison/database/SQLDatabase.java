@@ -9,6 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
+
 public abstract class SQLDatabase {
 
 	protected final XPrison plugin;
@@ -33,7 +36,7 @@ public abstract class SQLDatabase {
 			this.replaceQueryParameters(statement,replacements);
 
 			if (this.plugin.isDebugMode()) {
-				this.plugin.getLogger().info("Statement prepared: " + sql + " (Replacement values: " + Arrays.toString(replacements) + ")");
+				info("Statement prepared: " + sql + " (Replacement values: " + Arrays.toString(replacements) + ")");
 			}
 
 			return statement;
@@ -58,7 +61,7 @@ public abstract class SQLDatabase {
 			long endTime = System.currentTimeMillis();
 
 			if (this.plugin.isDebugMode()) {
-				this.plugin.getLogger().info("Statement executed: " + sql + " (Replacement values: " + Arrays.toString(replacements) + "). Took " + (endTime - startTime) + "ms.");
+				info("Statement executed: " + sql + " (Replacement values: " + Arrays.toString(replacements) + "). Took " + (endTime - startTime) + "ms.");
 			}
 
 		} catch (SQLException e) {
@@ -74,7 +77,7 @@ public abstract class SQLDatabase {
 				try {
 					statement.setObject(position, value);
 				} catch (SQLException e) {
-					this.plugin.getLogger().warning("Unable to set query parameter at position " + position + " to " + value + " for query: " + statement);
+					warning("Unable to set query parameter at position " + position + " to " + value + " for query: " + statement);
 					e.printStackTrace();
 				}
 			}

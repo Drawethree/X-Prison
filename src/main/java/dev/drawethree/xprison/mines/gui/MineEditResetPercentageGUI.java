@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 public class MineEditResetPercentageGUI extends Gui {
 
 
-	private final Mine mine;
+	private final MineImpl mineImpl;
 
 	private double currentChance;
 
-	public MineEditResetPercentageGUI(Mine mine, Player player) {
+	public MineEditResetPercentageGUI(MineImpl mineImpl, Player player) {
 		super(player, 5, "Editing Reset Percentage");
-		this.mine = mine;
-		this.currentChance = this.mine.getResetPercentage();
+		this.mineImpl = mineImpl;
+		this.currentChance = this.mineImpl.getResetPercentage();
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class MineEditResetPercentageGUI extends Gui {
 
 		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to reset settings.").build(() -> {
 			this.close();
-			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
+			new MineResetOptionsGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
 		this.setItem(40, ItemStackBuilder.of(XMaterial.GREEN_WOOL.parseItem()).name("&aSave").lore("&7Click to save the current reset percentage.").build(() -> {
 			this.close();
-			this.mine.setResetPercentage(this.currentChance);
-			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
+			this.mineImpl.setResetPercentage(this.currentChance);
+			new MineResetOptionsGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
 	}

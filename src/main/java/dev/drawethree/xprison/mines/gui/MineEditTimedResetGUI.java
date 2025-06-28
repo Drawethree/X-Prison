@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.mines.model.mine.Mine;
+import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -9,14 +9,14 @@ import org.bukkit.entity.Player;
 
 public class MineEditTimedResetGUI extends Gui {
 
-	private final Mine mine;
+	private final MineImpl mineImpl;
 
 	private int currentTime;
 
-	public MineEditTimedResetGUI(Mine mine, Player player) {
+	public MineEditTimedResetGUI(MineImpl mineImpl, Player player) {
 		super(player, 5, "Editing Timed Reset");
-		this.mine = mine;
-		this.currentTime = this.mine.getResetTime();
+		this.mineImpl = mineImpl;
+		this.currentTime = this.mineImpl.getResetTime();
 	}
 
 	@Override
@@ -50,13 +50,13 @@ public class MineEditTimedResetGUI extends Gui {
 
 		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to reset settings.").build(() -> {
 			this.close();
-			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
+			new MineResetOptionsGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
 		this.setItem(40, ItemStackBuilder.of(XMaterial.GREEN_WOOL.parseItem()).name("&aSave").lore("&7Click to save the current reset time.").build(() -> {
 			this.close();
-			this.mine.setResetTime(this.currentTime);
-			new MineResetOptionsGUI(this.mine, this.getPlayer()).open();
+			this.mineImpl.setResetTime(this.currentTime);
+			new MineResetOptionsGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
 	}

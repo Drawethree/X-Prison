@@ -1,15 +1,15 @@
 package dev.drawethree.xprison.pickaxelevels;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModule;
-import dev.drawethree.xprison.pickaxelevels.api.XPrisonPickaxeLevelsAPI;
+import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.api.pickaxelevels.XPrisonPickaxeLevelsAPI;
 import dev.drawethree.xprison.pickaxelevels.api.XPrisonPickaxeLevelsAPIImpl;
 import dev.drawethree.xprison.pickaxelevels.config.PickaxeLevelsConfig;
 import dev.drawethree.xprison.pickaxelevels.listener.PickaxeLevelsListener;
 import dev.drawethree.xprison.pickaxelevels.manager.PickaxeLevelsManager;
 import lombok.Getter;
 
-public final class XPrisonPickaxeLevels implements XPrisonModule {
+public final class XPrisonPickaxeLevels implements XPrisonModuleAbstract {
 
     public static final String MODULE_NAME = "Pickaxe Levels";
 
@@ -68,9 +68,5 @@ public final class XPrisonPickaxeLevels implements XPrisonModule {
     @Override
     public boolean isHistoryEnabled() {
         return false;
-    }
-
-    @Override
-    public void resetPlayerData() {
     }
 }

@@ -2,7 +2,7 @@ package dev.drawethree.xprison.autosell.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegion;
+import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.menu.Gui;
 import org.bukkit.Material;
@@ -10,15 +10,15 @@ import org.bukkit.entity.Player;
 
 public final class UpdateSellPriceGui extends Gui {
 
-	private final SellRegion sellRegion;
+	private final SellRegionImpl sellRegionImpl;
 	private final XMaterial material;
 	private double price;
 
-	public UpdateSellPriceGui(Player player, SellRegion sellRegion, XMaterial material) {
+	public UpdateSellPriceGui(Player player, SellRegionImpl sellRegionImpl, XMaterial material) {
 		super(player, 5, "Editing Sell Price");
-		this.sellRegion = sellRegion;
+		this.sellRegionImpl = sellRegionImpl;
 		this.material = material;
-		this.price = sellRegion.getSellPriceForMaterial(material);
+		this.price = sellRegionImpl.getSellPriceForMaterial(material);
 	}
 
 	@Override
@@ -30,21 +30,21 @@ public final class UpdateSellPriceGui extends Gui {
 	}
 
 	private void setPreviewItem() {
-		this.setItem(4, ItemStackBuilder.of(this.material.parseItem()).name("&eSell Price").lore(" ", "&7Selling price for this block", String.format("&7in region &b%s &7is &2$&a%,.2f", this.sellRegion.getRegion().getId(), this.price)).buildItem().build());
+		this.setItem(4, ItemStackBuilder.of(this.material.parseItem()).name("&eSell Price").lore(" ", "&7Selling price for this block", String.format("&7in region &b%s &7is &2$&a%,.2f", this.sellRegionImpl.getRegion().getId(), this.price)).buildItem().build());
 	}
 
 	private void setSaveItem() {
 		this.setItem(40, ItemStackBuilder.of(XMaterial.GREEN_WOOL.parseItem()).name("&aSave").lore("&7Click to save the current price.").build(() -> {
 			this.saveChanges();
 			this.close();
-			new SellRegionGui(this.sellRegion, this.getPlayer()).open();
+			new SellRegionGui(this.sellRegionImpl, this.getPlayer()).open();
 		}));
 	}
 
 	private void setBackItem() {
 		this.setItem(36, ItemStackBuilder.of(Material.ARROW).name("&cBack").lore("&7Click to go back to all blocks.").build(() -> {
 			this.close();
-			new SellRegionGui(this.sellRegion, this.getPlayer()).open();
+			new SellRegionGui(this.sellRegionImpl, this.getPlayer()).open();
 		}));
 	}
 
@@ -71,8 +71,8 @@ public final class UpdateSellPriceGui extends Gui {
 	}
 
 	private void saveChanges() {
-		this.sellRegion.addSellPrice(this.material, this.price);
-		XPrisonAutoSell.getInstance().getAutoSellConfig().saveSellRegion(sellRegion);
+		this.sellRegionImpl.addSellPrice(this.material, this.price);
+		XPrisonAutoSell.getInstance().getAutoSellConfig().saveSellRegion(sellRegionImpl);
 	}
 
 	private void handleAddition(double addition) {

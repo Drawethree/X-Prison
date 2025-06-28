@@ -1,9 +1,10 @@
 package dev.drawethree.xprison.autominer.manager;
 
+import dev.drawethree.xprison.api.autominer.events.PlayerAutoMinerTimeModifyEvent;
+import dev.drawethree.xprison.api.autominer.events.PlayerAutomineEvent;
+import dev.drawethree.xprison.api.autominer.model.AutoMinerRegion;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
-import dev.drawethree.xprison.autominer.api.events.PlayerAutoMinerTimeModifyEvent;
-import dev.drawethree.xprison.autominer.api.events.PlayerAutomineEvent;
-import dev.drawethree.xprison.autominer.model.AutoMinerRegion;
+import dev.drawethree.xprison.autominer.model.AutoMinerRegionImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -20,13 +21,16 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
+
 public class AutoMinerManager {
 
 	private final XPrisonAutoMiner plugin;
 
 	private final Map<UUID, Integer> autoMinerTimes;
 
-	private List<AutoMinerRegion> autoMinerRegions;
+	private List<AutoMinerRegionImpl> autoMinerRegionImpls;
 
 	public AutoMinerManager(XPrisonAutoMiner plugin) {
 		this.plugin = plugin;
@@ -114,7 +118,7 @@ public class AutoMinerManager {
 	}
 
 	public boolean isInAutoMinerRegion(Player player) {
-		for (AutoMinerRegion region : this.autoMinerRegions) {
+		for (AutoMinerRegion region : this.autoMinerRegionImpls) {
 			if (region.getRegion().contains(player.getLocation())) {
 				return true;
 			}
@@ -130,11 +134,11 @@ public class AutoMinerManager {
 
 	public void saveAllPlayerAutoMinerData(boolean async) {
 		Players.all().forEach(p -> savePlayerAutoMinerData(p, async));
-		this.plugin.getCore().getLogger().info("Saved online players auto miner data.");
+		info("&fSaved online players auto miner data.");
 	}
 
 	private void loadAutoMinerRegions() {
-		this.autoMinerRegions = new ArrayList<>();
+		this.autoMinerRegionImpls = new ArrayList<>();
 
 		YamlConfiguration configuration = this.plugin.getAutoMinerConfig().getYamlConfig();
 
@@ -145,43 +149,43 @@ public class AutoMinerManager {
 			World world = Bukkit.getWorld(worldName);
 
 			if (world == null) {
-				plugin.getCore().getLogger().warning(String.format("Unable to get world with name %s!  Disabling AutoMiner region.", worldName));
+				warning(String.format("Unable to get world with name %s!  Disabling AutoMiner region.", worldName));
 				return;
 			}
 
 			int rewardPeriod = configuration.getInt("auto-miner-regions." + regionName + ".reward-period");
 
 			if (rewardPeriod <= 0) {
-				plugin.getCore().getLogger().warning("reward-period in autominer.yml for region " + regionName + " needs to be greater than 0!");
+				warning("reward-period in autominer.yml for region " + regionName + " needs to be greater than 0!");
 				return;
 			}
 
 			Optional<IWrappedRegion> optRegion = WorldGuardWrapper.getInstance().getRegion(world, regionName);
 
 			if (!optRegion.isPresent()) {
-				plugin.getCore().getLogger().warning(String.format("There is no such region named %s in world %s!", regionName, world.getName()));
+				warning(String.format("There is no such region named %s in world %s!", regionName, world.getName()));
 				return;
 			}
 
 			List<String> rewards = configuration.getStringList("auto-miner-regions." + regionName + ".rewards");
 
 			if (rewards.isEmpty()) {
-				plugin.getCore().getLogger().warning("rewards in autominer.yml for region " + regionName + " are empty!");
+				warning("rewards in autominer.yml for region " + regionName + " are empty!");
 				return;
 			}
 
 			int blocksBroken = configuration.getInt("auto-miner-regions." + regionName + ".blocks-broken");
 
 			if (blocksBroken <= 0) {
-				this.plugin.getCore().getLogger().warning("blocks-broken in autominer.yml for region " + regionName + " needs to be greater than 0!");
+				warning("blocks-broken in autominer.yml for region " + regionName + " needs to be greater than 0!");
 				return;
 			}
 
-			AutoMinerRegion region = new AutoMinerRegion(this.plugin, world, optRegion.get(), rewards, rewardPeriod, blocksBroken);
+			AutoMinerRegionImpl region = new AutoMinerRegionImpl(this.plugin, world, optRegion.get(), rewards, rewardPeriod, blocksBroken);
 			region.startAutoMinerTask();
 
-			this.plugin.getCore().getLogger().info("AutoMiner region '" + regionName + "' loaded successfully!");
-			this.autoMinerRegions.add(region);
+			info("&aLoaded AutoMiner region &e'" + regionName + "'");
+			this.autoMinerRegionImpls.add(region);
 		}
 	}
 
@@ -209,8 +213,12 @@ public class AutoMinerManager {
 	}
 
 	private void stopAutoMinerRegions() {
-		for (AutoMinerRegion region : this.autoMinerRegions) {
+		for (AutoMinerRegionImpl region : this.autoMinerRegionImpls) {
 			region.stopAutoMinerTask();
 		}
+	}
+
+	public List<AutoMinerRegion> getAutoMinerRegions() {
+		return Collections.unmodifiableList(new ArrayList<>(this.autoMinerRegionImpls));
 	}
 }

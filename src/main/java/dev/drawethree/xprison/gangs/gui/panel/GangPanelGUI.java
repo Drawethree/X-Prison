@@ -2,7 +2,7 @@ package dev.drawethree.xprison.gangs.gui.panel;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
-import dev.drawethree.xprison.gangs.model.Gang;
+import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import me.lucko.helper.Services;
 import me.lucko.helper.menu.Gui;
@@ -28,12 +28,12 @@ public final class GangPanelGUI extends Gui {
 
 
 	private final XPrisonGangs plugin;
-	private final Gang gang;
+	private final GangImpl gangImpl;
 
-	public GangPanelGUI(XPrisonGangs plugin, Gang gang, Player player) {
+	public GangPanelGUI(XPrisonGangs plugin, GangImpl gangImpl, Player player) {
 		super(player, 3, "Gang Panel");
 		this.plugin = plugin;
-		this.gang = gang;
+		this.gangImpl = gangImpl;
 	}
 
 	@Override
@@ -56,16 +56,16 @@ public final class GangPanelGUI extends Gui {
 
 		populator.acceptIfSpace(createGangInfoItem());
 
-		if (gang.canRenameGang(getPlayer())) {
+		if (gangImpl.canRenameGang(getPlayer())) {
 			populator.acceptIfSpace(createGangRenameItem());
 		}
-		if (gang.canManageMembers(getPlayer())) {
+		if (gangImpl.canManageMembers(getPlayer())) {
 			populator.acceptIfSpace(createManageMembersItem());
 		}
-		if (gang.canManageInvites(getPlayer())) {
+		if (gangImpl.canManageInvites(getPlayer())) {
 			populator.acceptIfSpace(createManageInvitesItem());
 		}
-		if (gang.canDisband(getPlayer())) {
+		if (gangImpl.canDisband(getPlayer())) {
 			populator.acceptIfSpace(createDisbandGangItem());
 		}
 
@@ -81,7 +81,7 @@ public final class GangPanelGUI extends Gui {
 
 	private void openDisbandGangGui() {
 		close();
-		new DisbandGangGUI(this.plugin, this.getPlayer(), this.gang).open();
+		new DisbandGangGUI(this.plugin, this.getPlayer(), this.gangImpl).open();
 	}
 
 	private Item createManageMembersItem() {
@@ -90,12 +90,12 @@ public final class GangPanelGUI extends Gui {
 
 	private void openManageMembersGui() {
 		close();
-		new ManageGangMembersGui(this.plugin, this.gang, this.getPlayer()).open();
+		new ManageGangMembersGui(this.plugin, this.gangImpl, this.getPlayer()).open();
 	}
 
 	private void openManageInvitesGui() {
 		close();
-		new ManageGangInvitesGui(this.plugin, this.gang, this.getPlayer()).open();
+		new ManageGangInvitesGui(this.plugin, this.gangImpl, this.getPlayer()).open();
 	}
 
 	private Item createGangRenameItem() {
@@ -105,7 +105,7 @@ public final class GangPanelGUI extends Gui {
 				if (responseHandler.get(0).isEmpty()) {
 					return SignPromptFactory.Response.ACCEPTED;
 				}
-				this.plugin.getGangsManager().renameGang(this.gang, responseHandler.get(0), this.getPlayer());
+				this.plugin.getGangsManager().renameGang(this.gangImpl, responseHandler.get(0), this.getPlayer());
 				return SignPromptFactory.Response.ACCEPTED;
 			});
 		});
@@ -116,16 +116,16 @@ public final class GangPanelGUI extends Gui {
 
 		return ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&eGang Info").lore(
 				" ",
-				String.format("&8» &e%s &7Gang", this.gang.getName()),
-				String.format("&8» &7Owner: &e%s", this.gang.getOwnerOffline().getName()),
-				String.format("&8» &7Members: &e%,d", this.gang.getMembersOffline().size()),
-				String.format("&8» &7Value: &e%,d", this.gang.getValue()),
+				String.format("&8» &e%s &7Gang", this.gangImpl.getName()),
+				String.format("&8» &7Owner: &e%s", this.gangImpl.getOwnerOffline().getName()),
+				String.format("&8» &7Members: &e%,d", this.gangImpl.getMembersOffline().size()),
+				String.format("&8» &7Value: &e%,d", this.gangImpl.getValue()),
 				String.format("&8» &7Top Placement: &e%s", gangTopPosition == -1 ? "Please Wait" : String.format("#%,d", gangTopPosition)),
 				" "
 		).buildItem().build();
 	}
 
 	private int getGangTopPosition() {
-		return this.plugin.getGangsManager().getGangTopPosition(this.gang);
+		return this.plugin.getGangsManager().getGangTopPosition(this.gangImpl);
 	}
 }

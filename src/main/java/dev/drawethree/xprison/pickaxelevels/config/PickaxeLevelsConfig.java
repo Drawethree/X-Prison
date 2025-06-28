@@ -2,12 +2,14 @@ package dev.drawethree.xprison.pickaxelevels.config;
 
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevel;
+import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.*;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
 public class PickaxeLevelsConfig {
 
@@ -15,10 +17,10 @@ public class PickaxeLevelsConfig {
 	private final FileManager.Config config;
 
 	private Map<String, String> messages;
-	private Map<Integer, PickaxeLevel> pickaxeLevels;
+	private Map<Integer, PickaxeLevelImpl> pickaxeLevels;
 	private int progressBarLength;
-	private PickaxeLevel defaultLevel;
-	private PickaxeLevel maxLevel;
+	private PickaxeLevelImpl defaultLevel;
+	private PickaxeLevelImpl maxLevel;
 	private String progressBarDelimiter;
 
 
@@ -69,17 +71,17 @@ public class PickaxeLevelsConfig {
 			List<String> rewards = this.getConfig().get().getStringList("levels." + level + ".rewards");
 
 
-			PickaxeLevel pickaxeLevel = new PickaxeLevel(levelId, blocksRequire, displayName, rewards);
+			PickaxeLevelImpl pickaxeLevelImpl = new PickaxeLevelImpl(levelId, blocksRequire, displayName, rewards);
 
 			if (levelId == 1) {
-				this.defaultLevel = pickaxeLevel;
+				this.defaultLevel = pickaxeLevelImpl;
 			}
 
-			this.pickaxeLevels.put(levelId, pickaxeLevel);
-			this.maxLevel = pickaxeLevel;
+			this.pickaxeLevels.put(levelId, pickaxeLevelImpl);
+			this.maxLevel = pickaxeLevelImpl;
 		}
 
-		this.plugin.getCore().getLogger().info("Loaded " + pickaxeLevels.size() + " Pickaxe Levels.");
+		info("&aLoaded &e" + pickaxeLevels.size() + " Pickaxe Levels.");
 
 	}
 
@@ -99,15 +101,15 @@ public class PickaxeLevelsConfig {
 		return progressBarLength;
 	}
 
-	public PickaxeLevel getDefaultLevel() {
+	public PickaxeLevelImpl getDefaultLevel() {
 		return defaultLevel;
 	}
 
-	public PickaxeLevel getMaxLevel() {
+	public PickaxeLevelImpl getMaxLevel() {
 		return maxLevel;
 	}
 
-	public Optional<PickaxeLevel> getPickaxeLevel(int level) {
+	public Optional<PickaxeLevelImpl> getPickaxeLevel(int level) {
 		return Optional.ofNullable(this.pickaxeLevels.get(level));
 	}
 

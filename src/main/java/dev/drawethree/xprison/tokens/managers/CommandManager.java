@@ -63,7 +63,7 @@ public class CommandManager {
 						return;
 					}
 
-					if (c.args().size() == 0 && c.sender() instanceof Player) {
+					if (c.args().isEmpty() && c.sender() instanceof Player) {
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
 						return;
 					}
@@ -91,7 +91,7 @@ public class CommandManager {
 		// /blockstop, / blocktop
 		Commands.create()
 				.handler(c -> {
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getTokensManager().sendBlocksTop(c.sender());
 					}
 				})
@@ -100,7 +100,7 @@ public class CommandManager {
 		// /blockstopweekly, /blockstopw
 		Commands.create()
 				.handler(c -> {
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getTokensManager().sendBlocksTopWeekly(c.sender());
 					}
 				})
@@ -110,7 +110,7 @@ public class CommandManager {
 		Commands.create()
 				.assertPermission(TokensConstants.TOKENS_ADMIN_PERM, this.plugin.getTokensConfig().getMessage("no_permission"))
 				.handler(c -> {
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getTokensManager().resetBlocksTopWeekly(c.sender());
 					}
 				})
@@ -119,7 +119,7 @@ public class CommandManager {
 		// /tokenstop, /tokentop
 		Commands.create()
 				.handler(c -> {
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getTokensManager().sendTokensTop(c.sender());
 					}
 				})
@@ -132,7 +132,7 @@ public class CommandManager {
 						return;
 					}
 
-					if (c.args().size() == 0) {
+					if (c.args().isEmpty()) {
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
 					} else if (c.args().size() == 1) {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));

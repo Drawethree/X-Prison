@@ -1,15 +1,15 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XEnchantment;
+
+import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
-import org.bukkit.enchantments.Enchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public final class EfficiencyEnchant extends XPrisonEnchantment {
+public final class EfficiencyEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
 	public EfficiencyEnchant(XPrisonEnchants instance) {
 		super(instance, 1);
 	}
@@ -23,11 +23,6 @@ public final class EfficiencyEnchant extends XPrisonEnchantment {
 
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
-
-	}
-
-	@Override
-	public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
 	}
 

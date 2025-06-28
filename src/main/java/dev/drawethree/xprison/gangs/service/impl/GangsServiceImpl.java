@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.gangs.service.impl;
 
-import dev.drawethree.xprison.gangs.model.Gang;
-import dev.drawethree.xprison.gangs.model.GangInvitation;
+import dev.drawethree.xprison.gangs.model.GangImpl;
+import dev.drawethree.xprison.gangs.model.GangInvitationImpl;
 import dev.drawethree.xprison.gangs.repo.GangsRepository;
 import dev.drawethree.xprison.gangs.service.GangsService;
 
@@ -16,37 +16,37 @@ public class GangsServiceImpl implements GangsService {
 	}
 
 	@Override
-	public void updateGang(Gang g) {
+	public void updateGang(GangImpl g) {
 		repository.updateGang(g);
 	}
 
 	@Override
-	public void deleteGang(Gang g) {
+	public void deleteGang(GangImpl g) {
 		repository.deleteGang(g);
 	}
 
 	@Override
-	public void createGang(Gang g) {
+	public void createGang(GangImpl g) {
 		repository.createGang(g);
 	}
 
 	@Override
-	public List<Gang> getAllGangs() {
+	public List<GangImpl> getAllGangs() {
 		return repository.getAllGangs();
 	}
 
 	@Override
-	public List<GangInvitation> getGangInvitations(Gang gang) {
-		return repository.getGangInvitations(gang);
+	public List<GangInvitationImpl> getGangInvitations(GangImpl gangImpl) {
+		return repository.getGangInvitations(gangImpl);
 	}
 
 	@Override
-	public void createGangInvitation(GangInvitation gangInvitation) {
-		repository.createGangInvitation(gangInvitation);
+	public void createGangInvitation(GangInvitationImpl gangInvitationImpl) {
+		repository.createGangInvitation(gangInvitationImpl);
 	}
 
 	@Override
-	public void deleteGangInvitation(GangInvitation gangInvitation) {
-		repository.deleteGangInvitation(gangInvitation);
+	public void deleteGangInvitation(GangInvitationImpl gangInvitationImpl) {
+		repository.deleteGangInvitation(gangInvitationImpl);
 	}
 }
