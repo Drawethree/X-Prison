@@ -64,11 +64,17 @@
         <org.junit.version>5.13.1</org.junit.version>
         <org.mockito.version>5.18.0</org.mockito.version>
         <org.projectlombok.lombok.version>1.18.38</org.projectlombok.lombok.version>
-        <dev.drawethree.xprison.api.version>1.0-SNAPSHOT</dev.drawethree.xprison.api.version>
+        <dev.drawethree.xprison.api.version>1.0</dev.drawethree.xprison.api.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>dev.drawethree.xprison</groupId>
+                <artifactId>X-PrisonAPI</artifactId>
+                <version>${dev.drawethree.xprison.api.version}</version>
+                <scope>compile</scope>
+            </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
@@ -194,7 +200,6 @@
         <dependency>
             <groupId>dev.drawethree.xprison</groupId>
             <artifactId>X-PrisonAPI</artifactId>
-            <version>1.0</version>
             <scope>compile</scope>
         </dependency>
 
