@@ -6,6 +6,8 @@
 
 I am accepting pull requests!
 
+If you are a developer looking for API, please check https://github.com/Drawethree/X-PrisonAPI/
+
 # Pages
 ### General
 * [Home](https://github.com/Drawethree/X-Prison/wiki)
