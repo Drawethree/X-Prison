@@ -2,12 +2,13 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -16,13 +17,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class FortuneEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
+public final class FortuneEnchant extends XPrisonEnchantmentBaseCore implements EquipabbleEnchantment {
 
     private static List<XMaterial> blackListedBlocks;
 
-    public FortuneEnchant(XPrisonEnchants instance) {
-        super(instance, 3);
-        blackListedBlocks = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Blacklist").stream().map(XMaterial::matchXMaterial).map(Optional::get).filter(Objects::nonNull).collect(Collectors.toList());
+    public FortuneEnchant() {
     }
 
     @Override
@@ -38,19 +37,12 @@ public final class FortuneEnchant extends XPrisonEnchantmentAbstract implements 
     }
 
     @Override
-    public double getChanceToTrigger(int enchantLevel) {
-        return 100.0;
-    }
-
-    @Override
-    public void reload() {
-        super.reload();
-        blackListedBlocks = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Blacklist").stream().map(XMaterial::matchXMaterial).map(Optional::get).filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public void loadCustomProperties(JsonObject config) {
+        List<String> blacklist = new Gson().fromJson(
+                config.get("blacklist"),
+                new TypeToken<List<String>>(){}.getType()
+        );
+        blackListedBlocks = blacklist.stream().map(XMaterial::matchXMaterial).map(Optional::get).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public static boolean isBlockBlacklisted(Block block) {

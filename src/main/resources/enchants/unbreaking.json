@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.UnbreakingEnchant",
+  "id": 2,
+  "rawName": "unbreaking",
+  "name": "&bUnbreaking",
+  "enabled": true,
+  "increaseCostBy": 75,
+  "maxLevel": 300,
+  "initialCost": 75,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 28,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&bUnbreaking",
+    "material": "PRISMARINE_CRYSTALS",
+    "slot": 28,
+    "description": [
+      "&7&o(( Prevents your pickaxe from breaking while mining ))"
+    ]
+  }
+}

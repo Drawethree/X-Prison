@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.SpeedEnchant",
+  "id": 5,
+  "rawName": "speed",
+  "name": "&aSpeed",
+  "enabled": true,
+  "increaseCostBy": 10000,
+  "maxLevel": 2,
+  "initialCost": 10000,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 31,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&aSpeed",
+    "material": "SUGAR",
+    "slot": 31,
+    "description": [
+      "&7&o(( Ability to move faster while holding your pickaxe ))"
+    ]
+  }
+}

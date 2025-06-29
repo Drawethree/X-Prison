@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.NightVisionEnchant",
+  "id": 7,
+  "rawName": "nightvision",
+  "name": "&cNight Vision",
+  "enabled": true,
+  "increaseCostBy": 0,
+  "maxLevel": 1,
+  "initialCost": 10000,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 33,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&cNight Vision",
+    "material": "POTION",
+    "slot": 33,
+    "description": [
+      "&7&o(( Ability to see in the dark while mining ))"
+    ]
+  }
+}

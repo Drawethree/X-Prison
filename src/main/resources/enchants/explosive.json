@@ -1,0 +1,29 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.ExplosiveEnchant",
+  "id": 9,
+  "rawName": "explosive",
+  "name": "&aExplosive",
+  "enabled": true,
+  "increaseCostBy": 125,
+  "cooldown": 0,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "initialCost": 125,
+  "countBlocksBroken": true,
+  "explosionType": "CUBE",
+  "sounds": true,
+  "useEvents": false,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 35,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&aExplosive",
+    "material": "TNT",
+    "slot": 35,
+    "description": [
+      "&7&o(( Explodes nearby blocks while mining ))"
+    ]
+  }
+}

@@ -2,6 +2,7 @@ package dev.drawethree.xprison.enchants.gui;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
@@ -101,24 +102,24 @@ public final class EnchantGUI extends Gui {
 				continue;
 			}
 			int level = XPrisonEnchants.getInstance().getEnchantsManager().getEnchantLevel(this.pickAxe, enchantment);
-			this.setItem(enchantment.getGuiSlot(), getGuiItem(enchantment, this, level));
+			this.setItem(enchantment.getGuiProperties().getGuiSlot(), getGuiItem(enchantment, this, level));
 		}
 	}
 
 	private Item getGuiItem(XPrisonEnchantment enchantment, EnchantGUI gui, int currentLevel) {
 
-		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getGuiMaterial());
+		ItemStackBuilder builder = ItemStackBuilder.of(enchantment.getGuiProperties().getGuiMaterial());
 
-		if (enchantment.getGuiBase64() != null && !enchantment.getGuiBase64().isEmpty()) {
-			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getGuiBase64()));
+		if (enchantment.getGuiProperties().getGuiBase64() != null && !enchantment.getGuiProperties().getGuiBase64().isEmpty()) {
+			builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getGuiProperties().getGuiBase64()));
 		}
 
-		builder.name(enchantment.getGuiName());
+		builder.name(enchantment.getGuiProperties().getGuiName());
 		builder.lore(GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, currentLevel));
 
 		return builder.buildItem().bind(handler -> {
 			if (!EnchantUtils.canBeBought(enchantment, gui.getPickAxe())) {
-				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment.getRequiredPickaxeLevel())));
+				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment instanceof RequiresPickaxeLevel ? ((RequiresPickaxeLevel) enchantment).getRequiredPickaxeLevel() : 0)));
 				return;
 			}
 			if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {

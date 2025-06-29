@@ -1,10 +1,11 @@
 messages:
-  no_permission: "&c&l(!) &fYou do not have a permission to do that!"
-  rank_up: '&e&lRANKUP &8» &7Congratulations, you ranked up from %Rank-1% &7to %Rank-2%&7.'
-  not_enough_money: '&e&lRANKUP &8» &7You don''t have enough money to rankup. You need $%cost%'
-  not_enough_tokens: '&e&lRANKUP &8» &7You don''t have enough tokens to rankup. You need %cost% Tokens.'
-  prestige_needed: '&e&lRANKUP &8» &7In order to continue to the next stage do &f/prestige&7.'
-  rank_set: "&e&lRANKUP &8» &7You have set %player%'s rank to %rank%"
+  no_permission: '&c&l(!) &fYou do not have a permission to do that!'
+  rank_up: '&e&lRANKUP &8» &fCongratulations, you ranked up from &e%Rank-1% &fto &e%Rank-2%&f.'
+  not_enough_money: '&e&lRANKUP &8» &fYou don''t have enough money to rankup. You
+    need &e$%cost%'
+  not_enough_tokens: '&e&lRANKUP &8» &fYou need &e%cost% &fE-Tokens!'
+  prestige_needed: '&e&lRANKUP &8» &fPlease use &e/prestige'
+  rank_set: '&e&lRANKUP &8» &fYou have set %player%''s rank to %rank%'
 # Should we use tokens as a currency for ranks ?
 use_tokens_currency: false
 # Delimiter on progress bar

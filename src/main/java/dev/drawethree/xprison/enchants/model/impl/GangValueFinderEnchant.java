@@ -1,37 +1,33 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
-
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.event.block.BlockBreakEvent;
 
 
-public final class GangValueFinderEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class GangValueFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private String amountToGiveExpression;
 
+    public GangValueFinderEnchant() {
 
-    public GangValueFinderEnchant(XPrisonEnchants instance) {
-        super(instance, 23);
-        this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-        if (!this.plugin.getCore().isModuleEnabled(XPrisonGangs.MODULE_NAME)) {
+        if (!getCore().isModuleEnabled(XPrisonGangs.MODULE_NAME)) {
             return;
         }
 
         int amount = (int) createExpression(enchantLevel).evaluate();
-        plugin.getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + amount));
+        getCore().getGangs().getGangsManager().getPlayerGang(e.getPlayer()).ifPresent(gang -> gang.setValue(gang.getValue() + amount));
 
     }
 
@@ -41,10 +37,9 @@ public final class GangValueFinderEnchant extends XPrisonEnchantmentAbstract imp
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.amountToGiveExpression = config.get("amountToGive").getAsString();
     }
 
     private Expression createExpression(int level) {
@@ -52,10 +47,5 @@ public final class GangValueFinderEnchant extends XPrisonEnchantmentAbstract imp
                 .variables("level")
                 .build()
                 .setVariable("level", level);
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
     }
 }

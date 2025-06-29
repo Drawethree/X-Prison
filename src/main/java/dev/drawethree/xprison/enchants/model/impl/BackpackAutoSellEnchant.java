@@ -1,26 +1,19 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.gson.JsonObject;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.ultrabackpacks.api.exception.BackpackNotFoundException;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.event.block.BlockBreakEvent;
 
-public final class BackpackAutoSellEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class BackpackAutoSellEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
 
-    public BackpackAutoSellEnchant(XPrisonEnchants instance) {
-        super(instance, 19);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public BackpackAutoSellEnchant() {
     }
 
     @Override
@@ -33,7 +26,7 @@ public final class BackpackAutoSellEnchant extends XPrisonEnchantmentAbstract im
         try {
             UltraBackpacksAPI.sellBackpack(e.getPlayer(), true);
         } catch (BackpackNotFoundException ignored) {
-            this.plugin.getCore().debug("BackpackAutoSellEnchant::onBlockBreak > Player " + e.getPlayer().getName() + " does not have backpack.", this.plugin);
+            getCore().debug("BackpackAutoSellEnchant::onBlockBreak > Player " + e.getPlayer().getName() + " does not have backpack.", getEnchants());
         }
 
     }
@@ -44,8 +37,7 @@ public final class BackpackAutoSellEnchant extends XPrisonEnchantmentAbstract im
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
     }
 }

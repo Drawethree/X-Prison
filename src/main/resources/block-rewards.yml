@@ -1,10 +1,227 @@
 # Rewards when breaking certain amount of blocks. (Counts overall, not just for pickaxe)
 block-rewards:
-  # Amount of blocks required
-  100:
-    # Message to be sent
-    message: '&e&lBLOCKS &8» &7You have mined &f100&7 blocks.'
-    # Commands to give rewards
+  '100':
+    message: '&e&lBLOCKS &8» &fYou have mined &e100 &fBlocks'
     commands:
-      - tokens give %player% 1000
-      - aam add %player% 300
+      - tokens give %player% 10000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e100 &fBlocks
+  '250':
+    message: '&e&lBLOCKS &8» &fYou have mined &e250 &fBlocks'
+    commands:
+      - tokens give %player% 150000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e250 &fBlocks
+  '500':
+    message: '&e&lBLOCKS &8» &fYou have mined &e500 &fBlocks'
+    commands:
+      - tokens give %player% 20000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e500 &fBlocks
+  '1000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e1000 &fBlocks'
+    commands:
+      - tokens give %player% 25000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e1000 &fBlocks
+  '1500':
+    message: '&e&lBLOCKS &8» &fYou have mined &e1500 &fBlocks'
+    commands:
+      - tokens give %player% 30000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e1500 &fBlocks
+  '2000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e2000 &fBlocks'
+    commands:
+      - tokens give %player% 35000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e2000 &fBlocks
+  '2500':
+    message: '&e&lBLOCKS &8» &fYou have mined &e2500 &fBlocks'
+    commands:
+      - tokens give %player% 40000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e2500 &fBlocks
+  '5000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e5000 &fBlocks'
+    commands:
+      - tokens give %player% 45000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e5000 &fBlocks
+  '10000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e10000 &fBlocks'
+    commands:
+      - tokens give %player% 50000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e10000 &fBlocks
+  '25000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e25000 &fBlocks'
+    commands:
+      - tokens give %player% 55000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e25000 &fBlocks
+  '50000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e50000 &fBlocks'
+    commands:
+      - tokens give %player% 60000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e50000 &fBlocks
+  '75000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e75000 &fBlocks'
+    commands:
+      - tokens give %player% 65000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e75000 &fBlocks
+  '100000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e100000 &fBlocks'
+    commands:
+      - tokens give %player% 70000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e100000 &fBlocks
+  '150000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e150000 &fBlocks'
+    commands:
+      - tokens give %player% 75000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e150000 &fBlocks
+  '200000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e200000 &fBlocks'
+    commands:
+      - tokens give %player% 80000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e200000 &fBlocks
+  '250000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e250000 &fBlocks'
+    commands:
+      - tokens give %player% 85000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e250000 &fBlocks
+  '300000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e300000 &fBlocks'
+    commands:
+      - tokens give %player% 90000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e300000 &fBlocks
+  '400000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e400000 &fBlocks'
+    commands:
+      - tokens give %player% 95000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e400000 &fBlocks
+  '500000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e500000 &fBlocks'
+    commands:
+      - tokens give %player% 100000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e500000 &fBlocks
+  '600000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e600000 &fBlocks'
+    commands:
+      - tokens give %player% 110000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e600000 &fBlocks
+  '700000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e700000 &fBlocks'
+    commands:
+      - tokens give %player% 120000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e700000 &fBlocks
+  '750000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e750000 &fBlocks'
+    commands:
+      - tokens give %player% 130000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e750000 &fBlocks
+  '1000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e1000000 &fBlocks'
+    commands:
+      - tokens give %player% 140000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e1000000 &fBlocks
+  '1250000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e1250000 &fBlocks'
+    commands:
+      - tokens give %player% 150000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e1000000 &fBlocks
+  '1500000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e1500000 &fBlocks'
+    commands:
+      - tokens give %player% 160000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e1500000 &fBlocks
+  '1750000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e1750000 &fBlocks'
+    commands:
+      - tokens give %player% 170000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e1750000 &fBlocks
+  '2000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e2000000 &fBlocks'
+    commands:
+      - tokens give %player% 180000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e2000000 &fBlocks
+  '2500000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e2500000 &fBlocks'
+    commands:
+      - tokens give %player% 190000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e2500000 &fBlocks
+  '3000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e3000000 &fBlocks'
+    commands:
+      - tokens give %player% 200000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e3000000 &fBlocks
+  '3500000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e3500000 &fBlocks'
+    commands:
+      - tokens give %player% 210000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e3500000 &fBlocks
+  '4000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e4000000 &fBlocks'
+    commands:
+      - tokens give %player% 220000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e4000000 &fBlocks
+  '5000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e5000000 &fBlocks'
+    commands:
+      - tokens give %player% 230000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e5000000 &fBlocks
+  '6000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e6000000 &fBlocks'
+    commands:
+      - tokens give %player% 240000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e6000000 &fBlocks
+  '7000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e7000000 &fBlocks'
+    commands:
+      - tokens give %player% 250000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e7000000 &fBlocks
+  '8000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e8000000 &fBlocks'
+    commands:
+      - tokens give %player% 260000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e8000000 &fBlocks
+  '9000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e9000000 &fBlocks'
+    commands:
+      - tokens give %player% 270000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e9000000 &fBlocks
+  '10000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e10000000 &fBlocks'
+    commands:
+      - tokens give %player% 280000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e10000000 &fBlocks
+  '12500000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e12500000 &fBlocks'
+    commands:
+      - tokens give %player% 280000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e12500000 &fBlocks
+  '15000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e15000000 &fBlocks'
+    commands:
+      - tokens give %player% 290000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e15000000 &fBlocks
+  '20000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e20000000 &fBlocks'
+    commands:
+      - tokens give %player% 300000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e20000000 &fBlocks
+  '25000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e25000000 &fBlocks'
+    commands:
+      - tokens give %player% 310000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e25000000 &fBlocks
+  '30000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e30000000 &fBlocks'
+    commands:
+      - tokens give %player% 320000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e30000000 &fBlocks
+  '35000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e35000000 &fBlocks'
+    commands:
+      - tokens give %player% 330000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e35000000 &fBlocks
+  '40000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e40000000 &fBlocks'
+    commands:
+      - tokens give %player% 340000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e40000000 &fBlocks
+  '50000000':
+    message: '&e&lBLOCKS &8» &fYou have mined &e50000000 &fBlocks'
+    commands:
+      - tokens give %player% 350000000
+      - tm msg %player% &e&lREWARD\n&fYou have mined &e50000000 &fBlocks

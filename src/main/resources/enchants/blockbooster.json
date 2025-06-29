@@ -1,0 +1,24 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.BlockBoosterEnchant",
+  "id": 17,
+  "rawName": "blockbooster",
+  "name": "&dBlock Booster",
+  "enabled": true,
+  "increaseCostBy": 225,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "initialCost": 500,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 43,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&dBlock Booster",
+    "material": "ENCHANTING_TABLE",
+    "slot": 43,
+    "description": [
+      "&7&o(( Ability to receive x2 Blocks for 1 Minute while mining))"
+    ]
+  }
+}

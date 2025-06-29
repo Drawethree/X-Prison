@@ -1,0 +1,25 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.GemFinderEnchant",
+  "id": 22,
+  "rawName": "gemfinder",
+  "name": "&aGem Finder",
+  "enabled": true,
+  "increaseCostBy": 6,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "amountToGive": "level * 2",
+  "initialCost": 12,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 48,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&aGem Finder",
+    "material": "EMERALD",
+    "slot": 48,
+    "description": [
+      "&7&o(( Ability to find gems while mining ))"
+    ]
+  }
+}

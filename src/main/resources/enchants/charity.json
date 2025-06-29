@@ -1,0 +1,26 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.CharityEnchant",
+  "id": 11,
+  "rawName": "charity",
+  "name": "&cCharity",
+  "enabled": true,
+  "increaseCostBy": 25,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "amountToGive": "level * 1000",
+  "initialCost": 25,
+  "messagesEnabled": true,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 37,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&cCharity",
+    "material": "SLIME_BALL",
+    "slot": 37,
+    "description": [
+      "&7&o(( Chance to give to everyone online money while mining ))"
+    ]
+  }
+}

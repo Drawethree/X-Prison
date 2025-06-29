@@ -1,24 +1,25 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class KeyallsEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class KeyallsEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
 
     private double chance;
     private List<String> commandsToExecute;
+    private int requiredPickaxeLevel;
 
-    public KeyallsEnchant(XPrisonEnchants instance) {
-        super(instance, 18);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
+    public KeyallsEnchant() {
     }
 
 
@@ -38,14 +39,17 @@ public final class KeyallsEnchant extends XPrisonEnchantmentAbstract implements 
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.commandsToExecute = new Gson().fromJson(
+                config.get("commands"),
+                new TypeToken<List<String>>(){}.getType()
+        );
+        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
     }
 
     @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public int getRequiredPickaxeLevel() {
+        return requiredPickaxeLevel;
     }
 }

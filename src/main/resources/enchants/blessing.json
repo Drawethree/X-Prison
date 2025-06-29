@@ -1,0 +1,26 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.BlessingEnchant",
+  "id": 13,
+  "rawName": "blessing",
+  "name": "&eBlessing",
+  "enabled": true,
+  "increaseCostBy": 25,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "amountToGive": "level * 2",
+  "initialCost": 25,
+  "messagesEnabled": true,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 39,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&eBlessing",
+    "material": "CAMPFIRE",
+    "slot": 39,
+    "description": [
+      "&7&o(( Chance to give to everyone online tokens while mining ))"
+    ]
+  }
+}

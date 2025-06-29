@@ -1,22 +1,63 @@
 # Pickaxe Levels settings
 levels:
-  1:
+  '1':
     # Pickaxe display name
-    display_name: "&7Level 1 Pickaxe"
+    display_name: '&7Level I Pickaxe'
     # Number of blocks mined required to hit certain level
     blocks_required: 0
-  2:
+  '2':
     # Pickaxe display name
-    display_name: "&aLevel 2 Pickaxe"
+    display_name: '&aLevel II Pickaxe'
     # Number of blocks mined required to hit certain level
     blocks_required: 1000
     # Commands executed when reaching this level
     rewards:
-      - 'eco give %player% 1000'
+      - tokens give %player% 10000000
+  '3':
+    display_name: '&aLevel III Pickaxe'
+    blocks_required: 5000
+    rewards:
+      - tokens give %player% 30000000
+    '4':
+      display_name: '&aLevel IV Pickaxe'
+      blocks_required: 10000
+      rewards:
+        - tokens give %player% 40000000
+    '5':
+      display_name: '&aLevel V Pickaxe'
+      blocks_required: 25000
+      rewards:
+        - tokens give %player% 50000000
+    '6':
+      display_name: '&aLevel VI Pickaxe'
+      blocks_required: 50000
+      rewards:
+        - tokens give %player% 60000000
+    '7':
+      display_name: '&aLevel VII Pickaxe'
+      blocks_required: 100000
+      rewards:
+        - tokens give %player% 70000000
+    '8':
+      display_name: '&aLevel VIII Pickaxe'
+      blocks_required: 250000
+      rewards:
+        - tokens give %player% 80000000
+    '9':
+      display_name: '&aLevel IX Pickaxe'
+      blocks_required: 500000
+      rewards:
+        - tokens give %player% 90000000
+    '10':
+      display_name: '&aLevel X Pickaxe'
+      blocks_required: 1000000
+      rewards:
+        - tokens give %player% 100000000
 # Progress bar delimiter
 progress-bar-delimiter: ":"
 # Length of progress bar
 progress-bar-length: 20
 messages:
-  pickaxe-level-up: "&e&lPICKAXE &8» &7Your current pickaxe just leveled up to &eLevel %level%&7!"
-  pickaxe-progress: "&e&lPICKAXE &8» &7Current progress: &c%blocks%&7/&a%blocks_required% Blocks"
+  pickaxe-level-up: '&e&lPICKAXE &8» &fYour pickaxe just leveled up to &eLevel %level%'
+  pickaxe-progress: '&e&lPICKAXE &8» &7Current progress: &e%blocks%&7/&e%blocks_required%
+    Blocks'

@@ -1,17 +1,14 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public final class SpeedEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
-	public SpeedEnchant(XPrisonEnchants instance) {
-		super(instance, 5);
+public final class SpeedEnchant extends XPrisonEnchantmentBaseCore implements EquipabbleEnchantment {
+	public SpeedEnchant() {
 	}
 
 	@Override
@@ -26,20 +23,5 @@ public final class SpeedEnchant extends XPrisonEnchantmentAbstract implements Eq
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
 		p.removePotionEffect(PotionEffectType.SPEED);
-	}
-
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return 100.0;
-	}
-
-	@Override
-	public void reload() {
-		super.reload();
-	}
-
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
 	}
 }

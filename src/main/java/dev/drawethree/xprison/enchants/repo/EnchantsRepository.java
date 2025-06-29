@@ -1,10 +1,12 @@
 package dev.drawethree.xprison.enchants.repo;
 
-import dev.drawethree.xprison.XPrison;
+
+import dev.drawethree.xprison.api.enchants.events.XPrisonEnchantRegisterEvent;
+import dev.drawethree.xprison.api.enchants.events.XPrisonEnchantUnregisterEvent;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.impl.*;
 import dev.drawethree.xprison.utils.text.TextUtils;
+import me.lucko.helper.Events;
 import org.apache.commons.lang.Validate;
 
 import java.util.Collection;
@@ -34,13 +36,15 @@ public class EnchantsRepository {
 	public XPrisonEnchantment getEnchantBy(Object object) {
 		if (object instanceof Integer) {
 			return getEnchantById((int) object);
-		} else {
+		} else if (object instanceof String) {
 			final String s = String.valueOf(object);
 			try {
 				return getEnchantById(Integer.parseInt(s));
 			} catch (NumberFormatException e) {
 				return getEnchantByName(s);
 			}
+		} else {
+			throw new IllegalArgumentException("Illegal argument. Cannot get enchant by: " + object);
 		}
 	}
 
@@ -54,39 +58,9 @@ public class EnchantsRepository {
 
 	public void reload() {
 
-		enchantsById.values().forEach(XPrisonEnchantment::reload);
+		enchantsById.values().forEach(XPrisonEnchantment::load);
 
 		info(TextUtils.applyColor("&aReloaded all enchants."));
-	}
-
-	public void registerDefaultEnchants() {
-		register(new EfficiencyEnchant(this.plugin));
-		register(new UnbreakingEnchant(this.plugin));
-		register(new FortuneEnchant(this.plugin));
-		register(new HasteEnchant(this.plugin));
-		register(new SpeedEnchant(this.plugin));
-		register(new JumpBoostEnchant(this.plugin));
-		register(new NightVisionEnchant(this.plugin));
-		register(new FlyEnchant(this.plugin));
-		register(new ExplosiveEnchant(this.plugin));
-		register(new LayerEnchant(this.plugin));
-		register(new CharityEnchant(this.plugin));
-		register(new SalaryEnchant(this.plugin));
-		register(new BlessingEnchant(this.plugin));
-		register(new TokenatorEnchant(this.plugin));
-		register(new KeyFinderEnchant(this.plugin));
-		register(new PrestigeFinderEnchant(this.plugin));
-		register(new BlockBoosterEnchant(this.plugin));
-		register(new KeyallsEnchant(this.plugin));
-		if (XPrison.getInstance().isUltraBackpacksEnabled()) {
-			register(new BackpackAutoSellEnchant(this.plugin));
-		} else {
-			register(new AutoSellEnchant(this.plugin));
-		}
-		register(new VoucherFinderEnchant(this.plugin));
-		register(new NukeEnchant(this.plugin));
-		register(new GemFinderEnchant(this.plugin));
-		register(new GangValueFinderEnchant(this.plugin));
 	}
 
 	public boolean register(XPrisonEnchantment enchantment) {
@@ -101,6 +75,8 @@ public class EnchantsRepository {
 		enchantsById.put(enchantment.getId(), enchantment);
 		enchantsByName.put(enchantment.getRawName().toLowerCase(), enchantment);
 
+		Events.call(new XPrisonEnchantRegisterEvent(enchantment));
+
 		info(TextUtils.applyColor("&aRegistered enchant " + enchantment.getName() + "&a created by &e" + enchantment.getAuthor()));
 		return true;
 	}
@@ -114,6 +90,8 @@ public class EnchantsRepository {
 
 		enchantsById.remove(enchantment.getId());
 		enchantsByName.remove(enchantment.getRawName());
+
+		Events.call(new XPrisonEnchantUnregisterEvent(enchantment));
 
 		info(TextUtils.applyColor("&aUnregistered enchant " + enchantment.getName() + "&a created by &e" + enchantment.getAuthor()));
 		return true;

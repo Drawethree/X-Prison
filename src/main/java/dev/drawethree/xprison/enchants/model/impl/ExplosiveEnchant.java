@@ -1,19 +1,18 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.JsonObject;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.xprison.api.enchants.events.ExplosionTriggerEvent;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
-import dev.drawethree.xprison.utils.block.CuboidExplosionBlockProvider;
 import dev.drawethree.xprison.utils.block.ExplosionBlockProvider;
-import dev.drawethree.xprison.utils.block.SpheroidExplosionBlockProvider;
+import dev.drawethree.xprison.utils.block.ExplosionType;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
@@ -29,7 +28,7 @@ import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class ExplosiveEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private boolean countBlocksBroken;
@@ -37,31 +36,10 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
     private boolean useEvents;
     private ExplosionBlockProvider blockProvider;
 
-    public ExplosiveEnchant(XPrisonEnchants instance) {
-        super(instance, 9);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-        this.soundsEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sounds");
-        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
-        this.blockProvider = this.loadBlockProvider();
+    public ExplosiveEnchant() {
     }
 
-    private ExplosionBlockProvider loadBlockProvider() {
-        String explosionType = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Explosion-Type", "CUBE");
 
-        if ("CUBE".equalsIgnoreCase(explosionType)) {
-            return CuboidExplosionBlockProvider.instance();
-        } else if ("SPHERE".equalsIgnoreCase(explosionType)) {
-            return SpheroidExplosionBlockProvider.instance();
-        } else {
-            return CuboidExplosionBlockProvider.instance();
-        }
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
-    }
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
@@ -75,7 +53,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
             return;
         }
 
-        this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
+        getCore().debug("ExplosiveEnchant::onBlockBreak >> WG Region used: " + region.getId(), getEnchants());
         int radius = this.calculateRadius(enchantLevel);
 
         List<Block> blocksAffected = this.blockProvider.provide(b, radius).stream().filter(block -> region.contains(block.getLocation()) && block.getType() != Material.AIR).collect(Collectors.toList());
@@ -83,7 +61,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
         ExplosionTriggerEvent event = this.callExplosionTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
         if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
-            this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> ExplosiveTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+            getCore().debug("ExplosiveEnchant::onBlockBreak >> ExplosiveTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), getEnchants());
             return;
         }
 
@@ -92,7 +70,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
         }
 
         if (this.useEvents) {
-            final List<BlockBreakEvent> ignored = this.plugin.getEnchantsListener().getIgnoredEvents();
+            final List<BlockBreakEvent> ignored = getEnchants().getEnchantsListener().getIgnoredEvents();
             blocksAffected = event.getBlocksAffected().stream().filter(block -> {
                 final BlockBreakEvent blockEvent = new BlockBreakEvent(block, p);
                 ignored.add(blockEvent);
@@ -104,29 +82,29 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
             blocksAffected = event.getBlocksAffected();
         }
 
-        if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
+        if (!getCore().isUltraBackpacksEnabled()) {
             handleAffectedBlocks(p, region, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (!this.useEvents && this.plugin.isMinesModuleEnabled()) {
-            MineImpl mineImpl = plugin.getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
+        if (!this.useEvents && getEnchants().isMinesModuleEnabled()) {
+            MineImpl mineImpl = getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
             if (mineImpl != null) {
                 mineImpl.handleBlockBreak(blocksAffected);
             }
         }
 
         if (this.countBlocksBroken) {
-            plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
+            getEnchants().getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
         }
 
         if (!this.useEvents) {
-            plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
         }
 
         long timeEnd = Time.nowMillis();
-        this.plugin.getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.", this.plugin);
+        getCore().debug("ExplosiveEnchant::onBlockBreak >> Took " + (timeEnd - timeStart) + " ms.", getEnchants());
     }
 
     @Override
@@ -137,7 +115,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
     private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
-        boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
+        boolean autoSellPlayerEnabled = getEnchants().isAutoSellModuleEnabled() && getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {
 
@@ -148,7 +126,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = XMaterial.matchXMaterial(block.getType()).parseItem();
                 itemToGive.setAmount(amplifier);
@@ -161,12 +139,12 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
 
     private void giveEconomyRewardToPlayer(Player p, double totalDeposit) {
 
-        double total = this.plugin.isMultipliersModuleEnabled() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+        double total = getEnchants().isMultipliersModuleEnabled() ? getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
 
-        plugin.getCore().getEconomy().depositPlayer(p, total);
+        getCore().getEconomy().depositPlayer(p, total);
 
-        if (this.plugin.isAutoSellModuleEnabled()) {
-            plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
+        if (getEnchants().isAutoSellModuleEnabled()) {
+            getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
         }
     }
 
@@ -178,17 +156,16 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentAbstract implement
     private ExplosionTriggerEvent callExplosionTriggerEvent(Player p, IWrappedRegion mineRegion, Block originBlock, List<Block> blocks) {
         ExplosionTriggerEvent event = new ExplosionTriggerEvent(p, mineRegion, originBlock, blocks);
         Events.callSync(event);
-        this.plugin.getCore().debug("ExplosiveEnchant::callExplosiveTriggerEvent >> ExplosiveTriggerEvent called.", this.plugin);
+        getCore().debug("ExplosiveEnchant::callExplosiveTriggerEvent >> ExplosiveTriggerEvent called.", getEnchants());
         return event;
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-        this.soundsEnabled = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Sounds");
-        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
-        this.blockProvider = this.loadBlockProvider();
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.countBlocksBroken = config.get("countBlocksBroken").getAsBoolean();
+        this.soundsEnabled = config.get("sounds").getAsBoolean();
+        this.useEvents = config.get("useEvents").getAsBoolean();
+        this.blockProvider = ExplosionType.getBlockProvider(ExplosionType.valueOf(config.get("explosionType").getAsString()));
     }
 }

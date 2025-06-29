@@ -1,38 +1,32 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import org.bukkit.event.block.BlockBreakEvent;
 
 
-public final class AutoSellEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class AutoSellEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
 
     private double chance;
+    private int requiredPickaxeLevel;
 
-    public AutoSellEnchant(XPrisonEnchants instance) {
-        super(instance, 19);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public AutoSellEnchant() {
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
 
-        if (!this.plugin.getCore().isModuleEnabled(XPrisonAutoSell.MODULE_NAME)) {
+        if (!getCore().isModuleEnabled(XPrisonAutoSell.MODULE_NAME)) {
             return;
         }
 
-        this.plugin.getCore().getAutoSell().getManager().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()));
-
+        getCore().getAutoSell().getManager().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()));
     }
 
     @Override
@@ -41,8 +35,13 @@ public final class AutoSellEnchant extends XPrisonEnchantmentAbstract implements
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
+    public int getRequiredPickaxeLevel() {
+        return requiredPickaxeLevel;
+    }
+
+    @Override
+    protected void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
     }
 }

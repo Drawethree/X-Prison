@@ -1,13 +1,14 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.JsonObject;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.xprison.api.enchants.events.NukeTriggerEvent;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
@@ -31,21 +32,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class NukeEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class NukeEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
 
     private double chance;
     private boolean countBlocksBroken;
     private boolean removeBlocks;
     private boolean useEvents;
     private String message;
+    private int requiredPickaxeLevel;
 
-    public NukeEnchant(XPrisonEnchants instance) {
-        super(instance, 21);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-        this.removeBlocks = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Remove-Blocks");
-        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
-        this.message = TextUtils.applyColor(plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Message"));
+    public NukeEnchant() {
     }
 
     @Override
@@ -60,18 +56,18 @@ public final class NukeEnchant extends XPrisonEnchantmentAbstract implements Blo
             return;
         }
 
-        this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
+        getCore().debug("NukeEnchant::onBlockBreak >> WG Region used: " + region.getId(), getEnchants());
         List<Block> blocksAffected = this.getAffectedBlocks(b, region);
 
         NukeTriggerEvent event = this.callNukeTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
         if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
-            this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> NukeTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+            getCore().debug("NukeEnchant::onBlockBreak >> NukeTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), getEnchants());
             return;
         }
 
         if (this.useEvents) {
-            final List<BlockBreakEvent> ignored = this.plugin.getEnchantsListener().getIgnoredEvents();
+            final List<BlockBreakEvent> ignored = getEnchants().getEnchantsListener().getIgnoredEvents();
             blocksAffected = event.getBlocksAffected().stream().filter(block -> {
                 final BlockBreakEvent blockEvent = new BlockBreakEvent(block, p);
                 ignored.add(blockEvent);
@@ -83,14 +79,14 @@ public final class NukeEnchant extends XPrisonEnchantmentAbstract implements Blo
             blocksAffected = event.getBlocksAffected();
         }
 
-        if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
+        if (!getCore().isUltraBackpacksEnabled()) {
             handleAffectedBlocks(p, region, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (!this.useEvents && this.plugin.isMinesModuleEnabled() && removeBlocks) {
-            MineImpl mineImpl = plugin.getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
+        if (!this.useEvents && getEnchants().isMinesModuleEnabled() && removeBlocks) {
+            MineImpl mineImpl = getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
 
             if (mineImpl != null) {
                 mineImpl.handleBlockBreak(blocksAffected);
@@ -98,21 +94,21 @@ public final class NukeEnchant extends XPrisonEnchantmentAbstract implements Blo
         }
 
         if (this.countBlocksBroken) {
-            plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
+            getEnchants().getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
         }
 
         if (!this.useEvents) {
-            plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
         }
 
         long timeEnd = Time.nowMillis();
-        this.plugin.getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
+        getCore().debug("NukeEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", getEnchants());
     }
 
     private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
-        boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
+        boolean autoSellPlayerEnabled = getEnchants().isAutoSellModuleEnabled() && getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {
 
@@ -123,7 +119,7 @@ public final class NukeEnchant extends XPrisonEnchantmentAbstract implements Blo
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = XMaterial.matchXMaterial(block.getType()).parseItem();
                 itemToGive.setAmount(amplifier);
@@ -161,12 +157,12 @@ public final class NukeEnchant extends XPrisonEnchantmentAbstract implements Blo
     }
 
     private void giveEconomyRewardsToPlayer(Player p, double totalDeposit) {
-        double total = this.plugin.isMultipliersModuleEnabled() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+        double total = getEnchants().isMultipliersModuleEnabled() ? getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
 
-        plugin.getCore().getEconomy().depositPlayer(p, total);
+        getCore().getEconomy().depositPlayer(p, total);
 
-        if (plugin.isAutoSellModuleEnabled()) {
-            plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
+        if (getEnchants().isAutoSellModuleEnabled()) {
+            getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
         }
 
         if (message != null || !message.isEmpty()) {
@@ -177,23 +173,22 @@ public final class NukeEnchant extends XPrisonEnchantmentAbstract implements Blo
     private NukeTriggerEvent callNukeTriggerEvent(Player p, IWrappedRegion region, Block startBlock, List<Block> affectedBlocks) {
         NukeTriggerEvent event = new NukeTriggerEvent(p, region, startBlock, affectedBlocks);
         Events.callSync(event);
-        this.plugin.getCore().debug("NukeEnchant::callNukeTriggerEvent >> NukeTriggerEvent called.", this.plugin);
+        getCore().debug("NukeEnchant::callNukeTriggerEvent >> NukeTriggerEvent called.", getEnchants());
         return event;
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-        this.removeBlocks = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Remove-Blocks");
-        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
-        this.message = TextUtils.applyColor(plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Message"));
-
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.countBlocksBroken = config.get("countBlocksBroken").getAsBoolean();
+        this.removeBlocks = config.get("removeBlocks").getAsBoolean();
+        this.useEvents = config.get("useEvents").getAsBoolean();
+        this.message = TextUtils.applyColor(config.get("message").getAsString());
+        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
     }
 
     @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public int getRequiredPickaxeLevel() {
+        return requiredPickaxeLevel;
     }
 }

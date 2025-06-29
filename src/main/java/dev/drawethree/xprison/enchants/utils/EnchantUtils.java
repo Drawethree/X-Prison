@@ -3,6 +3,7 @@ package dev.drawethree.xprison.enchants.utils;
 import com.saicone.rtag.util.ServerInstance;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.api.enchants.model.RefundableEnchant;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.model.impl.FortuneEnchant;
@@ -29,8 +30,11 @@ public final class EnchantUtils {
         if (!XPrison.getInstance().isModuleEnabled(XPrisonPickaxeLevels.MODULE_NAME)) {
             return true;
         }
+        if (!(enchantment instanceof RequiresPickaxeLevel)) {
+            return true;
+        }
         Optional<PickaxeLevelImpl> pickaxeLevelOptional = XPrison.getInstance().getPickaxeLevels().getPickaxeLevelsManager().getPickaxeLevel(pickAxe);
-        return pickaxeLevelOptional.map(level -> level.getLevel() >= enchantment.getRequiredPickaxeLevel()).orElse(true);
+        return pickaxeLevelOptional.map(level -> level.getLevel() >= ((RequiresPickaxeLevel) enchantment).getRequiredPickaxeLevel()).orElse(true);
     }
 
     public static long getRefundForLevel(XPrisonEnchantment enchantment, int level) {
