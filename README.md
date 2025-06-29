@@ -34,12 +34,34 @@ If you are a developer looking for API, please check https://github.com/Drawethr
 * [_gangs.yml_](https://github.com/Drawethree/X-Prison/wiki/gangs.yml)
 * [_mines.yml_](https://github.com/Drawethree/X-Prison/wiki/mines.yml)
 
+### Default Enchant Configs
+* [_autosell.json_](https://github.com/Drawethree/X-Prison/wiki/autosell.json)
+* [_blessing.json_](https://github.com/Drawethree/X-Prison/wiki/blessing.json)
+* [_blockbooster.json_](https://github.com/Drawethree/X-Prison/wiki/blockbooster.json)
+* [_charity.json_](https://github.com/Drawethree/X-Prison/wiki/charity.json)
+* [_efficiency.json_](https://github.com/Drawethree/X-Prison/wiki/efficiency.json)
+* [_explosive.json_](https://github.com/Drawethree/X-Prison/wiki/explosive.json)
+* [_fly.json_](https://github.com/Drawethree/X-Prison/wiki/fly.json)
+* [_fortune.json_](https://github.com/Drawethree/X-Prison/wiki/fortune.json)
+* [_gangvaluefinder.json_](https://github.com/Drawethree/X-Prison/wiki/gangvaluefinder.json)
+* [_gemfinder.json_](https://github.com/Drawethree/X-Prison/wiki/gemfinder.json)
+* [_haste.json_](https://github.com/Drawethree/X-Prison/wiki/haste.json)
+* [_jumpboost.json_](https://github.com/Drawethree/X-Prison/wiki/jumpboost.json)
+* [_keyalls.json_](https://github.com/Drawethree/X-Prison/wiki/keyalls.json)
+* [_keyfinder.json_](https://github.com/Drawethree/X-Prison/wiki/keyfinder.json)
+* [_layer.json_](https://github.com/Drawethree/X-Prison/wiki/layer.json)
+* [_nightvision.json_](https://github.com/Drawethree/X-Prison/wiki/nightvision.json)
+* [_nuke.json_](https://github.com/Drawethree/X-Prison/wiki/nuke.json)
+* [_prestigefinder.json_](https://github.com/Drawethree/X-Prison/wiki/prestigefinder.json)
+* [_salary.json_](https://github.com/Drawethree/X-Prison/wiki/salary.json)
+* [_speed.json_](https://github.com/Drawethree/X-Prison/wiki/speed.json)
+* [_tokenator.json_](https://github.com/Drawethree/X-Prison/wiki/tokenator.json)
+* [_unbreaking.json_](https://github.com/Drawethree/X-Prison/wiki/unbreaking.json)
+* [_voucherfinder.json_](https://github.com/Drawethree/X-Prison/wiki/voucherfinder.json)
 
 ### Support
 * [FAQ](https://github.com/Drawethree/X-Prison/wiki/Frequently-Asked-Questions)
 ### For Developers
 * [Developer API](https://github.com/Drawethree/X-Prison/wiki/Developer-API)
-* [Creating Custom Enchants](https://github.com/Drawethree/X-Prison/wiki/Creating-Custom-Enchants)
-
 # Screenshots
 ![Image1](https://imgur.com/LdQmnhk.png)
