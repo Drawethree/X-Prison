@@ -1,8 +1,7 @@
 package dev.drawethree.xprison.utils.compat;
 
-import org.bukkit.Bukkit;
-
 import lombok.Getter;
+import org.bukkit.Bukkit;
 
 /**
  * Represents the current Minecraft version the plugin loaded on

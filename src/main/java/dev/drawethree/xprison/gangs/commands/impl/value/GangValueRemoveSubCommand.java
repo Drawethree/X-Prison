@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
-
 public final class GangValueRemoveSubCommand extends GangSubCommand {
 	public GangValueRemoveSubCommand(GangCommand command) {
 		super(command, "remove");

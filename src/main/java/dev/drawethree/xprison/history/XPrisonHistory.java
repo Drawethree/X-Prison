@@ -2,8 +2,6 @@ package dev.drawethree.xprison.history;
 
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.XPrisonModuleAbstract;
-
-
 import dev.drawethree.xprison.api.autominer.events.PlayerAutoMinerTimeModifyEvent;
 import dev.drawethree.xprison.api.autominer.events.PlayerAutomineEvent;
 import dev.drawethree.xprison.api.gangs.events.GangCreateEvent;

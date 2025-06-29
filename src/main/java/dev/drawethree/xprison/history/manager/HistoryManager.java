@@ -1,7 +1,6 @@
 package dev.drawethree.xprison.history.manager;
 
 import com.cryptomorin.xseries.XMaterial;
-
 import dev.drawethree.xprison.api.XPrisonModule;
 import dev.drawethree.xprison.api.history.model.HistoryLine;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;

@@ -26,7 +26,6 @@
 package dev.drawethree.xprison.utils.item;
 
 import com.cryptomorin.xseries.XItemFlag;
-import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.utils.annotation.NonnullByDefault;

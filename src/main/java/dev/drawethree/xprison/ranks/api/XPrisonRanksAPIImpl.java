@@ -3,7 +3,6 @@ package dev.drawethree.xprison.ranks.api;
 import dev.drawethree.xprison.api.ranks.XPrisonRanksAPI;
 import dev.drawethree.xprison.api.ranks.model.Rank;
 import dev.drawethree.xprison.ranks.manager.RanksManager;
-import dev.drawethree.xprison.ranks.model.RankImpl;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;

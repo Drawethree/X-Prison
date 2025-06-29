@@ -7,7 +7,6 @@ import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
-
 import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
 import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;

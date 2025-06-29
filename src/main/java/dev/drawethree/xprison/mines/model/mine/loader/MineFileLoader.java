@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
-import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
 
 public class MineFileLoader implements MineLoader<File> {
 

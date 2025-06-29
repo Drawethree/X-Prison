@@ -7,7 +7,6 @@ import dev.drawethree.xprison.api.gangs.events.GangCreateEvent;
 import dev.drawethree.xprison.api.gangs.events.GangDisbandEvent;
 import dev.drawethree.xprison.api.gangs.model.Gang;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
-import dev.drawethree.xprison.gangs.enums.GangRenameResult;
 import dev.drawethree.xprison.gangs.gui.admin.DisbandGangAdminGUI;
 import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.gangs.model.GangInvitationImpl;
