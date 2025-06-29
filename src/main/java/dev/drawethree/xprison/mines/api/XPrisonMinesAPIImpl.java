@@ -7,12 +7,20 @@ import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import org.bukkit.Location;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 public final class XPrisonMinesAPIImpl implements XPrisonMinesAPI {
 
 	private final XPrisonMines plugin;
 
 	public XPrisonMinesAPIImpl(XPrisonMines plugin) {
 		this.plugin = plugin;
+	}
+
+	@Override
+	public Collection<Mine> getMines() {
+		return this.plugin.getManager().getMines().stream().map(Mine.class::cast).collect(Collectors.toList());
 	}
 
 	@Override

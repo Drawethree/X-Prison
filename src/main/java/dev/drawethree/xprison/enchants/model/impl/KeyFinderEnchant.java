@@ -1,25 +1,23 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
-
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class KeyFinderEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class KeyFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private List<String> commandsToExecute;
 
-    public KeyFinderEnchant(XPrisonEnchants instance) {
-        super(instance, 15);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
+    public KeyFinderEnchant() {
     }
 
 
@@ -40,14 +38,12 @@ public final class KeyFinderEnchant extends XPrisonEnchantmentAbstract implement
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = plugin.getEnchantsConfig().getYamlConfig().getStringList("enchants." + id + ".Commands");
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.commandsToExecute = new Gson().fromJson(
+                config.get("commands"),
+                new TypeToken<List<String>>(){}.getType()
+        );
     }
 
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
-    }
 }

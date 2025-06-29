@@ -1,33 +1,30 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.event.block.BlockBreakEvent;
 
 
-public final class SalaryEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class SalaryEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private String amountToGiveExpression;
 
-    public SalaryEnchant(XPrisonEnchants instance) {
-        super(instance, 12);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+    public SalaryEnchant() {
     }
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
         double randAmount = createExpression(enchantLevel).evaluate();
 
-        plugin.getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
+        getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
 
-        if (this.plugin.isAutoSellModuleEnabled()) {
-            plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(e.getPlayer(), randAmount);
+        if (getEnchants().isAutoSellModuleEnabled()) {
+            getCore().getAutoSell().getManager().addToCurrentEarnings(e.getPlayer(), randAmount);
         }
 
     }
@@ -38,10 +35,9 @@ public final class SalaryEnchant extends XPrisonEnchantmentAbstract implements B
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.amountToGiveExpression = plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Amount-To-Give");
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.amountToGiveExpression = config.get("amountToGive").getAsString();
     }
 
     private Expression createExpression(int level) {
@@ -49,10 +45,5 @@ public final class SalaryEnchant extends XPrisonEnchantmentAbstract implements B
                 .variables("level")
                 .build()
                 .setVariable("level", level);
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
     }
 }

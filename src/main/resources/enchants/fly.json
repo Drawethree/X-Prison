@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.FlyEnchant",
+  "id": 8,
+  "rawName": "fly",
+  "name": "&cFly",
+  "enabled": true,
+  "increaseCostBy": 350,
+  "maxLevel": 1,
+  "initialCost": 10000,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 34,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&cFly",
+    "material": "FEATHER",
+    "slot": 34,
+    "description": [
+      "&7&o(( Ability to fly while holding pickaxe ))"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.KeyallsEnchant",
+  "id": 18,
+  "rawName": "keyalls",
+  "name": "&cKeyalls",
+  "enabled": true,
+  "increaseCostBy": 350,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "initialCost": 350,
+  "pickaxeLevelRequired": 1,
+  "commands": [
+    "cc giveall physical Token 1",
+    "cc giveall physical Token 2",
+    "cc giveall physical Coal 1",
+    "cc giveall physical Iron 1",
+    "cc giveall physical Gold 1"
+  ],
+  "refund": {
+    "enabled": true,
+    "guiSlot": 44,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&cKeyalls",
+    "material": "REDSTONE",
+    "slot": 44,
+    "description": [
+      "&7&o(( Ability to give everyone crate keys while mining ))"
+    ]
+  }
+}

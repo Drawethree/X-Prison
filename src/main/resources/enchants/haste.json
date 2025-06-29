@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.HasteEnchant",
+  "id": 4,
+  "rawName": "haste",
+  "name": "&dHaste",
+  "enabled": true,
+  "increaseCostBy": 2500,
+  "maxLevel": 5,
+  "initialCost": 2500,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 30,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&dHaste",
+    "material": "GHAST_TEAR",
+    "slot": 30,
+    "description": [
+      "&7&o(( Ability to swing your pickaxe faster while mining ))"
+    ]
+  }
+}

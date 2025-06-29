@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.EfficiencyEnchant",
+  "id": 1,
+  "rawName": "efficiency",
+  "name": "&aEfficiency",
+  "enabled": true,
+  "increaseCostBy": 10,
+  "maxLevel": 500,
+  "initialCost": 10,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 27,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&aEfficiency",
+    "material": "PRISMARINE_SHARD",
+    "slot": 27,
+    "description": [
+      "&7&o(( Ability to mine blocks faster ))"
+    ]
+  }
+}

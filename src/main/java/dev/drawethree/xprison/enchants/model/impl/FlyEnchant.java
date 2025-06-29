@@ -1,16 +1,14 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
-public final class FlyEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
+public final class FlyEnchant extends XPrisonEnchantmentBaseCore implements EquipabbleEnchantment {
 
-	public FlyEnchant(XPrisonEnchants instance) {
-		super(instance, 8);
+	public FlyEnchant() {
+
 	}
 
 	@Override
@@ -21,20 +19,5 @@ public final class FlyEnchant extends XPrisonEnchantmentAbstract implements Equi
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
 		p.setAllowFlight(false);
-	}
-
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return 100.0;
-	}
-
-	@Override
-	public void reload() {
-		super.reload();
-	}
-
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
 	}
 }

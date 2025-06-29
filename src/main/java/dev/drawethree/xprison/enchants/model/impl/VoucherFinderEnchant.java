@@ -1,27 +1,28 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lucko.helper.random.RandomSelector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public final class VoucherFinderEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class VoucherFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
 
     private double chance;
     private List<CommandWithChance> commandsToExecute;
+    private int requiredPickaxeLevel;
 
-    public VoucherFinderEnchant(XPrisonEnchants instance) {
-        super(instance, 20);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = this.loadCommands();
+    public VoucherFinderEnchant() {
     }
 
     @Override
@@ -40,25 +41,21 @@ public final class VoucherFinderEnchant extends XPrisonEnchantmentAbstract imple
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.commandsToExecute = this.loadCommands();
-    }
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        JsonElement element = config.get("commands");
 
-    private List<CommandWithChance> loadCommands() {
-        List<CommandWithChance> returnList = new ArrayList<>();
-        for (String key : this.plugin.getEnchantsConfig().getYamlConfig().getConfigurationSection("enchants." + id + ".Commands").getKeys(false)) {
-            String cmd = this.plugin.getEnchantsConfig().getYamlConfig().getString("enchants." + id + ".Commands." + key + ".command");
-            double chance = this.plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Commands." + key + ".chance");
-            returnList.add(new CommandWithChance(cmd, chance));
-        }
-        return returnList;
+        this.commandsToExecute = new Gson().fromJson(
+                element,
+                new TypeToken<List<CommandWithChance>>() {
+                }.getType()
+        );
+        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
     }
 
     @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public int getRequiredPickaxeLevel() {
+        return requiredPickaxeLevel;
     }
 
     @AllArgsConstructor

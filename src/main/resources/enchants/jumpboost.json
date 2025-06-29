@@ -1,0 +1,23 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.JumpBoostEnchant",
+  "id": 6,
+  "rawName": "jumpboost",
+  "name": "&bJump Boost",
+  "enabled": true,
+  "increaseCostBy": 5000,
+  "maxLevel": 5,
+  "initialCost": 5000,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 32,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&bJump Boost",
+    "material": "LEATHER_BOOTS",
+    "slot": 32,
+    "description": [
+      "&7&o(( Ability to jump higher while holding your pickaxe ))"
+    ]
+  }
+}

@@ -20,7 +20,12 @@ public class PrisonItem extends RtagItem {
         final Map<XPrisonEnchantment, Integer> enchants = new HashMap<>();
         final Map<String, Object> map = get(MAIN, "enchants");
         if (map != null) {
-            map.forEach((id, level) -> enchants.put(repository.getEnchantBy(id), (int) level));
+            map.forEach((id, level) -> {
+                XPrisonEnchantment enchantment = repository.getEnchantBy(id);
+                if (enchantment != null) {
+                    enchants.put(enchantment, (int) level);
+                }
+            });
         }
         return enchants;
     }

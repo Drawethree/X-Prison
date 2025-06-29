@@ -2,16 +2,14 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XEnchantment;
 import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public final class UnbreakingEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
+public final class UnbreakingEnchant extends XPrisonEnchantmentBaseCore implements EquipabbleEnchantment {
 
-	public UnbreakingEnchant(XPrisonEnchants instance) {
-		super(instance, 2);
+	public UnbreakingEnchant() {
 	}
 
 	@Override
@@ -26,18 +24,4 @@ public final class UnbreakingEnchant extends XPrisonEnchantmentAbstract implemen
 
 	}
 
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return 100.0;
-	}
-
-	@Override
-	public void reload() {
-		super.reload();
-	}
-
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
-	}
 }

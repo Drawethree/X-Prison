@@ -1,0 +1,25 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.TokenatorEnchant",
+  "id": 14,
+  "rawName": "tokenator",
+  "name": "&aTokenator",
+  "enabled": true,
+  "increaseCostBy": 6,
+  "maxLevel": 500,
+  "chance": 0.2,
+  "amountToGive": "level * 2",
+  "initialCost": 12,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 40,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&aTokenator",
+    "material": "SUNFLOWER",
+    "slot": 40,
+    "description": [
+      "&7&o(( Ability to gain more tokens while mining ))"
+    ]
+  }
+}

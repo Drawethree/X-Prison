@@ -1,0 +1,26 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.AutoSellEnchant",
+  "id": 19,
+  "rawName": "autosell",
+  "name": "&eAutosell",
+  "enabled": true,
+  "increaseCostBy": 0,
+  "maxLevel": 1,
+  "chance": 25.0,
+  "initialCost": 1000,
+  "pickaxeLevelRequired": 1,
+  "messagesEnabled": true,
+  "refund": {
+    "enabled": true,
+    "guiSlot": 45,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&eAutosell",
+    "material": "BOOK",
+    "slot": 45,
+    "description": [
+      "&7&o(( Ability to sell all items while mining ))"
+    ]
+  }
+}

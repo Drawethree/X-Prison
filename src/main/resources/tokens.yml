@@ -1,32 +1,35 @@
 messages:
-  no_permission: "&c&l(!) &fYou do not have permission to do that!"
-  not_enough_tokens: "&e&l(!) &eYou don't have enough tokens"
-  your_tokens: "&eYour Tokens: %tokens%"
-  other_tokens: "&e%player%'s Tokens: %tokens%"
-  cooldown: "&cPlease wait %time% seconds before executing this command again."
-  your_blocks: "&eYour Blocks: %blocks%"
-  other_blocks: "&e%player%'s Blocks: %blocks%"
-  withdraw_successful: "&aYou have withdrawn &e%value%x %amount% Tokens!"
-  admin_set_tokens: "&aSuccessfuly set &e%player%'s &atokens to &e%tokens%."
-  admin_give_tokens: "&aSuccessfuly given &e%tokens% &atokens to &e%player%."
-  admin_remove_tokens: "&aSuccessfuly removed &e%tokens% &atokens from &e%player%."
-  admin_set_blocks: "&aSuccessfuly set &e%blocks%'s &ablocks to &e%blocks%."
-  admin_give_blocks: "&aSuccessfuly given &e%blocks% &ablocks to &e%player%."
-  admin_remove_blocks: "&aSuccessfuly removed &e%blocks% &ablocks from &e%player%."
-  not_token_item: "&cThis is not a token item!"
-  tokens_redeem: "&e&l(!) &eYou redeemed &f%tokens% &etoken(s)"
-  tokens_send: "&eYou have sent %tokens% to %player%"
-  tokens_cant_send_to_yourself: "&c&l(!) &cYou can't send tokens to yourself."
-  tokens_received: "&eYou received %tokens% from %player%."
-  tokens_received_console: "&e&lTOKENS &8» &7You have received &f%tokens% tokens&7."
-  not_a_number: "&c%input% is not a number!"
-  player_not_online: "&cPlayer &e%player% &cis not online!"
-  top_updating: "&c&lLeaderboard is currently updating..."
-  top_weekly_reset: "&7&oTime Left: %time%"
-  token_message_disabled: "&e&lTOKENS &8» &7Messages &c&lOFF"
-  token_message_enabled: "&e&lTOKENS &8» &7Messages &a&lON"
-  tokens_received_mining: "&e&lTOKENS &8» &7You found &6%amount% Tokens &7while mining"
-  lucky_block_mined: "&e&lLUCKY BLOCK &8» &7You have mined a &e&lLUCKY BLOCK &7and received &6%amount% Tokens!"
+  cooldown: '&ePlease wait %time% seconds before executing this command again.'
+  no_permission: '&e&lTOKENS &8» &fYou do not have permission to do that!'
+  not_enough_tokens: '&e&lTOKENS &8» &fYou don''t have enough tokens'
+  your_tokens: '&e&lTOKENS &8» &fYou have &e%tokens% &fTokens'
+  other_tokens: '&e&lTOKENS &8» &e%player%''s Tokens: %tokens%'
+  your_blocks: '&e&lBLOCKS &8» &fYou mined &e%blocks% &fBlocks'
+  other_blocks: '&e&lBLOCKS &8» &e%player% &fmined &e%blocks% &fBlocks'
+  withdraw_successful: '&e&lTOKENS &8» &fYou have withdrawn &e%value%x %amount% Tokens!'
+  admin_set_tokens: '&e&lTOKENS &8» &fSuccessfuly set &e%player%''s &ftokens to &e%tokens%.'
+  admin_give_tokens: '&e&lTOKENS &8» &fSuccessfuly given &e%tokens% &ftokens to &e%player%.'
+  admin_remove_tokens: '&e&lTOKENS &8» &fSuccessfuly removed &e%tokens% &ftokens from
+    &e%player%.'
+  admin_set_blocks: '&e&lTOKENS &8» &fSuccessfuly set &e%blocks%''s &fblocks to &e%blocks%.'
+  admin_give_blocks: '&e&lTOKENS &8» &fSuccessfuly given &e%blocks% &fblocks to &e%player%.'
+  admin_remove_blocks: '&e&lTOKENS &8» &fSuccessfuly removed &e%blocks% &fblocks from
+    &e%player%.'
+  not_token_item: '&e&lTOKENS &8» &fThis is not a token item!'
+  tokens_redeem: '&e&lTOKENS &8» &eYou redeemed &f%tokens% &etoken(s)'
+  tokens_send: '&e&lTOKENS &8» &eYou have sent &f%tokens% &eto &f%player%'
+  tokens_cant_send_to_yourself: '&e&lTOKENS &8» &fYou can''t send tokens to yourself.'
+  tokens_received: '&e&lTOKENS &8» &eYou received &f%tokens% &efrom &f%player%.'
+  tokens_received_console: '&e&lTOKENS &8» &fYou have received &f%tokens% tokens&f.'
+  not_a_number: '&f%input% is not a number!'
+  player_not_online: '&e&lPRISON &8» &fPlayer &e%player%  &fis not online!'
+  top_updating: '&e&lTOPLIST &8» &fCurrently updating'
+  top_weekly_reset: '&e&lUPDATE &8» &fTime Left: &e%time%'
+  token_message_disabled: '&e&lTOKENS &8» &fMessages &e&lOFF'
+  token_message_enabled: '&e&lTOKENS &8» &fMessages &e&lON'
+  tokens_received_mining: '&e&lTOKENS &8» &fYou found &e%amount% Tokens &fwhile mining'
+  lucky_block_mined: '&e&lLUCKY BLOCK &8» &fYou have mined a &e&lLUCKY BLOCK &fand
+    received &e%amount% Tokens!'
 # Starting tokens for players
 starting-tokens: 1000
 tokens:
@@ -39,9 +42,9 @@ tokens:
   # Physical token item settings
   item:
     material: SUNFLOWER
-    name: "&e&l%amount% TOKENS"
+    name: '&ex%amount% &fTokens'
     lore:
-      - "&7Right-Click to Redeem"
+      - '&e➥ &fRight-Click to Redeem'
 # LuckyBlocks settings for rewards
 lucky-blocks:
   SPONGE:
@@ -59,20 +62,20 @@ tokens-command-cooldown: 5
 top_players_amount: 10
 world-whitelist: []
 tokens-top-format:
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
-  - "&e&lTOKENS TOP"
-  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%tokens% Tokens"
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+  - '&e&lTOKENS TOP'
+  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%tokens% Tokens'
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
 blocks-top-format:
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
-  - "&e&lBLOCKS TOP"
-  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+  - '&e&lBLOCKS TOP'
+  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%blocks% Blocks'
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
 blocks-top-weekly-format:
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
-  - "&e&lBLOCKS TOP WEEKLY"
-  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%blocks% Blocks"
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+  - '&e&lBLOCKS TOP WEEKLY'
+  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%blocks% Blocks'
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
 # Aliases for /tokens command
 tokens-command-aliases:
   - token

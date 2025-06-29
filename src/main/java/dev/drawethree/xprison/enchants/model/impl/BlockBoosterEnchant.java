@@ -1,11 +1,11 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
+import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.tokens.events.XPrisonBlockBreakEvent;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -18,15 +18,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public final class BlockBoosterEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class BlockBoosterEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private static final Map<UUID, Long> BOOSTED_PLAYERS = new HashMap<>();
     private double chance;
 
-    public BlockBoosterEnchant(XPrisonEnchants instance) {
-        super(instance, 17);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-
+    public BlockBoosterEnchant() {
         Events.subscribe(XPrisonBlockBreakEvent.class)
                 .handler(e -> {
                     if (BOOSTED_PLAYERS.containsKey(e.getPlayer().getUniqueId())) {
@@ -37,7 +34,7 @@ public final class BlockBoosterEnchant extends XPrisonEnchantmentAbstract implem
                         }
                         e.setBlocks(blocks);
                     }
-                }).bindWith(instance.getCore());
+                }).bindWith(getCore());
     }
 
     public static boolean hasBlockBoosterRunning(Player p) {
@@ -50,13 +47,13 @@ public final class BlockBoosterEnchant extends XPrisonEnchantmentAbstract implem
             return;
         }
 
-        PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_on"));
+        PlayerUtils.sendMessage(e.getPlayer(), getEnchants().getEnchantsConfig().getMessage("block_booster_on"));
 
         BOOSTED_PLAYERS.put(e.getPlayer().getUniqueId(), Time.nowMillis() + TimeUnit.MINUTES.toMillis(1));
 
         Schedulers.sync().runLater(() -> {
             if (e.getPlayer().isOnline()) {
-                PlayerUtils.sendMessage(e.getPlayer(), this.plugin.getEnchantsConfig().getMessage("block_booster_off"));
+                PlayerUtils.sendMessage(e.getPlayer(), getEnchants().getEnchantsConfig().getMessage("block_booster_off"));
             }
             BOOSTED_PLAYERS.remove(e.getPlayer().getUniqueId());
         }, 5, TimeUnit.MINUTES);
@@ -69,13 +66,7 @@ public final class BlockBoosterEnchant extends XPrisonEnchantmentAbstract implem
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
     }
 }

@@ -10,6 +10,7 @@ import dev.drawethree.xprison.enchants.config.EnchantsConfig;
 import dev.drawethree.xprison.enchants.gui.DisenchantGUI;
 import dev.drawethree.xprison.enchants.gui.EnchantGUI;
 import dev.drawethree.xprison.enchants.listener.EnchantsListener;
+import dev.drawethree.xprison.enchants.loader.EnchantLoader;
 import dev.drawethree.xprison.enchants.managers.CooldownManager;
 import dev.drawethree.xprison.enchants.managers.EnchantsManager;
 import dev.drawethree.xprison.enchants.managers.RespawnManager;
@@ -19,6 +20,14 @@ import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import lombok.Getter;
 import me.lucko.helper.utils.Players;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.*;
 
 public final class XPrisonEnchants implements XPrisonModuleAbstract {
 
@@ -50,6 +59,9 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 	private EnchantsRepository enchantsRepository;
 
 	@Getter
+	private EnchantLoader enchantLoader;
+
+	@Getter
 	private final XPrison core;
 
 	private boolean enabled;
@@ -78,6 +90,8 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 	@Override
 	public void enable() {
 
+		copyDefaultEnchants();
+
 		this.enchantsConfig = new EnchantsConfig(this);
 		this.enchantsConfig.load();
 
@@ -93,7 +107,8 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 		this.registerCommands();
 
 		this.enchantsRepository = new EnchantsRepository(this);
-		this.enchantsRepository.registerDefaultEnchants();
+		this.enchantLoader = new EnchantLoader(enchantsRepository);
+		this.enchantLoader.load();
 
 		EnchantGUI.init();
 		DisenchantGUI.init();
@@ -102,6 +117,38 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 
 
 		this.enabled = true;
+	}
+
+	private void copyDefaultEnchants() {
+		File enchantsFolder = new File(this.core.getDataFolder(), "enchants");
+		if (!enchantsFolder.exists()) {
+			enchantsFolder.mkdirs();
+		}
+
+		String[] enchantFiles = {
+				"autosell.json", "blessing.json", "blockbooster.json", "charity.json",
+				"efficiency.json", "explosive.json", "fly.json", "fortune.json",
+				"gangvaluefinder.json", "gemfinder.json", "haste.json", "jumpboost.json",
+				"keyalls.json", "keyfinder.json", "layer.json", "nightvision.json",
+				"nuke.json", "prestigefinder.json", "salary.json", "speed.json",
+				"tokenator.json", "unbreaking.json", "voucherfinder.json"
+		};
+
+		for (String fileName : enchantFiles) {
+			File outFile = new File(enchantsFolder, fileName);
+			if (!outFile.exists()) {
+				try (InputStream in = XPrison.getInstance().getResource( "enchants/" + fileName)) {
+					if (in != null) {
+						Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+						info("Copied default " + fileName);
+					} else {
+						warning("Resource not found: enchants/" + fileName);
+					}
+				} catch (IOException e) {
+					error("Failed to copy " + fileName + ": " + e.getMessage());
+				}
+			}
+		}
 	}
 
 

@@ -1,44 +1,51 @@
 messages:
-  no_permission: "&c&l(!) &fYou do not have a permission to do that!"
-  selection_valid: "&aYour selection is valid. You can now create a mine by &e/mines create <name>"
-  selection_invalid: "&cYour selection is invalid. Please make a selection via our selection tool &e/mines tool"
-  selection_point_set: "&aPoint %position% set to: %location%"
-  selection_tool_given: "&aYou were given x1 Selection Tool!"
-  mine_exists: "&cMine with such name already exists!"
-  mine_not_exists: "&cMine with such name does not exist!"
-  mine_created: "&aMine %mine% has been created! Use &e/mine panel %mine% &ato edit it."
-  mine_redefined: "&aYou have redefined mine region for mine %mine%."
-  mine_deleted: "&aMine %mine% has been deleted!"
-  mine_teleport: "&aYou have been teleported to mine %mine%!"
-  mine_no_teleport_location: "&cMine %mine% does not have teleport location set!"
-  mine_no_item_in_hand: "&cYou must have some item in hand!"
-  mine_block_added: "&aYou have addded &e%block% &ato &e%mine%&a! Please set its percentages in &e/mine panel %mine%"
-  mine_teleport_set: "&aYou have set the teleport location for Mine %mine%!"
-  mine_resetting: "&c&l(!) &aMine %mine% will be reset in &e5 seconds&a!"
-  mine_reset: "&aMine %mine% was reset."
-  mine_saved: "&aMine %mine% saved."
-  mine_already_reset: "&cMine %mine% is already resetting!"
-  mine_hologram_create: "&aHologram %type% for mine %mine% created at your location."
-  mine_hologram_delete: "&aHologram %type% for mine %mine% was removed"
-  mine_migration_invalid_plugin: "&cYou have specified plugin we do not currently allow migration from."
-  mine_migration_plugin_not_present: "&cCannot contact %plugin%'s API. Migration aborted."
-  mine_migration_started: "&7Started migrating all mines from %plugin%...."
-  mine_migration_completed: "&7Migration of all mines from plugin %plugin% was completed."
-  mine_migration_result: "&7Result: &a%completed% Completed, &e%skipped% Skipped."
-  mine_migration_mine_started: "&7Started migrating Mine %mine% from %plugin%."
-  mine_migration_mine_skipped: "&eMigration of Mine %mine% from %plugin% was skipped. There is already mine with such name."
-  mine_migration_mine_failed: "&cMigration of Mine %mine% from %plugin% failed."
-  mine_migration_mine_completed: "&aMigration of Mine %mine% from %plugin% was completed."
-  mine_all_reset_success: "&aAll mines were reset."
-  mine_all_reset_started: "&aStarted reset of all mines."
-  mine_renamed: "&aMine &e%mine% &awas renamed to &e%new_name%&a."
+  no_permission: '&c&l(!) &fYou do not have a permission to do that!'
+  selection_valid: '&6Your selection is valid. You can now create a mine by &e/mines
+    create <name>'
+  selection_invalid: '&cYour selection is invalid. Please make a selection via our
+    selection tool &e/mines tool'
+  selection_point_set: '&6Point %position% set to: %location%'
+  selection_tool_given: '&6You were given x1 Selection Tool!'
+  mine_exists: '&cMine with such name already exists!'
+  mine_not_exists: '&cMine with such name does not exist!'
+  mine_created: '&6Mine %mine% has been created! Use &e/mine panel %mine% &6to edit
+    it.'
+  mine_redefined: '&6You have redefined mine region for mine %mine%.'
+  mine_deleted: '&6Mine %mine% has been deleted!'
+  mine_teleport: '&6You have been teleported to mine %mine%!'
+  mine_no_teleport_location: '&cMine %mine% does not have teleport location set!'
+  mine_no_item_in_hand: '&cYou must have some item in hand!'
+  mine_block_added: '&6You have addded &e%block% &6to &e%mine%&6! Please set its percentages
+    in &e/mine panel %mine%'
+  mine_teleport_set: '&6You have set the teleport location for Mine %mine%!'
+  mine_resetting: '&c&l(!) &6Mine %mine% will be reset in &e5 seconds&6!'
+  mine_reset: '&6Mine %mine% was reset.'
+  mine_saved: '&6Mine %mine% saved.'
+  mine_already_reset: '&cMine %mine% is already resetting!'
+  mine_hologram_create: '&6Hologram %type% for mine %mine% created at your location.'
+  mine_hologram_delete: '&6Hologram %type% for mine %mine% was removed'
+  mine_migration_invalid_plugin: '&cYou have specified plugin we do not currently
+    allow migration from.'
+  mine_migration_plugin_not_present: '&cCannot contact %plugin%''s API. Migration
+    aborted.'
+  mine_migration_started: '&7Started migrating all mines from %plugin%....'
+  mine_migration_completed: '&7Migration of all mines from plugin %plugin% was completed.'
+  mine_migration_result: '&7Result: &6%completed% Completed, &e%skipped% Skipped.'
+  mine_migration_mine_started: '&7Started migrating Mine %mine% from %plugin%.'
+  mine_migration_mine_skipped: '&eMigration of Mine %mine% from %plugin% was skipped.
+    There is already mine with such name.'
+  mine_migration_mine_failed: '&cMigration of Mine %mine% from %plugin% failed.'
+  mine_migration_mine_completed: '&6Migration of Mine %mine% from %plugin% was completed.'
+  mine_all_reset_success: '&6All mines were reset.'
+  mine_all_reset_started: '&6Started reset of all mines.'
+  mine_renamed: '&6Mine &e%mine% &6was renamed to &e%new_name%&6.'
 # Mine holograms settings
 holograms:
   # How should blocks left hologram look like.
   blocks_left:
-    - " "
-    - "&7-- &aThere are &b%blocks%% &ablocks left in mine &b%mine% &7--"
-    - " "
+    - ' '
+    - '&7-- &6There are &b%blocks%% &6blocks left in mine &b%mine% &7--'
+    - ' '
   # How should blocks mined hologram look like.
   blocks_mined:
     - " "
@@ -46,6 +53,6 @@ holograms:
     - " "
   # How should time left hologram look like.
   timed_reset:
-    - " "
-    - "&7-- &b%time% &aleft till next reset &7--"
-    - " "
+    - ' '
+    - '&7-- &b%time% &6left till next reset &7--'
+    - ' '

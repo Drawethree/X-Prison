@@ -1,13 +1,13 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.google.gson.JsonObject;
 import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.xprison.api.enchants.events.LayerTriggerEvent;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
@@ -28,17 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class LayerEnchant extends XPrisonEnchantmentAbstract implements BlockBreakEnchant, ChanceBasedEnchant {
+public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private boolean countBlocksBroken;
     private boolean useEvents;
 
-    public LayerEnchant(XPrisonEnchants instance) {
-        super(instance, 10);
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
+    public LayerEnchant() {
     }
 
     @Override
@@ -53,18 +49,18 @@ public final class LayerEnchant extends XPrisonEnchantmentAbstract implements Bl
             return;
         }
 
-        this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> WG Region used: " + region.getId(), this.plugin);
+        getCore().debug("LayerEnchant::onBlockBreak >> WG Region used: " + region.getId(), getEnchants());
         List<Block> blocksAffected = this.getAffectedBlocks(b, region);
 
         LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
 
         if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
-            this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), this.plugin);
+            getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), getEnchants());
             return;
         }
 
         if (this.useEvents) {
-            final List<BlockBreakEvent> ignored = this.plugin.getEnchantsListener().getIgnoredEvents();
+            final List<BlockBreakEvent> ignored = getEnchants().getEnchantsListener().getIgnoredEvents();
             blocksAffected = event.getBlocksAffected().stream().filter(block -> {
                 final BlockBreakEvent blockEvent = new BlockBreakEvent(block, p);
                 ignored.add(blockEvent);
@@ -76,29 +72,29 @@ public final class LayerEnchant extends XPrisonEnchantmentAbstract implements Bl
             blocksAffected = event.getBlocksAffected();
         }
 
-        if (!this.plugin.getCore().isUltraBackpacksEnabled()) {
+        if (!getCore().isUltraBackpacksEnabled()) {
             handleAffectedBlocks(p, region, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
 
-        if (!this.useEvents && this.plugin.isMinesModuleEnabled()) {
-            MineImpl mineImpl = plugin.getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
+        if (!this.useEvents && getEnchants().isMinesModuleEnabled()) {
+            MineImpl mineImpl = getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
             if (mineImpl != null) {
                 mineImpl.handleBlockBreak(blocksAffected);
             }
         }
 
         if (this.countBlocksBroken) {
-            plugin.getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
+            getEnchants().getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
         }
 
         if (!this.useEvents) {
-            plugin.getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
         }
 
         long timeEnd = Time.nowMillis();
-        this.plugin.getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", this.plugin);
+        getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", getEnchants());
     }
 
     private List<Block> getAffectedBlocks(Block startBlock, IWrappedRegion region) {
@@ -119,7 +115,7 @@ public final class LayerEnchant extends XPrisonEnchantmentAbstract implements Bl
     private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
-        boolean autoSellPlayerEnabled = this.plugin.isAutoSellModuleEnabled() && plugin.getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
+        boolean autoSellPlayerEnabled = getEnchants().isAutoSellModuleEnabled() && getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
 
         for (Block block : blocksAffected) {
 
@@ -129,7 +125,7 @@ public final class LayerEnchant extends XPrisonEnchantmentAbstract implements Bl
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((plugin.getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = XMaterial.matchXMaterial(block.getType()).parseItem();
                 itemToGive.setAmount(amplifier);
@@ -146,34 +142,26 @@ public final class LayerEnchant extends XPrisonEnchantmentAbstract implements Bl
     }
 
     private void giveEconomyRewardToPlayer(Player p, double totalDeposit) {
-        double total = this.plugin.isMultipliersModuleEnabled() ? plugin.getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+        double total = getEnchants().isMultipliersModuleEnabled() ? getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
 
-        plugin.getCore().getEconomy().depositPlayer(p, total);
+        getCore().getEconomy().depositPlayer(p, total);
 
-        if (plugin.isAutoSellModuleEnabled()) {
-            plugin.getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
+        if (getEnchants().isAutoSellModuleEnabled()) {
+            getCore().getAutoSell().getManager().addToCurrentEarnings(p, total);
         }
     }
 
     private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
         LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
         Events.callSync(event);
-        this.plugin.getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", this.plugin);
+        getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", getEnchants());
         return event;
     }
 
     @Override
-    public void reload() {
-        super.reload();
-        this.chance = plugin.getEnchantsConfig().getYamlConfig().getDouble("enchants." + id + ".Chance");
-        this.countBlocksBroken = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Count-Blocks-Broken");
-        this.useEvents = plugin.getEnchantsConfig().getYamlConfig().getBoolean("enchants." + id + ".Use-Events");
+    public void loadCustomProperties(JsonObject config) {
+        this.chance = config.get("chance").getAsDouble();
+        this.countBlocksBroken = config.get("countBlocksBroken").getAsBoolean();
+        this.useEvents = config.get("useEvents").getAsBoolean();
     }
-
-    @Override
-    public String getAuthor() {
-        return "Drawethree";
-    }
-
-
 }

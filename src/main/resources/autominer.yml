@@ -13,14 +13,16 @@ auto-miner-regions:
     # Amount of blocks broken added to player every cycle
     blocks-broken: 5
 messages:
-  not_enough_tokens: "&e&lAUTOMINER &8» &cYou do not have enough tokens! (Needed: %tokens%)"
-  not_a_number: "&c%input% is not a number!"
-  player_not_online: "&cPlayer &e%player% &cis not online!"
-  autominer_disabled: "&e&l(!) &7You've &c&lDISABLED &7AutoMiner."
-  autominer_enabled: "&e&l(!) &7You've &a&lENABLED &7AutoMiner."
-  auto_miner_enabled: "&aYou are now in &a&lAUTO-MINER &amode."
-  auto_miner_disabled: "&cYou don't have &c&lAUTO-MINER &ctime."
-  auto_miner_no_pickaxe: "&cYou do not have any pickaxe equipped!"
-  auto_miner_time: "&e&lAUTOMINER &8» &7You have &f%time% of Auto-Miner time."
-  auto_miner_time_add: "&e&lAUTOMINER &8» &7You added &f%time% %timeunit% &7to &f%player%&7."
-  auto_miner_time_remove: "&e&lAUTOMINER &8» &7You have removed &f%time% %timeunit% &7from &f%player%&7."
+  auto_miner_time_remove: '&e&lAUTOMINER &8» &7You have removed &f%time% %timeunit%
+    &7from &f%player%&7.'
+  not_enough_tokens: '&e&lAUTOMINER &8» &eYou do not have enough tokens! (Needed:
+    %tokens%)'
+  not_a_number: '&e&lAUTOMINER &8» &e%input% is not a number!'
+  player_not_online: '&e&lAUTOMINER &8» &fPlayer &e%player% &&fis not online!'
+  autominer_disabled: '&e&lAUTOMINER &8» &fYou''ve &e&lDISABLED &fAutoMiner.'
+  autominer_enabled: '&e&lAUTOMINER &8» &fYou''ve &e&lENABLED &fAutoMiner.'
+  auto_miner_enabled: ''
+  auto_miner_disabled: ''
+  auto_miner_no_pickaxe: ''
+  auto_miner_time: '&e&lAUTOMINER &8» &fYou have &e%time% of Auto-Miner time.'
+  auto_miner_time_add: '&e&lAUTOMINER &8» &fYou added &e%time% %timeunit% &fto &e%player%&7.'

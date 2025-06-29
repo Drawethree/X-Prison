@@ -1,0 +1,26 @@
+{
+  "class": "dev.drawethree.xprison.enchants.model.impl.FortuneEnchant",
+  "id": 3,
+  "rawName": "fortune",
+  "name": "&cFortune",
+  "enabled": true,
+  "increaseCostBy": 75,
+  "maxLevel": -1,
+  "initialCost": 75,
+  "blacklist": [
+    "BEDROCK"
+  ],
+  "refund": {
+    "enabled": true,
+    "guiSlot": 29,
+    "percentage": 50.0
+  },
+  "gui": {
+    "name": "&cFortune",
+    "material": "DIAMOND",
+    "slot": 29,
+    "description": [
+      "&7&o(( Ability to receive more blocks while mining ))"
+    ]
+  }
+}

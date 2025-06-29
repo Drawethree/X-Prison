@@ -110,14 +110,14 @@ public final class DisenchantGUI extends Gui {
 
     private Item getRefundGuiItem(XPrisonEnchantment enchantment, DisenchantGUI gui, int level) {
         RefundableEnchant refundableEnchant = (RefundableEnchant) enchantment;
-        Material m = refundableEnchant.isRefundEnabled() ? enchantment.getGuiMaterial() : XMaterial.BARRIER.get();
+        Material m = refundableEnchant.isRefundEnabled() ? enchantment.getGuiProperties().getGuiMaterial() : XMaterial.BARRIER.get();
         ItemStackBuilder builder = ItemStackBuilder.of(m);
 
-        if (enchantment.getGuiBase64() != null && !enchantment.getGuiBase64().isEmpty()) {
-            builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getGuiBase64()));
+        if (enchantment.getGuiProperties().getGuiBase64() != null && !enchantment.getGuiProperties().getGuiBase64().isEmpty()) {
+            builder = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(enchantment.getGuiProperties().getGuiBase64()));
         }
 
-        builder.name(refundableEnchant.isRefundEnabled() ? enchantment.getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
+        builder.name(refundableEnchant.isRefundEnabled() ? enchantment.getGuiProperties().getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
         builder.lore(refundableEnchant.isRefundEnabled() ? GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, level) : new ArrayList<>());
 
         return refundableEnchant.isRefundEnabled() ? builder.buildItem().bind(handler -> {

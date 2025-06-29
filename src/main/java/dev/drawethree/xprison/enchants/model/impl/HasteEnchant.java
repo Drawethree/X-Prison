@@ -2,17 +2,14 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XPotion;
 import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
-import dev.drawethree.xprison.enchants.XPrisonEnchants;
-import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentAbstract;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-public final class HasteEnchant extends XPrisonEnchantmentAbstract implements EquipabbleEnchantment {
+public final class HasteEnchant extends XPrisonEnchantmentBaseCore implements EquipabbleEnchantment {
 
-	public HasteEnchant(XPrisonEnchants instance) {
-		super(instance, 4);
+	public HasteEnchant() {
 	}
 
 	@Override
@@ -27,20 +24,5 @@ public final class HasteEnchant extends XPrisonEnchantmentAbstract implements Eq
 	@Override
 	public void onUnequip(Player p, ItemStack pickAxe, int level) {
 		p.removePotionEffect(XPotion.HASTE.get());
-	}
-
-	@Override
-	public double getChanceToTrigger(int enchantLevel) {
-		return 100.0;
-	}
-
-	@Override
-	public void reload() {
-		super.reload();
-	}
-
-	@Override
-	public String getAuthor() {
-		return "Drawethree";
 	}
 }

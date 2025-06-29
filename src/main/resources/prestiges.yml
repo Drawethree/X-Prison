@@ -1,16 +1,20 @@
 messages:
-  no_permission: "&c&l(!) &fYou do not have a permission to do that!"
-  prestige_up: '&e&lPRESTIGE &8» &7Congratulations, you prestiged up to &f%Prestige%'
-  not_enough_money_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need &a$%cost%.'
-  not_enough_tokens_prestige: '&e&lPRESTIGE &8» &7You don''t have enough money to prestige. You need %cost% Tokens.'
-  last_prestige: '&e&lPRESTIGE &8» &7You are at the last Prestige and have no more Prestiges.'
-  not_last_rank: '&e&lPRESTIGE &8» &7You must be last rank to prestige.'
-  top_updating: "&c&lLeaderboard is currently updating..."
-  prestige_set: "&e&lPRESTIGE &8» &7You have set %player%'s prestige to %amount%"
-  prestige_add: "&e&lPRESTIGE &8» &7You have added %amount% prestige to  %player%"
-  prestige_remove: "&e&lPRESTIGE &8» &7You have removed %amount% prestige from %player%"
-  max_prestige_started: "&e&lPRESTIGE &8» &7Started /maxprestige. This might take a while..."
-  max_prestige_done: "&e&lPRESTIGE &8» &7Congratulations, you've max prestiged from &cP%start_prestige% &7to &cP%prestige%&7."
+  no_permission: '&e&l(!) &fYou do not have a permission to do that!'
+  prestige_up: '&e&lRANKUP &8» &fCongratulations, you prestiged up to &f%Prestige%'
+  not_enough_money_prestige: '&e&lRANKUP &8» &fYou don''t have enough money to prestige.
+    You need &e$%cost%.'
+  not_enough_tokens_prestige: '&e&lRANKUP &8» &fYou don''t have enough money to prestige.
+    You need &e%cost% &fTokens.'
+  last_prestige: '&e&lRANKUP &8» &fYou are at the last Prestige and have no more Prestiges.'
+  not_last_rank: '&e&lRANKUP &8» &fYou must be last rank to prestige.'
+  top_updating: '&e&lRANKUP &8»  &fcurrently updating...'
+  prestige_set: '&e&lRANKUP &8» &fYou have set &e%player%''s &fprestige to &e%amount%'
+  prestige_add: '&e&lRANKUP &8» &fYou have added &e%amount% &fprestige to  &e%player%'
+  prestige_remove: '&e&lRANKUP &8» &fYou have removed %amount% prestige from &e%player%'
+  max_prestige_started: '&e&lRANKUP &8» &fStarted /maxprestige. This might take a
+    while...'
+  max_prestige_done: '&e&lRANKUP &8» &fCongratulations, you''ve max prestiged from
+    &e%start_prestige% &fto &e%prestige%&f.'
 # Interval in minutes for saving player data into database
 player_data_save_interval: 10
 # Should we use tokens as a currency for prestiges ?
@@ -20,10 +24,10 @@ reset_rank_after_prestige: false
 # Amount of players displayed in top lists
 top_players_amount: 10
 prestige-top-format:
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
-  - "&e&lPRESTIGE TOP"
-  - "{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &7%prestige% Prestige"
-  - "&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------"
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+  - '&e&lPRESTIGE TOP'
+  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%prestige% Prestige'
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
 # Infinite prestiges settings
 unlimited_prestiges:
   # Should we enable infinite prestiges ?
@@ -67,4 +71,5 @@ Prestige:
     # Commands to run when player reaches this prestige
     CMD:
       - tokens give 25000 %player%
-      - broadcast &a&l*&2&l*&a&l* &f%player%&7 has just prestiged to &8[%Prestige%&8] &a&l*&2&l*&a&l*
+      - broadcast &e&l*&2&l*&e&l* &f%player%&7 has just prestiged to &8[%Prestige%&8]
+        &e&l*&2&l*&e&l*
