@@ -3,10 +3,8 @@ package dev.drawethree.xprison.multipliers;
 import dev.drawethree.ultrabackpacks.api.event.BackpackSellEvent;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.XPrisonModuleAbstract;
-
 import dev.drawethree.xprison.api.multipliers.XPrisonMultipliersAPI;
 import dev.drawethree.xprison.api.multipliers.events.PlayerMultiplierReceiveEvent;
-import dev.drawethree.xprison.api.multipliers.model.Multiplier;
 import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;

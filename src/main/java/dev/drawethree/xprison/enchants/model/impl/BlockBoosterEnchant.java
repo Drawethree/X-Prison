@@ -2,7 +2,6 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
-
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.tokens.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
@@ -13,7 +12,6 @@ import me.lucko.helper.time.Time;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
-
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

@@ -3,7 +3,6 @@ package dev.drawethree.xprison.pickaxelevels.api;
 import dev.drawethree.xprison.api.pickaxelevels.XPrisonPickaxeLevelsAPI;
 import dev.drawethree.xprison.api.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.pickaxelevels.manager.PickaxeLevelsManager;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

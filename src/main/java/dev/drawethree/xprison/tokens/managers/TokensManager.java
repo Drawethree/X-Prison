@@ -1,14 +1,12 @@
 package dev.drawethree.xprison.tokens.managers;
 
 import com.cryptomorin.xseries.XEnchantment;
-
 import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
 import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.api.tokens.events.PlayerTokensLostEvent;
 import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.api.tokens.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
-
 import dev.drawethree.xprison.tokens.model.BlockReward;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonItem;

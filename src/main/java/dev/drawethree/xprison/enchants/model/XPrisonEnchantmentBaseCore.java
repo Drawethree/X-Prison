@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
-
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Setter;
 import org.bukkit.Material;

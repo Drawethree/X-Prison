@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
-import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
 
 public final class SQLiteDatabase extends PooledSQLDatabase {
 

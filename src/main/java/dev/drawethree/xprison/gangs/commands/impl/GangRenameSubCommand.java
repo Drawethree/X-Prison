@@ -2,7 +2,6 @@ package dev.drawethree.xprison.gangs.commands.impl;
 
 import dev.drawethree.xprison.gangs.commands.GangCommand;
 import dev.drawethree.xprison.gangs.commands.GangSubCommand;
-import dev.drawethree.xprison.gangs.enums.GangRenameResult;
 import dev.drawethree.xprison.gangs.model.GangImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.ChatColor;

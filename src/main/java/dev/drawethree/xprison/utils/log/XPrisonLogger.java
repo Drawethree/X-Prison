@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.utils.log;
 
-import dev.drawethree.xprison.XPrisonModuleAbstract;
 import dev.drawethree.xprison.utils.text.TextUtils;
 
 import java.util.logging.Level;

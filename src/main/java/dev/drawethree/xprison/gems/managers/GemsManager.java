@@ -2,7 +2,6 @@ package dev.drawethree.xprison.gems.managers;
 
 import com.cryptomorin.xseries.XEnchantment;
 import com.cryptomorin.xseries.XMaterial;
-
 import dev.drawethree.xprison.api.gems.events.PlayerGemsLostEvent;
 import dev.drawethree.xprison.api.gems.events.PlayerGemsReceiveEvent;
 import dev.drawethree.xprison.api.shared.currency.enums.LostCause;

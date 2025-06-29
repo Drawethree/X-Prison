@@ -7,7 +7,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static dev.drawethree.xprison.utils.log.XPrisonLogger.*;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
 public abstract class PooledSQLDatabase extends SQLDatabase {
 
