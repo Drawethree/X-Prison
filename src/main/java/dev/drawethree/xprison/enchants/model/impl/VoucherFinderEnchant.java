@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,11 +15,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 
 import java.util.List;
 
-public final class VoucherFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
+public final class VoucherFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private List<CommandWithChance> commandsToExecute;
-    private int requiredPickaxeLevel;
 
     public VoucherFinderEnchant() {
     }
@@ -50,12 +48,6 @@ public final class VoucherFinderEnchant extends XPrisonEnchantmentBaseCore imple
                 new TypeToken<List<CommandWithChance>>() {
                 }.getType()
         );
-        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
-    }
-
-    @Override
-    public int getRequiredPickaxeLevel() {
-        return requiredPickaxeLevel;
     }
 
     @AllArgsConstructor

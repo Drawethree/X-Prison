@@ -42,6 +42,7 @@ public class XPrisonEnchantmentBaseCore extends XPrisonEnchantmentAbstract {
         this.refundEnabled = config.get("refund").getAsJsonObject().get("enabled").getAsBoolean();
         this.refundGuiSlot = config.get("refund").getAsJsonObject().get("guiSlot").getAsInt();
         this.refundPercentage = config.get("refund").getAsJsonObject().get("percentage").getAsDouble();
+        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
     }
 
     private void loadGuiProperties(JsonObject config) {

@@ -13,6 +13,7 @@
   "explosionType": "CUBE",
   "sounds": true,
   "useEvents": false,
+  "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,
     "guiSlot": 35,

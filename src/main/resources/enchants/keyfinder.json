@@ -8,6 +8,7 @@
   "maxLevel": 500,
   "chance": 0.2,
   "initialCost": 350,
+  "pickaxeLevelRequired": 1,
   "commands": [
     "cc give physical Coal 1 %player%",
     "cc give physical Iron 1 %player%",

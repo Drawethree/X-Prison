@@ -9,6 +9,7 @@
   "maxLevel": 500,
   "chance": 0.2,
   "initialCost": 175,
+  "pickaxeLevelRequired": 1,
   "command": "prestigeadmin add %player% %amount%",
   "refund": {
     "enabled": true,

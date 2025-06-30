@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -13,11 +12,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public final class KeyallsEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
+public final class KeyallsEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private List<String> commandsToExecute;
-    private int requiredPickaxeLevel;
 
     public KeyallsEnchant() {
     }
@@ -45,11 +43,6 @@ public final class KeyallsEnchant extends XPrisonEnchantmentBaseCore implements 
                 config.get("commands"),
                 new TypeToken<List<String>>(){}.getType()
         );
-        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
     }
 
-    @Override
-    public int getRequiredPickaxeLevel() {
-        return requiredPickaxeLevel;
-    }
 }

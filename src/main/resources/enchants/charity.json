@@ -9,6 +9,7 @@
   "chance": 0.2,
   "amountToGive": "level * 1000",
   "initialCost": 25,
+  "pickaxeLevelRequired": 1,
   "messagesEnabled": true,
   "refund": {
     "enabled": true,

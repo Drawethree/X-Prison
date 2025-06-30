@@ -6,7 +6,6 @@ import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
 import dev.drawethree.xprison.api.enchants.events.NukeTriggerEvent;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
@@ -32,14 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class NukeEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant, RequiresPickaxeLevel {
+public final class NukeEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private boolean countBlocksBroken;
     private boolean removeBlocks;
     private boolean useEvents;
     private String message;
-    private int requiredPickaxeLevel;
 
     public NukeEnchant() {
     }
@@ -184,11 +182,5 @@ public final class NukeEnchant extends XPrisonEnchantmentBaseCore implements Blo
         this.removeBlocks = config.get("removeBlocks").getAsBoolean();
         this.useEvents = config.get("useEvents").getAsBoolean();
         this.message = TextUtils.applyColor(config.get("message").getAsString());
-        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
-    }
-
-    @Override
-    public int getRequiredPickaxeLevel() {
-        return requiredPickaxeLevel;
     }
 }

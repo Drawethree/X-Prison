@@ -6,7 +6,7 @@
 
     <groupId>dev.drawethree.xprison</groupId>
     <artifactId>X-Prison</artifactId>
-    <version>2025.1.1</version>
+    <version>2025.1.2</version>
     <name>XPrison</name>
 
     <repositories>
@@ -64,7 +64,7 @@
         <org.junit.version>5.13.1</org.junit.version>
         <org.mockito.version>5.18.0</org.mockito.version>
         <org.projectlombok.lombok.version>1.18.38</org.projectlombok.lombok.version>
-        <dev.drawethree.xprison.api.version>1.0</dev.drawethree.xprison.api.version>
+        <dev.drawethree.xprison.api.version>1.1-SNAPSHOT</dev.drawethree.xprison.api.version>
     </properties>
 
     <dependencyManagement>

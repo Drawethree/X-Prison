@@ -10,6 +10,7 @@
   "initialCost": 200,
   "countBlocksBroken": true,
   "useEvents": false,
+  "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,
     "guiSlot": 36,

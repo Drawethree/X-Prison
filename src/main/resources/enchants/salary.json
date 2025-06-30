@@ -9,6 +9,7 @@
   "chance": 0.2,
   "amountToGive": "level * 1000",
   "initialCost": 35,
+  "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,
     "guiSlot": 38,

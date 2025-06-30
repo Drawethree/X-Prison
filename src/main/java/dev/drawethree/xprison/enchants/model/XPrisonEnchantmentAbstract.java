@@ -1,12 +1,13 @@
 package dev.drawethree.xprison.enchants.model;
 
 import dev.drawethree.xprison.api.enchants.model.RefundableEnchant;
+import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantmentGuiProperties;
 import lombok.Getter;
 
 @Getter
-public abstract class XPrisonEnchantmentAbstract implements XPrisonEnchantment, RefundableEnchant {
+public abstract class XPrisonEnchantmentAbstract implements XPrisonEnchantment, RefundableEnchant, RequiresPickaxeLevel {
 
 	protected int id;
 	protected String rawName;
@@ -20,24 +21,10 @@ public abstract class XPrisonEnchantmentAbstract implements XPrisonEnchantment, 
 	protected boolean refundEnabled;
 	protected int refundGuiSlot;
 	protected double refundPercentage;
+	protected int requiredPickaxeLevel;
 
 	public XPrisonEnchantmentAbstract() {
 
-	}
-
-	@Override
-	public boolean isRefundEnabled() {
-		return refundEnabled;
-	}
-
-	@Override
-	public double getRefundPercentage() {
-		return refundPercentage;
-	}
-
-	@Override
-	public int getRefundGuiSlot() {
-		return refundGuiSlot;
 	}
 
 	public int getMaxLevel() {

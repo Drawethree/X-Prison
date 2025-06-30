@@ -7,6 +7,7 @@
   "increaseCostBy": 75,
   "maxLevel": 300,
   "initialCost": 75,
+  "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,
     "guiSlot": 28,
