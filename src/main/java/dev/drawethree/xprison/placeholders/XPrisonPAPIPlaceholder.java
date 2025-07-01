@@ -146,7 +146,7 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 				return String.format("%,d", plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "blocks":
 			case "blocks_2":
-				return String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+				return String.format("%,d", plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(player));
 			case "multiplier_sell": {
 				Multiplier sellMulti = plugin.getMultipliers().getApi().getSellMultiplier(player);
 				if (sellMulti == null || !sellMulti.isActive()) {
@@ -212,9 +212,9 @@ public final class XPrisonPAPIPlaceholder extends PlaceholderExpansion {
 			case "tokens_1":
 				return String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(player));
 			case "blocks_1":
-				return String.valueOf(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+				return String.valueOf(plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(player));
 			case "blocks_3":
-				return MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(player));
+				return MathUtils.formatNumber(plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(player));
 			case "gems_1":
 				return String.valueOf(plugin.getGems().getGemsManager().getPlayerGems(player));
 			case "pickaxe_level": {

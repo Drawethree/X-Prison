@@ -4,16 +4,10 @@ messages:
   not_enough_tokens: '&e&lTOKENS &8» &fYou don''t have enough tokens'
   your_tokens: '&e&lTOKENS &8» &fYou have &e%tokens% &fTokens'
   other_tokens: '&e&lTOKENS &8» &e%player%''s Tokens: %tokens%'
-  your_blocks: '&e&lBLOCKS &8» &fYou mined &e%blocks% &fBlocks'
-  other_blocks: '&e&lBLOCKS &8» &e%player% &fmined &e%blocks% &fBlocks'
   withdraw_successful: '&e&lTOKENS &8» &fYou have withdrawn &e%value%x %amount% Tokens!'
   admin_set_tokens: '&e&lTOKENS &8» &fSuccessfuly set &e%player%''s &ftokens to &e%tokens%.'
   admin_give_tokens: '&e&lTOKENS &8» &fSuccessfuly given &e%tokens% &ftokens to &e%player%.'
   admin_remove_tokens: '&e&lTOKENS &8» &fSuccessfuly removed &e%tokens% &ftokens from
-    &e%player%.'
-  admin_set_blocks: '&e&lTOKENS &8» &fSuccessfuly set &e%blocks%''s &fblocks to &e%blocks%.'
-  admin_give_blocks: '&e&lTOKENS &8» &fSuccessfuly given &e%blocks% &fblocks to &e%player%.'
-  admin_remove_blocks: '&e&lTOKENS &8» &fSuccessfuly removed &e%blocks% &fblocks from
     &e%player%.'
   not_token_item: '&e&lTOKENS &8» &fThis is not a token item!'
   tokens_redeem: '&e&lTOKENS &8» &eYou redeemed &f%tokens% &etoken(s)'
@@ -28,8 +22,7 @@ messages:
   token_message_disabled: '&e&lTOKENS &8» &fMessages &e&lOFF'
   token_message_enabled: '&e&lTOKENS &8» &fMessages &e&lON'
   tokens_received_mining: '&e&lTOKENS &8» &fYou found &e%amount% Tokens &fwhile mining'
-  lucky_block_mined: '&e&lLUCKY BLOCK &8» &fYou have mined a &e&lLUCKY BLOCK &fand
-    received &e%amount% Tokens!'
+
 # Starting tokens for players
 starting-tokens: 1000
 tokens:
@@ -45,18 +38,13 @@ tokens:
     name: '&ex%amount% &fTokens'
     lore:
       - '&e➥ &fRight-Click to Redeem'
-# LuckyBlocks settings for rewards
-lucky-blocks:
-  SPONGE:
-    - tokens give %player% 1000
-# This value determines when will the next weekly top reset be. Updated automatically with /resetblockstopweekly command
-next-reset-weekly: 0
+
+
 # Should players receive token messages when mining?
 display-token-messages: true
 # Interval in minutes for saving player data into database
 player_data_save_interval: 10
 # Cooldown in seconds to check other player's tokens balances (/tokens <player>)
-# Applies also for /blocks <player>
 tokens-command-cooldown: 5
 # Amount of players displayed in top lists
 top_players_amount: 10
@@ -66,16 +54,6 @@ tokens-top-format:
   - '&e&lTOKENS TOP'
   - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%tokens% Tokens'
   - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
-blocks-top-format:
-  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
-  - '&e&lBLOCKS TOP'
-  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%blocks% Blocks'
-  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
-blocks-top-weekly-format:
-  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
-  - '&e&lBLOCKS TOP WEEKLY'
-  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%blocks% Blocks'
-  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
 # Aliases for /tokens command
 tokens-command-aliases:
   - token
@@ -84,10 +62,6 @@ tokens-command-aliases:
 tokens-top-command-aliases:
   - tokentop
   - tokenstop
-# Aliases for /blockstop command
-blocks-top-command-aliases:
-  - blockstop
-  - blocktop
 # Aliases for /tokenmessage command
 token-message-command-aliases:
   - tokenmessage

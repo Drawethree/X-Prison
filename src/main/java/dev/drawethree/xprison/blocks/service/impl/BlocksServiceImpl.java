@@ -1,7 +1,7 @@
-package dev.drawethree.xprison.tokens.service.impl;
+package dev.drawethree.xprison.blocks.service.impl;
 
-import dev.drawethree.xprison.tokens.repo.BlocksRepository;
-import dev.drawethree.xprison.tokens.service.BlocksService;
+import dev.drawethree.xprison.blocks.repo.BlocksRepository;
+import dev.drawethree.xprison.blocks.service.BlocksService;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Map;

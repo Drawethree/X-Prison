@@ -5,6 +5,7 @@ import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.tokens.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -65,6 +66,6 @@ public final class BlockBoosterEnchant extends XPrisonEnchantmentBaseCore implem
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
     }
 }

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -38,7 +39,7 @@ public final class KeyallsEnchant extends XPrisonEnchantmentBaseCore implements 
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
         this.commandsToExecute = new Gson().fromJson(
                 config.get("commands"),
                 new TypeToken<List<String>>(){}.getType()

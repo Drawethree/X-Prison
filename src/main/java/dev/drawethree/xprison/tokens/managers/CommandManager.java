@@ -14,7 +14,10 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -64,7 +67,7 @@ public class CommandManager {
 					}
 
 					if (c.args().isEmpty() && c.sender() instanceof Player) {
-						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), true);
+						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender());
 						return;
 					}
 
@@ -77,7 +80,7 @@ public class CommandManager {
 						}
 					} else {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target, true);
+						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target);
 					}
 				}).registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getTokensCommandAliases());
 
@@ -88,34 +91,6 @@ public class CommandManager {
 					this.plugin.getTokensManager().toggleTokenMessage(c.sender());
 				}).registerAndBind(this.plugin.getCore(), "tokenmessage");
 
-		// /blockstop, / blocktop
-		Commands.create()
-				.handler(c -> {
-					if (c.args().isEmpty()) {
-						this.plugin.getTokensManager().sendBlocksTop(c.sender());
-					}
-				})
-				.registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getBlocksTopCommandAliases());
-
-		// /blockstopweekly, /blockstopw
-		Commands.create()
-				.handler(c -> {
-					if (c.args().isEmpty()) {
-						this.plugin.getTokensManager().sendBlocksTopWeekly(c.sender());
-					}
-				})
-				.registerAndBind(this.plugin.getCore(), "blockstopweekly", "blockstopw");
-
-		// /blockstopweeklyreset
-		Commands.create()
-				.assertPermission(TokensConstants.TOKENS_ADMIN_PERM, this.plugin.getTokensConfig().getMessage("no_permission"))
-				.handler(c -> {
-					if (c.args().isEmpty()) {
-						this.plugin.getTokensManager().resetBlocksTopWeekly(c.sender());
-					}
-				})
-				.registerAndBind(this.plugin.getCore(), "blockstopweeklyreset");
-
 		// /tokenstop, /tokentop
 		Commands.create()
 				.handler(c -> {
@@ -124,52 +99,6 @@ public class CommandManager {
 					}
 				})
 				.registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getTokensTopCommandAliases());
-
-		// /blocks
-		Commands.create()
-				.handler(c -> {
-					if (!checkCommandCooldown(c.sender())) {
-						return;
-					}
-
-					if (c.args().isEmpty()) {
-						this.plugin.getTokensManager().sendInfoMessage(c.sender(), (OfflinePlayer) c.sender(), false);
-					} else if (c.args().size() == 1) {
-						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
-						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target, false);
-					}
-				})
-				.registerAndBind(this.plugin.getCore(), "blocks");
-
-		// /blocksadmin, /blocksa
-		Commands.create()
-				.tabHandler(c -> Arrays.asList("add", "remove", "set"))
-				.assertPermission(TokensConstants.TOKENS_ADMIN_PERM, this.plugin.getTokensConfig().getMessage("no_permission"))
-				.handler(c -> {
-					if (c.args().size() == 3) {
-
-						OfflinePlayer target = c.arg(1).parseOrFail(OfflinePlayer.class);
-						long amount = c.arg(2).parseOrFail(Long.class);
-
-						switch (c.rawArg(0).toLowerCase()) {
-							case "add":
-								this.plugin.getTokensManager().addBlocksBroken(c.sender(), target, amount);
-								break;
-							case "remove":
-								this.plugin.getTokensManager().removeBlocksBroken(c.sender(), target, amount);
-								break;
-							case "set":
-								this.plugin.getTokensManager().setBlocksBroken(c.sender(), target, amount);
-								break;
-							default:
-								PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
-								break;
-						}
-					} else {
-						PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
-					}
-				})
-				.registerAndBind(this.plugin.getCore(), "blocksadmin", "blocksa");
 	}
 
 	private List<String> createTabHandler(CommandContext<CommandSender> context) {

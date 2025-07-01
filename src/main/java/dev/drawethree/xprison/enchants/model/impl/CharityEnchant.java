@@ -5,10 +5,10 @@ import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
+import dev.drawethree.xprison.utils.expression.ExpressionUtils;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.utils.Players;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -28,7 +28,7 @@ public final class CharityEnchant extends XPrisonEnchantmentBaseCore implements 
             return;
         }
 
-        long amount = (long) createExpression(enchantLevel).evaluate();
+        long amount = (long) ExpressionUtils.createExpressionWithSingleVariable(amountToGiveExpression,"level", enchantLevel).evaluate();
 
         for (Player p : Players.all()) {
             getCore().getEconomy().depositPlayer(p, amount);
@@ -53,15 +53,8 @@ public final class CharityEnchant extends XPrisonEnchantmentBaseCore implements 
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.amountToGiveExpression = config.get("amountToGive").getAsString();
-        this.messagesEnabled = config.get("messagesEnabled").getAsBoolean();
-    }
-
-    private Expression createExpression(int level) {
-        return new ExpressionBuilder(this.amountToGiveExpression)
-                .variables("level")
-                .build()
-                .setVariable("level", level);
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
+        this.amountToGiveExpression = JsonUtils.getString(config,"amountToGive","");
+        this.messagesEnabled = JsonUtils.getBoolean(config,"messagesEnabled",false);
     }
 }

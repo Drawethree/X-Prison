@@ -1,8 +1,8 @@
-package dev.drawethree.xprison.tokens.config;
+package dev.drawethree.xprison.blocks.config;
 
+import dev.drawethree.xprison.blocks.XPrisonBlocks;
+import dev.drawethree.xprison.blocks.model.BlockReward;
 import dev.drawethree.xprison.config.FileManager;
-import dev.drawethree.xprison.tokens.XPrisonTokens;
-import dev.drawethree.xprison.tokens.model.BlockReward;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,11 +15,11 @@ import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
 public class BlockRewardsConfig {
 
-	private final XPrisonTokens plugin;
+	private final XPrisonBlocks plugin;
 	private final FileManager.Config config;
 	private final Map<Long, BlockReward> blockRewards;
 
-	public BlockRewardsConfig(XPrisonTokens plugin) {
+	public BlockRewardsConfig(XPrisonBlocks plugin) {
 		this.plugin = plugin;
 		this.config = this.plugin.getCore().getFileManager().getConfig("block-rewards.yml").copyDefaults(true).save();
 		this.blockRewards = new LinkedHashMap<>();

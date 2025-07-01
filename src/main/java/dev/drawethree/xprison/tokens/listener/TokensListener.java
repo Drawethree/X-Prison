@@ -44,7 +44,7 @@ public class TokensListener {
 				.handler(e -> {
 					List<Block> blocks = new ArrayList<>();
 					blocks.add(e.getBlock());
-					this.plugin.getTokensManager().handleBlockBreak(e.getPlayer(), blocks, true);
+					this.plugin.getTokensManager().handleBlockBreak(e.getPlayer(), blocks);
 				}).bindWith(plugin.getCore());
 	}
 
@@ -72,7 +72,6 @@ public class TokensListener {
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
 					this.plugin.getTokensManager().savePlayerData(Collections.singletonList(e.getPlayer()), true, true);
-					e.getPlayer().getActivePotionEffects().forEach(effect -> e.getPlayer().removePotionEffect(effect.getType()));
 				}).bindWith(plugin.getCore());
 	}
 

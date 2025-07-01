@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import dev.drawethree.xprison.utils.expression.ExpressionUtils;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import org.bukkit.event.block.BlockBreakEvent;
 
 
@@ -19,7 +19,7 @@ public final class SalaryEnchant extends XPrisonEnchantmentBaseCore implements B
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        double randAmount = createExpression(enchantLevel).evaluate();
+        double randAmount = ExpressionUtils.createExpressionWithSingleVariable(amountToGiveExpression,"level", enchantLevel).evaluate();
 
         getCore().getEconomy().depositPlayer(e.getPlayer(), randAmount);
 
@@ -36,14 +36,7 @@ public final class SalaryEnchant extends XPrisonEnchantmentBaseCore implements B
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.amountToGiveExpression = config.get("amountToGive").getAsString();
-    }
-
-    private Expression createExpression(int level) {
-        return new ExpressionBuilder(this.amountToGiveExpression)
-                .variables("level")
-                .build()
-                .setVariable("level", level);
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
+        this.amountToGiveExpression = JsonUtils.getString(config,"amountToGive", "");
     }
 }

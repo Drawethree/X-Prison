@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import dev.drawethree.xprison.utils.expression.ExpressionUtils;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -20,7 +20,7 @@ public final class PrestigeFinderEnchant extends XPrisonEnchantmentBaseCore impl
 
     @Override
     public void onBlockBreak(BlockBreakEvent e, int enchantLevel) {
-        int levels = (int) createExpression(enchantLevel).evaluate();
+        int levels = (int) ExpressionUtils.createExpressionWithSingleVariable(amountToGiveExpression,"level", enchantLevel).evaluate();
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), commandToExecute.replace("%player%", e.getPlayer().getName()).replace("%amount%", String.valueOf(levels)));
     }
 
@@ -31,15 +31,8 @@ public final class PrestigeFinderEnchant extends XPrisonEnchantmentBaseCore impl
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.amountToGiveExpression = config.get("amountToGive").getAsString();
-        this.commandToExecute = config.get("command").getAsString();
-    }
-
-    private Expression createExpression(int level) {
-        return new ExpressionBuilder(this.amountToGiveExpression)
-                .variables("level")
-                .build()
-                .setVariable("level", level);
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
+        this.amountToGiveExpression = JsonUtils.getString(config,"amountToGive", "");
+        this.commandToExecute = JsonUtils.getString(config,"command", "");
     }
 }

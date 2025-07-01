@@ -6,8 +6,8 @@ import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.gems.XPrisonGems;
-import net.objecthunter.exp4j.Expression;
-import net.objecthunter.exp4j.ExpressionBuilder;
+import dev.drawethree.xprison.utils.expression.ExpressionUtils;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public final class GemFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
@@ -25,7 +25,7 @@ public final class GemFinderEnchant extends XPrisonEnchantmentBaseCore implement
             return;
         }
 
-        long amount = (long) createExpression(enchantLevel).evaluate();
+        long amount = (long) ExpressionUtils.createExpressionWithSingleVariable(amountToGiveExpression,"level", enchantLevel).evaluate();
         getCore().getGems().getGemsManager().giveGems(e.getPlayer(), amount, null, ReceiveCause.MINING);
     }
 
@@ -36,14 +36,9 @@ public final class GemFinderEnchant extends XPrisonEnchantmentBaseCore implement
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.amountToGiveExpression = config.get("amountToGive").getAsString();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
+        this.amountToGiveExpression = JsonUtils.getString(config,"amountToGive","");
     }
 
-    private Expression createExpression(int level) {
-        return new ExpressionBuilder(this.amountToGiveExpression)
-                .variables("level")
-                .build()
-                .setVariable("level", level);
-    }
+
 }

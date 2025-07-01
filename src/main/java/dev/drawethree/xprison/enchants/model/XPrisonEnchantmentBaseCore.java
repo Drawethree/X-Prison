@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -31,18 +32,20 @@ public class XPrisonEnchantmentBaseCore extends XPrisonEnchantmentAbstract {
     }
 
     private void loadBaseProperties(JsonObject config) {
-        this.id = config.get("id").getAsInt();
-        this.rawName = config.get("rawName").getAsString();
-        this.name = TextUtils.applyColor(config.get("name").getAsString());
+        this.id = JsonUtils.getInt(config,"id",-1);
+        this.rawName = JsonUtils.getString(config, "rawName", "");
+        this.name = TextUtils.applyColor(JsonUtils.getString(config, "name", ""));
         this.nameWithoutColor = this.name.replaceAll("§.", "");
-        this.enabled = config.get("enabled").getAsBoolean();
-        this.maxLevel = config.get("maxLevel").getAsInt();
-        this.baseCost = config.get("initialCost").getAsLong();
-        this.increaseCost = config.get("increaseCostBy").getAsLong();
-        this.refundEnabled = config.get("refund").getAsJsonObject().get("enabled").getAsBoolean();
-        this.refundGuiSlot = config.get("refund").getAsJsonObject().get("guiSlot").getAsInt();
-        this.refundPercentage = config.get("refund").getAsJsonObject().get("percentage").getAsDouble();
-        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
+        this.enabled = JsonUtils.getBoolean(config,"enabled",false);
+        this.maxLevel = JsonUtils.getInt(config,"maxLevel",0);
+        this.baseCost = JsonUtils.getLong(config,"initialCost", 0);
+        this.increaseCost = JsonUtils.getLong(config,"increaseCostBy", 0);
+        this.requiredPickaxeLevel = JsonUtils.getInt(config,"pickaxeLevelRequired",1);
+
+        JsonObject refundObject = JsonUtils.getObject(config,"refund");
+        this.refundEnabled = JsonUtils.getBoolean(refundObject,"enabled", false);
+        this.refundGuiSlot = JsonUtils.getInt(refundObject,"guiSlot", -1);
+        this.refundPercentage = JsonUtils.getDouble(refundObject, "percentage", 0.0);
     }
 
     private void loadGuiProperties(JsonObject config) {

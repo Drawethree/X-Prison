@@ -1,4 +1,4 @@
-package dev.drawethree.xprison.tokens.repo;
+package dev.drawethree.xprison.blocks.repo;
 
 import org.bukkit.OfflinePlayer;
 

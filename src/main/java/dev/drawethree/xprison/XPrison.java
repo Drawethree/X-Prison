@@ -6,7 +6,10 @@ import dev.drawethree.xprison.api.XPrisonAPI;
 import dev.drawethree.xprison.api.XPrisonAPIImpl;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
+import dev.drawethree.xprison.blocks.XPrisonBlocks;
 import dev.drawethree.xprison.config.FileManager;
+import dev.drawethree.xprison.core.XPrisonCoreListener;
+import dev.drawethree.xprison.core.XPrisonMainCommand;
 import dev.drawethree.xprison.database.SQLDatabase;
 import dev.drawethree.xprison.database.impl.MySQLDatabase;
 import dev.drawethree.xprison.database.impl.SQLiteDatabase;
@@ -16,8 +19,6 @@ import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.gangs.XPrisonGangs;
 import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.history.XPrisonHistory;
-import dev.drawethree.xprison.mainmenu.MainMenu;
-import dev.drawethree.xprison.mainmenu.help.HelpGui;
 import dev.drawethree.xprison.migrator.ItemMigrator;
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
@@ -35,16 +36,11 @@ import dev.drawethree.xprison.utils.log.XPrisonLogger;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import lombok.Getter;
-import me.lucko.helper.Commands;
-import me.lucko.helper.Events;
 import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
@@ -62,10 +58,12 @@ public final class XPrison extends ExtendedJavaPlugin {
 	private static XPrison instance;
 
 	private boolean debugMode;
+	private boolean useMetrics;
 	private Map<String, XPrisonModuleAbstract> modules;
 	private SQLDatabase pluginDatabase;
 	private Economy economy;
 	private FileManager fileManager;
+	private XPrisonBlocks blocks;
 	private XPrisonTokens tokens;
 	private XPrisonGems gems;
 	private XPrisonRanks ranks;
@@ -96,6 +94,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.fileManager = new FileManager(this);
 		this.fileManager.getConfig("config.yml").copyDefaults(true).save();
 		this.debugMode = this.getConfig().getBoolean("debug-mode", false);
+		this.useMetrics = this.getConfig().getBoolean("enable-metrics", false);
 
 		if (!this.initDatabase()) {
 			this.getServer().getPluginManager().disablePlugin(this);
@@ -122,11 +121,20 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 		this.registerPlaceholders();
 
-		this.registerMainEvents();
 		this.registerMainCommand();
-		this.startMetrics();
+		this.registerCoreListener();
+
+		this.startMetricsIfEnabled();
 
 		SkullUtils.init();
+	}
+
+	private void registerMainCommand() {
+		new XPrisonMainCommand(this).register();
+	}
+
+	private void registerCoreListener() {
+		new XPrisonCoreListener(this).subscribeToEvents();
 	}
 
 	private void initApi() {
@@ -159,6 +167,10 @@ public final class XPrison extends ExtendedJavaPlugin {
 	}
 
 	private void loadModules() {
+
+		if (this.getConfig().getBoolean("modules.blocks")) {
+			this.loadModule(blocks);
+		}
 		if (this.getConfig().getBoolean("modules.tokens")) {
 			this.loadModule(tokens);
 		}
@@ -240,6 +252,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	}
 
 	private void initModules() {
+		this.blocks = new XPrisonBlocks(this);
 		this.tokens = new XPrisonTokens(this);
 		this.gems = new XPrisonGems(this);
 		this.ranks = new XPrisonRanks(this);
@@ -253,6 +266,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.mines = new XPrisonMines(this);
 		this.history = new XPrisonHistory(this);
 
+		this.modules.put(this.blocks.getName().toLowerCase(), this.blocks);
 		this.modules.put(this.tokens.getName().toLowerCase(), this.tokens);
 		this.modules.put(this.gems.getName().toLowerCase(), this.gems);
 		this.modules.put(this.ranks.getName().toLowerCase(), this.ranks);
@@ -267,16 +281,10 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.modules.put(this.history.getName().toLowerCase(), this.history);
 	}
 
-	private void registerMainEvents() {
-		//Updating of mapping table
-		Events.subscribe(PlayerJoinEvent.class, EventPriority.LOW)
-				.handler(e -> {
-					this.nicknameService.updatePlayerNickname(e.getPlayer());
-				}).bindWith(this);
-	}
-
-	private void startMetrics() {
-		new Metrics(this, Constants.METRICS_SERVICE_ID);
+	private void startMetricsIfEnabled() {
+		if (useMetrics) {
+			new Metrics(this, Constants.METRICS_SERVICE_ID);
+		}
 	}
 
 	private void loadModule(XPrisonModuleAbstract module) {
@@ -315,47 +323,6 @@ public final class XPrison extends ExtendedJavaPlugin {
 		info(String.format("&aModule &e%s &areloaded.", module.getName()));
 	}
 
-	private void registerMainCommand() {
-
-		List<String> commandAliases = this.getConfig().getStringList("main-command-aliases");
-		String[] commandAliasesArray = commandAliases.toArray(new String[commandAliases.size()]);
-
-		Commands.create()
-				.assertPermission("xprison.admin")
-				.handler(c -> {
-                    if (c.args().isEmpty() && c.sender() instanceof Player) {
-                        new MainMenu(this, (Player) c.sender()).open();
-                    } else if (c.args().size() >= 1) {
-                        if ("reload".equalsIgnoreCase(c.rawArg(0))) {
-                            final String name = c.args().size() >= 2 ? c.rawArg(1).trim().toLowerCase().replace("-", "") : "all";
-                            switch (name) {
-                                case "all":
-                                case "*":
-                                    getModules().forEach(this::reloadModule);
-                                    getItemMigrator().reload();
-                                    c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded all the plugin"));
-                                    break;
-                                case "migrator":
-                                case "itemmigrator":
-                                    getItemMigrator().reload();
-                                    c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded item migrator"));
-                                    break;
-                                default:
-                                    final XPrisonModuleAbstract module = modules.get(name);
-                                    if (module != null) {
-                                        reloadModule(module);
-                                        c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded &f" + name + " &amodule"));
-                                    } else {
-                                        c.sender().sendMessage(TextUtils.applyColor("&cThe module &6" + c.rawArg(1) + " &cdoesn't exist"));
-                                    }
-                                    break;
-                            }
-                        } else if (c.sender() instanceof Player && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
-                            new HelpGui((Player) c.sender()).open();
-                        }
-                    }
-				}).registerAndBind(this, commandAliasesArray);
-	}
 
 	@Override
 	protected void disable() {
@@ -368,11 +335,9 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 
 		if (this.pluginDatabase != null) {
-			if (this.pluginDatabase instanceof SQLDatabase) {
-				SQLDatabase sqlDatabase = (SQLDatabase) this.pluginDatabase;
-				sqlDatabase.close();
-			}
-		}
+            SQLDatabase sqlDatabase = this.pluginDatabase;
+            sqlDatabase.close();
+        }
 	}
 
 
@@ -462,5 +427,9 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 	public WorldGuardWrapper getWorldGuardWrapper() {
 		return WorldGuardWrapper.getInstance();
+	}
+
+	public XPrisonModuleAbstract getModuleByName(String name) {
+		return modules.get(name);
 	}
 }

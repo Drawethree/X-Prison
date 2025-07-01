@@ -47,7 +47,7 @@
 
     <properties>
         <project.java.version>17</project.java.version>
-        <org.spigotmc.spigot-api.version>1.21.6-R0.1-SNAPSHOT</org.spigotmc.spigot-api.version>
+        <org.spigotmc.spigot-api.version>1.21.7-R0.1-SNAPSHOT</org.spigotmc.spigot-api.version>
         <com.mojang.authlib.version>6.0.54</com.mojang.authlib.version>
         <com.saicone.rtag.version>1.5.11</com.saicone.rtag.version>
         <com.github.cryptomorin.XSeries.version>13.3.1</com.github.cryptomorin.XSeries.version>

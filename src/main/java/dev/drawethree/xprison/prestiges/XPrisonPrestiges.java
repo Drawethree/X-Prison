@@ -16,8 +16,11 @@ import dev.drawethree.xprison.prestiges.repo.PrestigeRepository;
 import dev.drawethree.xprison.prestiges.repo.impl.PrestigeRepositoryImpl;
 import dev.drawethree.xprison.prestiges.service.PrestigeService;
 import dev.drawethree.xprison.prestiges.service.impl.PrestigeServiceImpl;
-import dev.drawethree.xprison.prestiges.task.SavePlayerDataTask;
+import dev.drawethree.xprison.utils.task.RepeatingTask;
 import lombok.Getter;
+import me.lucko.helper.utils.Players;
+
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerDataHolder {
@@ -32,7 +35,7 @@ public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerData
 	@Getter
 	private XPrisonPrestigesAPI api;
 
-	private SavePlayerDataTask savePlayerDataTask;
+	private RepeatingTask savePlayerDataTask;
 
 	@Getter
 	private final XPrison core;
@@ -76,7 +79,11 @@ public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerData
 
 		this.api = new XPrisonPrestigesAPIImpl(this);
 
-		this.savePlayerDataTask = new SavePlayerDataTask(this);
+		this.savePlayerDataTask = new RepeatingTask.Builder().
+				initialDelay(30).
+				initialDelayUnit(TimeUnit.SECONDS).
+				interval(getPrestigeConfig().getSavePlayerDataInterval()).intervalUnit(TimeUnit.MINUTES).
+				task(() ->	Players.all().forEach(p -> getPrestigeManager().savePlayerData(p, false, true))).build();
 		this.savePlayerDataTask.start();
 
 		this.registerCommands();

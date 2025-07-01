@@ -9,8 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class ConfirmationGui extends Gui {
 
-	private static final ItemStack YES_ITEM = ItemStackBuilder.of(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()).name("&aYES").build();
-	private static final ItemStack NO_ITEM = ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name("&cNO").build();
+	private static final ItemStack YES_ITEM = ItemStackBuilder.of(XMaterial.LIME_STAINED_GLASS_PANE.parseItem()).name("&a&lYES").build();
+	private static final ItemStack NO_ITEM = ItemStackBuilder.of(XMaterial.RED_STAINED_GLASS_PANE.parseItem()).name("&c&cNO").build();
 
 	public ConfirmationGui(Player player, String title) {
 		super(player, 6, title);

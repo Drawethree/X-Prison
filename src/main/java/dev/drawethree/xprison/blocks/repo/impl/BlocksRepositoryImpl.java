@@ -1,8 +1,8 @@
-package dev.drawethree.xprison.tokens.repo.impl;
+package dev.drawethree.xprison.blocks.repo.impl;
 
+import dev.drawethree.xprison.blocks.repo.BlocksRepository;
 import dev.drawethree.xprison.database.SQLDatabase;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
-import dev.drawethree.xprison.tokens.repo.BlocksRepository;
 import org.bukkit.OfflinePlayer;
 
 import java.sql.Connection;

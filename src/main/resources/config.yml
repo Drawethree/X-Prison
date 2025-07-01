@@ -1,5 +1,7 @@
 # Should plugin show debug messages?
 debug-mode: false
+# Should plugin send your server data to bStats ? (https://bstats.org/)
+enable-metrics: false
 # Database type (SQLite, MySQL)
 database_type: SQLite
 # MySQL connection details
@@ -23,6 +25,7 @@ connection_properties:
   character_encoding: "utf8"
 # Enabling / Disabling of specific modules
 modules:
+  blocks: true
   tokens: true
   gems: true
   ranks: true

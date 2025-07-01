@@ -7,12 +7,14 @@ import com.google.gson.JsonObject;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import me.lucko.helper.random.RandomSelector;
 import org.bukkit.Bukkit;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class VoucherFinderEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
@@ -40,14 +42,14 @@ public final class VoucherFinderEnchant extends XPrisonEnchantmentBaseCore imple
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
         JsonElement element = config.get("commands");
 
-        this.commandsToExecute = new Gson().fromJson(
+        this.commandsToExecute = element != null ?new Gson().fromJson(
                 element,
                 new TypeToken<List<CommandWithChance>>() {
                 }.getType()
-        );
+        ) : new ArrayList<>();
     }
 
     @AllArgsConstructor

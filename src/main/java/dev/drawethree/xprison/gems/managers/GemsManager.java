@@ -69,7 +69,6 @@ public class GemsManager {
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
 					this.savePlayerData(e.getPlayer(), true, true);
-					e.getPlayer().getActivePotionEffects().forEach(effect -> e.getPlayer().removePotionEffect(effect.getType()));
 				}).bindWith(plugin.getCore());
 
 		this.loadPlayerDataOnEnable();

@@ -1,4 +1,4 @@
-package dev.drawethree.xprison.tokens.model;
+package dev.drawethree.xprison.blocks.model;
 
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import lombok.AllArgsConstructor;

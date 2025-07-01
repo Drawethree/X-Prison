@@ -5,21 +5,19 @@ import dev.drawethree.xprison.XPrisonModuleAbstract;
 import dev.drawethree.xprison.api.tokens.XPrisonTokensAPI;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.tokens.api.XPrisonTokensAPIImpl;
-import dev.drawethree.xprison.tokens.config.BlockRewardsConfig;
 import dev.drawethree.xprison.tokens.config.TokensConfig;
 import dev.drawethree.xprison.tokens.listener.TokensListener;
 import dev.drawethree.xprison.tokens.managers.CommandManager;
 import dev.drawethree.xprison.tokens.managers.TokensManager;
-import dev.drawethree.xprison.tokens.repo.BlocksRepository;
 import dev.drawethree.xprison.tokens.repo.TokensRepository;
-import dev.drawethree.xprison.tokens.repo.impl.BlocksRepositoryImpl;
 import dev.drawethree.xprison.tokens.repo.impl.TokensRepositoryImpl;
-import dev.drawethree.xprison.tokens.service.BlocksService;
 import dev.drawethree.xprison.tokens.service.TokensService;
-import dev.drawethree.xprison.tokens.service.impl.BlocksServiceImpl;
 import dev.drawethree.xprison.tokens.service.impl.TokensServiceImpl;
-import dev.drawethree.xprison.tokens.task.SavePlayerDataTask;
+import dev.drawethree.xprison.utils.task.RepeatingTask;
 import lombok.Getter;
+import me.lucko.helper.utils.Players;
+
+import java.util.concurrent.TimeUnit;
 
 public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHolder {
 
@@ -27,9 +25,6 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 
 	@Getter
 	private static XPrisonTokens instance;
-
-	@Getter
-	private BlockRewardsConfig blockRewardsConfig;
 
 	@Getter
 	private TokensConfig tokensConfig;
@@ -50,15 +45,9 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 	private TokensService tokensService;
 
 	@Getter
-	private BlocksRepository blocksRepository;
-
-	@Getter
-	private BlocksService blocksService;
-
-	@Getter
 	private final XPrison core;
 
-	private SavePlayerDataTask savePlayerDataTask;
+	private RepeatingTask savePlayerDataTask;
 
 	private boolean enabled;
 
@@ -77,7 +66,6 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 	@Override
 	public void reload() {
 		this.tokensConfig.reload();
-		this.blockRewardsConfig.reload();
 		this.tokensManager.reload();
 		this.commandManager.reload();
 	}
@@ -87,20 +75,12 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 	public void enable() {
 
 		this.tokensConfig = new TokensConfig(this);
-		this.blockRewardsConfig = new BlockRewardsConfig(this);
-
 		this.tokensConfig.load();
-		this.blockRewardsConfig.load();
 
 		this.tokensRepository = new TokensRepositoryImpl(this.core.getPluginDatabase());
 		this.tokensRepository.createTables();
 
 		this.tokensService = new TokensServiceImpl(this.tokensRepository);
-
-		this.blocksRepository = new BlocksRepositoryImpl(this.core.getPluginDatabase());
-		this.blocksRepository.createTables();
-
-		this.blocksService = new BlocksServiceImpl(this.blocksRepository);
 
 		this.tokensManager = new TokensManager(this);
 		this.tokensManager.enable();
@@ -108,7 +88,11 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 		this.commandManager = new CommandManager(this);
 		this.commandManager.enable();
 
-		this.savePlayerDataTask = new SavePlayerDataTask(this);
+		this.savePlayerDataTask = new RepeatingTask.Builder().
+				initialDelay(30).
+				initialDelayUnit(TimeUnit.SECONDS).
+				interval(getTokensConfig().getSavePlayerDataInterval()).intervalUnit(TimeUnit.MINUTES).
+				task(() ->getTokensManager().savePlayerData(Players.all(), false, true)).build();
 		this.savePlayerDataTask.start();
 
 		this.registerListeners();
@@ -147,7 +131,6 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 	@Override
 	public void resetPlayerData() {
 		this.tokensRepository.clearTableData();
-		this.blocksRepository.clearTableData();
 	}
 
 }

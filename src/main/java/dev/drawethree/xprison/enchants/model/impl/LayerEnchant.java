@@ -11,6 +11,7 @@ import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
@@ -90,7 +91,8 @@ public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements Bl
         }
 
         if (!this.useEvents) {
-            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected);
+            getCore().getBlocks().getBlocksManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
         }
 
         long timeEnd = Time.nowMillis();
@@ -160,8 +162,8 @@ public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements Bl
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.countBlocksBroken = config.get("countBlocksBroken").getAsBoolean();
-        this.useEvents = config.get("useEvents").getAsBoolean();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
+        this.countBlocksBroken = JsonUtils.getBoolean(config,"countBlocksBroken",false);
+        this.useEvents = JsonUtils.getBoolean(config,"useEvents", false);
     }
 }

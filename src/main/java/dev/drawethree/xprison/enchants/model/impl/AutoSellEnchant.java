@@ -5,6 +5,7 @@ import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import org.bukkit.event.block.BlockBreakEvent;
 
@@ -33,7 +34,6 @@ public final class AutoSellEnchant extends XPrisonEnchantmentBaseCore implements
 
     @Override
     protected void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.requiredPickaxeLevel = config.get("pickaxeLevelRequired").getAsInt();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
     }
 }

@@ -13,6 +13,7 @@ import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.block.ExplosionBlockProvider;
 import dev.drawethree.xprison.utils.block.ExplosionType;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
@@ -100,7 +101,8 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentBaseCore implement
         }
 
         if (!this.useEvents) {
-            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected);
+            getCore().getBlocks().getBlocksManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
         }
 
         long timeEnd = Time.nowMillis();
@@ -162,10 +164,10 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentBaseCore implement
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
-        this.countBlocksBroken = config.get("countBlocksBroken").getAsBoolean();
-        this.soundsEnabled = config.get("sounds").getAsBoolean();
-        this.useEvents = config.get("useEvents").getAsBoolean();
-        this.blockProvider = ExplosionType.getBlockProvider(ExplosionType.valueOf(config.get("explosionType").getAsString()));
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
+        this.countBlocksBroken = JsonUtils.getBoolean(config,"countBlocksBroken", false);
+        this.soundsEnabled = JsonUtils.getBoolean(config, "sounds", false);
+        this.useEvents = JsonUtils.getBoolean(config,"useEvents",false);
+        this.blockProvider = ExplosionType.getBlockProvider(ExplosionType.valueOf(JsonUtils.getString(config,"explosionType","CUBE")));
     }
 }

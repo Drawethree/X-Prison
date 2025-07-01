@@ -7,6 +7,7 @@ import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
+import dev.drawethree.xprison.utils.json.JsonUtils;
 import org.bukkit.event.block.BlockBreakEvent;
 
 public final class BackpackAutoSellEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
@@ -38,6 +39,6 @@ public final class BackpackAutoSellEnchant extends XPrisonEnchantmentBaseCore im
 
     @Override
     public void loadCustomProperties(JsonObject config) {
-        this.chance = config.get("chance").getAsDouble();
+        this.chance = JsonUtils.getDouble(config, "chance", 0.0);
     }
 }

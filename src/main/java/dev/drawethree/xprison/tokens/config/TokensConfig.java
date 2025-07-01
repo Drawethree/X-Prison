@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +26,8 @@ public class TokensConfig {
 	private int savePlayerDataInterval;
 	private boolean displayTokenMessages;
 	private Map<String, String> messages;
-	private Map<Material, List<String>> luckyBlockRewards;
 	private List<String> worldWhitelist;
 	private List<String> tokensTopFormat;
-	private List<String> blocksTopFormat;
-	private List<String> blocksTopFormatWeekly;
 	private List<String> tokenItemLore;
 	private String tokenItemDisplayName;
 	private ItemStack tokenItem;
@@ -39,7 +35,6 @@ public class TokensConfig {
 
 	private String[] tokensCommandAliases;
 	private String[] tokensTopCommandAliases;
-	private String[] blocksTopCommandAliases;
 
 
 	public TokensConfig(XPrisonTokens plugin) {
@@ -60,25 +55,10 @@ public class TokensConfig {
 		this.chance = configuration.getDouble("tokens.breaking.chance");
 		this.minAmount = configuration.getLong("tokens.breaking.min");
 		this.maxAmount = configuration.getLong("tokens.breaking.max");
-
 		this.commandCooldown = configuration.getLong("tokens-command-cooldown");
-
-		this.luckyBlockRewards = new HashMap<>();
-
-		for (String key : configuration.getConfigurationSection("lucky-blocks").getKeys(false)) {
-			XMaterial material = XMaterial.valueOf(key);
-			List<String> rewards = configuration.getStringList("lucky-blocks." + key);
-			if (rewards.isEmpty()) {
-				continue;
-			}
-			this.luckyBlockRewards.put(material.get(), rewards);
-		}
-
 		this.topPlayersAmount = configuration.getInt("top_players_amount");
 		this.worldWhitelist = configuration.getStringList("world-whitelist");
 		this.tokensTopFormat = configuration.getStringList("tokens-top-format");
-		this.blocksTopFormat = configuration.getStringList("blocks-top-format");
-		this.blocksTopFormatWeekly = configuration.getStringList("blocks-top-weekly-format");
 		this.nextResetWeekly = configuration.getLong("next-reset-weekly");
 		this.displayTokenMessages = configuration.getBoolean("display-token-messages");
 		this.savePlayerDataInterval = configuration.getInt("player_data_save_interval");
@@ -88,8 +68,6 @@ public class TokensConfig {
 		this.startingTokens = configuration.getLong("starting-tokens");
 		this.tokensCommandAliases = configuration.getStringList("tokens-command-aliases").toArray(new String[0]);
 		this.tokensTopCommandAliases = configuration.getStringList("tokens-top-command-aliases").toArray(new String[0]);
-		this.blocksTopCommandAliases = configuration.getStringList("blocks-top-command-aliases").toArray(new String[0]);
-
 	}
 
 	private void loadMessages(YamlConfiguration configuration) {
@@ -135,24 +113,12 @@ public class TokensConfig {
 		return tokensTopFormat;
 	}
 
-	public List<String> getBlocksTopFormat() {
-		return blocksTopFormat;
-	}
-
-	public List<String> getBlocksTopFormatWeekly() {
-		return blocksTopFormatWeekly;
-	}
-
 	public List<String> getTokenItemLore() {
 		return tokenItemLore;
 	}
 
 	public String getTokenItemDisplayName() {
 		return tokenItemDisplayName;
-	}
-
-	public List<String> getLuckyBlockReward(Material m) {
-		return this.luckyBlockRewards.getOrDefault(m, new ArrayList<>());
 	}
 
 	public double getChance() {
@@ -189,10 +155,6 @@ public class TokensConfig {
 
 	public String[] getTokensTopCommandAliases() {
 		return tokensTopCommandAliases;
-	}
-
-	public String[] getBlocksTopCommandAliases() {
-		return blocksTopCommandAliases;
 	}
 
 	public void save() {

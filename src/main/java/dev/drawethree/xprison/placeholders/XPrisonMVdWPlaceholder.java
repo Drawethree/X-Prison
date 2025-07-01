@@ -221,11 +221,11 @@ public class XPrisonMVdWPlaceholder {
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_tokens_1", event -> String.valueOf(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_tokens_2", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_tokens_3", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_formatted", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_1", event -> String.valueOf(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_2", event -> String.format("%,d", plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
-		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_3", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks", event -> String.format("%,d", plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_formatted", event -> MathUtils.formatNumber(plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_1", event -> String.valueOf(plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_2", event -> String.format("%,d", plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(event.getPlayer())));
+		PlaceholderAPI.registerPlaceholder(plugin, "xprison_blocks_3", event -> MathUtils.formatNumber(plugin.getBlocks().getBlocksManager().getPlayerBrokenBlocks(event.getPlayer())));
 		PlaceholderAPI.registerPlaceholder(plugin, "xprison_tokens_formatted", event -> MathUtils.formatNumber(plugin.getTokens().getTokensManager().getPlayerTokens(event.getPlayer())));
 
 	}

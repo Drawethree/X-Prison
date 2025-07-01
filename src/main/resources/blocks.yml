@@ -1,0 +1,36 @@
+messages:
+  cooldown: '&ePlease wait %time% seconds before executing this command again.'
+  your_blocks: '&e&lBLOCKS &8» &fYou mined &e%blocks% &fBlocks'
+  other_blocks: '&e&lBLOCKS &8» &e%player% &fmined &e%blocks% &fBlocks'
+  admin_set_blocks: '&e&lTOKENS &8» &fSuccessfuly set &e%blocks%''s &fblocks to &e%blocks%.'
+  admin_give_blocks: '&e&lTOKENS &8» &fSuccessfuly given &e%blocks% &fblocks to &e%player%.'
+  admin_remove_blocks: '&e&lTOKENS &8» &fSuccessfuly removed &e%blocks% &fblocks from
+    &e%player%.'
+  lucky_block_mined: '&e&lLUCKY BLOCK &8» &fYou have mined a &e&lLUCKY BLOCK &fand
+    received &e%amount% Tokens!'
+# LuckyBlocks settings for rewards
+lucky-blocks:
+  SPONGE:
+    - tokens give %player% 1000
+# This value determines when will the next weekly top reset be. Updated automatically with /resetblockstopweekly command
+next-reset-weekly: 0
+# Interval in minutes for saving player data into database
+player_data_save_interval: 10
+# Cooldown in seconds to check other player's blocks (/blocks <player>)
+blocks-command-cooldown: 5
+# Amount of players displayed in top lists
+top_players_amount: 10
+blocks-top-format:
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+  - '&e&lBLOCKS TOP'
+  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%blocks% Blocks'
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+blocks-top-weekly-format:
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+  - '&e&lBLOCKS TOP WEEKLY'
+  - '{FOR_EACH_PLAYER} &f&l#%position%. &e%player% &8» &f%blocks% Blocks'
+  - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
+# Aliases for /blockstop command
+blocks-top-command-aliases:
+  - blockstop
+  - blocktop
