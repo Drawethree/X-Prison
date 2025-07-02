@@ -50,7 +50,6 @@ public class MinesListener {
 				.handler(e -> {
 					int pos = e.getAction() == Action.LEFT_CLICK_BLOCK ? 1 : e.getAction() == Action.RIGHT_CLICK_BLOCK ? 2 : -1;
 
-					System.out.println(pos);
 					if (pos == -1) {
 						return;
 					}
