@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -15,7 +17,7 @@ public class MineSelectionImpl implements MineSelection {
 	private Position position2;
 
 	public boolean isValid() {
-		return position1 != null && position2 != null;
+		return position1 != null && position2 != null && Objects.equals(position1.getWorld(),position2.getWorld());
 	}
 
 	public Region toRegion() {

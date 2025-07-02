@@ -29,11 +29,13 @@ import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import me.lucko.helper.serialize.Point;
 import me.lucko.helper.serialize.Position;
 import me.lucko.helper.serialize.Region;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
@@ -565,5 +567,21 @@ public class MineManager {
 
 	public MineSaver getMineSaver() {
 		return mineSaver;
+	}
+
+	public static boolean isSelectionTool(ItemStack item) {
+		if (item == null) return false;
+		if (item.getType() != Material.STICK) return false;
+		if (!item.hasItemMeta()) return false;
+
+		ItemMeta meta = item.getItemMeta();
+		if (!meta.hasDisplayName() || !meta.getDisplayName().equals(ChatColor.YELLOW + "Mine Selection Tool")) {
+			return false;
+		}
+
+		if (!meta.hasLore()) return false;
+		if (!meta.hasEnchant(XEnchantment.UNBREAKING.get())) return false;
+
+		return true;
 	}
 }

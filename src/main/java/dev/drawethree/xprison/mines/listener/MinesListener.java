@@ -46,10 +46,11 @@ public class MinesListener {
 
 	private void subscribeToPlayerInteractEvent() {
 		Events.subscribe(PlayerInteractEvent.class)
-				.filter(e -> e.getItem() != null && e.getItem().isSimilar(MineManager.SELECTION_TOOL) && e.getClickedBlock() != null)
+				.filter(e -> e.getItem() != null && MineManager.isSelectionTool(e.getItem()) && e.getClickedBlock() != null)
 				.handler(e -> {
 					int pos = e.getAction() == Action.LEFT_CLICK_BLOCK ? 1 : e.getAction() == Action.RIGHT_CLICK_BLOCK ? 2 : -1;
 
+					System.out.println(pos);
 					if (pos == -1) {
 						return;
 					}
