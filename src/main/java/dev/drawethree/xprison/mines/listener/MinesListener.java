@@ -41,7 +41,7 @@ public class MinesListener {
 					}
 
 					mineImpl.handleBlockBreak(Arrays.asList(e.getBlock()));
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerInteractEvent() {
@@ -57,6 +57,6 @@ public class MinesListener {
 					e.setCancelled(true);
 
 					this.plugin.getManager().selectPosition(e.getPlayer(), pos, Position.of(e.getClickedBlock()));
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 }

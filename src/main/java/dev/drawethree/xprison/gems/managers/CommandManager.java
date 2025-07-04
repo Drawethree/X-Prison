@@ -84,18 +84,18 @@ public class CommandManager {
                         this.plugin.getGemsManager().sendInfoMessage(c.sender(), target);
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), this.gemsCommandAliases);
+                .registerAndBind(this.plugin, this.gemsCommandAliases);
         Commands.create()
                 .handler(c -> {
                     if (c.args().isEmpty()) {
                         this.plugin.getGemsManager().sendGemsTop(c.sender());
                     }
-                }).registerAndBind(this.plugin.getCore(), this.gemsTopCommandAliases);
+                }).registerAndBind(this.plugin, this.gemsTopCommandAliases);
 
         // /gemsmessage
         Commands.create()
                 .assertPlayer()
-                .handler(c -> this.plugin.getGemsManager().toggleGemsMessage(c.sender())).registerAndBind(this.plugin.getCore(), this.gemsMessageCommandAliases);
+                .handler(c -> this.plugin.getGemsManager().toggleGemsMessage(c.sender())).registerAndBind(this.plugin, this.gemsMessageCommandAliases);
 
     }
 

@@ -28,6 +28,6 @@ public class GiveFirstJoinPickaxeCommand {
 
 					this.plugin.getEnchantsManager().giveFirstJoinPickaxe(target);
 					PlayerUtils.sendMessage(c.sender(), "&aYou have given first join pickaxe to &e" + target.getName());
-				}).registerAndBind(this.plugin.getCore(), "givefirstjoinpickaxe");
+				}).registerAndBind(this.plugin, "givefirstjoinpickaxe");
 	}
 }

@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.prestiges;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.prestiges.XPrisonPrestigesAPI;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.prestiges.api.XPrisonPrestigesAPIImpl;
@@ -23,7 +23,7 @@ import me.lucko.helper.utils.Players;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonPrestiges extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Prestiges";
 
@@ -38,33 +38,24 @@ public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerData
 	private RepeatingTask savePlayerDataTask;
 
 	@Getter
-	private final XPrison core;
-
-	@Getter
 	private PrestigeRepository prestigeRepository;
 
 	@Getter
 	private PrestigeService prestigeService;
 
-	private boolean enabled;
-
 	public XPrisonPrestiges(XPrison core) {
-		this.core = core;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
+		super(core);
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.prestigeConfig.reload();
 	}
 
 	@Override
 	public void enable() {
-		this.enabled = true;
+		super.enable();
 
 		this.prestigeConfig = new PrestigeConfig(this);
 		this.prestigeConfig.load();
@@ -88,11 +79,13 @@ public final class XPrisonPrestiges implements XPrisonModuleAbstract, PlayerData
 
 		this.registerCommands();
 		this.registerListeners();
+		this.enabled = true;
 	}
 
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.savePlayerDataTask.stop();
 		this.prestigeManager.disable();
 		this.enabled = false;

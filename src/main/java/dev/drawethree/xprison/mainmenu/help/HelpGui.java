@@ -111,8 +111,13 @@ public class HelpGui extends Gui {
 				this.close();
 				new MinesHelpGui(this.getPlayer()).open();
 			}));
+			//Bombs
+			this.setItem(25, ItemStackBuilder.of(XMaterial.TNT.parseItem()).name("&e&lBombs").lore("&7Click to see detailed info", "&7about Bombs feature.").build(() -> {
+				this.close();
+				new BombsHelpGui(this.getPlayer()).open();
+			}));
 			//History
-			this.setItem(25, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lHistory").lore("&7Click to see detailed info", "&7about History feature.").build(() -> {
+			this.setItem(29, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lHistory").lore("&7Click to see detailed info", "&7about History feature.").build(() -> {
 				this.close();
 				new HistoryHelpGui(this.getPlayer()).open();
 			}));

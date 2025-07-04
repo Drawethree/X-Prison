@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.enchants;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.enchants.XPrisonEnchantsAPI;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.enchants.api.XPrisonEnchantsAPIImpl;
@@ -29,7 +29,7 @@ import java.nio.file.StandardCopyOption;
 
 import static dev.drawethree.xprison.utils.log.XPrisonLogger.*;
 
-public final class XPrisonEnchants implements XPrisonModuleAbstract {
+public final class XPrisonEnchants extends XPrisonModuleBase {
 
 
 	public static final String MODULE_NAME = "Enchants";
@@ -61,24 +61,14 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 	@Getter
 	private EnchantLoader enchantLoader;
 
-	@Getter
-	private final XPrison core;
-
-	private boolean enabled;
-
 	public XPrisonEnchants(XPrison core) {
+		super(core);
 		instance = this;
-		this.core = core;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	@Override
 	public void reload() {
-
+		super.reload();
 		this.enchantsConfig.reload();
 		this.enchantsRepository.reload();
 
@@ -89,7 +79,7 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 
 	@Override
 	public void enable() {
-
+		super.enable();
 		copyDefaultEnchants();
 
 		this.enchantsConfig = new EnchantsConfig(this);
@@ -114,7 +104,6 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 		DisenchantGUI.init();
 
 		this.api = new XPrisonEnchantsAPIImpl(this.enchantsManager, this.enchantsRepository);
-
 
 		this.enabled = true;
 	}
@@ -172,6 +161,7 @@ public final class XPrisonEnchants implements XPrisonModuleAbstract {
 
 	@Override
 	public void disable() {
+		super.disable();
 		for (Player p : Players.all()) {
 			p.closeInventory();
 		}

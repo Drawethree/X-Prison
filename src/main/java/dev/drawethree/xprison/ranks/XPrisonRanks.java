@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.ranks;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.ranks.XPrisonRanksAPI;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.ranks.api.XPrisonRanksAPIImpl;
@@ -18,7 +18,7 @@ import dev.drawethree.xprison.ranks.service.impl.RanksServiceImpl;
 import lombok.Getter;
 
 @Getter
-public final class XPrisonRanks implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonRanks extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Ranks";
 
@@ -28,8 +28,6 @@ public final class XPrisonRanks implements XPrisonModuleAbstract, PlayerDataHold
 	private RanksManager ranksManager;
 	@Getter
 	private XPrisonRanksAPI api;
-	@Getter
-	private final XPrison core;
 
 	@Getter
 	private RanksRepository ranksRepository;
@@ -37,25 +35,19 @@ public final class XPrisonRanks implements XPrisonModuleAbstract, PlayerDataHold
 	@Getter
 	private RanksService ranksService;
 
-	private boolean enabled;
-
 	public XPrisonRanks(XPrison core) {
-		this.core = core;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
+		super(core);
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.ranksConfig.reload();
 	}
 
 	@Override
 	public void enable() {
-		this.enabled = true;
+		super.enable();
 		this.ranksConfig = new RanksConfig(this);
 		this.ranksConfig.load();
 		this.ranksRepository = new RanksRepositoryImpl(this.core.getPluginDatabase());
@@ -66,6 +58,7 @@ public final class XPrisonRanks implements XPrisonModuleAbstract, PlayerDataHold
 		this.api = new XPrisonRanksAPIImpl(this.ranksManager);
 		this.registerCommands();
 		this.registerListeners();
+		this.enabled = true;
 	}
 
 	private void registerListeners() {
@@ -74,6 +67,7 @@ public final class XPrisonRanks implements XPrisonModuleAbstract, PlayerDataHold
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.ranksManager.disable();
 		this.enabled = false;
 	}

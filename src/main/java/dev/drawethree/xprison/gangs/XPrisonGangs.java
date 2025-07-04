@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.gangs;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.gangs.XPrisonGangsAPI;
 import dev.drawethree.xprison.gangs.api.XPrisonGangsAPIImpl;
 import dev.drawethree.xprison.gangs.commands.GangCommand;
@@ -18,7 +18,7 @@ import dev.drawethree.xprison.gangs.service.impl.GangsServiceImpl;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import lombok.Getter;
 
-public final class XPrisonGangs implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonGangs extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Gangs";
 
@@ -41,33 +41,25 @@ public final class XPrisonGangs implements XPrisonModuleAbstract, PlayerDataHold
 	private GangUpdateTopTask gangUpdateTopTask;
 
 	@Getter
-	private final XPrison core;
-
-	@Getter
 	private GangsRepository gangsRepository;
 
 	@Getter
 	private GangsService gangsService;
 
-	private boolean enabled;
-
 	public XPrisonGangs(XPrison prisonCore) {
+		super(prisonCore);
 		instance = this;
-		this.core = prisonCore;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.config.reload();
 	}
 
 	@Override
 	public void enable() {
+		super.enable();
 		this.config = new GangsConfig(this);
 		this.config.load();
 
@@ -99,6 +91,7 @@ public final class XPrisonGangs implements XPrisonModuleAbstract, PlayerDataHold
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.gangsManager.disable();
 		this.gangUpdateTopTask.stop();
 		this.enabled = false;

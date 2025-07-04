@@ -29,7 +29,7 @@ public class AutoMinerCommand {
 					int timeLeft = this.plugin.getManager().getAutoMinerTime(c.sender());
 					PlayerUtils.sendMessage(c.sender(), this.plugin.getAutoMinerConfig().getMessage("auto_miner_time").replace("%time%", AutoMinerUtils.getAutoMinerTimeLeftFormatted(timeLeft)));
 
-				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
+				}).registerAndBind(this.plugin, COMMAND_ALIASES);
 	}
 
 	private boolean validateArguments(CommandContext<Player> c) {

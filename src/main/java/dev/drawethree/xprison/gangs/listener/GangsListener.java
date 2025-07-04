@@ -53,7 +53,7 @@ public class GangsListener {
 						e.setCancelled(true);
 					}
 
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToAsyncPlayerChatEvent() {
@@ -76,7 +76,7 @@ public class GangsListener {
 					for (Player p : gangImpl.getOnlinePlayers()) {
 						PlayerUtils.sendMessage(p, this.plugin.getConfig().getMessage("gang-chat-format").replace("%player%", e.getPlayer().getName()).replace("%message%", e.getMessage()).replace("%gang%", gangImpl.getName()));
 					}
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 }

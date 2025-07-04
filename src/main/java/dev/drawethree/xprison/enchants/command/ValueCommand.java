@@ -37,7 +37,7 @@ public class ValueCommand {
 					}
 
 					PlayerUtils.sendMessage(c.sender(), this.plugin.getEnchantsConfig().getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.plugin.getEnchantsManager().getPickaxeValue(pickAxe))));
-				}).registerAndBind(plugin.getCore(), COMMAND_NAME);
+				}).registerAndBind(plugin, COMMAND_NAME);
 	}
 
 	private boolean validatePickaxe(ItemStack pickAxe) {

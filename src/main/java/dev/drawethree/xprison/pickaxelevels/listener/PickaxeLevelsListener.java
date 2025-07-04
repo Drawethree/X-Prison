@@ -28,7 +28,7 @@ public final class PickaxeLevelsListener {
 					if (item != null && this.plugin.getCore().isPickaxeSupported(item.getType()) && !this.plugin.getPickaxeLevelsManager().getPickaxeLevel(item).isPresent()) {
 						e.getPlayer().getInventory().setItem(e.getNewSlot(), this.plugin.getPickaxeLevelsManager().addDefaultPickaxeLevel(item, e.getPlayer()));
 					}
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToBlockBreakEvent() {
@@ -39,6 +39,6 @@ public final class PickaxeLevelsListener {
 					ItemStack pickaxe = e.getPlayer().getItemInHand();
 					Player player = e.getPlayer();
 					this.plugin.getPickaxeLevelsManager().updatePickaxeLevel(player, pickaxe);
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 }

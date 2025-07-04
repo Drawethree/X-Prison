@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.core;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.mainmenu.MainMenu;
 import dev.drawethree.xprison.mainmenu.help.HelpGui;
 import dev.drawethree.xprison.utils.text.TextUtils;
@@ -48,7 +48,7 @@ public class XPrisonMainCommand {
                                     c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded item migrator"));
                                     break;
                                 default:
-                                    final XPrisonModuleAbstract module = plugin.getModuleByName(name);
+                                    final XPrisonModuleBase module = plugin.getModuleByName(name);
                                     if (module != null) {
                                         plugin.reloadModule(module);
                                         c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded &f" + name + " &amodule"));

@@ -4,9 +4,11 @@ import com.cryptomorin.xseries.XMaterial;
 import com.github.lalyos.jfiglet.FigletFont;
 import dev.drawethree.xprison.api.XPrisonAPI;
 import dev.drawethree.xprison.api.XPrisonAPIImpl;
+import dev.drawethree.xprison.api.XPrisonModule;
 import dev.drawethree.xprison.autominer.XPrisonAutoMiner;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.blocks.XPrisonBlocks;
+import dev.drawethree.xprison.bombs.XPrisonBombs;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.core.XPrisonCoreListener;
 import dev.drawethree.xprison.core.XPrisonMainCommand;
@@ -59,7 +61,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 	private boolean debugMode;
 	private boolean useMetrics;
-	private Map<String, XPrisonModuleAbstract> modules;
+	private Map<String, XPrisonModuleBase> modules;
 	private SQLDatabase pluginDatabase;
 	private Economy economy;
 	private FileManager fileManager;
@@ -75,6 +77,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	private XPrisonPickaxeLevels pickaxeLevels;
 	private XPrisonGangs gangs;
 	private XPrisonMines mines;
+	private XPrisonBombs bombs;
 	private XPrisonHistory history;
 	private ItemMigrator itemMigrator;
 	private List<Material> supportedPickaxes;
@@ -171,6 +174,11 @@ public final class XPrison extends ExtendedJavaPlugin {
 		if (this.getConfig().getBoolean("modules.blocks")) {
 			this.loadModule(blocks);
 		}
+
+		if (this.getConfig().getBoolean("modules.bombs")) {
+			this.loadModule(bombs);
+		}
+
 		if (this.getConfig().getBoolean("modules.tokens")) {
 			this.loadModule(tokens);
 		}
@@ -264,6 +272,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.pickaxeLevels = new XPrisonPickaxeLevels(this);
 		this.gangs = new XPrisonGangs(this);
 		this.mines = new XPrisonMines(this);
+		this.bombs = new XPrisonBombs(this);
 		this.history = new XPrisonHistory(this);
 
 		this.modules.put(this.blocks.getName().toLowerCase(), this.blocks);
@@ -278,6 +287,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.modules.put(this.pickaxeLevels.getName().toLowerCase(), this.pickaxeLevels);
 		this.modules.put(this.gangs.getName().toLowerCase(), this.gangs);
 		this.modules.put(this.mines.getName().toLowerCase(), this.mines);
+		this.modules.put(this.bombs.getName().toLowerCase(), this.bombs);
 		this.modules.put(this.history.getName().toLowerCase(), this.history);
 	}
 
@@ -287,7 +297,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 	}
 
-	private void loadModule(XPrisonModuleAbstract module) {
+	private void loadModule(XPrisonModuleBase module) {
 		if (module.isEnabled()) {
 			return;
 		}
@@ -296,7 +306,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	}
 
 	//Always unload via iterator!
-	private void unloadModule(XPrisonModuleAbstract module) {
+	private void unloadModule(XPrisonModuleBase module) {
 		if (!module.isEnabled()) {
 			return;
 		}
@@ -304,7 +314,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		info(String.format("&cModule &e%s &cunloaded.", module.getName()));
 	}
 
-	public void debug(String msg, XPrisonModuleAbstract module) {
+	public void debug(String msg, XPrisonModule module) {
 		if (!this.debugMode) {
 			return;
 		}
@@ -315,7 +325,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		}
 	}
 
-	public void reloadModule(XPrisonModuleAbstract module) {
+	public void reloadModule(XPrisonModuleBase module) {
 		if (!module.isEnabled()) {
 			return;
 		}
@@ -327,7 +337,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 	@Override
 	protected void disable() {
 
-		Iterator<XPrisonModuleAbstract> it = this.modules.values().iterator();
+		Iterator<XPrisonModuleBase> it = this.modules.values().iterator();
 
 		while (it.hasNext()) {
 			this.unloadModule(it.next());
@@ -342,7 +352,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 
 
 	public boolean isModuleEnabled(String moduleName) {
-		XPrisonModuleAbstract module = this.modules.get(moduleName.toLowerCase());
+		XPrisonModuleBase module = this.modules.get(moduleName.toLowerCase());
 		return module != null && module.isEnabled();
 	}
 
@@ -381,7 +391,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		return item != null && isPickaxeSupported(item.getType());
 	}
 
-	public Collection<XPrisonModuleAbstract> getModules() {
+	public Collection<XPrisonModuleBase> getModules() {
 		return this.modules.values();
 	}
 
@@ -429,7 +439,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 		return WorldGuardWrapper.getInstance();
 	}
 
-	public XPrisonModuleAbstract getModuleByName(String name) {
+	public XPrisonModuleBase getModuleByName(String name) {
 		return modules.get(name);
 	}
 }

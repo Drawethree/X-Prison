@@ -1,16 +1,16 @@
 package dev.drawethree.xprison.mainmenu.confirmation;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.utils.gui.ConfirmationGui;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.entity.Player;
 
 public class ReloadModuleConfirmationGui extends ConfirmationGui {
 
-	private final XPrisonModuleAbstract module;
+	private final XPrisonModuleBase module;
 
-	public ReloadModuleConfirmationGui(Player player, XPrisonModuleAbstract module) {
+	public ReloadModuleConfirmationGui(Player player, XPrisonModuleBase module) {
 		super(player, module == null ? "Reload all modules ?" : "Reload module " + module.getName() + "?");
 		this.module = module;
 	}

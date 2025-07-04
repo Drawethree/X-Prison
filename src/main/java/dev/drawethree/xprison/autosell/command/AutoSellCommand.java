@@ -21,6 +21,6 @@ public class AutoSellCommand {
                     if (c.args().isEmpty()) {
                         this.plugin.getManager().toggleAutoSell(c.sender());
                     }
-                }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);
+                }).registerAndBind(this.plugin, COMMAND_NAME);
     }
 }

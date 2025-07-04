@@ -25,6 +25,6 @@ public class MaxPrestigeCommand {
 
                         this.plugin.getPrestigeManager().buyMaxPrestige(c.sender());
                     }
-                }).registerAndBind(this.plugin.getCore(), "maxprestige", "maxp", "mp");
+                }).registerAndBind(this.plugin, "maxprestige", "maxp", "mp");
     }
 }

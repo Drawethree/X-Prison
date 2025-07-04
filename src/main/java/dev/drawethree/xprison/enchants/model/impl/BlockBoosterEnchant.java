@@ -33,7 +33,7 @@ public final class BlockBoosterEnchant extends XPrisonEnchantmentBaseCore implem
                         }
                         e.setBlocks(blocks);
                     }
-                }).bindWith(getCore());
+                }).bindWith(getEnchants());
     }
 
     public static boolean hasBlockBoosterRunning(Player p) {

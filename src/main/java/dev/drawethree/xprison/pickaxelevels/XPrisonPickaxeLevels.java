@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.pickaxelevels;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.pickaxelevels.XPrisonPickaxeLevelsAPI;
 import dev.drawethree.xprison.pickaxelevels.api.XPrisonPickaxeLevelsAPIImpl;
 import dev.drawethree.xprison.pickaxelevels.config.PickaxeLevelsConfig;
@@ -9,7 +9,7 @@ import dev.drawethree.xprison.pickaxelevels.listener.PickaxeLevelsListener;
 import dev.drawethree.xprison.pickaxelevels.manager.PickaxeLevelsManager;
 import lombok.Getter;
 
-public final class XPrisonPickaxeLevels implements XPrisonModuleAbstract {
+public final class XPrisonPickaxeLevels extends XPrisonModuleBase {
 
     public static final String MODULE_NAME = "Pickaxe Levels";
 
@@ -20,27 +20,20 @@ public final class XPrisonPickaxeLevels implements XPrisonModuleAbstract {
     @Getter
     private XPrisonPickaxeLevelsAPI api;
 
-    @Getter
-    private final XPrison core;
-
-    private boolean enabled;
 
     public XPrisonPickaxeLevels(XPrison core) {
-        this.core = core;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+        super(core);
     }
 
     @Override
     public void reload() {
+        super.reload();
         this.pickaxeLevelsConfig.reload();
 	}
 
     @Override
     public void enable() {
+        super.enable();
         this.pickaxeLevelsConfig = new PickaxeLevelsConfig(this);
         this.pickaxeLevelsConfig.load();
         this.pickaxeLevelsManager = new PickaxeLevelsManager(this);
@@ -57,6 +50,7 @@ public final class XPrisonPickaxeLevels implements XPrisonModuleAbstract {
 
     @Override
     public void disable() {
+        super.disable();
         this.enabled = false;
     }
 

@@ -7,7 +7,7 @@ import dev.drawethree.xprison.api.tokens.events.PlayerTokensLostEvent;
 import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
-import dev.drawethree.xprison.utils.item.PrisonItem;
+import dev.drawethree.xprison.utils.item.PrisonToolItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
@@ -149,7 +149,7 @@ public class TokensManager {
 	}
 
 	public void redeemTokens(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
-        final Long tokenAmount = new PrisonItem(item).getTokens();
+        final Long tokenAmount = new PrisonToolItem(item).getTokens();
         if (tokenAmount == null) {
             PlayerUtils.sendMessage(p, plugin.getTokensConfig().getMessage("not_token_item"));
             return;
@@ -259,9 +259,9 @@ public class TokensManager {
 				.enchant(XEnchantment.PROTECTION.get())
 				.flag(ItemFlag.HIDE_ENCHANTS)
 				.build();
-		final PrisonItem prisonItem = new PrisonItem(item);
-		prisonItem.setTokens(amount);
-		prisonItem.load();
+		final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
+		prisonToolItem.setTokens(amount);
+		prisonToolItem.load();
 		return item;
 	}
 

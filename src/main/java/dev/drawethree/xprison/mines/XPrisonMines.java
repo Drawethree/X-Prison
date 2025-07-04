@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.mines;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.mines.XPrisonMinesAPI;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.mines.api.XPrisonMinesAPIImpl;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class XPrisonMines implements XPrisonModuleAbstract {
+public class XPrisonMines extends XPrisonModuleBase {
 
 	public static final String MODULE_NAME = "Mines";
 
@@ -28,8 +28,6 @@ public class XPrisonMines implements XPrisonModuleAbstract {
 	@Getter
 	private static XPrisonMines instance;
 
-	private boolean enabled;
-
 	private Map<String, String> messages;
 	@Getter
 	private FileManager.Config config;
@@ -37,21 +35,18 @@ public class XPrisonMines implements XPrisonModuleAbstract {
 	private MineManager manager;
 	@Getter
 	private XPrisonMinesAPI api;
-	@Getter
-	private final XPrison core;
 
 	private Map<String, MineCommand> commands;
 
 
 	public XPrisonMines(XPrison core) {
+		super(core);
 		instance = this;
-		this.core = core;
-		this.enabled = false;
 	}
 
 	@Override
 	public void enable() {
-		this.enabled = true;
+		super.enable();
 		this.config = this.core.getFileManager().getConfig("mines.yml").copyDefaults(true).save();
 		this.loadMessages();
 		this.manager = new MineManager(this);
@@ -59,21 +54,19 @@ public class XPrisonMines implements XPrisonModuleAbstract {
 		new MinesListener(this).register();
 		this.registerCommands();
 		this.api = new XPrisonMinesAPIImpl(this);
+		this.enabled = true;
 	}
 
 	@Override
 	public void disable() {
-		this.enabled = false;
+		super.disable();
 		this.manager.disable();
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return this.enabled;
+		this.enabled = false;
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.config.reload();
 
 		this.loadMessages();
@@ -143,7 +136,7 @@ public class XPrisonMines implements XPrisonModuleAbstract {
 					} else {
 						this.getCommand("help").execute(c.sender(), c.args());
 					}
-				}).registerAndBind(core, "mines", "mine");
+				}).registerAndBind(this, "mines", "mine");
 	}
 
 	private MineCommand getCommand(String name) {

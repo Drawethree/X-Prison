@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.autominer;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.autominer.XPrisonAutoMinerAPI;
 import dev.drawethree.xprison.autominer.api.XPrisonAutoMinerAPIImpl;
 import dev.drawethree.xprison.autominer.command.AdminAutoMinerCommand;
@@ -16,15 +16,12 @@ import dev.drawethree.xprison.autominer.service.impl.AutominerServiceImpl;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import lombok.Getter;
 
-public final class XPrisonAutoMiner implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonAutoMiner extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Auto Miner";
 
 	@Getter
 	private static XPrisonAutoMiner instance;
-
-	@Getter
-	private final XPrison core;
 
 	@Getter
 	private AutoMinerManager manager;
@@ -41,19 +38,13 @@ public final class XPrisonAutoMiner implements XPrisonModuleAbstract, PlayerData
 	@Getter
 	private AutominerRepository autominerRepository;
 
-	private boolean enabled;
-
 	public XPrisonAutoMiner(XPrison core) {
-		this.core = core;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
+		super(core);
 	}
 
 	@Override
 	public void enable() {
+		super.enable();
 		instance = this;
 
 		this.autoMinerConfig = new AutoMinerConfig(this);
@@ -80,12 +71,14 @@ public final class XPrisonAutoMiner implements XPrisonModuleAbstract, PlayerData
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.manager.disable();
 		this.enabled = false;
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.autoMinerConfig.reload();
 		this.manager.reload();
 	}

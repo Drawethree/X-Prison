@@ -2,7 +2,7 @@ package dev.drawethree.xprison.multipliers;
 
 import dev.drawethree.ultrabackpacks.api.event.BackpackSellEvent;
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.multipliers.XPrisonMultipliersAPI;
 import dev.drawethree.xprison.api.multipliers.events.PlayerMultiplierReceiveEvent;
 import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
@@ -46,14 +46,12 @@ import java.util.concurrent.TimeUnit;
 
 import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
 
-public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonMultipliers extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Multipliers";
 
 	@Getter
 	private static XPrisonMultipliers instance;
-	@Getter
-	private final XPrison core;
 	@Getter
 	private FileManager.Config config;
 	@Getter
@@ -67,8 +65,6 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 
 	private Map<String, String> messages;
 	private Map<String, Double> permissionToMultiplier;
-
-	private boolean enabled;
 
 	private Task rankUpdateTask;
 	private int rankMultiplierUpdateTime;
@@ -89,8 +85,8 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 	private MultipliersService multipliersService;
 
 	public XPrisonMultipliers(XPrison plugin) {
+		super(plugin);
 		instance = this;
-		this.core = plugin;
 	}
 
 
@@ -115,14 +111,9 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 		}
 	}
 
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
-
 	@Override
 	public void reload() {
+		super.reload();
 		this.config.reload();
 
 		this.loadMessages();
@@ -137,8 +128,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 
 	@Override
 	public void enable() {
-
-		this.enabled = true;
+		super.enable();
 		this.config = this.core.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
 
 		this.rankMultipliers = new ConcurrentHashMap<>();
@@ -167,6 +157,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 		this.api = new XPrisonMultipliersAPIImpl(this);
 
 		this.rankUpdateTask = Schedulers.async().runRepeating(() -> Players.all().forEach(p -> this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p))), this.rankMultiplierUpdateTime, TimeUnit.MINUTES, this.rankMultiplierUpdateTime, TimeUnit.MINUTES);
+		this.enabled = true;
 	}
 
 	private void loadOnlineMultipliers() {
@@ -183,13 +174,13 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 					this.rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
 					this.loadSellMultiplier(e.getPlayer());
 					this.loadTokenMultiplier(e.getPlayer());
-				}).bindWith(core);
+				}).bindWith(this);
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
 					this.rankMultipliers.remove(e.getPlayer().getUniqueId());
 					this.saveSellMultiplier(e.getPlayer(), true);
 					this.saveTokenMultiplier(e.getPlayer(), true);
-				}).bindWith(core);
+				}).bindWith(this);
 
 		Events.subscribe(PlayerTokensReceiveEvent.class, EventPriority.HIGHEST)
 				.filter(EventFilters.ignoreCancelled())
@@ -198,7 +189,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 					if (p.isOnline() && e.getCause() == ReceiveCause.MINING) {
 						e.setAmount((long) this.getApi().getTotalToDeposit((Player) p, e.getAmount(), MultiplierType.TOKENS));
 					}
-				}).bindWith(core);
+				}).bindWith(this);
 
 		if (this.core.isUltraBackpacksEnabled()) {
 			Events.subscribe(BackpackSellEvent.class, EventPriority.NORMAL)
@@ -208,7 +199,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 						double newAmount = this.getApi().getTotalToDeposit(e.getPlayer(), currentAmount, MultiplierType.SELL);
 						this.core.debug("BackpacksSellEvent >> New Amount: " + newAmount, this);
 						e.setMoneyToDeposit(newAmount);
-					}).bindWith(core);
+					}).bindWith(this);
 		}
 
 	}
@@ -317,6 +308,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.saveAllMultipliers();
 		this.rankUpdateTask.stop();
 		this.enabled = false;
@@ -379,7 +371,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 						PlayerUtils.sendMessage(c.sender(), "&c/gmulti <money/token> <multiplier> <time> <time_unit>");
 						PlayerUtils.sendMessage(c.sender(), "&c/gmulti <money/token> reset");
 					}
-				}).registerAndBind(core, "globalmultiplier", "gmulti");
+				}).registerAndBind(this, "globalmultiplier", "gmulti");
 		Commands.create()
 				.assertPermission("xprison.multipliers.admin")
 				.handler(c -> {
@@ -405,7 +397,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 						PlayerUtils.sendMessage(c.sender(), "&c/sellmulti <player> <multiplier> <time> <time_unit>");
 						PlayerUtils.sendMessage(c.sender(), "&c/sellmulti <player> reset");
 					}
-				}).registerAndBind(core, "sellmulti", "sellmultiplier", "smulti");
+				}).registerAndBind(this, "sellmulti", "sellmultiplier", "smulti");
 		Commands.create()
 				.assertPermission("xprison.multipliers.admin")
 				.handler(c -> {
@@ -429,7 +421,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 						PlayerUtils.sendMessage(c.sender(), "&c/tokenmulti <player> <multiplier> <time> <time_unit>");
 						PlayerUtils.sendMessage(c.sender(), "&c/tokenmulti <player> reset");
 					}
-				}).registerAndBind(core, "tokenmulti", "tokenmultiplier", "tmulti");
+				}).registerAndBind(this, "tokenmulti", "tokenmultiplier", "tmulti");
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
@@ -449,7 +441,7 @@ public final class XPrisonMultipliers implements XPrisonModuleAbstract, PlayerDa
 					PlayerUtils.sendMessage(c.sender(), messages.get("rank_multi").replace("%multiplier%", String.format("%,.2f", rankMultipler)));
 					PlayerUtils.sendMessage(c.sender(), messages.get("sell_multi").replace("%multiplier%", String.format("%,.2f", sellMultiplier)).replace("%duration%", sellMultiplierDuration));
 					PlayerUtils.sendMessage(c.sender(), messages.get("token_multi").replace("%multiplier%", String.format("%,.2f", tokenMultiplier)).replace("%duration%", tokenMultiplierDuration));
-				}).registerAndBind(core, "multiplier", "multi");
+				}).registerAndBind(this, "multiplier", "multi");
 	}
 
 	private void resetGlobalMultiplier(CommandSender sender, String type) {

@@ -8,7 +8,7 @@ import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
 import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.gems.XPrisonGems;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
-import dev.drawethree.xprison.utils.item.PrisonItem;
+import dev.drawethree.xprison.utils.item.PrisonToolItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
@@ -65,11 +65,11 @@ public class GemsManager {
 					if (this.displayGemsMessages && hasOffGemsMessages(e.getPlayer())) {
 						this.gemsMessageOnPlayers.add(e.getPlayer().getUniqueId());
 					}
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
 					this.savePlayerData(e.getPlayer(), true, true);
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 
 		this.loadPlayerDataOnEnable();
 		this.updateTop10();
@@ -213,7 +213,7 @@ public class GemsManager {
 	}
 
 	public void redeemGems(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
-		final Long gemsAmount = new PrisonItem(item).getGems();
+		final Long gemsAmount = new PrisonToolItem(item).getGems();
 		if (gemsAmount == null) {
 			PlayerUtils.sendMessage(p, plugin.getMessage("not_gems_item"));
 			return;
@@ -318,9 +318,9 @@ public class GemsManager {
 
 	private ItemStack createGemsItem(long amount, int value) {
 		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(XEnchantment.PROTECTION.get()).flag(ItemFlag.HIDE_ENCHANTS).build();
-		final PrisonItem prisonItem = new PrisonItem(item);
-		prisonItem.setGems(amount);
-		prisonItem.load();
+		final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
+		prisonToolItem.setGems(amount);
+		prisonToolItem.load();
 		return item;
 	}
 

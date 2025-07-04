@@ -55,7 +55,7 @@ public class AdminAutoMinerCommand {
 					}
 
 					this.plugin.getManager().modifyPlayerAutoMinerTime(c.sender(), target, time, timeUnit);
-				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
+				}).registerAndBind(this.plugin, COMMAND_ALIASES);
 	}
 
 	private List<String> createTabHandler(CommandContext<CommandSender> context) {

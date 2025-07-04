@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.blocks;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.blocks.XPrisonBlocksAPI;
 import dev.drawethree.xprison.blocks.api.XPrisonBlocksAPIImpl;
 import dev.drawethree.xprison.blocks.config.BlockRewardsConfig;
@@ -20,7 +20,7 @@ import me.lucko.helper.utils.Players;
 
 import java.util.concurrent.TimeUnit;
 
-public final class XPrisonBlocks implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonBlocks extends XPrisonModuleBase implements PlayerDataHolder {
 
     public static final String MODULE_NAME = "Blocks";
 
@@ -48,36 +48,24 @@ public final class XPrisonBlocks implements XPrisonModuleAbstract, PlayerDataHol
     @Getter
     private BlocksService blocksService;
 
-    @Getter
-    private final XPrison core;
-
     private RepeatingTask savePlayerDataTask;
 
-    private boolean enabled;
-
-
     public XPrisonBlocks(XPrison prisonCore) {
+        super(prisonCore);
         instance = this;
-        this.core = prisonCore;
-    }
-
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
     }
 
     @Override
     public void reload() {
+        super.reload();
         this.blockRewardsConfig.reload();
         this.blocksManager.reload();
         this.commandManager.reload();
     }
 
-
     @Override
     public void enable() {
-
+        super.enable();
         this.blocksConfig = new BlocksConfig(this);
         this.blocksConfig.load();
 
@@ -118,6 +106,7 @@ public final class XPrisonBlocks implements XPrisonModuleAbstract, PlayerDataHol
 
     @Override
     public void disable() {
+        super.disable();
         this.blocksManager.disable();
 
         this.savePlayerDataTask.stop();

@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.gems;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.gems.XPrisonGemsAPI;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.gems.api.XPrisonGemsAPIImpl;
@@ -24,7 +24,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.HashMap;
 
-public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonGems extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Gems";
 	public static final String GEMS_ADMIN_PERM = "xprison.gems.admin";
@@ -40,8 +40,6 @@ public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolde
 
 	@Getter
 	private GemsManager gemsManager;
-	@Getter
-	private final XPrison core;
 
 	@Getter
 	private GemsRepository gemsRepository;
@@ -51,25 +49,19 @@ public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolde
 
 	private HashMap<String, String> messages;
 
-	private boolean enabled;
 	private CommandManager commandManager;
 
 	@Getter
 	private long commandCooldown;
 
 	public XPrisonGems(XPrison XPrison) {
+		super(XPrison);
 		instance = this;
-		this.core = XPrison;
-	}
-
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.config.reload();
 
 		this.loadMessages();
@@ -81,7 +73,7 @@ public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolde
 
 	@Override
 	public void enable() {
-		this.enabled = true;
+		super.enable();
 		this.config = this.core.getFileManager().getConfig("gems.yml").copyDefaults(true).save();
 
 		this.loadVariables();
@@ -96,6 +88,7 @@ public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolde
 		this.api = new XPrisonGemsAPIImpl(this.gemsManager);
 
 		this.registerEvents();
+		this.enabled = true;
 	}
 
 	private void loadVariables() {
@@ -105,6 +98,7 @@ public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolde
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.gemsManager.stopUpdating();
 		this.gemsManager.savePlayerDataOnDisable();
 		this.enabled = false;
@@ -138,7 +132,7 @@ public final class XPrisonGems implements XPrisonModuleAbstract, PlayerDataHolde
 						}
 						this.gemsManager.redeemGems(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
 					}
-				}).bindWith(core);
+				}).bindWith(this);
 	}
 
 

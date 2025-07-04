@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.tokens;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.tokens.XPrisonTokensAPI;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.tokens.api.XPrisonTokensAPIImpl;
@@ -19,7 +19,7 @@ import me.lucko.helper.utils.Players;
 
 import java.util.concurrent.TimeUnit;
 
-public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonTokens extends XPrisonModuleBase implements PlayerDataHolder {
 
 	public static final String MODULE_NAME = "Tokens";
 
@@ -44,27 +44,17 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 	@Getter
 	private TokensService tokensService;
 
-	@Getter
-	private final XPrison core;
-
 	private RepeatingTask savePlayerDataTask;
 
-	private boolean enabled;
-
-
 	public XPrisonTokens(XPrison prisonCore) {
+		super(prisonCore);
 		instance = this;
-		this.core = prisonCore;
 	}
 
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
-	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.tokensConfig.reload();
 		this.tokensManager.reload();
 		this.commandManager.reload();
@@ -73,7 +63,7 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 
 	@Override
 	public void enable() {
-
+		super.enable();
 		this.tokensConfig = new TokensConfig(this);
 		this.tokensConfig.load();
 
@@ -111,6 +101,7 @@ public final class XPrisonTokens implements XPrisonModuleAbstract, PlayerDataHol
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.tokensManager.disable();
 
 		this.savePlayerDataTask.stop();

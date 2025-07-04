@@ -43,6 +43,6 @@ public class PrestigeAdminCommand {
                                 break;
                         }
                     }
-                }).registerAndBind(this.plugin.getCore(), "prestigeadmin", "prestigea");
+                }).registerAndBind(this.plugin, "prestigeadmin", "prestigea");
     }
 }

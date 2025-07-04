@@ -30,7 +30,7 @@ public class DisenchantCommand {
 
 					openDisenchantGui(pickAxe, c.sender());
 
-				}).registerAndBind(this.plugin.getCore(), "disenchant", "dise", "de", "disenchantmenu", "dismenu");
+				}).registerAndBind(this.plugin, "disenchant", "dise", "de", "disenchantmenu", "dismenu");
 	}
 
 	private void openDisenchantGui(ItemStack pickAxe, Player player) {

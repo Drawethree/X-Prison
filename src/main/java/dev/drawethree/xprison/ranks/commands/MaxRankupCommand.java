@@ -21,6 +21,6 @@ public class MaxRankupCommand {
 					if (c.args().isEmpty()) {
 						this.plugin.getRanksManager().buyMaxRank(c.sender());
 					}
-				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
+				}).registerAndBind(this.plugin, COMMAND_ALIASES);
 	}
 }

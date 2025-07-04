@@ -37,6 +37,7 @@ modules:
   pickaxe_levels: true
   gangs: true
   mines: true
+  bombs: true
   history: true
 # Item migrator config
 item-migrator:

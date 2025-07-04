@@ -31,7 +31,7 @@ public class SellAllCommand {
 
                     this.plugin.getManager().sellAll(c.sender(), region);
 
-                }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);
+                }).registerAndBind(this.plugin, COMMAND_NAME);
     }
 
     private IWrappedRegion parseRegionFromCommandContext(CommandContext<Player> c) {
