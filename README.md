@@ -33,6 +33,7 @@ If you are a developer looking for API, please check https://github.com/Drawethr
 * [_pickaxe-levels.yml_](https://github.com/Drawethree/X-Prison/wiki/pickaxe-levels.yml)
 * [_gangs.yml_](https://github.com/Drawethree/X-Prison/wiki/gangs.yml)
 * [_mines.yml_](https://github.com/Drawethree/X-Prison/wiki/mineImpls.yml)
+* [_bombs.yml_](https://github.com/Drawethree/X-Prison/wiki/bombs.yml)
 
 ### Default Enchant Configs
 * [_autosell.json_](https://github.com/Drawethree/X-Prison/wiki/autosell.json)
