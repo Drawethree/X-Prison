@@ -82,14 +82,14 @@ public class CommandManager {
 						OfflinePlayer target = Players.getOfflineNullable(c.rawArg(0));
 						this.plugin.getTokensManager().sendInfoMessage(c.sender(), target);
 					}
-				}).registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getTokensCommandAliases());
+				}).registerAndBind(this.plugin, this.plugin.getTokensConfig().getTokensCommandAliases());
 
 		// /tokenmessage
 		Commands.create()
 				.assertPlayer()
 				.handler(c -> {
 					this.plugin.getTokensManager().toggleTokenMessage(c.sender());
-				}).registerAndBind(this.plugin.getCore(), "tokenmessage");
+				}).registerAndBind(this.plugin, "tokenmessage");
 
 		// /tokenstop, /tokentop
 		Commands.create()
@@ -98,7 +98,7 @@ public class CommandManager {
 						this.plugin.getTokensManager().sendTokensTop(c.sender());
 					}
 				})
-				.registerAndBind(this.plugin.getCore(), this.plugin.getTokensConfig().getTokensTopCommandAliases());
+				.registerAndBind(this.plugin, this.plugin.getTokensConfig().getTokensTopCommandAliases());
 	}
 
 	private List<String> createTabHandler(CommandContext<CommandSender> context) {

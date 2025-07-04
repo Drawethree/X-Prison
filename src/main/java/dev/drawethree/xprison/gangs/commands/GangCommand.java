@@ -79,7 +79,7 @@ public class GangCommand {
 					} else {
 						this.getHelpSubCommand().execute(c.sender(), c.args());
 					}
-				}).registerAndBind(this.plugin.getCore(), this.plugin.getConfig().getGangsCommandAliases());
+				}).registerAndBind(this.plugin, this.plugin.getConfig().getGangsCommandAliases());
 	}
 
 	private GangSubCommand getHelpSubCommand() {

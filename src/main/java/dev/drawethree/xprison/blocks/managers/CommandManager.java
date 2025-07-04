@@ -53,7 +53,7 @@ public class CommandManager {
                         this.plugin.getBlocksManager().sendInfoMessage(c.sender(), target);
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), "blocks");
+                .registerAndBind(this.plugin, "blocks");
 
         // /blocksadmin, /blocksa
         Commands.create()
@@ -83,7 +83,7 @@ public class CommandManager {
                         PlayerUtils.sendMessage(c.sender(), "&c/blocksadmin <add/set/remove> <player> <amount>");
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), "blocksadmin", "blocksa");
+                .registerAndBind(this.plugin, "blocksadmin", "blocksa");
 
         // /blockstop, / blocktop
         Commands.create()
@@ -92,7 +92,7 @@ public class CommandManager {
                         this.plugin.getBlocksManager().sendBlocksTop(c.sender());
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), this.plugin.getBlocksConfig().getBlocksTopCommandAliases());
+                .registerAndBind(this.plugin, this.plugin.getBlocksConfig().getBlocksTopCommandAliases());
 
         // /blockstopweekly, /blockstopw
         Commands.create()
@@ -101,7 +101,7 @@ public class CommandManager {
                         this.plugin.getBlocksManager().sendBlocksTopWeekly(c.sender());
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), "blockstopweekly", "blockstopw");
+                .registerAndBind(this.plugin, "blockstopweekly", "blockstopw");
 
         // /blockstopweeklyreset
         Commands.create()
@@ -111,7 +111,7 @@ public class CommandManager {
                         this.plugin.getBlocksManager().resetBlocksTopWeekly(c.sender());
                     }
                 })
-                .registerAndBind(this.plugin.getCore(), "blockstopweeklyreset");
+                .registerAndBind(this.plugin, "blockstopweeklyreset");
     }
 
     public void reload() {

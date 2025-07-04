@@ -71,7 +71,7 @@ public class SellPriceCommand {
 
                     PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, wrappedRegion.getId()));
 
-                }).registerAndBind(this.plugin.getCore(), COMMAND_NAME);
+                }).registerAndBind(this.plugin, COMMAND_NAME);
     }
 
     private void openEditorGui(Player sender) {

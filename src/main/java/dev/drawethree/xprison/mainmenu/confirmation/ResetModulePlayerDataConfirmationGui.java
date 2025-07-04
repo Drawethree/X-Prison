@@ -1,16 +1,16 @@
 package dev.drawethree.xprison.mainmenu.confirmation;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.utils.gui.ConfirmationGui;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import org.bukkit.entity.Player;
 
 public class ResetModulePlayerDataConfirmationGui extends ConfirmationGui {
-	private final XPrisonModuleAbstract module;
+	private final XPrisonModuleBase module;
 
-	public ResetModulePlayerDataConfirmationGui(Player player, XPrisonModuleAbstract module) {
+	public ResetModulePlayerDataConfirmationGui(Player player, XPrisonModuleBase module) {
 		super(player, module == null ? "Reset all player data ?" : "Reset " + module.getName() + " player data?");
 		this.module = module;
 	}

@@ -22,11 +22,11 @@ public class RanksListener {
 
 	private void subscribePlayerQuitEvent() {
 		Events.subscribe(PlayerQuitEvent.class)
-				.handler(e -> this.plugin.getRanksManager().savePlayerRank(e.getPlayer())).bindWith(plugin.getCore());
+				.handler(e -> this.plugin.getRanksManager().savePlayerRank(e.getPlayer())).bindWith(plugin);
 	}
 
 	private void subscribePlayerJoinEvent() {
 		Events.subscribe(PlayerJoinEvent.class)
-				.handler(e -> this.plugin.getRanksManager().loadPlayerRank(Collections.singleton(e.getPlayer()))).bindWith(plugin.getCore());
+				.handler(e -> this.plugin.getRanksManager().loadPlayerRank(Collections.singleton(e.getPlayer()))).bindWith(plugin);
 	}
 }

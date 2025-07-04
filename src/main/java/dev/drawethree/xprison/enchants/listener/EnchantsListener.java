@@ -2,7 +2,6 @@ package dev.drawethree.xprison.enchants.listener;
 
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.gui.EnchantGUI;
-import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.inventory.InventoryUtils;
 import me.lucko.helper.Events;
@@ -15,12 +14,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.ItemStack;
-import org.codemc.worldguardwrapper.flag.IWrappedFlag;
-import org.codemc.worldguardwrapper.flag.WrappedState;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class EnchantsListener {
@@ -52,7 +48,7 @@ public class EnchantsListener {
 		Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
 				.filter(e -> !e.isCancelled() && !ignoredEvents.contains(e))
 				.filter(e -> e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
-				.handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin.getCore());
+				.handler(e -> this.plugin.getEnchantsManager().handleBlockBreak(e, e.getPlayer().getItemInHand())).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerItemHeldEvent() {
@@ -73,7 +69,7 @@ public class EnchantsListener {
 						this.plugin.getEnchantsManager().handlePickaxeEquip(e.getPlayer(), newItem);
 					}
 
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerInteractEvent() {
@@ -89,7 +85,7 @@ public class EnchantsListener {
 					this.plugin.getCore().debug("Pickaxe slot is: " + pickaxeSlot, this.plugin);
 
 					new EnchantGUI(this.plugin, e.getPlayer(), pickAxe, pickaxeSlot).open();
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerDropItemEvent() {
@@ -99,7 +95,7 @@ public class EnchantsListener {
 					if (this.plugin.getCore().isPickaxeSupported(e.getItemDrop().getItemStack())) {
 						this.plugin.getEnchantsManager().handlePickaxeUnequip(e.getPlayer(), e.getItemDrop().getItemStack());
 					}
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerJoinEvent() {
@@ -109,12 +105,12 @@ public class EnchantsListener {
 				.handler(e -> {
 					ItemStack firstJoinPickaxe = this.plugin.getEnchantsManager().createFirstJoinPickaxe(e.getPlayer());
 					e.getPlayer().getInventory().addItem(firstJoinPickaxe);
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerRespawnEvent() {
 		Events.subscribe(PlayerRespawnEvent.class, EventPriority.LOWEST)
-				.handler(e -> this.plugin.getRespawnManager().handleRespawn(e.getPlayer())).bindWith(this.plugin.getCore());
+				.handler(e -> this.plugin.getRespawnManager().handleRespawn(e.getPlayer())).bindWith(this.plugin);
 	}
 
 	private void subscribeToInventoryClickEvent() {
@@ -128,7 +124,7 @@ public class EnchantsListener {
 						if (e.getSlot() == 2 && (this.plugin.getEnchantsManager().hasEnchants(item1) || this.plugin.getEnchantsManager().hasEnchants(item2))) {
 							e.setCancelled(true);
 						}
-					}).bindWith(this.plugin.getCore());
+					}).bindWith(this.plugin);
 		}
 
 		Events.subscribe(InventoryClickEvent.class, EventPriority.MONITOR)
@@ -140,7 +136,7 @@ public class EnchantsListener {
 					if (this.plugin.getCore().isPickaxeSupported(item)) {
 						this.plugin.getEnchantsManager().handlePickaxeUnequip((Player) e.getWhoClicked(), item);
 					}
-				}).bindWith(this.plugin.getCore());
+				}).bindWith(this.plugin);
 	}
 
 	private void subscribeToPlayerDeathEvent() {
@@ -163,10 +159,6 @@ public class EnchantsListener {
 						this.plugin.getCore().debug("No Pickaxes found for player " + e.getEntity().getName() + " (PlayerDeathEvent)", this.plugin);
 					}
 
-				}).bindWith(this.plugin.getCore());
-	}
-
-	private Optional<IWrappedFlag<WrappedState>> getWGFlag() {
-		return this.plugin.getCore().getWorldGuardWrapper().getFlag(Constants.ENCHANTS_WG_FLAG_NAME, WrappedState.class);
+				}).bindWith(this.plugin);
 	}
 }

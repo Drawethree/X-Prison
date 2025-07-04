@@ -34,19 +34,19 @@ public class BlocksListener {
 					List<Block> blocks = new ArrayList<>();
 					blocks.add(e.getBlock());
 					this.plugin.getBlocksManager().handleBlockBreak(e.getPlayer(), blocks, true);
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 	private void subscribeToPlayerQuitEvent() {
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
 					this.plugin.getBlocksManager().savePlayerData(Collections.singletonList(e.getPlayer()), true, true);
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 
 	private void subscribeToPlayerJoinEvent() {
 		Events.subscribe(PlayerJoinEvent.class)
 				.handler(e -> {
 					this.plugin.getBlocksManager().loadPlayerData(Collections.singleton(e.getPlayer()));
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 }

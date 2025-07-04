@@ -3,8 +3,7 @@ package dev.drawethree.xprison.mainmenu;
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.history.gui.PlayerHistoryGUI;
-import dev.drawethree.xprison.mainmenu.reload.ReloadSelectionGui;
-import dev.drawethree.xprison.mainmenu.reset.ResetSelectionGui;
+import dev.drawethree.xprison.mainmenu.modules.ModulesGui;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
@@ -37,13 +36,6 @@ public class MainMenu extends Gui {
 			.mask("000000000")
 			.mask("100000001");
 
-	private static final MenuScheme CONTENT = new MenuScheme()
-			.mask("000000000")
-			.mask("000111000")
-			.mask("001111100")
-			.mask("000111000")
-			.mask("000000000");
-
 
 	private final XPrison core;
 
@@ -74,13 +66,13 @@ public class MainMenu extends Gui {
 
 		}));
 
-		//Reload
-		this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&e&lReload Modules").lore("&7Click to reload specific module").build(() -> {
-			if (!this.getPlayer().hasPermission("xprison.mainmenu.reload")) {
+		//Modules
+		this.setItem(21, ItemStackBuilder.of(SkullUtils.COMMAND_BLOCK_SKULL.clone()).name("&e&lModules Manager").lore("&7Click to manage modules").build(() -> {
+			if (!this.getPlayer().hasPermission("xprison.mainmenu.modules")) {
 				return;
 			}
 			this.close();
-			new ReloadSelectionGui(this.core, this.getPlayer()).open();
+			openGui(new ModulesGui(this.getPlayer()));
 		}));
 
 		//Debug
@@ -92,17 +84,8 @@ public class MainMenu extends Gui {
 			this.redraw();
 		}));
 
-		//Reset Data
-		this.setItem(23, ItemStackBuilder.of(SkullUtils.DANGER_SKULL.clone()).name("&e&lReset Player Data").lore("&7Click to select which module data", "&7would you like to wipe.").build(() -> {
-			if (!this.getPlayer().hasPermission("xprison.mainmenu.reset")) {
-				return;
-			}
-			this.close();
-			new ResetSelectionGui(this.core, this.getPlayer()).open();
-		}));
-
 		//Players History
-		this.setItem(31, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lPlayers History").lore("&7Click to see players history.").build(() -> {
+		this.setItem(23, ItemStackBuilder.of(XMaterial.BOOK.parseItem()).name("&e&lPlayers History").lore("&7Click to see players history.").build(() -> {
 			if (!this.getPlayer().hasPermission("xprison.mainmenu.history")) {
 				return;
 			}
@@ -126,6 +109,10 @@ public class MainMenu extends Gui {
 					PlayerUtils.sendMessage(this.getPlayer(), " ");
 				}));
 
+	}
+
+	private void openGui(Gui gui) {
+		gui.open();
 	}
 
 	private void openHistorySelectorGui() {

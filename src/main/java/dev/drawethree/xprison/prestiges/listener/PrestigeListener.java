@@ -19,12 +19,12 @@ public class PrestigeListener {
 
     private void subscribePlayerQuitEvent() {
         Events.subscribe(PlayerQuitEvent.class)
-                .handler(e -> this.plugin.getPrestigeManager().savePlayerData(e.getPlayer(), true, true)).bindWith(plugin.getCore());
+                .handler(e -> this.plugin.getPrestigeManager().savePlayerData(e.getPlayer(), true, true)).bindWith(plugin);
     }
 
     private void subscribePlayerJoinEvent() {
         Events.subscribe(PlayerJoinEvent.class)
-                .handler(e -> this.plugin.getPrestigeManager().loadPlayerPrestige(e.getPlayer())).bindWith(plugin.getCore());
+                .handler(e -> this.plugin.getPrestigeManager().loadPlayerPrestige(e.getPlayer())).bindWith(plugin);
     }
 
 

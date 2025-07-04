@@ -18,7 +18,7 @@ import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
 import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
-import dev.drawethree.xprison.utils.item.PrisonItem;
+import dev.drawethree.xprison.utils.item.PrisonToolItem;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
@@ -64,7 +64,7 @@ public class EnchantsManager {
 			return new HashMap<>();
 		}
 
-        return new PrisonItem(itemStack).getEnchants(getEnchantsRepository());
+        return new PrisonToolItem(itemStack).getEnchants(getEnchantsRepository());
 	}
 
 	public ItemStack updatePickaxe(Player player, ItemStack item) {
@@ -94,14 +94,14 @@ public class EnchantsManager {
 		}
 
 		long blocksBroken = getBlocksBroken(item);
-		final PrisonItem prisonItem = new PrisonItem(item);
-		Map<XPrisonEnchantment, Integer> enchants = prisonItem.getEnchants(getEnchantsRepository());
+		final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
+		Map<XPrisonEnchantment, Integer> enchants = prisonToolItem.getEnchants(getEnchantsRepository());
 
 		List<String> pickaxeLore = this.plugin.getEnchantsConfig().getPickaxeLore();
 
 		final boolean isUnbreakable;
 		Boolean unbreakResult = null;
-		if (USE_META_UNBREAK ? meta.isUnbreakable() : prisonItem.isUnbreakable()) {
+		if (USE_META_UNBREAK ? meta.isUnbreakable() : prisonToolItem.isUnbreakable()) {
 			if (!this.plugin.getEnchantsConfig().isUseUnbreakablePermission() || player.hasPermission(UNBREAK_PERMISSION)) {
 				isUnbreakable = true;
 			} else {
@@ -122,11 +122,11 @@ public class EnchantsManager {
 				meta.setUnbreakable(unbreakResult);
 			} else {
 				if (unbreakResult) {
-					prisonItem.setUnbreakable(true);
+					prisonToolItem.setUnbreakable(true);
 				} else {
-					prisonItem.remove("Unbreakable");
+					prisonToolItem.remove("Unbreakable");
 				}
-				prisonItem.load();
+				prisonToolItem.load();
 				meta = item.getItemMeta();
 			}
 		}
@@ -190,7 +190,7 @@ public class EnchantsManager {
 			return 0;
 		}
 
-        return new PrisonItem(item).getBrokenBlocks();
+        return new PrisonToolItem(item).getBrokenBlocks();
 	}
 
 	public synchronized void addBlocksBrokenToItem(Player p, int amount) {
@@ -199,9 +199,9 @@ public class EnchantsManager {
 			return;
 		}
 
-        final PrisonItem prisonItem = new PrisonItem(p.getItemInHand());
-        prisonItem.addBrokenBlocks(amount);
-		ItemStack item = prisonItem.loadCopy();
+        final PrisonToolItem prisonToolItem = new PrisonToolItem(p.getItemInHand());
+        prisonToolItem.addBrokenBlocks(amount);
+		ItemStack item = prisonToolItem.loadCopy();
 		applyLoreToPickaxe(p, item);
 		p.setItemInHand(item);
 	}
@@ -212,9 +212,9 @@ public class EnchantsManager {
 			return;
 		}
 
-        final PrisonItem prisonItem = new PrisonItem(item);
-        prisonItem.addBrokenBlocks(amount);
-		player.setItemInHand(prisonItem.loadCopy());
+        final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
+        prisonToolItem.addBrokenBlocks(amount);
+		player.setItemInHand(prisonToolItem.loadCopy());
 		applyLoreToPickaxe(player, player.getItemInHand());
 	}
 
@@ -224,7 +224,7 @@ public class EnchantsManager {
 			return 0;
 		}
 
-		return Math.min(new PrisonItem(itemStack).getEnchantLevel(enchantment), enchantment.getMaxLevel());
+		return Math.min(new PrisonToolItem(itemStack).getEnchantLevel(enchantment), enchantment.getMaxLevel());
 	}
 
     public void forEachEffectiveEnchant(Player player, ItemStack item, BiConsumer<XPrisonEnchantment, Integer> consumer) {
@@ -283,9 +283,9 @@ public class EnchantsManager {
 			return item;
 		}
 
-        final PrisonItem prisonItem = new PrisonItem(item);
-        prisonItem.setEnchant(enchantment, level);
-		prisonItem.load();
+        final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
+        prisonToolItem.setEnchant(enchantment, level);
+		prisonToolItem.load();
 		return this.applyLoreToPickaxe(player, item);
 	}
 

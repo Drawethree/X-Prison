@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.autosell;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.autosell.XPrisonAutoSellAPI;
 import dev.drawethree.xprison.autosell.api.XPrisonAutoSellAPIImpl;
 import dev.drawethree.xprison.autosell.command.AutoSellCommand;
@@ -14,14 +14,12 @@ import dev.drawethree.xprison.autosell.model.AutoSellBroadcastTask;
 import dev.drawethree.xprison.multipliers.XPrisonMultipliers;
 import lombok.Getter;
 
-public final class XPrisonAutoSell implements XPrisonModuleAbstract {
+public final class XPrisonAutoSell extends XPrisonModuleBase {
 
 	public static final String MODULE_NAME = "Auto Sell";
 
 	@Getter
 	private static XPrisonAutoSell instance;
-	@Getter
-	private final XPrison core;
 	@Getter
 	private XPrisonAutoSellAPI api;
 	@Getter
@@ -31,20 +29,14 @@ public final class XPrisonAutoSell implements XPrisonModuleAbstract {
 	@Getter
 	private AutoSellBroadcastTask broadcastTask;
 
-	private boolean enabled;
-
 	public XPrisonAutoSell(XPrison core) {
+		super(core);
 		instance = this;
-		this.core = core;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return enabled;
 	}
 
 	@Override
 	public void reload() {
+		super.reload();
 		this.autoSellConfig.reload();
 		this.manager.reload();
 	}
@@ -52,6 +44,7 @@ public final class XPrisonAutoSell implements XPrisonModuleAbstract {
 
     @Override
     public void enable() {
+		super.enable();
         this.autoSellConfig = new AutoSellConfig(this);
         this.autoSellConfig.load();
 
@@ -87,6 +80,7 @@ public final class XPrisonAutoSell implements XPrisonModuleAbstract {
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.broadcastTask.stop();
 		this.enabled = false;
 	}

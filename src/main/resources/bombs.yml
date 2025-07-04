@@ -1,0 +1,92 @@
+# Cooldown in seconds between throwing another bomb
+bomb-throw-cooldown: 3
+# Command aliases for /bombs command
+bombs-command-aliases:
+  - bomb
+  - bombs
+# All bomb types
+bombs:
+  # Bomb type name
+  tiny:
+    # Explosion Radius
+    radius: 3
+    # Sound played when bomb is dropped
+    drop_sound: ENTITY_TNT_PRIMED
+    # Sound played when bomb has exploded
+    explode_sound: ENTITY_GENERIC_EXPLODE
+    # Delay of explosion in seconds
+    explosion_delay: 3
+    # Bomb Item configuration
+    item:
+      # Type of item
+      material: FIRE_CHARGE
+      # Display name
+      name: "&a&lTINY &cBomb"
+      # Lore
+      lore:
+        - " "
+        - "&7&oDrop it and run away!"
+        - " "
+        - "&7Creates explosion in 3x3 radius."
+        - " "
+  small:
+    radius: 5
+    drop_sound: ENTITY_TNT_PRIMED
+    explode_sound: ENTITY_GENERIC_EXPLODE
+    explosion_delay: 3
+    item:
+      material: BLAZE_POWDER
+      name: "&e&lSMALL &cBomb"
+      lore:
+        - " "
+        - "&7A slightly stronger blast."
+        - "&7Creates explosion in 5x5 radius."
+        - " "
+  normal:
+    radius: 7
+    drop_sound: ENTITY_TNT_PRIMED
+    explode_sound: ENTITY_GENERIC_EXPLODE
+    explosion_delay: 3
+    item:
+      material: TNT
+      name: "&e&lNORMAL &cBomb"
+      lore:
+        - " "
+        - "&7Moderate explosive power."
+        - "&7Creates explosion in 7x7 radius."
+        - " "
+  large:
+    radius: 10
+    drop_sound: ENTITY_TNT_PRIMED
+    explode_sound: ENTITY_GENERIC_EXPLODE
+    explosion_delay: 3
+    item:
+      material: MAGMA_CREAM
+      name: "&c&lLARGE &cBomb"
+      lore:
+        - " "
+        - "&7Big boom, big range."
+        - "&7Creates explosion in 10x10 radius."
+        - " "
+  mega:
+    radius: 15
+    drop_sound: ENTITY_TNT_PRIMED
+    explode_sound: ENTITY_GENERIC_EXPLODE
+    explosion_delay: 3
+    item:
+      material: NETHER_STAR
+      name: "&4&lMEGA &cBomb"
+      lore:
+        - " "
+        - "&cCatastrophic power — run far!"
+        - "&7Creates explosion in 15x15 radius."
+        - " "
+# Messages
+messages:
+  player_offline: "&c&lBOMBS &8» &e%player% &7is not online!"
+  bomb_given: "&c&lBOMBS &8» &7You have given &ex%amount%&r %item% &7to &e%player%&7!"
+  bomb_received: "&c&lBOMBS &8» &7You have received &ex%amount%&r %item%&7!"
+  bomb_invalid_type: "&c&lBOMBS &8» &c%type% &7is not a valid bomb!"
+  no-permission: "&c&lBOMBS &8» &cInsufficient permissions!"
+  items_sold: "&c&lBOMBS &8» &7Items auto-sold for &e$%price%&7."
+  cooldown: "&c&lBOMBS &8» &cYou can drop next bomb in %time% seconds."

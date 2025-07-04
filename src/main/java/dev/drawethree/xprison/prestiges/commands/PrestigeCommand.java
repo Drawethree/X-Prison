@@ -18,6 +18,6 @@ public class PrestigeCommand {
                     if (c.args().isEmpty()) {
                         this.plugin.getPrestigeManager().buyNextPrestige(c.sender());
                     }
-                }).registerAndBind(this.plugin.getCore(), "prestige");
+                }).registerAndBind(this.plugin, "prestige");
     }
 }

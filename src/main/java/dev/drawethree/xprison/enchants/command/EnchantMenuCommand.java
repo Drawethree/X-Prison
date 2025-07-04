@@ -29,7 +29,7 @@ public class EnchantMenuCommand {
 					}
 
 					openEnchantMenu(pickAxe, c.sender());
-				}).registerAndBind(this.plugin.getCore(), "enchantmenu", "enchmenu");
+				}).registerAndBind(this.plugin, "enchantmenu", "enchmenu");
 	}
 
 	private void openEnchantMenu(ItemStack pickAxe, Player player) {

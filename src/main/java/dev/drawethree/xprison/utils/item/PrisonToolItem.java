@@ -8,11 +8,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PrisonItem extends RtagItem {
+public class PrisonToolItem extends RtagItem {
 
     private static final String MAIN = "upc";
 
-    public PrisonItem(ItemStack item) {
+    public PrisonToolItem(ItemStack item) {
         super(item);
     }
 

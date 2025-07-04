@@ -45,7 +45,7 @@ public class TokensListener {
 					List<Block> blocks = new ArrayList<>();
 					blocks.add(e.getBlock());
 					this.plugin.getTokensManager().handleBlockBreak(e.getPlayer(), blocks);
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 
 	private void subscribeToPlayerInteractEvent() {
@@ -65,14 +65,14 @@ public class TokensListener {
 
 					this.plugin.getTokensManager().redeemTokens(e.getPlayer(), e.getItem(), e.getPlayer().isSneaking(), offHandClick);
 
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 
 	private void subscribeToPlayerQuitEvent() {
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
 					this.plugin.getTokensManager().savePlayerData(Collections.singletonList(e.getPlayer()), true, true);
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 
 	private void subscribeToPlayerJoinEvent() {
@@ -84,6 +84,6 @@ public class TokensListener {
 						this.plugin.getTokensManager().addPlayerIntoTokenMessageOnPlayers(e.getPlayer());
 					}
 
-				}).bindWith(plugin.getCore());
+				}).bindWith(plugin);
 	}
 }

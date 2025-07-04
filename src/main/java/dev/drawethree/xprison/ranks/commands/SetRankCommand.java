@@ -34,6 +34,6 @@ public class SetRankCommand {
 
 						this.plugin.getRanksManager().setRank(target, rankOptional.get(), c.sender());
 					}
-				}).registerAndBind(this.plugin.getCore(), COMMAND_ALIASES);
+				}).registerAndBind(this.plugin, COMMAND_ALIASES);
 	}
 }

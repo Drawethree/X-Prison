@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.history;
 
 import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.XPrisonModuleAbstract;
+import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.api.autominer.events.PlayerAutoMinerTimeModifyEvent;
 import dev.drawethree.xprison.api.autominer.events.PlayerAutomineEvent;
 import dev.drawethree.xprison.api.gangs.events.GangCreateEvent;
@@ -34,11 +34,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 
-public final class XPrisonHistory implements XPrisonModuleAbstract, PlayerDataHolder {
+public final class XPrisonHistory extends XPrisonModuleBase implements PlayerDataHolder {
 
 	private static final String MODULE_NAME = "History";
-	@Getter
-	private final XPrison core;
 
 	@Getter
 	private HistoryManager historyManager;
@@ -52,16 +50,14 @@ public final class XPrisonHistory implements XPrisonModuleAbstract, PlayerDataHo
 	@Getter
 	private XPrisonHistoryAPI api;
 
-	private boolean enabled;
-
 	public XPrisonHistory(XPrison core) {
-		this.core = core;
+		super(core);
 		this.enabled = false;
 	}
 
 	@Override
 	public void enable() {
-		this.enabled = true;
+		super.enable();
 		this.historyRepository = new HistoryRepositoryImpl(this.core.getPluginDatabase());
 		this.historyRepository.createTables();
 		this.historyService = new HistoryServiceImpl(this.historyRepository);
@@ -69,6 +65,7 @@ public final class XPrisonHistory implements XPrisonModuleAbstract, PlayerDataHo
 		this.api = new XPrisonHistoryAPIImpl(this);
 		this.registerCommands();
 		this.registerEvents();
+		this.enabled = true;
 	}
 
 	private void registerEvents() {
@@ -76,65 +73,65 @@ public final class XPrisonHistory implements XPrisonModuleAbstract, PlayerDataHo
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGems(), String.format("&a&l+%,d GEMS &f(%s). &7Current Gems: &e%,d", e.getAmount(), e.getCause().name(), this.core.getGems().getApi().getAmount(e.getPlayer())));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerGemsLostEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGems(), String.format("&c&l-%,d GEMS &f(%s). &7Current Gems: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getAmount(e.getPlayer())));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerTokensReceiveEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getTokens(), String.format("&a&l+%,d TOKENS &f(%s).&7Current Tokens: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getAmount(e.getPlayer())));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerTokensLostEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getTokens(), String.format("&c&l-%,d TOKENS &f(%s).&7Current Tokens: &e%,d", e.getAmount(), e.getCause().name(), this.core.getTokens().getApi().getAmount(e.getPlayer())));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerRankUpEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getRanks(), String.format("Rank Up: %s&r -> %s", e.getOldRank().getPrefix(), e.getNewRank().getPrefix()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerPrestigeEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getPrestiges(), String.format("Prestige Up:  %s&r -> %s", e.getOldPrestige().getPrefix(), e.getNewPrestige().getPrefix()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(GangLeaveEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGangs(), String.format("Left Gang: &e%s", e.getGang().getName()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(GangJoinEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getGangs(), String.format("Joined Gang: &e%s", e.getGang().getName()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(GangCreateEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					if (e.getGangLeader() instanceof Player) {
 						this.historyManager.createPlayerHistoryLine(e.getGangLeader(), this.core.getGangs(), String.format("Created Gang: &e%s", e.getGang().getName()));
 					}
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(GangDisbandEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getGang().getOwnerOffline(), this.core.getGangs(), String.format("Disbanded Gang: &e%s", e.getGang().getName()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerMultiplierReceiveEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getMultipliers(), String.format("Received x%,.2f %s Multiplier for %,d %s", e.getMultiplier(), e.getType(), e.getDuration(), e.getTimeUnit().name()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerAutomineEvent.class, EventPriority.MONITOR)
 				.filter(EventFilters.ignoreCancelled())
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getAutoMiner(), String.format("Player is Auto-Mining. Time left: %s", TimeUtil.getTime(e.getTimeLeft() - 1)));
-				}).bindWith(this.core);
+				}).bindWith(this);
 		Events.subscribe(PlayerAutoMinerTimeModifyEvent.class, EventPriority.MONITOR)
 				.handler(e -> {
 					this.historyManager.createPlayerHistoryLine(e.getPlayer(), this.core.getAutoMiner(), String.format("Received %,d %s of Auto-Miner time.", e.getDuration(), e.getTimeUnit().name()));
-				}).bindWith(this.core);
+				}).bindWith(this);
 	}
 
 	private void registerCommands() {
@@ -148,21 +145,18 @@ public final class XPrisonHistory implements XPrisonModuleAbstract, PlayerDataHo
 					}
 					OfflinePlayer target = c.arg(0).parseOrFail(OfflinePlayer.class);
 					new PlayerHistoryGUI(c.sender(), target, this).open();
-				}).registerAndBind(this.core, "history");
+				}).registerAndBind(this, "history");
 	}
 
 	@Override
 	public void disable() {
+		super.disable();
 		this.enabled = false;
 	}
 
 	@Override
 	public void reload() {
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return this.enabled;
+		super.reload();
 	}
 
 	@Override

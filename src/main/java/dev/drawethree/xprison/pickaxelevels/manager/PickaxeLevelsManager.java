@@ -5,7 +5,7 @@ import dev.drawethree.xprison.api.pickaxelevels.model.PickaxeLevel;
 import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
 import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
-import dev.drawethree.xprison.utils.item.PrisonItem;
+import dev.drawethree.xprison.utils.item.PrisonToolItem;
 import dev.drawethree.xprison.utils.misc.ProgressBar;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -48,7 +48,7 @@ public class PickaxeLevelsManager {
 			return Optional.empty();
 		}
 
-		final Integer level = new PrisonItem(itemStack).getLevel();
+		final Integer level = new PrisonToolItem(itemStack).getLevel();
 		return level != null ? this.getPickaxeLevel(level) : Optional.of(getDefaultLevel());
 	}
 
@@ -62,9 +62,9 @@ public class PickaxeLevelsManager {
 			return item;
 		}
 
-		final PrisonItem prisonItem = new PrisonItem(item);
-		prisonItem.setLevel(level.getLevel());
-		ItemStackBuilder builder = ItemStackBuilder.of(prisonItem.loadCopy());
+		final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
+		prisonToolItem.setLevel(level.getLevel());
+		ItemStackBuilder builder = ItemStackBuilder.of(prisonToolItem.loadCopy());
 		if (level.getDisplayName() != null && !level.getDisplayName().isEmpty()) {
 			builder = builder.name(this.getDisplayName(level, p));
 		}
@@ -125,7 +125,7 @@ public class PickaxeLevelsManager {
 			return 0;
 		}
 
-		return new PrisonItem(item).getBrokenBlocks();
+		return new PrisonToolItem(item).getBrokenBlocks();
 	}
 
 	private String getProgressBarDelimiter() {

@@ -26,7 +26,7 @@ public class AutoSellListener {
 
     private void subscribeToWorldLoadEvent() {
         Events.subscribe(WorldLoadEvent.class)
-                .handler(e -> this.plugin.getManager().loadPostponedAutoSellRegions(e.getWorld())).bindWith(this.plugin.getCore());
+                .handler(e -> this.plugin.getManager().loadPostponedAutoSellRegions(e.getWorld())).bindWith(this.plugin);
     }
 
     private void subscribeToPlayerJoinEvent() {
@@ -41,7 +41,7 @@ public class AutoSellListener {
 					if (this.plugin.getManager().canPlayerEnableAutosellOnJoin(e.getPlayer())) {
 						this.plugin.getManager().toggleAutoSell(e.getPlayer());
 					}
-				}, 20)).bindWith(this.plugin.getCore());
+				}, 20)).bindWith(this.plugin);
     }
 
     private void subscribeToBlockBreakEvent() {
@@ -72,7 +72,7 @@ public class AutoSellListener {
                     } else {
                         e.setCancelled(true);
                     }
-                }).bindWith(this.plugin.getCore());
+                }).bindWith(this.plugin);
     }
 }
 
