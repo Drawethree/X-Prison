@@ -7,6 +7,7 @@
   "increaseCostBy": 6,
   "maxLevel": 500,
   "chance": 0.2,
+  "currency": "TOKENS",
   "amountToGive": "level * 2",
   "initialCost": 12,
   "pickaxeLevelRequired": 1,

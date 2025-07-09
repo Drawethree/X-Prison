@@ -7,6 +7,7 @@
   "increaseCostBy": 75,
   "maxLevel": -1,
   "initialCost": 75,
+  "currency": "TOKENS",
   "pickaxeLevelRequired": 1,
   "blacklist": [
     "BEDROCK"

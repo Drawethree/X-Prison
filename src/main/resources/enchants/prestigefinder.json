@@ -10,6 +10,7 @@
   "chance": 0.2,
   "initialCost": 175,
   "pickaxeLevelRequired": 1,
+  "currency": "TOKENS",
   "command": "prestigeadmin add %player% %amount%",
   "refund": {
     "enabled": true,

@@ -9,6 +9,7 @@
   "chance": 0.2,
   "amountToGive": "level * 2",
   "initialCost": 12,
+  "currency": "TOKENS",
   "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,

@@ -8,6 +8,7 @@
   "maxLevel": 500,
   "chance": 0.2,
   "initialCost": 5000,
+  "currency": "GEMS",
   "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,

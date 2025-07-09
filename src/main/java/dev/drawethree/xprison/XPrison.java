@@ -2,6 +2,8 @@ package dev.drawethree.xprison;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.github.lalyos.jfiglet.FigletFont;
+import dev.drawethree.license.HttpLicenseVerifier;
+import dev.drawethree.license.LicenseVerifier;
 import dev.drawethree.xprison.api.XPrisonAPI;
 import dev.drawethree.xprison.api.XPrisonAPIImpl;
 import dev.drawethree.xprison.api.XPrisonModule;
@@ -48,10 +50,14 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static dev.drawethree.xprison.utils.Constants.DISCORD_LINK;
 import static dev.drawethree.xprison.utils.log.XPrisonLogger.*;
 
 @Getter
@@ -99,6 +105,14 @@ public final class XPrison extends ExtendedJavaPlugin {
 		this.debugMode = this.getConfig().getBoolean("debug-mode", false);
 		this.useMetrics = this.getConfig().getBoolean("enable-metrics", false);
 
+		if (!verifyLicense()) {
+			warning("&cYour License is Invalid. Please contact our discord support: " + DISCORD_LINK);
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		} else {
+			info("&aLicense Verified");
+		}
+
 		if (!this.initDatabase()) {
 			this.getServer().getPluginManager().disablePlugin(this);
 			return;
@@ -132,6 +146,33 @@ public final class XPrison extends ExtendedJavaPlugin {
 		SkullUtils.init();
 	}
 
+	private boolean verifyLicense() {
+		final String licenseKey = getConfig().getString("license_key");
+		final String serverIP = getPublicIp();
+		if (serverIP == null) {
+			warning("Unable to determine your public server IP.");
+			return false;
+		}
+		info("&fLicense Verification Starting");
+		info("&fLicense Key: &e" + licenseKey);
+		info("&fServer IP: &e" + serverIP);
+
+		LicenseVerifier verifier = new HttpLicenseVerifier("x-prison", serverIP);
+
+		return verifier.verifyLicense(licenseKey);
+	}
+
+	public String getPublicIp() {
+		try {
+			URL url = new URL("https://api.ipify.org");
+			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+			return in.readLine();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	private void registerMainCommand() {
 		new XPrisonMainCommand(this).register();
 	}
@@ -150,7 +191,7 @@ public final class XPrison extends ExtendedJavaPlugin {
 			info(this.getDescription().getVersion());
 			info("&fBy: &e" + this.getDescription().getAuthors());
 			info("&fWebsite: &e" + this.getDescription().getWebsite());
-			info("&fDiscord Support: &e" + Constants.DISCORD_LINK);
+			info("&fDiscord Support: &e" + DISCORD_LINK);
 		} catch (IOException ignored) {
 		}
 	}

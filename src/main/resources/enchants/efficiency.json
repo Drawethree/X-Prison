@@ -6,6 +6,7 @@
   "enabled": true,
   "increaseCostBy": 10,
   "maxLevel": 500,
+  "currency": "TOKENS",
   "initialCost": 10,
   "pickaxeLevelRequired": 1,
   "refund": {

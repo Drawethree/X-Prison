@@ -1,5 +1,6 @@
 package dev.drawethree.xprison.enchants.model;
 
+import dev.drawethree.xprison.api.currency.CurrencyType;
 import dev.drawethree.xprison.api.enchants.model.RefundableEnchant;
 import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
@@ -22,6 +23,7 @@ public abstract class XPrisonEnchantmentAbstract implements XPrisonEnchantment, 
 	protected int refundGuiSlot;
 	protected double refundPercentage;
 	protected int requiredPickaxeLevel;
+	protected CurrencyType currencyType;
 
 	public XPrisonEnchantmentAbstract() {
 

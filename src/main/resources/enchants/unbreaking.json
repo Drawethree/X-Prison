@@ -8,6 +8,7 @@
   "maxLevel": 300,
   "initialCost": 75,
   "pickaxeLevelRequired": 1,
+  "currency": "TOKENS",
   "refund": {
     "enabled": true,
     "guiSlot": 28,
