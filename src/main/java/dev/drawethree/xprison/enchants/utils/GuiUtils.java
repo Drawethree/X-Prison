@@ -3,6 +3,8 @@ package dev.drawethree.xprison.enchants.utils;
 import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
 import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.utils.economy.EconomyUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public class GuiUtils {
             }
             newList.add(s
                     .replace("%refund%", String.format("%,d", EnchantUtils.getRefundForLevel(enchantment, currentLevel)))
+                    .replace("%currency%", StringUtils.capitalize(EconomyUtils.getCurrencyName(enchantment.getCurrencyType())))
                     .replace("%cost%", String.format("%,d", enchantment.getBaseCost() + (enchantment.getIncreaseCost() * currentLevel)))
                     .replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel()))
                     .replace("%chance%", String.format("%,.2f", enchantment instanceof ChanceBasedEnchant ? ((ChanceBasedEnchant) enchantment).getChanceToTrigger(currentLevel) : 100.00F))

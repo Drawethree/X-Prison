@@ -9,6 +9,7 @@
   "chance": 0.2,
   "initialCost": 1000,
   "pickaxeLevelRequired": 1,
+  "currency": "GEMS",
   "removeBlocks": true,
   "countBlocksBroken": true,
   "useEvents": false,

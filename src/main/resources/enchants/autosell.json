@@ -8,6 +8,7 @@
   "maxLevel": 1,
   "chance": 25.0,
   "initialCost": 1000,
+  "currency": "TOKENS",
   "pickaxeLevelRequired": 1,
   "messagesEnabled": true,
   "refund": {

@@ -36,7 +36,7 @@ public class ValueCommand {
 						return;
 					}
 
-					PlayerUtils.sendMessage(c.sender(), this.plugin.getEnchantsConfig().getMessage("value_value").replace("%player%", c.sender().getName()).replace("%tokens%", String.format("%,d", this.plugin.getEnchantsManager().getPickaxeValue(pickAxe))));
+					PlayerUtils.sendMessage(c.sender(), this.plugin.getEnchantsConfig().getMessage("value_value").replace("%player%", c.sender().getName()).replace("%amount%", String.format("%,d", this.plugin.getEnchantsManager().getPickaxeValue(pickAxe))));
 				}).registerAndBind(plugin, COMMAND_NAME);
 	}
 

@@ -3,6 +3,7 @@ package dev.drawethree.xprison.api;
 import dev.drawethree.xprison.XPrison;
 import dev.drawethree.xprison.api.autominer.XPrisonAutoMinerAPI;
 import dev.drawethree.xprison.api.autosell.XPrisonAutoSellAPI;
+import dev.drawethree.xprison.api.bombs.XPrisonBombsAPI;
 import dev.drawethree.xprison.api.enchants.XPrisonEnchantsAPI;
 import dev.drawethree.xprison.api.gangs.XPrisonGangsAPI;
 import dev.drawethree.xprison.api.gems.XPrisonGemsAPI;
@@ -81,5 +82,10 @@ public class XPrisonAPIImpl implements XPrisonAPI {
     @Override
     public @NotNull XPrisonTokensAPI getTokensApi() {
         return plugin.getTokens().getApi();
+    }
+
+    @Override
+    public @NotNull XPrisonBombsAPI getBombsApi() {
+        return plugin.getBombs().getApi();
     }
 }

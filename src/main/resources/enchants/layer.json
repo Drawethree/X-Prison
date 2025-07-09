@@ -9,6 +9,7 @@
   "maxLevel": 500,
   "initialCost": 200,
   "countBlocksBroken": true,
+  "currency": "GEMS",
   "useEvents": false,
   "pickaxeLevelRequired": 1,
   "refund": {
