@@ -17,6 +17,7 @@
   "gui": {
     "name": "&cNight Vision",
     "material": "POTION",
+    "customModelData": 0,
     "slot": 33,
     "description": [
       "&7&o(( Ability to see in the dark while mining ))"

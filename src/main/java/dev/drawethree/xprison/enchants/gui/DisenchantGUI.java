@@ -119,6 +119,7 @@ public final class DisenchantGUI extends Gui {
 
         builder.name(refundableEnchant.isRefundEnabled() ? enchantment.getGuiProperties().getGuiName() : this.plugin.getEnchantsConfig().getMessage("enchant_cant_disenchant"));
         builder.lore(refundableEnchant.isRefundEnabled() ? GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, level) : new ArrayList<>());
+        builder.customModelData(enchantment.getGuiProperties().getCustomModelData());
 
         return refundableEnchant.isRefundEnabled() ? builder.buildItem().bind(handler -> {
             if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {
@@ -153,10 +154,18 @@ public final class DisenchantGUI extends Gui {
 
             if (base64 != null) {
                 HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
+                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name"))
+                        .lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore"))
+                        .customModelData(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("disenchant_menu.help_item.custom_model_data"))
+                        .buildItem()
+                        .build();
             } else {
                 HELP_ITEM = ItemStackBuilder.of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.material")).parseItem())
-                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore")).buildItem().build();
+                        .name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("disenchant_menu.help_item.name"))
+                        .customModelData(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("disenchant_menu.help_item.custom_model_data"))
+                        .lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("disenchant_menu.help_item.lore"))
+                        .buildItem()
+                        .build();
             }
             HELP_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("disenchant_menu.help_item.slot");
         }

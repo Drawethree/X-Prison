@@ -17,6 +17,7 @@
   "gui": {
     "name": "&aSpeed",
     "material": "SUGAR",
+    "customModelData": 0,
     "slot": 31,
     "description": [
       "&7&o(( Ability to move faster while holding your pickaxe ))"

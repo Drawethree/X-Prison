@@ -20,6 +20,7 @@
   "gui": {
     "name": "&eBlessing",
     "material": "CAMPFIRE",
+    "customModelData": 0,
     "slot": 39,
     "description": [
       "&7&o(( Chance to give to everyone online tokens while mining ))"

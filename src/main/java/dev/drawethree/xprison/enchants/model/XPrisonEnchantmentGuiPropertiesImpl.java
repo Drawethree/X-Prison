@@ -18,5 +18,6 @@ public class XPrisonEnchantmentGuiPropertiesImpl implements XPrisonEnchantmentGu
     private String guiBase64;
     private Material guiMaterial;
     private List<String> guiDescription;
+    private int customModelData;
 
 }

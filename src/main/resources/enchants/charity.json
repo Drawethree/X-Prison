@@ -20,6 +20,7 @@
   "gui": {
     "name": "&cCharity",
     "material": "SLIME_BALL",
+    "customModelData": 0,
     "slot": 37,
     "description": [
       "&7&o(( Chance to give to everyone online money while mining ))"

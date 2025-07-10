@@ -29,6 +29,7 @@ starting-gems: 1000
 # Physical item settings
 gems:
   item:
+    custom_model_data: 0
     material: EMERALD
     name: '&ex%amount% &fGems'
     lore:

@@ -18,6 +18,7 @@
   "gui": {
     "name": "&dBlock Booster",
     "material": "ENCHANTING_TABLE",
+    "customModelData": 0,
     "slot": 43,
     "description": [
       "&7&o(( Ability to receive x2 Blocks for 1 Minute while mining))"

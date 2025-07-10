@@ -17,6 +17,7 @@
   "gui": {
     "name": "&bJump Boost",
     "material": "LEATHER_BOOTS",
+    "customModelData": 0,
     "slot": 32,
     "description": [
       "&7&o(( Ability to jump higher while holding your pickaxe ))"

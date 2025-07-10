@@ -27,6 +27,7 @@
   "gui": {
     "name": "&bKey Finder",
     "material": "TRIPWIRE_HOOK",
+    "customModelData": 0,
     "slot": 41,
     "description": [
       "&7&o(( Ability to find crate keys while mining ))"

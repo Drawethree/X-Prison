@@ -17,6 +17,7 @@
   "gui": {
     "name": "&aEfficiency",
     "material": "PRISMARINE_SHARD",
+    "customModelData": 0,
     "slot": 27,
     "description": [
       "&7&o(( Ability to mine blocks faster ))"

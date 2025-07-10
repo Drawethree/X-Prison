@@ -17,6 +17,7 @@
   "gui": {
     "name": "&dHaste",
     "material": "GHAST_TEAR",
+    "customModelData": 0,
     "slot": 30,
     "description": [
       "&7&o(( Ability to swing your pickaxe faster while mining ))"

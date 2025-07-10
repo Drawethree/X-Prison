@@ -254,6 +254,7 @@ public class TokensManager {
 		ItemStack item = ItemStackBuilder.of(
 						this.plugin.getTokensConfig().getTokenItem().clone())
 				.amount(value)
+				.customModelData(this.plugin.getTokensConfig().getTokenItemCustomModelData())
 				.name(this.plugin.getTokensConfig().getTokenItemDisplayName().replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount)))
 				.lore(this.plugin.getTokensConfig().getTokenItemLore())
 				.enchant(XEnchantment.PROTECTION.get())

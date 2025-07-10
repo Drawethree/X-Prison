@@ -18,6 +18,7 @@
   "gui": {
     "name": "&bVoucher Finder",
     "material": "BEACON",
+    "customModelData": 0,
     "slot": 46,
     "description": [
       "&7&o(( Ability to find store vouchers while mining ))"
