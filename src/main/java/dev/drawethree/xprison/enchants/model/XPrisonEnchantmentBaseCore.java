@@ -61,8 +61,9 @@ public class XPrisonEnchantmentBaseCore extends XPrisonEnchantmentAbstract {
                 guiObject.get("description"),
                 new TypeToken<List<String>>(){}.getType()
         );
+        int customModelData = JsonUtils.getInt(guiObject,"customModelData", 0);
         List<String> guiDescription = TextUtils.applyColor(description);
-        this.guiProperties = new XPrisonEnchantmentGuiPropertiesImpl(guiSlot,guiName,guiBase64,guiMaterial,guiDescription);
+        this.guiProperties = new XPrisonEnchantmentGuiPropertiesImpl(guiSlot,guiName,guiBase64,guiMaterial,guiDescription,customModelData);
     }
 
     protected void loadCustomProperties(JsonObject config) {

@@ -116,6 +116,7 @@ public final class EnchantGUI extends Gui {
 
 		builder.name(enchantment.getGuiProperties().getGuiName());
 		builder.lore(GuiUtils.translateGuiLore(enchantment, GUI_ITEM_LORE, currentLevel));
+		builder.customModelData(enchantment.getGuiProperties().getCustomModelData());
 
 		return builder.buildItem().bind(handler -> {
 			if (!EnchantUtils.canBeBought(enchantment, gui.getPickAxe())) {
@@ -154,10 +155,16 @@ public final class EnchantGUI extends Gui {
 
 			if (base64 != null) {
 				DISENCHANT_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
+						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name"))
+						.lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore"))
+						.customModelData(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.disenchant_item.custom_model_data"))
+						.build();
 			} else {
 				DISENCHANT_ITEM = ItemStackBuilder.of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.material")).parseItem())
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore")).build();
+						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.disenchant_item.name"))
+						.lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.disenchant_item.lore"))
+						.customModelData(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.disenchant_item.custom_model_data"))
+						.build();
 			}
 			DISENCHANT_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.disenchant_item.slot");
 
@@ -168,10 +175,16 @@ public final class EnchantGUI extends Gui {
 
 			if (base64 != null) {
 				HELP_ITEM = ItemStackBuilder.of(SkullUtils.getCustomTextureHead(base64))
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name"))
+						.lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore"))
+						.customModelData(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.help_item.custom_model_data"))
+						.buildItem().build();
 			} else {
 				HELP_ITEM = ItemStackBuilder.of(XMaterial.valueOf(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.material")).parseItem())
-						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name")).lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore")).buildItem().build();
+						.name(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getString("enchant_menu.help_item.name"))
+						.lore(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getStringList("enchant_menu.help_item.lore"))
+						.customModelData(XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.help_item.custom_model_data"))
+						.buildItem().build();
 			}
 
 			HELP_ITEM_SLOT = XPrisonEnchants.getInstance().getEnchantsConfig().getYamlConfig().getInt("enchant_menu.help_item.slot");

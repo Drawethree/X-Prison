@@ -29,6 +29,7 @@ bombs:
         - " "
         - "&7Creates explosion in 3x3 radius."
         - " "
+      custom_model_data: 0
   small:
     radius: 5
     drop_sound: ENTITY_TNT_PRIMED
@@ -42,6 +43,7 @@ bombs:
         - "&7A slightly stronger blast."
         - "&7Creates explosion in 5x5 radius."
         - " "
+      custom_model_data: 0
   normal:
     radius: 7
     drop_sound: ENTITY_TNT_PRIMED
@@ -55,6 +57,7 @@ bombs:
         - "&7Moderate explosive power."
         - "&7Creates explosion in 7x7 radius."
         - " "
+      custom_model_data: 0
   large:
     radius: 10
     drop_sound: ENTITY_TNT_PRIMED
@@ -68,6 +71,7 @@ bombs:
         - "&7Big boom, big range."
         - "&7Creates explosion in 10x10 radius."
         - " "
+      custom_model_data: 0
   mega:
     radius: 15
     drop_sound: ENTITY_TNT_PRIMED
@@ -81,6 +85,7 @@ bombs:
         - "&cCatastrophic power — run far!"
         - "&7Creates explosion in 15x15 radius."
         - " "
+      custom_model_data: 0
 # Messages
 messages:
   player_offline: "&c&lBOMBS &8» &e%player% &7is not online!"

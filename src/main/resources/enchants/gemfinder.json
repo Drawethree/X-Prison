@@ -19,6 +19,7 @@
   "gui": {
     "name": "&aGem Finder",
     "material": "EMERALD",
+    "customModelData": 0,
     "slot": 48,
     "description": [
       "&7&o(( Ability to find gems while mining ))"

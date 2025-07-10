@@ -17,6 +17,7 @@
   "gui": {
     "name": "&cFly",
     "material": "FEATHER",
+    "customModelData": 0,
     "slot": 34,
     "description": [
       "&7&o(( Ability to fly while holding pickaxe ))"

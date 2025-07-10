@@ -83,6 +83,7 @@ enchant_menu:
     enabled: true
     material: BOOK
     slot: 11
+    custom_model_data: 0
     name: '&e&lHOW IT WORKS?'
     lore:
       - '&7&o(( Here you can find how to'
@@ -98,6 +99,7 @@ enchant_menu:
   disenchant_item:
     enabled: true
     material: ANVIL
+    custom_model_data: 0
     slot: 15
     name: '&e&lENCHANTMENT REFUND'
     lore:
@@ -133,6 +135,7 @@ disenchant_menu:
     material: NAME_TAG
     slot: 11
     name: '&e&lHOW IT WORKS?'
+    custom_model_data: 0
     lore:
       - '&7&o(( Here you can find how to'
       - '&7&osell enchantment levels ))'

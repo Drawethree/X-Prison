@@ -19,6 +19,7 @@
   "gui": {
     "name": "&dSalary",
     "material": "PAPER",
+    "customModelData": 0,
     "slot": 38,
     "description": [
       "&7&o(( Ability to receive more money while mining ))"

@@ -17,6 +17,7 @@
   "gui": {
     "name": "&bUnbreaking",
     "material": "PRISMARINE_CRYSTALS",
+    "customModelData": 0,
     "slot": 28,
     "description": [
       "&7&o(( Prevents your pickaxe from breaking while mining ))"

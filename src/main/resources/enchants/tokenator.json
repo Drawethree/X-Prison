@@ -19,6 +19,7 @@
   "gui": {
     "name": "&aTokenator",
     "material": "SUNFLOWER",
+    "customModelData": 0,
     "slot": 40,
     "description": [
       "&7&o(( Ability to gain more tokens while mining ))"

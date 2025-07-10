@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.text.TextUtils;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -17,23 +18,41 @@ public class TokensConfig {
 	private final FileManager.Config config;
 	private final XPrisonTokens plugin;
 
+	@Getter
 	private double chance;
+	@Getter
 	private long minAmount;
+	@Getter
 	private long maxAmount;
+	@Getter
 	private long commandCooldown;
+	@Getter
 	private long nextResetWeekly;
+	@Getter
 	private long startingTokens;
+	@Getter
 	private int savePlayerDataInterval;
+	@Getter
 	private boolean displayTokenMessages;
 	private Map<String, String> messages;
+	@Getter
 	private List<String> worldWhitelist;
+	@Getter
 	private List<String> tokensTopFormat;
+	@Getter
 	private List<String> tokenItemLore;
+	@Getter
 	private String tokenItemDisplayName;
+	@Getter
 	private ItemStack tokenItem;
+	@Getter
 	private int topPlayersAmount;
+	@Getter
+	private int tokenItemCustomModelData;
 
+	@Getter
 	private String[] tokensCommandAliases;
+	@Getter
 	private String[] tokensTopCommandAliases;
 
 
@@ -68,6 +87,7 @@ public class TokensConfig {
 		this.startingTokens = configuration.getLong("starting-tokens");
 		this.tokensCommandAliases = configuration.getStringList("tokens-command-aliases").toArray(new String[0]);
 		this.tokensTopCommandAliases = configuration.getStringList("tokens-top-command-aliases").toArray(new String[0]);
+		this.tokenItemCustomModelData = configuration.getInt("tokens.item.custom_model_data");
 	}
 
 	private void loadMessages(YamlConfiguration configuration) {
@@ -93,80 +113,12 @@ public class TokensConfig {
 		return this.messages.getOrDefault(messageKey.toLowerCase(), "Missing message with key: " + messageKey);
 	}
 
-	public boolean isDisplayTokenMessages() {
-		return this.displayTokenMessages;
-	}
-
 	public Material getTokenItemMaterial() {
 		return this.tokenItem.getType();
-	}
-
-	public long getStartingTokens() {
-		return this.startingTokens;
-	}
-
-	public List<String> getWorldWhitelist() {
-		return worldWhitelist;
-	}
-
-	public List<String> getTokensTopFormat() {
-		return tokensTopFormat;
-	}
-
-	public List<String> getTokenItemLore() {
-		return tokenItemLore;
-	}
-
-	public String getTokenItemDisplayName() {
-		return tokenItemDisplayName;
-	}
-
-	public double getChance() {
-		return chance;
-	}
-
-	public long getMinAmount() {
-		return minAmount;
-	}
-
-	public long getMaxAmount() {
-		return maxAmount;
-	}
-
-	public long getCommandCooldown() {
-		return commandCooldown;
-	}
-
-	public long getNextResetWeekly() {
-		return nextResetWeekly;
-	}
-
-	public int getTopPlayersAmount() {
-		return topPlayersAmount;
-	}
-
-	public ItemStack getTokenItem() {
-		return tokenItem;
-	}
-
-	public String[] getTokensCommandAliases() {
-		return tokensCommandAliases;
-	}
-
-	public String[] getTokensTopCommandAliases() {
-		return tokensTopCommandAliases;
 	}
 
 	public void save() {
 		this.config.save();
 	}
 
-	public void setNextResetWeekly(long time) {
-		this.nextResetWeekly = time;
-
-	}
-
-	public int getSavePlayerDataInterval() {
-		return savePlayerDataInterval;
-	}
 }

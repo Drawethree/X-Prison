@@ -19,6 +19,7 @@
   "gui": {
     "name": "&eAutosell",
     "material": "BOOK",
+    "customModelData": 0,
     "slot": 45,
     "description": [
       "&7&o(( Ability to sell all items while mining ))"

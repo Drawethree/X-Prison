@@ -23,6 +23,7 @@
   "gui": {
     "name": "&aExplosive",
     "material": "TNT",
+    "customModelData": 0,
     "slot": 35,
     "description": [
       "&7&o(( Explodes nearby blocks while mining ))"

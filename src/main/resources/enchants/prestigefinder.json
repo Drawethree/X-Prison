@@ -20,6 +20,7 @@
   "gui": {
     "name": "&aPrestige Finder",
     "material": "ENDER_EYE",
+    "customModelData": 0,
     "slot": 42,
     "description": [
       "&7&o(( Ability to find prestige levels while mining. ))"

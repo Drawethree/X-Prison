@@ -25,6 +25,7 @@
   "gui": {
     "name": "&cKeyalls",
     "material": "REDSTONE",
+    "customModelData": 0,
     "slot": 44,
     "description": [
       "&7&o(( Ability to give everyone crate keys while mining ))"

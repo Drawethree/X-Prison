@@ -20,6 +20,7 @@
   "gui": {
     "name": "&cFortune",
     "material": "DIAMOND",
+    "customModelData": 0,
     "slot": 29,
     "description": [
       "&7&o(( Ability to receive more blocks while mining ))"

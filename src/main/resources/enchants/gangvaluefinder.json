@@ -19,6 +19,7 @@
   "gui": {
     "name": "&eGang Value Finder",
     "material": "GOLD_INGOT",
+    "customModelData": 0,
     "slot": 49,
     "description": [
       "&7&o(( Ability to find gang value while mining ))"

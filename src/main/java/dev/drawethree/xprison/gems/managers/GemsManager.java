@@ -52,6 +52,7 @@ public class GemsManager {
 	private final List<UUID> gemsMessageOnPlayers;
 
 	private long startingGems;
+	private int gemsItemCustomModelData;
 
 	public GemsManager(XPrisonGems plugin) {
 		this.plugin = plugin;
@@ -81,6 +82,7 @@ public class GemsManager {
 		this.TOP_FORMAT_GEMS = plugin.getMessage("top_format_gems");
 		this.displayGemsMessages = plugin.getConfig().get().getBoolean("display-gems-messages");
 		this.gemsItemDisplayName = plugin.getConfig().get().getString("gems.item.name");
+		this.gemsItemCustomModelData = plugin.getConfig().get().getInt("gems.item.custom_model_data");
 		this.gemsItemLore = plugin.getConfig().get().getStringList("gems.item.lore");
 		this.gemsItem = XMaterial.valueOf(plugin.getConfig().get().getString("gems.item.material")).parseItem();
 		this.startingGems = plugin.getConfig().get().getLong("starting-gems");
@@ -317,7 +319,7 @@ public class GemsManager {
 	}
 
 	private ItemStack createGemsItem(long amount, int value) {
-		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(XEnchantment.PROTECTION.get()).flag(ItemFlag.HIDE_ENCHANTS).build();
+		ItemStack item = ItemStackBuilder.of(this.gemsItem.clone()).amount(value).customModelData(gemsItemCustomModelData).name(this.gemsItemDisplayName.replace("%amount%", String.format("%,d", amount)).replace("%tokens%", String.format("%,d", amount))).lore(this.gemsItemLore).enchant(XEnchantment.PROTECTION.get()).flag(ItemFlag.HIDE_ENCHANTS).build();
 		final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
 		prisonToolItem.setGems(amount);
 		prisonToolItem.load();

@@ -26,6 +26,7 @@
 package dev.drawethree.xprison.utils.item;
 
 import com.cryptomorin.xseries.XItemFlag;
+import dev.drawethree.xprison.utils.compat.MinecraftVersion;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.utils.annotation.NonnullByDefault;
@@ -45,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+
+import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
 
 /**
  * Easily construct {@link ItemStack} instances
@@ -127,6 +130,14 @@ public final class ItemStackBuilder {
 
 	public ItemStackBuilder durability(int durability) {
 		return transform(itemStack -> itemStack.setDurability((short) durability));
+	}
+
+	public ItemStackBuilder customModelData(int data) {
+		if (!MinecraftVersion.atLeast(MinecraftVersion.V.v1_14)) {
+			warning("Unable to set custom model data as your server version is not >= 1.14!");
+			return this;
+		}
+		return transformMeta(meta -> meta.setCustomModelData(data));
 	}
 
 	public ItemStackBuilder data(int data) {

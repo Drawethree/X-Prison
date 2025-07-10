@@ -35,6 +35,7 @@ tokens:
   # Physical token item settings
   item:
     material: SUNFLOWER
+    custom_model_data: 0
     name: '&ex%amount% &fTokens'
     lore:
       - '&e➥ &fRight-Click to Redeem'
