@@ -53,9 +53,9 @@ public class XPrisonEnchantmentBaseCore extends XPrisonEnchantmentAbstract {
 
     private void loadGuiProperties(JsonObject config) {
         JsonObject guiObject = config.get("gui").getAsJsonObject();
-        int guiSlot = guiObject.get("slot").getAsInt();
-        Material guiMaterial = XMaterial.valueOf(guiObject.get("material").getAsString()).get();
-        String guiName = TextUtils.applyColor(guiObject.get("name").getAsString());
+        int guiSlot = JsonUtils.getInt(guiObject, "slot", 0);
+        Material guiMaterial = XMaterial.valueOf(JsonUtils.getString(guiObject, "material","BARRIER")).get();
+        String guiName = TextUtils.applyColor(JsonUtils.getString(guiObject, "name", ""));
         String guiBase64 = guiObject.get("base64") != null ? guiObject.get("base64").getAsString() : null;
         List<String> description = new Gson().fromJson(
                 guiObject.get("description"),
