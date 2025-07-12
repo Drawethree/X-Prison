@@ -2,16 +2,13 @@ package dev.drawethree.xprison.autosell.command;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.gui.AllSellRegionsGui;
-import dev.drawethree.xprison.autosell.model.SellRegionImpl;
+import dev.drawethree.xprison.autosell.gui.SellPriceEditorGui;
 import dev.drawethree.xprison.autosell.utils.AutoSellContants;
-import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Commands;
 import me.lucko.helper.command.CommandInterruptException;
 import me.lucko.helper.command.context.CommandContext;
 import org.bukkit.entity.Player;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 public class SellPriceCommand {
 
@@ -51,47 +48,19 @@ public class SellPriceCommand {
                         return;
                     }
 
-                    IWrappedRegion wrappedRegion = RegionUtils.getFirstRegionAtLocation(c.sender().getLocation());
+                    this.plugin.getManager().addSellPrice(type, price);
 
-                    if (!validateRegion(wrappedRegion)) {
-                        PlayerUtils.sendMessage(c.sender(), "&cYou must be standing in a region / specify a valid region!");
-                        return;
-                    }
-
-                    SellRegionImpl sellRegionImpl = this.getSellRegionFromWrappedRegion(wrappedRegion);
-
-                    if (sellRegionImpl == null) {
-                        sellRegionImpl = new SellRegionImpl(wrappedRegion, c.sender().getWorld());
-                    }
-
-                    sellRegionImpl.addSellPrice(type, price);
-
-                    this.plugin.getManager().updateSellRegion(sellRegionImpl);
-                    this.plugin.getAutoSellConfig().saveSellRegion(sellRegionImpl);
-
-                    PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f &ain region &e%s", type.name(), price, wrappedRegion.getId()));
+                    PlayerUtils.sendMessage(c.sender(), String.format("&aSuccessfuly set sell price of &e%s &ato &e$%.2f", type.name(), price));
 
                 }).registerAndBind(this.plugin, COMMAND_NAME);
     }
 
     private void openEditorGui(Player sender) {
-        AllSellRegionsGui.createAndOpenTo(sender);
+        new SellPriceEditorGui(this.plugin.getManager(),sender).open();
     }
 
     private boolean isEditorCommand(CommandContext<Player> c) {
         return "editor".equalsIgnoreCase(c.rawArg(0));
-    }
-
-    private SellRegionImpl getSellRegionByName(String name) {
-        return this.plugin.getManager().getSellRegionByName(name);
-    }
-
-    private SellRegionImpl getSellRegionFromWrappedRegion(IWrappedRegion region) {
-        return this.plugin.getManager().getSellRegionFromWrappedRegion(region);
-    }
-
-    private boolean validateRegion(IWrappedRegion region) {
-        return region != null;
     }
 
     private boolean validatePrice(double price) {

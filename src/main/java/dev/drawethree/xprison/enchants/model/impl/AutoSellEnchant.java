@@ -24,7 +24,7 @@ public final class AutoSellEnchant extends XPrisonEnchantmentBaseCore implements
             return;
         }
 
-        getCore().getAutoSell().getManager().sellAll(e.getPlayer(), RegionUtils.getRegionWithHighestPriority(e.getPlayer().getLocation()));
+        getCore().getAutoSell().getManager().sellAll(e.getPlayer());
     }
 
     @Override

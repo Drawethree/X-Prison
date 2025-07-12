@@ -84,7 +84,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentBaseCore implement
         }
 
         if (!getCore().isUltraBackpacksEnabled()) {
-            handleAffectedBlocks(p, region, blocksAffected);
+            handleAffectedBlocks(p, blocksAffected);
         } else {
             UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
         }
@@ -114,7 +114,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentBaseCore implement
         return chance * enchantLevel;
     }
 
-    private void handleAffectedBlocks(Player p, IWrappedRegion region, List<Block> blocksAffected) {
+    private void handleAffectedBlocks(Player p, List<Block> blocksAffected) {
         double totalDeposit = 0.0;
         int fortuneLevel = EnchantUtils.getItemFortuneLevel(p.getItemInHand());
         boolean autoSellPlayerEnabled = getEnchants().isAutoSellModuleEnabled() && getCore().getAutoSell().getManager().hasAutoSellEnabled(p);
@@ -128,7 +128,7 @@ public final class ExplosiveEnchant extends XPrisonEnchantmentBaseCore implement
             }
 
             if (autoSellPlayerEnabled) {
-                totalDeposit += ((getCore().getAutoSell().getManager().getPriceForBlock(region.getId(), block) + 0.0) * amplifier);
+                totalDeposit += ((getCore().getAutoSell().getManager().getPriceForBlock( block) + 0.0) * amplifier);
             } else {
                 ItemStack itemToGive = XMaterial.matchXMaterial(block.getType()).parseItem();
                 itemToGive.setAmount(amplifier);
