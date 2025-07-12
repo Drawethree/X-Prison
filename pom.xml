@@ -6,7 +6,7 @@
 
     <groupId>dev.drawethree.xprison</groupId>
     <artifactId>X-Prison</artifactId>
-    <version>2025.1.6</version>
+    <version>2025.1.7</version>
     <name>XPrison</name>
 
     <repositories>

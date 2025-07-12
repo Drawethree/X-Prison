@@ -1,10 +1,9 @@
 package dev.drawethree.xprison.autosell.config;
 
-import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.utils.text.TextUtils;
+import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.HashMap;
@@ -17,12 +16,19 @@ public class AutoSellConfig {
     private final FileManager.Config config;
 
     private Map<String, String> messages;
+    @Getter
     private boolean enableAutosellAutomatically;
+    @Getter
     private boolean autoSmelt;
+    @Getter
     private int autoSellBroadcastTime;
+    @Getter
     private List<String> autoSellBroadcastMessage;
+    @Getter
     private boolean inventoryFullNotificationEnabled;
+    @Getter
     private List<String> inventoryFullNotificationTitle;
+    @Getter
     private String inventoryFullNotificationMessage;
 
 
@@ -58,7 +64,7 @@ public class AutoSellConfig {
         }
     }
 
-    private FileManager.Config getConfig() {
+    public FileManager.Config getConfig() {
         return this.config;
     }
 
@@ -68,45 +74,5 @@ public class AutoSellConfig {
 
     public String getMessage(String key) {
         return messages.getOrDefault(key.toLowerCase(), "Message not found with key: " + key);
-    }
-
-    public boolean isEnableAutosellAutomatically() {
-        return enableAutosellAutomatically;
-    }
-
-    public boolean isAutoSmelt() {
-        return autoSmelt;
-    }
-
-    public int getAutoSellBroadcastTime() {
-        return autoSellBroadcastTime;
-    }
-
-    public List<String> getAutoSellBroadcastMessage() {
-        return autoSellBroadcastMessage;
-    }
-
-    public boolean isInventoryFullNotificationEnabled() {
-        return inventoryFullNotificationEnabled;
-    }
-
-    public List<String> getInventoryFullNotificationTitle() {
-        return inventoryFullNotificationTitle;
-    }
-
-    public String getInventoryFullNotificationMessage() {
-        return inventoryFullNotificationMessage;
-    }
-
-    public void saveSellRegion(SellRegionImpl region) {
-        this.getConfig().set("regions." + region.getRegion().getId() + ".world", region.getWorld().getName());
-        for (XMaterial material : region.getSellingMaterials()) {
-            double sellPrice = region.getSellPriceForMaterial(material);
-            if (sellPrice <= 0.0) {
-                continue;
-            }
-            this.getConfig().set("regions." + region.getRegion().getId() + ".items." + material.name(), sellPrice);
-        }
-        this.getConfig().save();
     }
 }

@@ -1,7 +1,6 @@
 package dev.drawethree.xprison.autosell.listener;
 
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegionImpl;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
@@ -21,12 +20,6 @@ public class AutoSellListener {
     public void subscribeToEvents() {
         this.subscribeToPlayerJoinEvent();
         this.subscribeToBlockBreakEvent();
-        this.subscribeToWorldLoadEvent();
-    }
-
-    private void subscribeToWorldLoadEvent() {
-        Events.subscribe(WorldLoadEvent.class)
-                .handler(e -> this.plugin.getManager().loadPostponedAutoSellRegions(e.getWorld())).bindWith(this.plugin);
     }
 
     private void subscribeToPlayerJoinEvent() {
@@ -49,12 +42,6 @@ public class AutoSellListener {
         Events.subscribe(BlockBreakEvent.class, EventPriority.HIGHEST)
                 .filter(e -> !e.isCancelled() && e.getPlayer().getItemInHand() != null && this.plugin.getCore().isPickaxeSupported(e.getPlayer().getItemInHand().getType()))
                 .handler(e -> {
-
-                    SellRegionImpl sellRegionImpl = this.plugin.getManager().getAutoSellRegion(e.getBlock().getLocation());
-
-                    if (sellRegionImpl == null) {
-                        return;
-                    }
 
                     boolean success = false;
 

@@ -1,15 +1,12 @@
 package dev.drawethree.xprison.autosell.api;
 
+import com.cryptomorin.xseries.XMaterial;
 import dev.drawethree.xprison.api.autosell.XPrisonAutoSellAPI;
-import dev.drawethree.xprison.api.autosell.model.SellRegion;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.autosell.model.SellRegionImpl;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
 import java.util.List;
 
 public final class XPrisonAutoSellAPIImpl implements XPrisonAutoSellAPI {
@@ -26,8 +23,8 @@ public final class XPrisonAutoSellAPIImpl implements XPrisonAutoSellAPI {
 	}
 
 	@Override
-	public double getPriceForItem(SellRegion sellRegion, ItemStack itemStack) {
-		return plugin.getManager().getPriceForItem(sellRegion, itemStack);
+	public double getPriceForItem(ItemStack itemStack) {
+		return plugin.getManager().getPriceForItem(itemStack);
 	}
 
 	@Override
@@ -46,12 +43,17 @@ public final class XPrisonAutoSellAPIImpl implements XPrisonAutoSellAPI {
 	}
 
 	@Override
-	public Collection<SellRegion> getSellRegions() {
-		return plugin.getManager().getAutoSellRegions();
+	public void addSellPrice(XMaterial xMaterial, double v) {
+		plugin.getManager().addSellPrice(xMaterial,v);
 	}
 
 	@Override
-	public SellRegionImpl getSellRegionAtLocation(Location location) {
-		return plugin.getManager().getAutoSellRegion(location);
+	public void removeSellPrice(XMaterial xMaterial) {
+		plugin.getManager().removeSellPrice(xMaterial);
+	}
+
+	@Override
+	public double getSellPriceForMaterial(XMaterial xMaterial) {
+		return plugin.getManager().getSellPriceForMaterial(xMaterial);
 	}
 }

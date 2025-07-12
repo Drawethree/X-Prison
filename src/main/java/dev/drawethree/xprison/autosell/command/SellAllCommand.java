@@ -22,26 +22,7 @@ public class SellAllCommand {
         Commands.create()
                 .assertPlayer()
                 .handler(c -> {
-                    IWrappedRegion region = this.parseRegionFromCommandContext(c);
-
-                    if (region == null) {
-                        PlayerUtils.sendMessage(c.sender(), this.plugin.getAutoSellConfig().getMessage("invalid_region"));
-                        return;
-                    }
-
-                    this.plugin.getManager().sellAll(c.sender(), region);
-
+                    this.plugin.getManager().sellAll(c.sender());
                 }).registerAndBind(this.plugin, COMMAND_NAME);
-    }
-
-    private IWrappedRegion parseRegionFromCommandContext(CommandContext<Player> c) {
-        IWrappedRegion region = null;
-        if (c.args().isEmpty()) {
-            region = RegionUtils.getRegionWithHighestPriority(c.sender().getLocation());
-        } else if (c.args().size() == 1) {
-            String regionName = c.rawArg(0);
-            region = WorldGuardWrapper.getInstance().getRegion(c.sender().getLocation().getWorld(), regionName).orElse(null);
-        }
-        return region;
     }
 }

@@ -1,12 +1,8 @@
 messages:
   autosell_enable: '&e&l(!) &7You''ve &e&lENABLED &7Autosell.'
   autosell_disable: '&e&l(!) &7You''ve &c&lDISABLED &7Autosell.'
-  not_in_region: '&e&l(!) &cYou must be in region to use /sellall'
-  invalid_region: '&e&l(!) &cYou have specified invalid region.'
   sell_all_complete: '&e&lSELLALL &8>> &7You''ve sold your inventory for &e$%price%'
   last_minute_earn: '&e&lINFO &8>> &7You''ve earn &e$%amount% &7in last minute.'
-  no_permission_sell: '&e&l(!) &cYou do not have permission to sell in this region!
-    (%perm%)'
   no_permission_autosell_toggle: '&e&l(!) &cYou do not have permission to toggle autosell
     feature!'
 # Should be autosell enabled automatically on player join?
@@ -23,8 +19,6 @@ auto_sell_broadcast:
     - ' &8&l➥ &e&lMONEY MADE: &2$&e%money%'
     - ' &8&l➥ &e&lITEMS SOLD: &f%items%'
     - '&e&m-------&f&m-------&e&m--------&f&m--------&e&m--------&f&m-------&e&m-------'
-# Sellprices for each regions
-regions: { }
 # Notification when player has full inventory
 # If 'title' is set, it will send title to players, otherwise it will display chat message.
 inventory_full_notification:
@@ -34,3 +28,28 @@ inventory_full_notification:
     - '&e&lInventory full!'
     - '&fType /sellall to sell your inventory'
   chat: '&c&l(!) &eYour inventory is full! Type /sellall to sell your inventory'
+# Sell prices defined here
+sell-prices:
+  COPPER_ORE: 100.0
+  DEEPSLATE_LAPIS_ORE: 8000.0
+  EMERALD_ORE: 10000.0
+  REDSTONE_ORE: 1000.0
+  DEEPSLATE_DIAMOND_ORE: 50000.0
+  NETHER_QUARTZ_ORE: 75000.0
+  EMERALD_BLOCK: 600000.0
+  STONE: 50.0
+  LAPIS_BLOCK: 400000.0
+  DIAMOND_ORE: 30000.0
+  NETHERITE_BLOCK: 1000000.0
+  DIAMOND_BLOCK: 750000.0
+  GOLD_ORE: 250.0
+  DEEPSLATE_EMERALD_ORE: 15000.0
+  COPPER_BLOCK: 200000.0
+  DEEPSLATE_REDSTONE_ORE: 2000.0
+  ANCIENT_DEBRIS: 900000.0
+  GOLD_BLOCK: 300000.0
+  NETHER_GOLD_ORE: 100000.0
+  LAPIS_ORE: 4000.0
+  REDSTONE_BLOCK: 500000.0
+  DEEPSLATE_GOLD_ORE: 500.0
+  IRON_BLOCK: 150000.0
