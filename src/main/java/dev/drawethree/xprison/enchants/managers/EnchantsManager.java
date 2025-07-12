@@ -49,7 +49,6 @@ import static dev.drawethree.xprison.utils.log.XPrisonLogger.error;
 
 public class EnchantsManager {
 
-    private static final String EXCLUDE_PERMISSION = "xprison.enchant.exclude.";
     private static final String UNBREAK_PERMISSION = "xprison.pickaxe.unbreakable";
     private static final boolean USE_META_UNBREAK = ServerInstance.verNumber >= 11;
     private static final Pattern PICKAXE_LORE_ENCHANT_PATTER = Pattern.compile("(?i)%Enchant-\\d+%");
@@ -136,6 +135,7 @@ public class EnchantsManager {
         }
 
         for (String s : pickaxeLore) {
+            s = s.replace("%player_name%", player.getName());
             s = s.replace("%Blocks%", String.valueOf(blocksBroken));
             s = s.replace("%Durability%", durability);
 
@@ -154,14 +154,7 @@ public class EnchantsManager {
                 if (enchantment != null) {
                     int enchLvl = enchants.getOrDefault(enchantment, 0);
                     if (enchLvl > 0) {
-                        final String line;
-                        if (player.hasPermission(EXCLUDE_PERMISSION + enchantment.getRawName())) {
-                            line = this.plugin.getEnchantsConfig().getExcludedFormat()
-                                    .replace("%Enchant%", enchantment.getNameWithoutColor())
-                                    .replace("%Level%", this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl));
-                        } else {
-                            line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
-                        }
+                        final String line = enchantment.getName() + " " + this.plugin.getEnchantsConfig().getLevelFormat().format(enchLvl);
                         s = s.replace(matcher.group(), line);
                     } else {
                         continue;
@@ -234,7 +227,7 @@ public class EnchantsManager {
     public void forEachEffectiveEnchant(Player player, ItemStack item, BiConsumer<XPrisonEnchantment, Integer> consumer) {
         for (var entry : this.getItemEnchants(item).entrySet()) {
             final XPrisonEnchantment enchant = entry.getKey();
-            if (enchant.isEnabled() && !player.hasPermission(EXCLUDE_PERMISSION + enchant.getRawName())) {
+            if (enchant.isEnabled()) {
                 consumer.accept(enchant, entry.getValue());
             }
         }
