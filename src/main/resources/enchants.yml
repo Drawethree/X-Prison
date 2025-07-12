@@ -153,7 +153,6 @@ Pickaxe:
   # ROMAN = All levels as roman numbers
   # FIXED = First 10 levels as roman,
   level-format: ROMAN
-  excluded-format: '&7[&c-&7] &8%Enchant% %Level%'
   lore:
     - ''
     - '&eInformations'
