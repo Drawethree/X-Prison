@@ -5,8 +5,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.api.currency.CurrencyType;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
@@ -16,7 +15,6 @@ import org.bukkit.Material;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Currency;
 import java.util.List;
 
 import static dev.drawethree.xprison.utils.log.XPrisonLogger.info;
@@ -91,8 +89,8 @@ public class XPrisonEnchantmentBaseCore extends XPrisonEnchantmentAbstract {
         //Nothing to do here.
     }
 
-    protected XPrison getCore() {
-        return XPrison.getInstance();
+    protected XPrisonLite getCore() {
+        return XPrisonLite.getInstance();
     }
 
     protected XPrisonEnchants getEnchants() {

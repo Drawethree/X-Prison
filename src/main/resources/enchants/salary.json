@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.SalaryEnchant",
-  "id": 12,
+  "id": 11,
   "rawName": "salary",
   "name": "&dSalary",
   "enabled": true,

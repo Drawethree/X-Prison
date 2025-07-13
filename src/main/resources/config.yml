@@ -1,9 +1,7 @@
-#License Key you got from our discord server after purchase (https://discord.com/invite/ZeSkmEC6mG)
-license_key: "replace-with-working-license-key"
 # Should plugin show debug messages?
 debug-mode: false
 # Should plugin send your server data to bStats ? (https://bstats.org/)
-enable-metrics: false
+enable-metrics: true
 # Database type (SQLite, MySQL)
 database_type: SQLite
 # MySQL connection details
@@ -29,18 +27,11 @@ connection_properties:
 modules:
   blocks: true
   tokens: true
-  gems: true
   ranks: true
-  prestiges: true
   multipliers: true
   enchants: true
   autosell: true
-  autominer: true
-  pickaxe_levels: true
-  gangs: true
   mines: true
-  bombs: true
-  history: true
 # Item migrator config
 item-migrator:
   enabled: true

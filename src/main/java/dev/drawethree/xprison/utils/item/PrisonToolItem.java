@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.utils.item;
 
 import com.saicone.rtag.RtagItem;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 import org.bukkit.inventory.ItemStack;
 

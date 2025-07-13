@@ -1,11 +1,8 @@
 package dev.drawethree.xprison.ranks;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.ranks.XPrisonRanksAPI;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
-import dev.drawethree.xprison.ranks.api.XPrisonRanksAPIImpl;
-import dev.drawethree.xprison.ranks.commands.MaxRankupCommand;
 import dev.drawethree.xprison.ranks.commands.RankupCommand;
 import dev.drawethree.xprison.ranks.commands.SetRankCommand;
 import dev.drawethree.xprison.ranks.config.RanksConfig;
@@ -26,8 +23,6 @@ public final class XPrisonRanks extends XPrisonModuleBase implements PlayerDataH
 	private RanksConfig ranksConfig;
 	@Getter
 	private RanksManager ranksManager;
-	@Getter
-	private XPrisonRanksAPI api;
 
 	@Getter
 	private RanksRepository ranksRepository;
@@ -35,7 +30,7 @@ public final class XPrisonRanks extends XPrisonModuleBase implements PlayerDataH
 	@Getter
 	private RanksService ranksService;
 
-	public XPrisonRanks(XPrison core) {
+	public XPrisonRanks(XPrisonLite core) {
 		super(core);
 	}
 
@@ -55,7 +50,6 @@ public final class XPrisonRanks extends XPrisonModuleBase implements PlayerDataH
 		this.ranksService = new RanksServiceImpl(this.ranksRepository);
 		this.ranksManager = new RanksManager(this);
 		this.ranksManager.enable();
-		this.api = new XPrisonRanksAPIImpl(this.ranksManager);
 		this.registerCommands();
 		this.registerListeners();
 		this.enabled = true;
@@ -78,18 +72,12 @@ public final class XPrisonRanks extends XPrisonModuleBase implements PlayerDataH
 	}
 
 	@Override
-	public boolean isHistoryEnabled() {
-		return true;
-	}
-
-	@Override
 	public void resetPlayerData() {
 		this.ranksRepository.clearTableData();
 	}
 
 	private void registerCommands() {
 		new RankupCommand(this).register();
-		new MaxRankupCommand(this).register();
 		new SetRankCommand(this).register();
 	}
 }

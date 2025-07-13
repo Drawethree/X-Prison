@@ -1,41 +1,14 @@
 messages:
   sell_multi: '&eSell Multiplier - x%multiplier% &7(&e%duration%&7)'
   token_multi: '&eToken Multiplier - x%multiplier% &7(&e%duration%&7)'
-  rank_multi: '&eRank Multiplier - x%multiplier% &7(&ePERMAMENT&7)'
-  global_sell_multi: '&eGlobal Sell Multiplier - x%multiplier% &7(&e%duration%&7)'
-  global_token_multi: '&eGlobal Token Multiplier - x%multiplier% &7(&e%duration%&7)'
   sell_multi_apply: '&e&l(!) &7You''ve &e&lENABLED &7Sell Multiplier x%multiplier%
     for %time%.'
   token_multi_apply: '&e&lMULTIPLIER &8» &fYou''ve &fenabled &eToken Multiplier x%multiplier%
     &ffor &e%time%.'
   sell_multi_reset: '&e&l(!) &cYour sell multiplier was reset.'
   token_multi_reset: '&e&lMULTIPLIER &8» &fYour token multiplier was reset.'
-# Rank Multipliers settings
-ranks: { }
-  #ultra: 1.0
-  #donor: 0.7
-  #vip: 0.5
-#default: 0.1
 # Should the plugins check for LuckPerms groups instead of Xprison permissions?
 use-luckperms-groups: true
-# GlobalMultiplier settings
-global-multiplier:
-  sell:
-    # Maximum x of Global Sell Multiplier that can be active
-    max: 10.0
-    # Current Global Sell Multiplier
-    multiplier: 0.0
-    # Time when Global Sell Multiplier ends
-    timeLeft: -1
-  tokens:
-    # Maximum x of Global Token Multiplier that can be active
-    max: 10.0
-    # Current Global Token Multiplier
-    multiplier: 0.0
-    # Time when Global Token Multiplier ends
-    timeLeft: -1
-# Interval for refreshing online players rank mulipliers
-rank-multiplier-update-time: 5
 # Maximum player sell multiplier
 sell-multiplier:
   max: 10.0

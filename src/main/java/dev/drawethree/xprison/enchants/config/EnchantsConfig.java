@@ -24,7 +24,6 @@ public class EnchantsConfig {
 	private LevelFormat levelFormat;
 	private String excludedFormat;
 	private List<String> pickaxeLore;
-	private boolean allowEnchantsOutside;
 	private boolean firstJoinPickaxeEnabled;
 	private XMaterial firstJoinPickaxeMaterial;
 	private List<String> firstJoinPickaxeEnchants;
@@ -53,7 +52,6 @@ public class EnchantsConfig {
 		this.excludedFormat = getYamlConfig().getString("Pickaxe.excluded-format", "&7[&c-&7] &8%Enchant% %Level%");
 		this.pickaxeLore = getYamlConfig().getStringList("Pickaxe.lore");
 		this.openEnchantMenuActions = Arrays.stream(getYamlConfig().getString("open-enchant-menu-action", "RIGHT_CLICK_AIR,RIGHT_CLICK_BLOCK").split(",")).map(s-> Action.valueOf(s.toUpperCase())).collect(Collectors.toList());
-		this.allowEnchantsOutside = getYamlConfig().getBoolean("allow-enchants-outside-mine-regions");
 		this.firstJoinPickaxeEnabled = getYamlConfig().getBoolean("first-join-pickaxe.enabled");
 		this.firstJoinPickaxeMaterial = XMaterial.matchXMaterial(getYamlConfig().getString("first-join-pickaxe.material")).get();
 		this.firstJoinPickaxeEnchants = getYamlConfig().getStringList("first-join-pickaxe.enchants");

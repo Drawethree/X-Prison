@@ -1,8 +1,7 @@
 package dev.drawethree.xprison.enchants.utils;
 
-import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.enchants.model.ChanceBasedEnchant;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.utils.economy.EconomyUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -29,8 +28,7 @@ public class GuiUtils {
                     .replace("%cost%", String.format("%,d", enchantment.getBaseCost() + (enchantment.getIncreaseCost() * currentLevel)))
                     .replace("%max_level%", enchantment.getMaxLevel() == Integer.MAX_VALUE ? "Unlimited" : String.format("%,d", enchantment.getMaxLevel()))
                     .replace("%chance%", String.format("%,.2f", enchantment instanceof ChanceBasedEnchant ? ((ChanceBasedEnchant) enchantment).getChanceToTrigger(currentLevel) : 100.00F))
-                    .replace("%current_level%", String.format("%,d", currentLevel))
-                    .replace("%pickaxe_level%", String.format("%,d", enchantment instanceof RequiresPickaxeLevel ? ((RequiresPickaxeLevel) enchantment).getRequiredPickaxeLevel() : 0)));
+                    .replace("%current_level%", String.format("%,d", currentLevel)));
         }
         return newList;
     }

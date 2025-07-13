@@ -1,7 +1,6 @@
 package dev.drawethree.xprison.multipliers.multiplier;
 
-import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
-import dev.drawethree.xprison.api.multipliers.model.PlayerMultiplier;
+import dev.drawethree.xprison.multipliers.MultiplierType;
 import lombok.ToString;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;

@@ -1,6 +1,6 @@
 package dev.drawethree.xprison.database;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
 import me.lucko.helper.Schedulers;
 
@@ -14,9 +14,9 @@ import static dev.drawethree.xprison.utils.log.XPrisonLogger.warning;
 
 public abstract class SQLDatabase {
 
-	protected final XPrison plugin;
+	protected final XPrisonLite plugin;
 
-	SQLDatabase(XPrison plugin) {
+	SQLDatabase(XPrisonLite plugin) {
 		this.plugin = plugin;
 	}
 

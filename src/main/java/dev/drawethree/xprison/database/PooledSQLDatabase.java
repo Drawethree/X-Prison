@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.database;
 
 import com.zaxxer.hikari.HikariDataSource;
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,7 +15,7 @@ public abstract class PooledSQLDatabase extends SQLDatabase {
 	protected static final AtomicInteger POOL_COUNTER = new AtomicInteger(0);
 	protected HikariDataSource hikari;
 
-	public PooledSQLDatabase(XPrison plugin) {
+	public PooledSQLDatabase(XPrisonLite plugin) {
 		super(plugin);
 	}
 

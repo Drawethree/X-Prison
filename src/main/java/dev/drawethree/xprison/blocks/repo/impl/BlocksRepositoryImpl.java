@@ -17,8 +17,8 @@ public class BlocksRepositoryImpl implements BlocksRepository {
 
     private static final String BLOCKS_UUID_COLNAME = "UUID";
     private static final String BLOCKS_BLOCKS_COLNAME = "Blocks";
-    private static final String TABLE_NAME_BLOCKS = "UltraPrison_BlocksBroken";
-    private static final String TABLE_NAME_BLOCKS_WEEKLY = "UltraPrison_BlocksBrokenWeekly";
+    private static final String TABLE_NAME_BLOCKS = "XPrison_BlocksBroken";
+    private static final String TABLE_NAME_BLOCKS_WEEKLY = "XPrison_BlocksBrokenWeekly";
 
     private final SQLDatabase database;
 

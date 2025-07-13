@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.LayerEnchant",
-  "id": 10,
+  "id": 9,
   "rawName": "layer",
   "name": "&bLayer",
   "enabled": true,
@@ -9,19 +9,19 @@
   "maxLevel": 500,
   "initialCost": 200,
   "countBlocksBroken": true,
-  "currency": "GEMS",
+  "currency": "TOKENS",
   "useEvents": false,
   "pickaxeLevelRequired": 1,
   "refund": {
     "enabled": true,
-    "guiSlot": 36,
+    "guiSlot": 35,
     "percentage": 50.0
   },
   "gui": {
     "name": "&bLayer",
     "material": "HOPPER",
     "customModelData": 0,
-    "slot": 36,
+    "slot": 35,
     "description": [
       "&7&o(( Ability to break full layer of your mine while mining))"
     ]

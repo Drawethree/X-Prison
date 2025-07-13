@@ -1,18 +1,9 @@
 package dev.drawethree.xprison.multipliers;
 
-import dev.drawethree.ultrabackpacks.api.event.BackpackSellEvent;
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.multipliers.XPrisonMultipliersAPI;
-import dev.drawethree.xprison.api.multipliers.events.PlayerMultiplierReceiveEvent;
-import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
-import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
-import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;
 import dev.drawethree.xprison.config.FileManager;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
-import dev.drawethree.xprison.multipliers.api.XPrisonMultipliersAPIImpl;
-import dev.drawethree.xprison.multipliers.multiplier.GlobalMultiplierBase;
-import dev.drawethree.xprison.multipliers.multiplier.MultiplierBase;
 import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplierBase;
 import dev.drawethree.xprison.multipliers.repo.MultipliersRepository;
 import dev.drawethree.xprison.multipliers.repo.impl.MultipliersRepositoryImpl;
@@ -24,16 +15,11 @@ import lombok.Getter;
 import me.lucko.helper.Commands;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.event.filter.EventFilters;
-import me.lucko.helper.scheduler.Task;
-import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -54,25 +40,13 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 	private static XPrisonMultipliers instance;
 	@Getter
 	private FileManager.Config config;
-	@Getter
-	private XPrisonMultipliersAPI api;
-	private GlobalMultiplierBase globalSellMultiplier;
-	private GlobalMultiplierBase globalTokenMultiplier;
 
-	private Map<UUID, PlayerMultiplierBase> rankMultipliers;
 	private Map<UUID, PlayerMultiplierBase> sellMultipliers;
 	private Map<UUID, PlayerMultiplierBase> tokenMultipliers;
 
 	private Map<String, String> messages;
 	private Map<String, Double> permissionToMultiplier;
 
-	private Task rankUpdateTask;
-	private int rankMultiplierUpdateTime;
-
-	@Getter
-	private double globalSellMultiMax;
-	@Getter
-	private double globalTokenMultiMax;
 	@Getter
 	private double playerSellMultiMax;
 	@Getter
@@ -84,7 +58,7 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 	@Getter
 	private MultipliersService multipliersService;
 
-	public XPrisonMultipliers(XPrison plugin) {
+	public XPrisonMultipliers(XPrisonLite plugin) {
 		super(plugin);
 		instance = this;
 	}
@@ -119,9 +93,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 		this.loadMessages();
 		this.loadRankMultipliers();
 
-		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time", 5);
-		this.globalSellMultiMax = this.getConfig().get().getDouble("global-multiplier.sell.max", 10.0);
-		this.globalTokenMultiMax = this.getConfig().get().getDouble("global-multiplier.tokens.max", 10.0);
 		this.playerSellMultiMax = this.getConfig().get().getDouble("sell-multiplier.max", 10.0);
 		this.playerTokenMultiMax = this.getConfig().get().getDouble("token-multiplier.max", 10.0);
 	}
@@ -131,7 +102,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 		super.enable();
 		this.config = this.core.getFileManager().getConfig("multipliers.yml").copyDefaults(true).save();
 
-		this.rankMultipliers = new ConcurrentHashMap<>();
 		this.sellMultipliers = new ConcurrentHashMap<>();
 		this.tokenMultipliers = new ConcurrentHashMap<>();
 
@@ -141,9 +111,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 
 		this.multipliersService = new MultipliersServiceImpl(this.multipliersRepository);
 
-		this.rankMultiplierUpdateTime = this.getConfig().get().getInt("rank-multiplier-update-time", 5);
-		this.globalSellMultiMax = this.getConfig().get().getDouble("global-multiplier.sell.max", 10.0);
-		this.globalTokenMultiMax = this.getConfig().get().getDouble("global-multiplier.tokens.max", 10.0);
 		this.playerSellMultiMax = this.getConfig().get().getDouble("sell-multiplier.max", 10.0);
 		this.playerTokenMultiMax = this.getConfig().get().getDouble("token-multiplier.max", 10.0);
 
@@ -152,17 +119,13 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 		this.registerCommands();
 		this.registerEvents();
 		this.removeExpiredMultipliers();
-		this.loadGlobalMultipliers();
 		this.loadOnlineMultipliers();
-		this.api = new XPrisonMultipliersAPIImpl(this);
 
-		this.rankUpdateTask = Schedulers.async().runRepeating(() -> Players.all().forEach(p -> this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p))), this.rankMultiplierUpdateTime, TimeUnit.MINUTES, this.rankMultiplierUpdateTime, TimeUnit.MINUTES);
 		this.enabled = true;
 	}
 
 	private void loadOnlineMultipliers() {
 		Players.all().forEach(p -> {
-			this.rankMultipliers.put(p.getUniqueId(), this.calculateRankMultiplier(p));
 			this.loadSellMultiplier(p);
 			this.loadTokenMultiplier(p);
 		});
@@ -171,37 +134,14 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 	private void registerEvents() {
 		Events.subscribe(PlayerJoinEvent.class)
 				.handler(e -> {
-					this.rankMultipliers.put(e.getPlayer().getUniqueId(), this.calculateRankMultiplier(e.getPlayer()));
 					this.loadSellMultiplier(e.getPlayer());
 					this.loadTokenMultiplier(e.getPlayer());
 				}).bindWith(this);
 		Events.subscribe(PlayerQuitEvent.class)
 				.handler(e -> {
-					this.rankMultipliers.remove(e.getPlayer().getUniqueId());
 					this.saveSellMultiplier(e.getPlayer(), true);
 					this.saveTokenMultiplier(e.getPlayer(), true);
 				}).bindWith(this);
-
-		Events.subscribe(PlayerTokensReceiveEvent.class, EventPriority.HIGHEST)
-				.filter(EventFilters.ignoreCancelled())
-				.handler(e -> {
-					OfflinePlayer p = e.getPlayer();
-					if (p.isOnline() && e.getCause() == ReceiveCause.MINING) {
-						e.setAmount((long) this.getApi().getTotalToDeposit((Player) p, e.getAmount(), MultiplierType.TOKENS));
-					}
-				}).bindWith(this);
-
-		if (this.core.isUltraBackpacksEnabled()) {
-			Events.subscribe(BackpackSellEvent.class, EventPriority.NORMAL)
-					.handler(e -> {
-						double currentAmount = e.getMoneyToDeposit();
-						this.core.debug("BackpacksSellEvent >> Original Amount: " + currentAmount, this);
-						double newAmount = this.getApi().getTotalToDeposit(e.getPlayer(), currentAmount, MultiplierType.SELL);
-						this.core.debug("BackpacksSellEvent >> New Amount: " + newAmount, this);
-						e.setMoneyToDeposit(newAmount);
-					}).bindWith(this);
-		}
-
 	}
 
 	private void saveSellMultiplier(Player player, boolean async) {
@@ -232,40 +172,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 			this.multipliersService.setTokenMultiplier(player, multiplier);
 			this.core.debug(String.format("Saved Token Multiplier of player %s", player.getName()), this);
 		}
-	}
-
-	private void loadGlobalMultipliers() {
-		double multiSell = this.config.get().getDouble("global-multiplier.sell.multiplier");
-		long timeLeftSell = this.config.get().getLong("global-multiplier.sell.timeLeft");
-
-		double multiTokens = this.config.get().getDouble("global-multiplier.tokens.multiplier");
-		long timeLeftTokens = this.config.get().getLong("global-multiplier.tokens.timeLeft");
-
-		this.globalSellMultiplier = new GlobalMultiplierBase(0.0, 0);
-		this.globalTokenMultiplier = new GlobalMultiplierBase(0.0, 0);
-
-		if (timeLeftSell > Time.nowMillis()) {
-			this.globalSellMultiplier.setEndTime(timeLeftSell);
-			this.globalSellMultiplier.setMultiplier(multiSell);
-		}
-
-		if (timeLeftTokens > Time.nowMillis()) {
-			this.globalTokenMultiplier.setEndTime(timeLeftSell);
-			this.globalTokenMultiplier.setMultiplier(multiTokens);
-		}
-
-		info(String.format("&aLoaded Global Sell Multiplier &e%.2fx", multiSell));
-		info(String.format("&aLoaded Global Token Multiplier &e%.2fx", multiTokens));
-
-	}
-
-	private void saveGlobalMultipliers() {
-		this.config.set("global-multiplier.sell.multiplier", this.globalSellMultiplier.getMultiplier());
-		this.config.set("global-multiplier.sell.timeLeft", this.globalSellMultiplier.getEndTime());
-		this.config.set("global-multiplier.tokens.multiplier", this.globalTokenMultiplier.getMultiplier());
-		this.config.set("global-multiplier.tokens.timeLeft", this.globalTokenMultiplier.getEndTime());
-		this.config.save();
-		info("&aSaved Global Multipliers into multipliers.yml");
 	}
 
 	private void loadSellMultiplier(Player player) {
@@ -310,18 +216,12 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 	public void disable() {
 		super.disable();
 		this.saveAllMultipliers();
-		this.rankUpdateTask.stop();
 		this.enabled = false;
 	}
 
 	@Override
 	public String getName() {
 		return MODULE_NAME;
-	}
-
-	@Override
-	public boolean isHistoryEnabled() {
-		return true;
 	}
 
 	@Override
@@ -334,7 +234,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 			saveSellMultiplier(p, false);
 			saveTokenMultiplier(p, false);
 		});
-		this.saveGlobalMultipliers();
 		info("&aMultipliers saved.");
 	}
 
@@ -347,31 +246,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 	}
 
 	private void registerCommands() {
-		Commands.create()
-				.assertPermission("xprison.multipliers.admin")
-				.handler(c -> {
-					if (c.args().size() == 4) {
-						String type = c.rawArg(0);
-						double amount = c.arg(1).parseOrFail(Double.class);
-						int duration = c.arg(2).parseOrFail(Integer.class);
-						TimeUnit timeUnit;
-						try {
-							timeUnit = TimeUnit.valueOf(c.rawArg(3).toUpperCase());
-						} catch (IllegalArgumentException e) {
-							PlayerUtils.sendMessage(c.sender(), "&cInvalid time unit! Please use one from: " + StringUtils.join(TimeUnit.values(), ","));
-							return;
-						}
-
-						setupGlobalMultiplier(c.sender(), type, duration, timeUnit, amount);
-					} else if (c.args().size() == 2 && c.rawArg(1).equalsIgnoreCase("reset")) {
-						String type = c.rawArg(0);
-						resetGlobalMultiplier(c.sender(), type);
-					} else {
-						PlayerUtils.sendMessage(c.sender(), "&cInvalid usage!");
-						PlayerUtils.sendMessage(c.sender(), "&c/gmulti <money/token> <multiplier> <time> <time_unit>");
-						PlayerUtils.sendMessage(c.sender(), "&c/gmulti <money/token> reset");
-					}
-				}).registerAndBind(this, "globalmultiplier", "gmulti");
 		Commands.create()
 				.assertPermission("xprison.multipliers.admin")
 				.handler(c -> {
@@ -428,35 +302,15 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 
 					PlayerMultiplierBase sellMulti = this.getSellMultiplier(c.sender());
 					PlayerMultiplierBase tokenMulti = this.getTokenMultiplier(c.sender());
-					MultiplierBase rankMulti = this.getRankMultiplier(c.sender());
 
 					double sellMultiplier = sellMulti == null || !sellMulti.isValid() ? 0.0 : sellMulti.getMultiplier();
 					double tokenMultiplier = tokenMulti == null || !tokenMulti.isValid() ? 0.0 : tokenMulti.getMultiplier();
-					double rankMultipler = rankMulti == null ? 0.0 : rankMulti.getMultiplier();
 					String sellMultiplierDuration = sellMulti == null || sellMulti.isExpired() ? "" : sellMulti.getTimeLeftString();
 					String tokenMultiplierDuration = tokenMulti == null || tokenMulti.isExpired() ? "" : tokenMulti.getTimeLeftString();
 
-					PlayerUtils.sendMessage(c.sender(), messages.get("global_sell_multi").replace("%multiplier%", String.format("%,.2f", this.globalSellMultiplier.isValid() ? this.globalSellMultiplier.getMultiplier() : 0.0)).replace("%duration%", this.globalSellMultiplier.getTimeLeftString()));
-					PlayerUtils.sendMessage(c.sender(), messages.get("global_token_multi").replace("%multiplier%", String.format("%,.2f", this.globalTokenMultiplier.isValid() ? this.globalTokenMultiplier.getMultiplier() : 0.0)).replace("%duration%", this.globalTokenMultiplier.getTimeLeftString()));
-					PlayerUtils.sendMessage(c.sender(), messages.get("rank_multi").replace("%multiplier%", String.format("%,.2f", rankMultipler)));
 					PlayerUtils.sendMessage(c.sender(), messages.get("sell_multi").replace("%multiplier%", String.format("%,.2f", sellMultiplier)).replace("%duration%", sellMultiplierDuration));
 					PlayerUtils.sendMessage(c.sender(), messages.get("token_multi").replace("%multiplier%", String.format("%,.2f", tokenMultiplier)).replace("%duration%", tokenMultiplierDuration));
 				}).registerAndBind(this, "multiplier", "multi");
-	}
-
-	private void resetGlobalMultiplier(CommandSender sender, String type) {
-		switch (type.toLowerCase()) {
-			case "sell":
-			case "money":
-				this.globalSellMultiplier.reset();
-				PlayerUtils.sendMessage(sender, "&eGlobal Sell Multiplier &awas reset.");
-				break;
-			case "tokens":
-			case "token":
-				this.globalTokenMultiplier.reset();
-				PlayerUtils.sendMessage(sender, "&eGlobal Token Multiplier &awas reset.");
-				break;
-		}
 	}
 
 	private void resetSellMultiplier(CommandSender sender, Player onlinePlayer) {
@@ -495,8 +349,6 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 			return;
 		}
 
-		this.callPlayerReceiveMultiplierEvent(onlinePlayer, amount, timeUnit, duration, MultiplierType.SELL);
-
 		if (sellMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			PlayerMultiplierBase multiplier = sellMultipliers.get(onlinePlayer.getUniqueId());
 
@@ -517,19 +369,11 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 		PlayerUtils.sendMessage(sender, String.format("&aYou have set &e%s's &eSell Multiplier &ato &e%.2f &afor &e%d &a%s.", onlinePlayer.getName(), amount, duration, StringUtils.capitalize(timeUnit.name())));
 	}
 
-	private PlayerMultiplierReceiveEvent callPlayerReceiveMultiplierEvent(Player onlinePlayer, double amount, TimeUnit timeUnit, int duration, MultiplierType type) {
-		PlayerMultiplierReceiveEvent event = new PlayerMultiplierReceiveEvent(onlinePlayer, amount, timeUnit, duration, type);
-		Events.call(event);
-		return event;
-	}
-
 	private void setupTokenMultiplier(CommandSender sender, Player onlinePlayer, double amount, TimeUnit timeUnit, int duration) {
 		if (onlinePlayer == null || !onlinePlayer.isOnline()) {
 			PlayerUtils.sendMessage(sender, "&cPlayer must be online!");
 			return;
 		}
-
-		this.callPlayerReceiveMultiplierEvent(onlinePlayer, amount, timeUnit, duration, MultiplierType.TOKENS);
 
 		if (tokenMultipliers.containsKey(onlinePlayer.getUniqueId())) {
 			PlayerMultiplierBase multiplier = tokenMultipliers.get(onlinePlayer.getUniqueId());
@@ -553,44 +397,12 @@ public final class XPrisonMultipliers extends XPrisonModuleBase implements Playe
 	}
 
 
-	private void setupGlobalMultiplier(CommandSender sender, String type, int time, TimeUnit timeUnit, double amount) {
-		double finalMulti;
-		switch (type.toLowerCase()) {
-			case "sell":
-			case "money":
-				finalMulti = this.globalSellMultiplier.getMultiplier() + amount > this.globalSellMultiMax ? this.globalSellMultiMax : this.globalSellMultiplier.getMultiplier() + amount;
-				this.globalSellMultiplier.setMultiplier(finalMulti);
-				this.globalSellMultiplier.addDuration(timeUnit, time);
-				PlayerUtils.sendMessage(sender, String.format("&aYou have set the &eGlobal Sell Multiplier &ato &e%.2f &afor &e%d &a%s.", amount, time, StringUtils.capitalize(timeUnit.name())));
-				break;
-			case "tokens":
-			case "token":
-				finalMulti = this.globalTokenMultiplier.getMultiplier() + amount > this.globalTokenMultiMax ? this.globalTokenMultiMax : this.globalTokenMultiplier.getMultiplier() + amount;
-				this.globalTokenMultiplier.setMultiplier(finalMulti);
-				this.globalTokenMultiplier.addDuration(timeUnit, time);
-				PlayerUtils.sendMessage(sender, String.format("&aYou have set the &eGlobal Token Multiplier &ato &e%.2f &afor &e%d &a%s.", amount, time, StringUtils.capitalize(timeUnit.name())));
-				break;
-		}
-	}
-
-	public GlobalMultiplierBase getGlobalSellMultiplier() {
-		return this.globalSellMultiplier;
-	}
-
-	public GlobalMultiplierBase getGlobalTokenMultiplier() {
-		return this.globalTokenMultiplier;
-	}
-
 	public PlayerMultiplierBase getSellMultiplier(Player p) {
 		return sellMultipliers.get(p.getUniqueId());
 	}
 
 	public PlayerMultiplierBase getTokenMultiplier(Player p) {
 		return tokenMultipliers.get(p.getUniqueId());
-	}
-
-	public PlayerMultiplierBase getRankMultiplier(Player p) {
-		return rankMultipliers.get(p.getUniqueId());
 	}
 
 	private PlayerMultiplierBase calculateRankMultiplier(Player p) {

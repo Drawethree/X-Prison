@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.mines.model.mine;
 
-import dev.drawethree.xprison.api.mines.model.MineSelection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MineSelectionImpl implements MineSelection {
+public class MineSelectionImpl{
 	private Position position1;
 	private Position position2;
 

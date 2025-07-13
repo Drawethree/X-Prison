@@ -1,6 +1,6 @@
 package dev.drawethree.xprison.utils.gui;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
@@ -22,17 +22,17 @@ public class ClearDBGui extends ConfirmationGui {
 		if (confirm) {
 			if (this.module == null) {
 				getAllModules().stream().filter(module -> module instanceof PlayerDataHolder).map(PlayerDataHolder.class::cast).forEach(dev.drawethree.xprison.interfaces.PlayerDataHolder::resetPlayerData);
-				PlayerUtils.sendMessage(this.getPlayer(), "&aX-Prison - All Modules Data have been reset.");
+				PlayerUtils.sendMessage(this.getPlayer(), "&aX-Prison Lite - All Modules Data have been reset.");
 			} else {
 				PlayerDataHolder playerDataHolder = (PlayerDataHolder) module;
 				playerDataHolder.resetPlayerData();
-				PlayerUtils.sendMessage(this.getPlayer(), "&aX-Prison - DB Player data for module " + module.getName() + " has been reset.");
+				PlayerUtils.sendMessage(this.getPlayer(), "&aX-Prison Lite - DB Player data for module " + module.getName() + " has been reset.");
 			}
 		}
 		this.close();
 	}
 
 	private Collection<XPrisonModuleBase> getAllModules() {
-		return XPrison.getInstance().getModules();
+		return XPrisonLite.getInstance().getModules();
 	}
 }

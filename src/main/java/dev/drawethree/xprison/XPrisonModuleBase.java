@@ -1,6 +1,5 @@
 package dev.drawethree.xprison;
 
-import dev.drawethree.xprison.api.XPrisonModule;
 import lombok.Getter;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.terminable.TerminableConsumer;
@@ -10,15 +9,15 @@ import me.lucko.helper.terminable.module.TerminableModule;
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
-public abstract class XPrisonModuleBase implements XPrisonModule, TerminableConsumer {
+public abstract class XPrisonModuleBase implements TerminableConsumer {
 
     @Getter
-    protected final XPrison core;
+    protected final XPrisonLite core;
     private final CompositeTerminable terminableRegistry;
     @Getter
     protected boolean enabled;
 
-    public XPrisonModuleBase(XPrison core) {
+    public XPrisonModuleBase(XPrisonLite core) {
         this.core = core;
         this.terminableRegistry = CompositeTerminable.create();
     }
@@ -40,6 +39,8 @@ public abstract class XPrisonModuleBase implements XPrisonModule, TerminableCons
     public void reload() {
 
     }
+
+    public abstract String getName();
 
     @Nonnull
     public <T extends AutoCloseable> T bind(@Nonnull T terminable) {

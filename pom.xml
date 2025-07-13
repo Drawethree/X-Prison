@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.drawethree.xprison</groupId>
-    <artifactId>X-Prison</artifactId>
-    <version>2025.1.7</version>
-    <name>XPrison</name>
+    <artifactId>X-PrisonLite</artifactId>
+    <version>2025.1.0</version>
+    <name>XPrisonLite</name>
 
     <repositories>
         <repository>
@@ -53,7 +53,6 @@
         <com.github.cryptomorin.XSeries.version>13.3.3</com.github.cryptomorin.XSeries.version>
         <org.bstats.version>3.0.2</org.bstats.version>
         <org.codemc.worldguardwrapper.version>1.2.1-SNAPSHOT</org.codemc.worldguardwrapper.version>
-        <me.clip.placeholderapi.version>2.11.6</me.clip.placeholderapi.version>
         <com.zaxxer.HikariCP.version>4.0.3</com.zaxxer.HikariCP.version>
         <com.github.MilkBowl.VaultAPI.version>1.7</com.github.MilkBowl.VaultAPI.version>
         <net.luckperms.api.version>5.5</net.luckperms.api.version>
@@ -64,18 +63,10 @@
         <org.junit.version>5.13.1</org.junit.version>
         <org.mockito.version>5.18.0</org.mockito.version>
         <org.projectlombok.lombok.version>1.18.38</org.projectlombok.lombok.version>
-        <dev.drawethree.xprison.api.version>1.1-SNAPSHOT</dev.drawethree.xprison.api.version>
-        <dev.drawethree.verification.version>1.0-SNAPSHOT</dev.drawethree.verification.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>dev.drawethree.xprison</groupId>
-                <artifactId>X-PrisonAPI</artifactId>
-                <version>${dev.drawethree.xprison.api.version}</version>
-                <scope>compile</scope>
-            </dependency>
             <dependency>
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
@@ -124,12 +115,6 @@
                 <version>${org.codemc.worldguardwrapper.version}</version>
             </dependency>
             <dependency>
-                <groupId>me.clip</groupId>
-                <artifactId>placeholderapi</artifactId>
-                <version>${me.clip.placeholderapi.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
                 <version>${com.zaxxer.HikariCP.version}</version>
@@ -144,12 +129,6 @@
                 <groupId>net.luckperms</groupId>
                 <artifactId>api</artifactId>
                 <version>${net.luckperms.api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.Drawethree</groupId>
-                <artifactId>UltraBackpacksAPI</artifactId>
-                <version>${com.github.Drawethree.UltraBackpacksAPI.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>me.lucko</groupId>
@@ -183,11 +162,6 @@
                 <version>${org.projectlombok.lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
-            <dependency>
-                <groupId>dev.drawethree.license</groupId>
-                <artifactId>LicenseVerification</artifactId>
-                <version>${dev.drawethree.verification.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -202,11 +176,6 @@
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.drawethree.xprison</groupId>
-            <artifactId>X-PrisonAPI</artifactId>
-            <scope>compile</scope>
         </dependency>
 
         <!-- 3RD PARTY DEPENDENCIES -->
@@ -243,11 +212,6 @@
             <artifactId>bstats-bukkit</artifactId>
         </dependency>
         <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
         </dependency>
@@ -259,11 +223,6 @@
         <dependency>
             <groupId>net.luckperms</groupId>
             <artifactId>api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Drawethree</groupId>
-            <artifactId>UltraBackpacksAPI</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -284,10 +243,6 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>dev.drawethree.license</groupId>
-            <artifactId>LicenseVerification</artifactId>
-        </dependency>
 
         <!-- TEST DEPENDENCIES -->
         <dependency>
@@ -305,7 +260,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>X-Prison ${project.version}</finalName>
+        <finalName>X-PrisonLite ${project.version}</finalName>
 
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>

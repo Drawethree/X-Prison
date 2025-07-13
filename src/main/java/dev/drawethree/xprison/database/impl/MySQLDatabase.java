@@ -2,7 +2,7 @@ package dev.drawethree.xprison.database.impl;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.database.PooledSQLDatabase;
 import dev.drawethree.xprison.database.model.ConnectionProperties;
 import dev.drawethree.xprison.database.model.DatabaseCredentials;
@@ -13,7 +13,7 @@ public final class MySQLDatabase extends PooledSQLDatabase {
     private final DatabaseCredentials credentials;
     private final ConnectionProperties connectionProperties;
 
-    public MySQLDatabase(XPrison parent, DatabaseCredentials credentials, ConnectionProperties connectionProperties) {
+    public MySQLDatabase(XPrisonLite parent, DatabaseCredentials credentials, ConnectionProperties connectionProperties) {
         super(parent);
         this.connectionProperties = connectionProperties;
         this.credentials = credentials;

@@ -12,7 +12,7 @@ import java.sql.SQLException;
 
 public class RanksRepositoryImpl implements RanksRepository {
 
-	private static final String TABLE_NAME = "UltraPrison_Ranks";
+	private static final String TABLE_NAME = "XPrison_Ranks";
 	private static final String RANKS_UUID_COLNAME = "UUID";
 	private static final String RANKS_RANK_COLNAME = "id_rank";
 

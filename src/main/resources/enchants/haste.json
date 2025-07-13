@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.HasteEnchant",
-  "id": 4,
+  "id": 7,
   "rawName": "haste",
   "name": "&dHaste",
   "enabled": true,

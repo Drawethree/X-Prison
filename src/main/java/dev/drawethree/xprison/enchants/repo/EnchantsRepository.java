@@ -1,12 +1,9 @@
 package dev.drawethree.xprison.enchants.repo;
 
 
-import dev.drawethree.xprison.api.enchants.events.XPrisonEnchantRegisterEvent;
-import dev.drawethree.xprison.api.enchants.events.XPrisonEnchantUnregisterEvent;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.utils.text.TextUtils;
-import me.lucko.helper.Events;
 import org.apache.commons.lang.Validate;
 
 import java.util.Collection;
@@ -75,8 +72,6 @@ public class EnchantsRepository {
 		enchantsById.put(enchantment.getId(), enchantment);
 		enchantsByName.put(enchantment.getRawName().toLowerCase(), enchantment);
 
-		Events.call(new XPrisonEnchantRegisterEvent(enchantment));
-
 		info(TextUtils.applyColor("&aRegistered enchant " + enchantment.getName() + "&a created by &e" + enchantment.getAuthor()));
 		return true;
 	}
@@ -90,8 +85,6 @@ public class EnchantsRepository {
 
 		enchantsById.remove(enchantment.getId());
 		enchantsByName.remove(enchantment.getRawName());
-
-		Events.call(new XPrisonEnchantUnregisterEvent(enchantment));
 
 		info(TextUtils.applyColor("&aUnregistered enchant " + enchantment.getName() + "&a created by &e" + enchantment.getAuthor()));
 		return true;

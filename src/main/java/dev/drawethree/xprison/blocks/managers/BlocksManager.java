@@ -1,10 +1,8 @@
 package dev.drawethree.xprison.blocks.managers;
 
-import dev.drawethree.xprison.api.tokens.events.XPrisonBlockBreakEvent;
 import dev.drawethree.xprison.blocks.XPrisonBlocks;
 import dev.drawethree.xprison.blocks.model.BlockReward;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
-import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
 import me.lucko.helper.utils.Players;
@@ -149,19 +147,6 @@ public class BlocksManager {
 	}
 
 	public void addBlocksBroken(OfflinePlayer player, List<Block> blocks) {
-
-		if (player.isOnline()) {
-			XPrisonBlockBreakEvent event = new XPrisonBlockBreakEvent((Player) player, blocks);
-
-			Events.call(event);
-
-			if (event.isCancelled()) {
-				return;
-			}
-
-			blocks = event.getBlocks();
-		}
-
 		long finalAmount = blocks.size();
 
 		Schedulers.async().run(() -> {
@@ -354,14 +339,6 @@ public class BlocksManager {
 		if (countBlocksBroken) {
 			this.addBlocksBroken(p, blocks);
 		}
-
-		//Lucky block check
-		blocks.forEach(block -> {
-			List<String> rewards = this.plugin.getBlocksConfig().getLuckyBlockReward(block.getType());
-			for (String s : rewards) {
-				Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("%player%", p.getName()));
-			}
-		});
 
 		this.plugin.getCore().debug("XPrisonBlocks::handleBlockBreak >> Took " + (System.currentTimeMillis() - startTime) + " ms.", this.plugin);
 	}

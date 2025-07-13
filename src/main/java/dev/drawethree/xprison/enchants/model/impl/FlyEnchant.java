@@ -1,6 +1,6 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
-import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
+import dev.drawethree.xprison.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

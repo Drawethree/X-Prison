@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.UnbreakingEnchant",
-  "id": 2,
+  "id": 14,
   "rawName": "unbreaking",
   "name": "&bUnbreaking",
   "enabled": true,

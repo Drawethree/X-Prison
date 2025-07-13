@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.enchants.model.impl;
 
 import com.google.gson.JsonObject;
-import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
-import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
+import dev.drawethree.xprison.enchants.model.BlockBreakEnchant;
+import dev.drawethree.xprison.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
+import dev.drawethree.xprison.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.expression.ExpressionUtils;
 import dev.drawethree.xprison.utils.json.JsonUtils;

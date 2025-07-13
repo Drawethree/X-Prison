@@ -42,16 +42,6 @@ public class MinePanelGUI extends Gui {
 			new MineResetOptionsGUI(this.mineImpl, this.getPlayer()).open();
 		}));
 
-		this.setItem(29, ItemStackBuilder.of(XMaterial.NAME_TAG.parseItem()).name("&eMine Holograms").lore(" ", "&7Click to modify mine's holograms").build(() -> {
-			this.close();
-			new MineHologramsGUI(this.mineImpl, this.getPlayer()).open();
-		}));
-
-		this.setItem(31, ItemStackBuilder.of(XMaterial.NETHER_STAR.parseItem()).name("&eMine Player Effects").lore(" ", "&7Click to modify mine player effects").build(() -> {
-			this.close();
-			new MineEffectsGUI(this.mineImpl, this.getPlayer()).open();
-		}));
-
 		this.setItem(36, ItemStackBuilder.of(XMaterial.ARROW.parseItem()).name("&cBack").lore("&7Click to show all mines").build(() -> {
 			this.close();
 			XPrisonMines.getInstance().getManager().openMinesListGUI(this.getPlayer());

@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.CharityEnchant",
-  "id": 11,
+  "id": 4,
   "rawName": "charity",
   "name": "&cCharity",
   "enabled": true,

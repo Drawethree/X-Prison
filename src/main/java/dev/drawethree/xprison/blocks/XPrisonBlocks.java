@@ -1,9 +1,7 @@
 package dev.drawethree.xprison.blocks;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.blocks.XPrisonBlocksAPI;
-import dev.drawethree.xprison.blocks.api.XPrisonBlocksAPIImpl;
 import dev.drawethree.xprison.blocks.config.BlockRewardsConfig;
 import dev.drawethree.xprison.blocks.config.BlocksConfig;
 import dev.drawethree.xprison.blocks.listener.BlocksListener;
@@ -34,9 +32,6 @@ public final class XPrisonBlocks extends XPrisonModuleBase implements PlayerData
     private BlocksConfig blocksConfig;
 
     @Getter
-    private XPrisonBlocksAPI api;
-
-    @Getter
     private BlocksManager blocksManager;
 
     @Getter
@@ -50,7 +45,7 @@ public final class XPrisonBlocks extends XPrisonModuleBase implements PlayerData
 
     private RepeatingTask savePlayerDataTask;
 
-    public XPrisonBlocks(XPrison prisonCore) {
+    public XPrisonBlocks(XPrisonLite prisonCore) {
         super(prisonCore);
         instance = this;
     }
@@ -94,7 +89,6 @@ public final class XPrisonBlocks extends XPrisonModuleBase implements PlayerData
 
         this.commandManager.enable();
 
-        this.api = new XPrisonBlocksAPIImpl(this.blocksManager);
 
         this.enabled = true;
     }
@@ -117,11 +111,6 @@ public final class XPrisonBlocks extends XPrisonModuleBase implements PlayerData
     @Override
     public String getName() {
         return MODULE_NAME;
-    }
-
-    @Override
-    public boolean isHistoryEnabled() {
-        return false;
     }
 
     @Override

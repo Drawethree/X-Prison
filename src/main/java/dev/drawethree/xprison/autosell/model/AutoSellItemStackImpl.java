@@ -1,11 +1,10 @@
 package dev.drawethree.xprison.autosell.model;
 
-import dev.drawethree.xprison.api.autosell.model.AutoSellItemStack;
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
 @Getter
-public class AutoSellItemStackImpl implements AutoSellItemStack {
+public class AutoSellItemStackImpl {
 
 	private final ItemStack itemStack;
 
