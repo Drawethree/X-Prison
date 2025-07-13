@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.SpeedEnchant",
-  "id": 5,
+  "id": 12,
   "rawName": "speed",
   "name": "&aSpeed",
   "enabled": true,

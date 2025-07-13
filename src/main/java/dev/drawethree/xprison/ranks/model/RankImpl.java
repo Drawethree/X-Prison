@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.ranks.model;
 
-import dev.drawethree.xprison.api.ranks.model.Rank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,7 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class RankImpl implements Rank {
+public class RankImpl {
 
 	private int id;
 	private double cost;

@@ -6,12 +6,6 @@ messages:
   admin_give_blocks: '&e&lTOKENS &8» &fSuccessfuly given &e%blocks% &fblocks to &e%player%.'
   admin_remove_blocks: '&e&lTOKENS &8» &fSuccessfuly removed &e%blocks% &fblocks from
     &e%player%.'
-  lucky_block_mined: '&e&lLUCKY BLOCK &8» &fYou have mined a &e&lLUCKY BLOCK &fand
-    received &e%amount% Tokens!'
-# LuckyBlocks settings for rewards
-lucky-blocks:
-  SPONGE:
-    - tokens give %player% 1000
 # This value determines when will the next weekly top reset be. Updated automatically with /resetblockstopweekly command
 next-reset-weekly: 0
 # Interval in minutes for saving player data into database

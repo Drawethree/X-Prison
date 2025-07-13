@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.drawethree.xprison.api.mines.model.BlockPalette;
 import me.lucko.helper.gson.GsonSerializable;
 import me.lucko.helper.gson.JsonBuilder;
 
@@ -14,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BlockPaletteImpl implements BlockPalette, GsonSerializable {
+public class BlockPaletteImpl implements GsonSerializable {
 
 	private Map<XMaterial, Double> blockPercentages;
 

@@ -29,12 +29,7 @@ public class MineResetOptionsGUI extends Gui {
 			this.mineImpl.getManager().resetMine(this.mineImpl);
 		}));
 
-		this.setItem(13, ItemStackBuilder.of(XMaterial.COMPARATOR.parseItem()).name("&eReset Type: " + this.mineImpl.getResetType().getName()).lore(" ", "&7Instant: Will use more CPU power", "&7but the mine will reset instantly.", " ", "&7Gradual: Will use less CPU power", "&7but mine reset may take more time.", " ", "&aClick &7to change.").build(() -> {
-			if (this.mineImpl.getResetType() == ResetType.GRADUAL) {
-				this.mineImpl.setResetType(ResetType.INSTANT);
-			} else {
-				this.mineImpl.setResetType(ResetType.GRADUAL);
-			}
+		this.setItem(13, ItemStackBuilder.of(XMaterial.COMPARATOR.parseItem()).name("&eReset Type: " + this.mineImpl.getResetType().getName()).lore(" ", "&7Instant: Will use more CPU power", "&7but the mine will reset instantly.", " ").build(() -> {
 			this.redraw();
 		}));
 

@@ -21,7 +21,6 @@ public class BlocksConfig {
 	private long nextResetWeekly;
 	private int savePlayerDataInterval;
 	private Map<String, String> messages;
-	private Map<Material, List<String>> luckyBlockRewards;
 	private List<String> blocksTopFormat;
 	private List<String> blocksTopFormatWeekly;
 	private int topPlayersAmount;
@@ -44,17 +43,6 @@ public class BlocksConfig {
 
 	private void loadVariables(YamlConfiguration configuration) {
 		this.commandCooldown = configuration.getLong("blocks-command-cooldown");
-		this.luckyBlockRewards = new HashMap<>();
-
-		for (String key : configuration.getConfigurationSection("lucky-blocks").getKeys(false)) {
-			XMaterial material = XMaterial.valueOf(key);
-			List<String> rewards = configuration.getStringList("lucky-blocks." + key);
-			if (rewards.isEmpty()) {
-				continue;
-			}
-			this.luckyBlockRewards.put(material.get(), rewards);
-		}
-
 		this.topPlayersAmount = configuration.getInt("top_players_amount");
 		this.blocksTopFormat = configuration.getStringList("blocks-top-format");
 		this.blocksTopFormatWeekly = configuration.getStringList("blocks-top-weekly-format");
@@ -93,10 +81,6 @@ public class BlocksConfig {
 
 	public List<String> getBlocksTopFormatWeekly() {
 		return blocksTopFormatWeekly;
-	}
-
-	public List<String> getLuckyBlockReward(Material m) {
-		return this.luckyBlockRewards.getOrDefault(m, new ArrayList<>());
 	}
 
 	public long getCommandCooldown() {

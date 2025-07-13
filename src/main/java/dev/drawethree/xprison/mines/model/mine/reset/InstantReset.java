@@ -60,6 +60,5 @@ public class InstantReset extends ResetType {
 		}
 		mineImpl.setResetting(false);
 		mineImpl.updateCurrentBlocks();
-		mineImpl.updateHolograms();
 	}
 }

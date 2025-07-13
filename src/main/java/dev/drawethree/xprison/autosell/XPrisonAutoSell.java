@@ -1,9 +1,7 @@
 package dev.drawethree.xprison.autosell;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.autosell.XPrisonAutoSellAPI;
-import dev.drawethree.xprison.autosell.api.XPrisonAutoSellAPIImpl;
 import dev.drawethree.xprison.autosell.command.AutoSellCommand;
 import dev.drawethree.xprison.autosell.command.SellAllCommand;
 import dev.drawethree.xprison.autosell.command.SellPriceCommand;
@@ -21,15 +19,13 @@ public final class XPrisonAutoSell extends XPrisonModuleBase {
 	@Getter
 	private static XPrisonAutoSell instance;
 	@Getter
-	private XPrisonAutoSellAPI api;
-	@Getter
 	private AutoSellConfig autoSellConfig;
 	@Getter
 	private AutoSellManager manager;
 	@Getter
 	private AutoSellBroadcastTask broadcastTask;
 
-	public XPrisonAutoSell(XPrison core) {
+	public XPrisonAutoSell(XPrisonLite core) {
 		super(core);
 		instance = this;
 	}
@@ -59,7 +55,6 @@ public final class XPrisonAutoSell extends XPrisonModuleBase {
 
         this.registerCommands();
 
-        this.api = new XPrisonAutoSellAPIImpl(this);
         this.enabled = true;
     }
 
@@ -88,11 +83,6 @@ public final class XPrisonAutoSell extends XPrisonModuleBase {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
-	}
-
-	@Override
-	public boolean isHistoryEnabled() {
-		return false;
 	}
 
 }

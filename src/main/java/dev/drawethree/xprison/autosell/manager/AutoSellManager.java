@@ -1,10 +1,6 @@
 package dev.drawethree.xprison.autosell.manager;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.api.autosell.events.XPrisonAutoSellEvent;
-import dev.drawethree.xprison.api.autosell.events.XPrisonSellAllEvent;
-import dev.drawethree.xprison.api.autosell.model.AutoSellItemStack;
-import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
 import dev.drawethree.xprison.autosell.model.AutoSellItemStackImpl;
 import dev.drawethree.xprison.autosell.utils.AutoSellContants;
@@ -83,15 +79,7 @@ public class AutoSellManager {
 
         this.plugin.getCore().debug("User " + sender.getName() + " ran /sellall", this.plugin);
 
-        Map<AutoSellItemStack, Double> itemsToSell = previewInventorySell(sender);
-
-        XPrisonSellAllEvent event = this.callSellAllEvent(sender, itemsToSell);
-
-        if (event.isCancelled()) {
-            return;
-        }
-
-        itemsToSell = event.getItemsToSell();
+        Map<AutoSellItemStackImpl, Double> itemsToSell = previewInventorySell(sender);
 
         double totalAmount = this.sellItems(sender, itemsToSell);
 
@@ -102,40 +90,12 @@ public class AutoSellManager {
         }
     }
 
-    private double sellItems(Player player, Map<AutoSellItemStack, Double> itemsToSell) {
+    private double sellItems(Player player, Map<AutoSellItemStackImpl, Double> itemsToSell) {
 
         double totalAmount = itemsToSell.values().stream().mapToDouble(Double::doubleValue).sum();
 
-        if (this.plugin.isMultipliersModuleEnabled()) {
-            totalAmount = (long) this.plugin.getCore().getMultipliers().getApi().getTotalToDeposit(player, totalAmount, MultiplierType.SELL);
-        }
-
         EconomyUtils.deposit(player, totalAmount);
         return totalAmount;
-    }
-
-    private XPrisonSellAllEvent callSellAllEvent(Player sender, Map<AutoSellItemStack, Double> sellItems) {
-        XPrisonSellAllEvent event = new XPrisonSellAllEvent(sender, sellItems);
-
-        Events.call(event);
-
-        if (event.isCancelled()) {
-            this.plugin.getCore().debug("XPrisonSellAllEvent was cancelled.", this.plugin);
-        }
-
-        return event;
-    }
-
-    private XPrisonAutoSellEvent callAutoSellEvent(Player player, Map<AutoSellItemStack, Double> itemsToSell) {
-        XPrisonAutoSellEvent event = new XPrisonAutoSellEvent(player, itemsToSell);
-
-        Events.call(event);
-
-        if (event.isCancelled()) {
-            this.plugin.getCore().debug("XPrisonAutoSellEvent was cancelled.", this.plugin);
-        }
-
-        return event;
     }
 
     public void resetLastEarnings() {
@@ -228,15 +188,7 @@ public class AutoSellManager {
 
     public boolean autoSellBlock(Player player, Block block) {
 
-        Map<AutoSellItemStack, Double> itemsToSell = previewItemsSell(Arrays.asList(createItemStackToGive(player, block)));
-
-        XPrisonAutoSellEvent event = this.callAutoSellEvent(player, itemsToSell);
-
-        if (event.isCancelled()) {
-            return false;
-        }
-
-        itemsToSell = event.getItemsToSell();
+        Map<AutoSellItemStackImpl, Double> itemsToSell = previewItemsSell(Arrays.asList(createItemStackToGive(player, block)));
 
         int amountOfItems = itemsToSell.keySet().stream().mapToInt(item -> item.getItemStack().getAmount()).sum();
         double moneyEarned = this.sellItems(player, itemsToSell);
@@ -270,9 +222,9 @@ public class AutoSellManager {
         blocks.forEach(block -> autoSellBlock(player, block));
     }
 
-    public Map<AutoSellItemStack, Double> previewItemsSell(Collection<ItemStack> items) {
+    public Map<AutoSellItemStackImpl, Double> previewItemsSell(Collection<ItemStack> items) {
 
-        Map<AutoSellItemStack, Double> itemsToSell = new HashMap<>();
+        Map<AutoSellItemStackImpl, Double> itemsToSell = new HashMap<>();
 
         for (ItemStack item : items) {
 
@@ -292,7 +244,7 @@ public class AutoSellManager {
         return itemsToSell;
     }
 
-    public Map<AutoSellItemStack, Double> previewInventorySell(Player player) {
+    public Map<AutoSellItemStackImpl, Double> previewInventorySell(Player player) {
         return previewItemsSell(Arrays.asList(player.getInventory().getContents()));
     }
 

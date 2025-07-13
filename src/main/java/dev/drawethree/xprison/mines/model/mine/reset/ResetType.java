@@ -6,7 +6,6 @@ import lombok.Getter;
 
 public abstract class ResetType {
 
-	public static final GradualReset GRADUAL = new GradualReset();
 	public static final InstantReset INSTANT = new InstantReset();
 
 	@Getter
@@ -18,8 +17,6 @@ public abstract class ResetType {
 
 	public static ResetType of(String name) {
 		switch (name.toLowerCase()) {
-			case "gradual":
-				return GRADUAL;
 			case "instant":
 				return INSTANT;
 		}

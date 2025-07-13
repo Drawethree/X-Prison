@@ -1,10 +1,8 @@
 package dev.drawethree.xprison.mines;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.mines.XPrisonMinesAPI;
 import dev.drawethree.xprison.config.FileManager;
-import dev.drawethree.xprison.mines.api.XPrisonMinesAPIImpl;
 import dev.drawethree.xprison.mines.commands.MineCommand;
 import dev.drawethree.xprison.mines.commands.impl.*;
 import dev.drawethree.xprison.mines.listener.MinesListener;
@@ -33,13 +31,11 @@ public class XPrisonMines extends XPrisonModuleBase {
 	private FileManager.Config config;
 	@Getter
 	private MineManager manager;
-	@Getter
-	private XPrisonMinesAPI api;
 
 	private Map<String, MineCommand> commands;
 
 
-	public XPrisonMines(XPrison core) {
+	public XPrisonMines(XPrisonLite core) {
 		super(core);
 		instance = this;
 	}
@@ -53,7 +49,6 @@ public class XPrisonMines extends XPrisonModuleBase {
 		this.manager.enable();
 		new MinesListener(this).register();
 		this.registerCommands();
-		this.api = new XPrisonMinesAPIImpl(this);
 		this.enabled = true;
 	}
 
@@ -77,11 +72,6 @@ public class XPrisonMines extends XPrisonModuleBase {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
-	}
-
-	@Override
-	public boolean isHistoryEnabled() {
-		return false;
 	}
 
 	private void loadMessages() {
@@ -110,7 +100,6 @@ public class XPrisonMines extends XPrisonModuleBase {
 		registerCommand(new MineAddBlockCommand(this));
 		registerCommand(new MineSetTpCommand(this));
 		registerCommand(new MineSaveCommand(this));
-		registerCommand(new MineMigrateCommand(this));
 		registerCommand(new MineRenameCommand(this));
 
 		Commands.create()

@@ -5,7 +5,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
+import dev.drawethree.xprison.enchants.model.EquipabbleEnchantment;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

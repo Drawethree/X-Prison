@@ -1,16 +1,13 @@
 package dev.drawethree.xprison.tokens.managers;
 
 import com.cryptomorin.xseries.XEnchantment;
-import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
-import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
-import dev.drawethree.xprison.api.tokens.events.PlayerTokensLostEvent;
-import dev.drawethree.xprison.api.tokens.events.PlayerTokensReceiveEvent;
+import dev.drawethree.xprison.shared.currency.enums.LostCause;
+import dev.drawethree.xprison.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.tokens.XPrisonTokens;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.item.PrisonToolItem;
 import dev.drawethree.xprison.utils.misc.NumberUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
-import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.utils.Players;
 import org.bukkit.OfflinePlayer;
@@ -102,18 +99,12 @@ public class TokensManager {
 	public void giveTokens(OfflinePlayer p, long amount, CommandSender executor, ReceiveCause cause) {
 		long currentTokens = getPlayerTokens(p);
 
-		this.plugin.getCore().debug("XPrisonPlayerTokenReceiveEvent :: Player Tokens :: " + currentTokens, this.plugin);
-
-		long finalAmount = this.callTokensReceiveEvent(cause, p, amount);
-
-		this.plugin.getCore().debug("XPrisonPlayerTokenReceiveEvent :: Final amount :: " + finalAmount, this.plugin);
-
 		long newAmount;
 
-		if (NumberUtils.wouldAdditionBeOverMaxLong(currentTokens, finalAmount)) {
+		if (NumberUtils.wouldAdditionBeOverMaxLong(currentTokens, amount)) {
 			newAmount = Long.MAX_VALUE;
 		} else {
-			newAmount = currentTokens + finalAmount;
+			newAmount = currentTokens + amount;
 		}
 
 		if (!p.isOnline()) {
@@ -121,31 +112,19 @@ public class TokensManager {
 		} else {
 			tokensCache.put(p.getUniqueId(), newAmount);
 			if (executor instanceof ConsoleCommandSender && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), plugin.getTokensConfig().getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", finalAmount)).replace("%player%", executor == null ? "Console" : executor.getName()));
+				PlayerUtils.sendMessage(p.getPlayer(), plugin.getTokensConfig().getMessage("tokens_received_console").replace("%tokens%", String.format("%,d", amount)).replace("%player%", executor == null ? "Console" : executor.getName()));
 			} else if (cause == ReceiveCause.MINING && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("tokens_received_mining").replace("%amount%", String.format("%,d", amount)));
 			} else if (cause == ReceiveCause.LUCKY_BLOCK && !this.hasOffTokenMessages(p.getPlayer())) {
-				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", finalAmount)));
+				PlayerUtils.sendMessage(p.getPlayer(), this.plugin.getTokensConfig().getMessage("lucky_block_mined").replace("%amount%", String.format("%,d", amount)));
 			}
 		}
 
 		this.plugin.getCore().debug("XPlayerTokenReceiveEvent :: Player tokens final  :: " + this.tokensCache.getOrDefault(p.getUniqueId(), 0L), this.plugin);
 
 		if (executor != null && !(executor instanceof ConsoleCommandSender)) {
-			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", finalAmount)));
+			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("admin_give_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
 		}
-	}
-
-	private long callTokensReceiveEvent(ReceiveCause cause, OfflinePlayer p, long amount) {
-		PlayerTokensReceiveEvent event = new PlayerTokensReceiveEvent(cause, p, amount);
-
-		Events.callSync(event);
-
-		if (event.isCancelled()) {
-			return amount;
-		}
-
-		return event.getAmount();
 	}
 
 	public void redeemTokens(Player p, ItemStack item, boolean shiftClick, boolean offhand) {
@@ -217,6 +196,10 @@ public class TokensManager {
 		});
 	}
 
+	public boolean hasEnough(OfflinePlayer p, long amount) {
+		return getPlayerTokens(p) >= amount;
+	}
+
 	public synchronized long getPlayerTokens(OfflinePlayer p) {
 		if (!p.isOnline()) {
 			return this.plugin.getTokensManager().getPlayerTokens(p);
@@ -233,8 +216,6 @@ public class TokensManager {
 			finalTokens = 0;
 		}
 
-		this.callTokensLostEvent(cause, p, amount);
-
 		if (!p.isOnline()) {
 			this.plugin.getTokensService().setTokens(p, amount);
 		} else {
@@ -243,11 +224,6 @@ public class TokensManager {
 		if (executor != null) {
 			PlayerUtils.sendMessage(executor, plugin.getTokensConfig().getMessage("admin_remove_tokens").replace("%player%", p.getName()).replace("%tokens%", String.format("%,d", amount)));
 		}
-	}
-
-	private void callTokensLostEvent(LostCause cause, OfflinePlayer p, long amount) {
-		PlayerTokensLostEvent event = new PlayerTokensLostEvent(cause, p, amount);
-		Events.callSync(event);
 	}
 
 	private ItemStack createTokenItem(long amount, int value) {

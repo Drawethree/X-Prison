@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.BlessingEnchant",
-  "id": 13,
+  "id": 2,
   "rawName": "blessing",
   "name": "&eBlessing",
   "enabled": true,

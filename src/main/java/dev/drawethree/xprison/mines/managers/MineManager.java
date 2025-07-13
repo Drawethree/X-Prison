@@ -1,15 +1,8 @@
 package dev.drawethree.xprison.mines.managers;
 
 import com.cryptomorin.xseries.XEnchantment;
-import dev.drawethree.xprison.api.mines.events.MineCreateEvent;
-import dev.drawethree.xprison.api.mines.events.MineDeleteEvent;
-import dev.drawethree.xprison.api.mines.events.MinePostResetEvent;
-import dev.drawethree.xprison.api.mines.events.MinePreResetEvent;
-import dev.drawethree.xprison.api.mines.model.Mine;
-import dev.drawethree.xprison.api.mines.model.MineSelection;
 import dev.drawethree.xprison.mines.XPrisonMines;
 import dev.drawethree.xprison.mines.gui.MinePanelGUI;
-import dev.drawethree.xprison.mines.model.mine.HologramType;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.mines.model.mine.MineSelectionImpl;
 import dev.drawethree.xprison.mines.model.mine.loader.MineFileLoader;
@@ -18,12 +11,9 @@ import dev.drawethree.xprison.mines.model.mine.saver.MineFileSaver;
 import dev.drawethree.xprison.mines.model.mine.saver.MineSaver;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.location.LocationUtils;
-import dev.drawethree.xprison.utils.misc.TimeUtil;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import lombok.Getter;
-import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
-import me.lucko.helper.hologram.Hologram;
 import me.lucko.helper.menu.Item;
 import me.lucko.helper.menu.paginated.PaginatedGuiBuilder;
 import me.lucko.helper.serialize.Point;
@@ -36,7 +26,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.util.*;
@@ -58,18 +47,11 @@ public class MineManager {
 	private final Map<UUID, MineSelectionImpl> mineSelections;
 	private Map<String, MineImpl> mines;
 
-	private List<String> hologramBlocksLeftLines;
-	private List<String> hologramBlocksMinedLines;
-	private List<String> hologramTimedResetLines;
-
 	private File minesDirectory;
 
 	public MineManager(XPrisonMines plugin) {
 		this.plugin = plugin;
 		this.mineSelections = new HashMap<>();
-		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
-		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
-		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
 		this.mineLoader = new MineFileLoader(this);
 		this.mineSaver = new MineFileSaver(this);
 	}
@@ -77,23 +59,6 @@ public class MineManager {
 	public void enable() {
 		this.setupMinesDirectory();
 		this.loadMines();
-	}
-
-	public List<String> getHologramBlocksLeftLines(MineImpl mineImpl) {
-		List<String> copy = new ArrayList<>();
-		for (String s : this.hologramBlocksLeftLines) {
-			copy.add(s.replace("%mine%", mineImpl.getName()).replace("%blocks%", String.format("%,.2f", (double) mineImpl.getCurrentBlocks() / mineImpl.getTotalBlocks() * 100.0D)));
-		}
-		return copy;
-	}
-
-
-	public List<String> getHologramBlocksMinedLines(MineImpl mineImpl) {
-		List<String> copy = new ArrayList<>();
-		for (String s : this.hologramBlocksMinedLines) {
-			copy.add(s.replace("%mine%", mineImpl.getName()).replace("%blocks%", String.format("%,d", mineImpl.getTotalBlocks() - mineImpl.getCurrentBlocks())));
-		}
-		return copy;
 	}
 
 	private void setupMinesDirectory() {
@@ -185,15 +150,6 @@ public class MineManager {
 
 		MineImpl mineImpl = new MineImpl(this, name, selection.toRegion());
 
-		MineCreateEvent event = new MineCreateEvent(creator, mineImpl);
-
-		Events.call(event);
-
-		if (event.isCancelled()) {
-			this.plugin.getCore().debug("MineCreateEvent was cancelled.", this.plugin);
-			return true;
-		}
-
 		this.mines.put(mineImpl.getName(), mineImpl);
 
 		this.mineSaver.save(mineImpl);
@@ -202,7 +158,7 @@ public class MineManager {
 		return true;
 	}
 
-	public Mine createMine(MineSelection selection, String name) {
+	public MineImpl createMine(MineSelectionImpl selection, String name) {
 
 		MineSelectionImpl mineSelection = new MineSelectionImpl(selection.getPosition1(),selection.getPosition2());
 
@@ -216,25 +172,12 @@ public class MineManager {
 
 		MineImpl mineImpl = new MineImpl(this, name, mineSelection.toRegion());
 
-		MineCreateEvent event = new MineCreateEvent(null, mineImpl);
-
-		Events.call(event);
-
-		if (event.isCancelled()) {
-			this.plugin.getCore().debug("MineCreateEvent was cancelled.", this.plugin);
-			return null;
-		}
-
 		this.mines.put(mineImpl.getName(), mineImpl);
 
 		this.mineSaver.save(mineImpl);
 
 		PlayerUtils.sendMessage(null, this.plugin.getMessage("mine_created").replace("%mine%", name));
 		return mineImpl;
-	}
-
-	public boolean deleteMine(Mine mine) {
-		return deleteMine(null,mine.getName());
 	}
 
 	public boolean deleteMine(CommandSender sender, String name) {
@@ -249,22 +192,12 @@ public class MineManager {
 	}
 
 	public boolean deleteMine(CommandSender sender, MineImpl mineImpl) {
-		MineDeleteEvent event = new MineDeleteEvent(mineImpl);
-
-		Events.call(event);
-
-		if (event.isCancelled()) {
-			this.plugin.getCore().debug("MineDeleteEvent was cancelled.", this.plugin);
-			return true;
-		}
-
 		if (mineImpl.getFile() != null) {
 			mineImpl.getFile().delete();
 		}
 
 		mineImpl.stopTicking();
 
-		this.despawnHolograms(mineImpl);
 
 		this.mines.remove(mineImpl.getName());
 
@@ -287,7 +220,6 @@ public class MineManager {
 
 	public void disable() {
 		this.saveMines();
-		this.getMines().forEach(this::despawnHolograms);
 	}
 
 	public Collection<MineImpl> getMines() {
@@ -344,40 +276,10 @@ public class MineManager {
 	}
 
 	public void reload() {
-		this.hologramBlocksLeftLines = this.plugin.getConfig().get().getStringList("holograms.blocks_left");
-		this.hologramBlocksMinedLines = this.plugin.getConfig().get().getStringList("holograms.blocks_mined");
-		this.hologramTimedResetLines = this.plugin.getConfig().get().getStringList("holograms.timed_reset");
-	}
-
-	public boolean addMineFromMigration(MineImpl migrated) {
-
-		if (migrated == null) {
-			return false;
-		}
-
-		if (this.mines.containsKey(migrated.getName())) {
-			return false;
-		}
-
-		this.mines.put(migrated.getName(), migrated);
-
-		return true;
 	}
 
 	public void resetAllMines() {
 		this.getMines().forEach(this::resetMine);
-	}
-
-	public List<String> getHologramTimedResetLines(MineImpl mineImpl) {
-		List<String> copy = new ArrayList<>();
-		for (String s : this.hologramTimedResetLines) {
-			copy.add(s.replace("%mine%", mineImpl.getName()).replace("%time%", TimeUtil.getTime(mineImpl.getSecondsToNextReset())));
-		}
-		return copy;
-	}
-
-	public void resetMine(Mine mine) {
-		resetMine(getMineByName(mine.getName()));
 	}
 
 	public void resetMine(MineImpl mineImpl) {
@@ -387,15 +289,6 @@ public class MineManager {
 		}
 
 		if (mineImpl.isResetting()) {
-			return;
-		}
-
-		MinePreResetEvent preResetEvent = new MinePreResetEvent(mineImpl);
-
-		Events.call(preResetEvent);
-
-		if (preResetEvent.isCancelled()) {
-			this.getPlugin().getCore().debug("MinePreResetEvent was cancelled.", this.getPlugin());
 			return;
 		}
 
@@ -421,101 +314,10 @@ public class MineManager {
 
 			mineImpl.setResetting(false);
 
-			MinePostResetEvent postResetEvent = new MinePostResetEvent(mineImpl);
-
-			Events.call(postResetEvent);
 		}, 5, TimeUnit.SECONDS);
 
 	}
 
-	public void giveMineEffects(MineImpl mineImpl, Player player) {
-		for (PotionEffectType type : mineImpl.getMineEffects().keySet()) {
-			player.removePotionEffect(type);
-			player.addPotionEffect(mineImpl.getEffect(type));
-		}
-	}
-
-
-	public void createHologram(MineImpl mineImpl, HologramType type, Player player) {
-		switch (type) {
-			case BLOCKS_LEFT: {
-				if (mineImpl.getBlocksLeftHologram() == null) {
-					mineImpl.setBlocksLeftHologram(Hologram.create(Position.of(player.getLocation()), this.getHologramBlocksLeftLines(mineImpl)));
-					mineImpl.getBlocksLeftHologram().spawn();
-				} else {
-					mineImpl.getBlocksLeftHologram().despawn();
-					mineImpl.getBlocksLeftHologram().updatePosition(Position.of(player.getLocation()));
-					mineImpl.getBlocksLeftHologram().spawn();
-				}
-				break;
-			}
-			case BLOCKS_MINED: {
-				if (mineImpl.getBlocksMinedHologram() == null) {
-					mineImpl.setBlocksMinedHologram(Hologram.create(Position.of(player.getLocation()), this.getHologramBlocksMinedLines(mineImpl)));
-					mineImpl.getBlocksMinedHologram().spawn();
-				} else {
-					mineImpl.getBlocksMinedHologram().despawn();
-					mineImpl.getBlocksMinedHologram().updatePosition(Position.of(player.getLocation()));
-					mineImpl.getBlocksMinedHologram().spawn();
-				}
-				break;
-			}
-			case TIMED_RESET: {
-				if (mineImpl.getTimedResetHologram() == null) {
-					mineImpl.setTimedResetHologram(Hologram.create(Position.of(player.getLocation()), this.getHologramTimedResetLines(mineImpl)));
-					mineImpl.getTimedResetHologram().spawn();
-				} else {
-					mineImpl.getTimedResetHologram().despawn();
-					mineImpl.getTimedResetHologram().updatePosition(Position.of(player.getLocation()));
-					mineImpl.getTimedResetHologram().spawn();
-				}
-				break;
-			}
-		}
-		PlayerUtils.sendMessage(player, this.getPlugin().getMessage("mine_hologram_create").replace("%type%", type.name()).replace("%mine%", mineImpl.getName()));
-	}
-
-	public void deleteHologram(MineImpl mineImpl, HologramType type, Player player) {
-		switch (type) {
-			case BLOCKS_LEFT: {
-				if (mineImpl.getBlocksLeftHologram() != null) {
-					mineImpl.getBlocksLeftHologram().despawn();
-					mineImpl.setBlocksLeftHologram(null);
-				}
-				break;
-			}
-			case BLOCKS_MINED: {
-				if (mineImpl.getBlocksMinedHologram() != null) {
-					mineImpl.getBlocksMinedHologram().despawn();
-					mineImpl.setBlocksMinedHologram(null);
-				}
-				break;
-			}
-			case TIMED_RESET: {
-				if (mineImpl.getTimedResetHologram() != null) {
-					mineImpl.getTimedResetHologram().despawn();
-					mineImpl.setTimedResetHologram(null);
-				}
-				break;
-			}
-		}
-		PlayerUtils.sendMessage(player, this.getPlugin().getMessage("mine_hologram_delete").replace("%type%", type.name()).replace("%mine%", mineImpl.getName()));
-	}
-
-	private void despawnHolograms(MineImpl mineImpl) {
-
-		if (mineImpl.getBlocksMinedHologram() != null) {
-			mineImpl.getBlocksMinedHologram().despawn();
-		}
-
-		if (mineImpl.getBlocksLeftHologram() != null) {
-			mineImpl.getBlocksLeftHologram().despawn();
-		}
-
-		if (mineImpl.getTimedResetHologram() != null) {
-			mineImpl.getTimedResetHologram().despawn();
-		}
-	}
 
 	public boolean renameMine(Player sender, String oldMineName, String newName) {
 

@@ -1,7 +1,7 @@
 package dev.drawethree.xprison.tokens.commands;
 
 import com.google.common.collect.ImmutableList;
-import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
+import dev.drawethree.xprison.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.tokens.managers.CommandManager;
 import dev.drawethree.xprison.tokens.utils.TokensConstants;
 import dev.drawethree.xprison.utils.player.PlayerUtils;

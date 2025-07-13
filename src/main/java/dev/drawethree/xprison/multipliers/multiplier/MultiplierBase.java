@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.multipliers.multiplier;
 
-import dev.drawethree.xprison.api.multipliers.model.Multiplier;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.ChatColor;

@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.TokenatorEnchant",
-  "id": 14,
+  "id": 13,
   "rawName": "tokenator",
   "name": "&aTokenator",
   "enabled": true,

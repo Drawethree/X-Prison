@@ -2,20 +2,15 @@ package dev.drawethree.xprison.enchants.model.impl;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonObject;
-import dev.drawethree.ultrabackpacks.api.UltraBackpacksAPI;
-import dev.drawethree.xprison.api.enchants.events.LayerTriggerEvent;
-import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
-import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
+import dev.drawethree.xprison.enchants.model.BlockBreakEnchant;
+import dev.drawethree.xprison.enchants.model.ChanceBasedEnchant;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.mines.model.mine.MineImpl;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.json.JsonUtils;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
-import me.lucko.helper.Events;
 import me.lucko.helper.time.Time;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -27,13 +22,11 @@ import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements BlockBreakEnchant, ChanceBasedEnchant {
 
     private double chance;
     private boolean countBlocksBroken;
-    private boolean useEvents;
 
     public LayerEnchant() {
     }
@@ -53,33 +46,9 @@ public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements Bl
         getCore().debug("LayerEnchant::onBlockBreak >> WG Region used: " + region.getId(), getEnchants());
         List<Block> blocksAffected = this.getAffectedBlocks(b, region);
 
-        LayerTriggerEvent event = this.callLayerTriggerEvent(e.getPlayer(), region, e.getBlock(), blocksAffected);
+        handleAffectedBlocks(p, blocksAffected);
 
-        if (event.isCancelled() || event.getBlocksAffected().isEmpty()) {
-            getCore().debug("LayerEnchant::onBlockBreak >> LayerTriggerEvent was cancelled. (Blocks affected size: " + event.getBlocksAffected().size(), getEnchants());
-            return;
-        }
-
-        if (this.useEvents) {
-            final List<BlockBreakEvent> ignored = getEnchants().getEnchantsListener().getIgnoredEvents();
-            blocksAffected = event.getBlocksAffected().stream().filter(block -> {
-                final BlockBreakEvent blockEvent = new BlockBreakEvent(block, p);
-                ignored.add(blockEvent);
-                Bukkit.getPluginManager().callEvent(blockEvent);
-                ignored.remove(blockEvent);
-                return !e.isCancelled();
-            }).collect(Collectors.toList());
-        } else {
-            blocksAffected = event.getBlocksAffected();
-        }
-
-        if (!getCore().isUltraBackpacksEnabled()) {
-            handleAffectedBlocks(p, blocksAffected);
-        } else {
-            UltraBackpacksAPI.handleBlocksBroken(p, blocksAffected);
-        }
-
-        if (!this.useEvents && getEnchants().isMinesModuleEnabled()) {
+        if (getEnchants().isMinesModuleEnabled()) {
             MineImpl mineImpl = getCore().getMines().getManager().getMineAtLocation(e.getBlock().getLocation());
             if (mineImpl != null) {
                 mineImpl.handleBlockBreak(blocksAffected);
@@ -90,10 +59,10 @@ public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements Bl
             getEnchants().getEnchantsManager().addBlocksBrokenToItem(p, blocksAffected.size());
         }
 
-        if (!this.useEvents) {
-            getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected);
-            getCore().getBlocks().getBlocksManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
-        }
+
+        getCore().getTokens().getTokensManager().handleBlockBreak(p, blocksAffected);
+        getCore().getBlocks().getBlocksManager().handleBlockBreak(p, blocksAffected, countBlocksBroken);
+
 
         long timeEnd = Time.nowMillis();
         getCore().debug("LayerEnchant::onBlockBreak >> Took " + (timeEnd - startTime) + " ms.", getEnchants());
@@ -144,7 +113,7 @@ public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements Bl
     }
 
     private void giveEconomyRewardToPlayer(Player p, double totalDeposit) {
-        double total = getEnchants().isMultipliersModuleEnabled() ? getCore().getMultipliers().getApi().getTotalToDeposit(p, totalDeposit, MultiplierType.SELL) : totalDeposit;
+        double total = totalDeposit;
 
         getCore().getEconomy().depositPlayer(p, total);
 
@@ -153,17 +122,10 @@ public final class LayerEnchant extends XPrisonEnchantmentBaseCore implements Bl
         }
     }
 
-    private LayerTriggerEvent callLayerTriggerEvent(Player player, IWrappedRegion region, Block originBlock, List<Block> blocksAffected) {
-        LayerTriggerEvent event = new LayerTriggerEvent(player, region, originBlock, blocksAffected);
-        Events.callSync(event);
-        getCore().debug("LayerEnchant::callLayerTriggerEvent >> LayerTriggerEvent called.", getEnchants());
-        return event;
-    }
 
     @Override
     public void loadCustomProperties(JsonObject config) {
         this.chance = JsonUtils.getDouble(config, "chance", 0.0);
         this.countBlocksBroken = JsonUtils.getBoolean(config,"countBlocksBroken",false);
-        this.useEvents = JsonUtils.getBoolean(config,"useEvents", false);
     }
 }

@@ -1,8 +1,8 @@
 package dev.drawethree.xprison.multipliers.repo.impl;
 
-import dev.drawethree.xprison.api.multipliers.model.MultiplierType;
 import dev.drawethree.xprison.database.SQLDatabase;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
+import dev.drawethree.xprison.multipliers.MultiplierType;
 import dev.drawethree.xprison.multipliers.multiplier.PlayerMultiplierBase;
 import dev.drawethree.xprison.multipliers.repo.MultipliersRepository;
 import me.lucko.helper.time.Time;
@@ -15,8 +15,8 @@ import java.sql.SQLException;
 
 public class MultipliersRepositoryImpl implements MultipliersRepository {
 
-	private static final String TABLE_NAME = "UltraPrison_Multipliers";
-	private static final String TABLE_NAME_TOKEN = "UltraPrison_Token_Multipliers";
+	private static final String TABLE_NAME = "XPrison_Multipliers";
+	private static final String TABLE_NAME_TOKEN = "XPrison_Token_Multipliers";
 
 	private static final String MULTIPLIERS_UUID_COLNAME = "UUID";
 	private static final String MULTIPLIERS_MULTIPLIER_COLNAME = "sell_multiplier";

@@ -2,21 +2,14 @@ package dev.drawethree.xprison.enchants.managers;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.saicone.rtag.util.ServerInstance;
-import dev.drawethree.xprison.api.currency.CurrencyType;
-import dev.drawethree.xprison.api.enchants.events.XPrisonPlayerEnchantEvent;
-import dev.drawethree.xprison.api.enchants.model.BlockBreakEnchant;
-import dev.drawethree.xprison.api.enchants.model.ChanceBasedEnchant;
-import dev.drawethree.xprison.api.enchants.model.EquipabbleEnchantment;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
-import dev.drawethree.xprison.api.shared.currency.enums.LostCause;
-import dev.drawethree.xprison.api.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
 import dev.drawethree.xprison.enchants.gui.DisenchantGUI;
 import dev.drawethree.xprison.enchants.gui.EnchantGUI;
+import dev.drawethree.xprison.enchants.model.*;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
-import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
+import dev.drawethree.xprison.shared.currency.enums.LostCause;
+import dev.drawethree.xprison.shared.currency.enums.ReceiveCause;
 import dev.drawethree.xprison.utils.Constants;
 import dev.drawethree.xprison.utils.economy.EconomyUtils;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
@@ -24,11 +17,9 @@ import dev.drawethree.xprison.utils.item.PrisonToolItem;
 import dev.drawethree.xprison.utils.misc.RegionUtils;
 import dev.drawethree.xprison.utils.player.PlayerUtils;
 import dev.drawethree.xprison.utils.text.TextUtils;
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.lucko.helper.Events;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.time.Time;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -84,18 +75,6 @@ public class EnchantsManager {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = new ArrayList<>();
 
-        boolean pickaxeLevels = this.plugin.getCore().isModuleEnabled(XPrisonPickaxeLevels.MODULE_NAME);
-
-        PickaxeLevelImpl currentLevel = null;
-        PickaxeLevelImpl nextLevel = null;
-        String pickaxeProgressBar = "";
-
-        if (pickaxeLevels) {
-            currentLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevelsManager().getPickaxeLevel(item).orElse(null);
-            nextLevel = this.plugin.getCore().getPickaxeLevels().getPickaxeLevelsManager().getNextPickaxeLevel(currentLevel).orElse(null);
-            pickaxeProgressBar = this.plugin.getCore().getPickaxeLevels().getPickaxeLevelsManager().getProgressBar(item);
-        }
-
         long blocksBroken = getBlocksBroken(item);
         final PrisonToolItem prisonToolItem = new PrisonToolItem(item);
         Map<XPrisonEnchantment, Integer> enchants = prisonToolItem.getEnchants(getEnchantsRepository());
@@ -139,12 +118,6 @@ public class EnchantsManager {
             s = s.replace("%Blocks%", String.valueOf(blocksBroken));
             s = s.replace("%Durability%", durability);
 
-            if (pickaxeLevels) {
-                s = s.replace("%Blocks_Required%", nextLevel == null ? "∞" : String.valueOf(nextLevel.getBlocksRequired()));
-                s = s.replace("%PickaxeLevel%", currentLevel == null ? "0" : String.valueOf(currentLevel.getLevel()));
-                s = s.replace("%PickaxeProgress%", pickaxeProgressBar);
-            }
-
             Matcher matcher = PICKAXE_LORE_ENCHANT_PATTER.matcher(s);
 
             if (matcher.find()) {
@@ -162,10 +135,6 @@ public class EnchantsManager {
                 } else {
                     continue;
                 }
-            }
-
-            if (this.plugin.getCore().isPlaceholderAPIEnabled()) {
-                s = PlaceholderAPI.setPlaceholders(player, s);
             }
 
             lore.add(TextUtils.applyColor(s));
@@ -321,18 +290,10 @@ public class EnchantsManager {
             return;
         }
 
-        // Fire event
-        XPrisonPlayerEnchantEvent event = new XPrisonPlayerEnchantEvent(player, totalCost, currentLevel + addition);
-        Events.callSync(event);
-        if (event.isCancelled()) return;
-
         // Deduct currency
         switch (currency) {
             case TOKENS:
-                plugin.getCore().getTokens().getApi().remove(player, totalCost, LostCause.ENCHANT);
-                break;
-            case GEMS:
-                plugin.getCore().getGems().getApi().remove(player, totalCost, LostCause.ENCHANT);
+                plugin.getCore().getTokens().getTokensManager().removeTokens(player, totalCost,null, LostCause.ENCHANT);
                 break;
             case VAULT:
                 plugin.getCore().getEconomy().withdrawPlayer(player, totalCost);
@@ -386,10 +347,7 @@ public class EnchantsManager {
 
         switch (currency) {
             case TOKENS:
-                plugin.getCore().getTokens().getApi().add(player, totalRefunded, ReceiveCause.REFUND);
-                break;
-            case GEMS:
-                plugin.getCore().getGems().getApi().add(player, totalRefunded, ReceiveCause.REFUND);
+                plugin.getCore().getTokens().getTokensManager().giveTokens(player, totalRefunded, null,ReceiveCause.REFUND);
                 break;
             case VAULT:
                 plugin.getCore().getEconomy().depositPlayer(player, totalRefunded);
@@ -474,8 +432,6 @@ public class EnchantsManager {
             switch (currency) {
                 case TOKENS ->
                         plugin.getCore().getTokens().getTokensManager().giveTokens(gui.getPlayer(), totalRefunded, null, ReceiveCause.REFUND);
-                case GEMS ->
-                        plugin.getCore().getGems().getGemsManager().giveGems(gui.getPlayer(), totalRefunded, null, ReceiveCause.REFUND);
                 case VAULT -> plugin.getCore().getEconomy().depositPlayer(gui.getPlayer(), totalRefunded);
             }
 
@@ -520,18 +476,8 @@ public class EnchantsManager {
                 return;
             }
 
-            XPrisonPlayerEnchantEvent event = new XPrisonPlayerEnchantEvent(gui.getPlayer(), totalCost, currentLevel + levelsToBuy);
-
-            Events.callSync(event);
-
-            if (event.isCancelled()) {
-                this.lockedPlayers.remove(gui.getPlayer().getUniqueId());
-                return;
-            }
-
             switch (currency) {
-                case TOKENS -> plugin.getCore().getTokens().getApi().remove(gui.getPlayer(), totalCost, LostCause.ENCHANT);
-                case GEMS -> plugin.getCore().getGems().getApi().remove(gui.getPlayer(), totalCost, LostCause.ENCHANT);
+                case TOKENS -> plugin.getCore().getTokens().getTokensManager().removeTokens(gui.getPlayer(), totalCost,null, LostCause.ENCHANT);
                 case VAULT -> plugin.getCore().getEconomy().withdrawPlayer(gui.getPlayer(),totalCost);
             }
 
@@ -565,8 +511,7 @@ public class EnchantsManager {
     private boolean hasEnoughToPurchase(CurrencyType currencyType, OfflinePlayer player, long amount) {
         boolean hasEnough;
         switch (currencyType) {
-            case TOKENS -> hasEnough = this.plugin.getCore().getTokens().getApi().hasEnough(player, amount);
-            case GEMS -> hasEnough = this.plugin.getCore().getGems().getApi().hasEnough(player, amount);
+            case TOKENS -> hasEnough = this.plugin.getCore().getTokens().getTokensManager().hasEnough(player, amount);
             case VAULT -> hasEnough = this.plugin.getCore().getEconomy().has(player, amount);
             default -> throw new IllegalArgumentException("Invalid currency type: " + currencyType);
         }
@@ -623,10 +568,6 @@ public class EnchantsManager {
 
         String pickaxeName = this.plugin.getEnchantsConfig().getFirstJoinPickaxeName();
         pickaxeName = pickaxeName.replace("%player%", player.getName());
-
-        if (this.plugin.getCore().isPlaceholderAPIEnabled()) {
-            pickaxeName = PlaceholderAPI.setPlaceholders(player, pickaxeName);
-        }
 
         XMaterial material = this.plugin.getEnchantsConfig().getFirstJoinPickaxeMaterial();
         ItemStack item = ItemStackBuilder.of(material.parseItem()).name(pickaxeName).build();

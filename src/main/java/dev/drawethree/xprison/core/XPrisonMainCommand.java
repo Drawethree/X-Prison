@@ -1,20 +1,17 @@
 package dev.drawethree.xprison.core;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.mainmenu.MainMenu;
-import dev.drawethree.xprison.mainmenu.help.HelpGui;
 import dev.drawethree.xprison.utils.text.TextUtils;
 import me.lucko.helper.Commands;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
 public class XPrisonMainCommand {
 
-    private final XPrison plugin;
+    private final XPrisonLite plugin;
 
-    public XPrisonMainCommand(XPrison plugin) {
+    public XPrisonMainCommand(XPrisonLite plugin) {
         this.plugin = plugin;
     }
 
@@ -30,22 +27,14 @@ public class XPrisonMainCommand {
         Commands.create()
                 .assertPermission("xprison.admin")
                 .handler(c -> {
-                    if (c.args().isEmpty() && c.sender() instanceof Player) {
-                        new MainMenu(plugin, (Player) c.sender()).open();
-                    } else if (c.args().size() >= 1) {
+                    if (!c.args().isEmpty()) {
                         if ("reload".equalsIgnoreCase(c.rawArg(0))) {
                             final String name = c.args().size() >= 2 ? c.rawArg(1).trim().toLowerCase().replace("-", "") : "all";
                             switch (name) {
                                 case "all":
                                 case "*":
                                     plugin.getModules().forEach(plugin::reloadModule);
-                                    plugin.getItemMigrator().reload();
                                     c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded all the plugin"));
-                                    break;
-                                case "migrator":
-                                case "itemmigrator":
-                                    plugin.getItemMigrator().reload();
-                                    c.sender().sendMessage(TextUtils.applyColor("&aSuccessfully reloaded item migrator"));
                                     break;
                                 default:
                                     final XPrisonModuleBase module = plugin.getModuleByName(name);
@@ -57,8 +46,6 @@ public class XPrisonMainCommand {
                                     }
                                     break;
                             }
-                        } else if (c.sender() instanceof Player && "help".equalsIgnoreCase(c.rawArg(0)) || "?".equalsIgnoreCase(c.rawArg(0))) {
-                            new HelpGui((Player) c.sender()).open();
                         }
                     }
                 }).registerAndBind(plugin, commandAliasesArray);

@@ -1,10 +1,10 @@
 package dev.drawethree.xprison.enchants.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.api.enchants.model.RefundableEnchant;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
+import dev.drawethree.xprison.enchants.model.RefundableEnchant;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.utils.GuiUtils;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
 import dev.drawethree.xprison.utils.misc.SkullUtils;
@@ -56,8 +56,8 @@ public final class DisenchantGUI extends Gui {
         Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
                 .filter(e -> e.getInventory().equals(this.getHandle()))
                 .handler(e -> {
-                    XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
-                    XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
+                    XPrisonLite.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
+                    XPrisonLite.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
                 }).bindWith(this);
 
         Schedulers.sync().runLater(() -> {

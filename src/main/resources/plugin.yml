@@ -1,12 +1,9 @@
-name: X-Prison
+name: X-PrisonLite
 version: ${project.version}
-main: dev.drawethree.xprison.XPrison
+main: dev.drawethree.xprison.XPrisonLite
 depend: [ Vault, WorldGuard, WorldEdit, helper ]
 softdepend:
-  - PlaceholderAPI
-  - MVdWPlaceholderAPI
   - Multiverse-Core
-  - UltraBackpacks
 authors: [ Drawethree ]
 api-version: 1.13
 load: POSTWORLD

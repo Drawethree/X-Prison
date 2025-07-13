@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.JumpBoostEnchant",
-  "id": 6,
+  "id": 8,
   "rawName": "jumpboost",
   "name": "&bJump Boost",
   "enabled": true,

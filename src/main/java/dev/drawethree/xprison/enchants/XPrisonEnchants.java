@@ -1,10 +1,8 @@
 package dev.drawethree.xprison.enchants;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.enchants.XPrisonEnchantsAPI;
 import dev.drawethree.xprison.autosell.XPrisonAutoSell;
-import dev.drawethree.xprison.enchants.api.XPrisonEnchantsAPIImpl;
 import dev.drawethree.xprison.enchants.command.*;
 import dev.drawethree.xprison.enchants.config.EnchantsConfig;
 import dev.drawethree.xprison.enchants.gui.DisenchantGUI;
@@ -38,9 +36,6 @@ public final class XPrisonEnchants extends XPrisonModuleBase {
 	private static XPrisonEnchants instance;
 
 	@Getter
-	private XPrisonEnchantsAPI api;
-
-	@Getter
 	private EnchantsManager enchantsManager;
 
 	@Getter
@@ -61,7 +56,7 @@ public final class XPrisonEnchants extends XPrisonModuleBase {
 	@Getter
 	private EnchantLoader enchantLoader;
 
-	public XPrisonEnchants(XPrison core) {
+	public XPrisonEnchants(XPrisonLite core) {
 		super(core);
 		instance = this;
 	}
@@ -103,8 +98,6 @@ public final class XPrisonEnchants extends XPrisonModuleBase {
 		EnchantGUI.init();
 		DisenchantGUI.init();
 
-		this.api = new XPrisonEnchantsAPIImpl(this.enchantsManager, this.enchantsRepository);
-
 		this.enabled = true;
 	}
 
@@ -115,23 +108,20 @@ public final class XPrisonEnchants extends XPrisonModuleBase {
 		}
 
 		String[] enchantFiles = {
-				"autosell.json", "blessing.json", "blockbooster.json", "charity.json",
-				"efficiency.json", "explosive.json", "fly.json", "fortune.json",
-				"gangvaluefinder.json", "gemfinder.json", "haste.json", "jumpboost.json",
-				"keyalls.json", "keyfinder.json", "layer.json", "nightvision.json",
-				"nuke.json", "prestigefinder.json", "salary.json", "speed.json",
-				"tokenator.json", "unbreaking.json", "voucherfinder.json"
+				"autosell.json", "blessing.json", "charity.json",
+				"efficiency.json", "fly.json", "fortune.json", "haste.json", "jumpboost.json",
+				"layer.json", "nightvision.json",
+				"salary.json", "speed.json",
+				"tokenator.json", "unbreaking.json"
 		};
 
 		for (String fileName : enchantFiles) {
 			File outFile = new File(enchantsFolder, fileName);
 			if (!outFile.exists()) {
-				try (InputStream in = XPrison.getInstance().getResource( "enchants/" + fileName)) {
+				try (InputStream in = XPrisonLite.getInstance().getResource( "enchants/" + fileName)) {
 					if (in != null) {
 						Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 						info("Copied default " + fileName);
-					} else {
-						warning("Resource not found: enchants/" + fileName);
 					}
 				} catch (IOException e) {
 					error("Failed to copy " + fileName + ": " + e.getMessage());
@@ -150,12 +140,6 @@ public final class XPrisonEnchants extends XPrisonModuleBase {
 
 		GiveFirstJoinPickaxeCommand giveFirstJoinPickaxeCommand = new GiveFirstJoinPickaxeCommand(this);
 		giveFirstJoinPickaxeCommand.register();
-
-		GivePickaxeCommand givePickaxeCommand = new GivePickaxeCommand(this);
-		givePickaxeCommand.register();
-
-		ValueCommand valueCommand = new ValueCommand(this);
-		valueCommand.register();
 	}
 
 
@@ -172,11 +156,6 @@ public final class XPrisonEnchants extends XPrisonModuleBase {
 	@Override
 	public String getName() {
 		return MODULE_NAME;
-	}
-
-	@Override
-	public boolean isHistoryEnabled() {
-		return false;
 	}
 
 	public boolean isAutoSellModuleEnabled() {

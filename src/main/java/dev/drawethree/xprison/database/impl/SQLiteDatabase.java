@@ -2,7 +2,7 @@ package dev.drawethree.xprison.database.impl;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.database.PooledSQLDatabase;
 import dev.drawethree.xprison.database.model.ConnectionProperties;
 import dev.drawethree.xprison.database.model.SQLDatabaseType;
@@ -19,7 +19,7 @@ public final class SQLiteDatabase extends PooledSQLDatabase {
     private final String filePath;
     private final ConnectionProperties connectionProperties;
 
-    public SQLiteDatabase(XPrison plugin, ConnectionProperties connectionProperties) {
+    public SQLiteDatabase(XPrisonLite plugin, ConnectionProperties connectionProperties) {
         super(plugin);
         this.connectionProperties = connectionProperties;
         this.filePath = this.plugin.getDataFolder().getPath() + File.separator + FILE_NAME;

@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.NightVisionEnchant",
-  "id": 7,
+  "id": 10,
   "rawName": "nightvision",
   "name": "&cNight Vision",
   "enabled": true,

@@ -1,10 +1,8 @@
 package dev.drawethree.xprison.tokens;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.XPrisonModuleBase;
-import dev.drawethree.xprison.api.tokens.XPrisonTokensAPI;
 import dev.drawethree.xprison.interfaces.PlayerDataHolder;
-import dev.drawethree.xprison.tokens.api.XPrisonTokensAPIImpl;
 import dev.drawethree.xprison.tokens.config.TokensConfig;
 import dev.drawethree.xprison.tokens.listener.TokensListener;
 import dev.drawethree.xprison.tokens.managers.CommandManager;
@@ -30,9 +28,6 @@ public final class XPrisonTokens extends XPrisonModuleBase implements PlayerData
 	private TokensConfig tokensConfig;
 
 	@Getter
-	private XPrisonTokensAPI api;
-
-	@Getter
 	private TokensManager tokensManager;
 
 	@Getter
@@ -46,7 +41,7 @@ public final class XPrisonTokens extends XPrisonModuleBase implements PlayerData
 
 	private RepeatingTask savePlayerDataTask;
 
-	public XPrisonTokens(XPrison prisonCore) {
+	public XPrisonTokens(XPrisonLite prisonCore) {
 		super(prisonCore);
 		instance = this;
 	}
@@ -89,8 +84,6 @@ public final class XPrisonTokens extends XPrisonModuleBase implements PlayerData
 
 		this.commandManager.enable();
 
-		this.api = new XPrisonTokensAPIImpl(this.tokensManager);
-
 		this.enabled = true;
 	}
 
@@ -112,11 +105,6 @@ public final class XPrisonTokens extends XPrisonModuleBase implements PlayerData
 	@Override
 	public String getName() {
 		return MODULE_NAME;
-	}
-
-	@Override
-	public boolean isHistoryEnabled() {
-		return true;
 	}
 
 	@Override

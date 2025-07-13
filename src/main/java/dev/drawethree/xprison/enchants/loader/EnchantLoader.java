@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.enchants.model.XPrisonEnchantmentBaseCore;
 import dev.drawethree.xprison.enchants.repo.EnchantsRepository;
 
@@ -17,7 +17,7 @@ import static dev.drawethree.xprison.utils.log.XPrisonLogger.*;
 
 public class EnchantLoader {
 
-    private static final File ENCHANTS_DIR = new File(XPrison.getInstance().getDataFolder().getPath() + "/enchants/");
+    private static final File ENCHANTS_DIR = new File(XPrisonLite.getInstance().getDataFolder().getPath() + "/enchants/");
     private final EnchantsRepository repository;
 
     public EnchantLoader(EnchantsRepository repository) {

@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.EfficiencyEnchant",
-  "id": 1,
+  "id": 5,
   "rawName": "efficiency",
   "name": "&aEfficiency",
   "enabled": true,

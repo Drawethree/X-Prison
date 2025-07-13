@@ -1,10 +1,9 @@
 package dev.drawethree.xprison.enchants.gui;
 
 import com.cryptomorin.xseries.XMaterial;
-import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
+import dev.drawethree.xprison.XPrisonLite;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.utils.EnchantUtils;
 import dev.drawethree.xprison.enchants.utils.GuiUtils;
 import dev.drawethree.xprison.utils.item.ItemStackBuilder;
@@ -59,8 +58,8 @@ public final class EnchantGUI extends Gui {
 		Events.subscribe(InventoryCloseEvent.class, EventPriority.LOWEST)
 				.filter(e -> e.getInventory().equals(this.getHandle()))
 				.handler(e -> {
-					XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
-					XPrison.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
+					XPrisonLite.getInstance().getEnchants().getEnchantsManager().handlePickaxeUnequip(this.getPlayer(), this.pickAxe);
+					XPrisonLite.getInstance().getEnchants().getEnchantsManager().handlePickaxeEquip(this.getPlayer(), this.pickAxe);
 				}).bindWith(this);
 
 		// Checking for duping
@@ -120,7 +119,7 @@ public final class EnchantGUI extends Gui {
 
 		return builder.buildItem().bind(handler -> {
 			if (!EnchantUtils.canBeBought(enchantment, gui.getPickAxe())) {
-				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required").replace("%pickaxe_level%", String.format("%,d", enchantment instanceof RequiresPickaxeLevel ? ((RequiresPickaxeLevel) enchantment).getRequiredPickaxeLevel() : 0)));
+				PlayerUtils.sendMessage(this.getPlayer(), this.plugin.getEnchantsConfig().getMessage("pickaxe_level_required"));
 				return;
 			}
 			if (handler.getClick() == ClickType.MIDDLE || handler.getClick() == ClickType.SHIFT_RIGHT) {

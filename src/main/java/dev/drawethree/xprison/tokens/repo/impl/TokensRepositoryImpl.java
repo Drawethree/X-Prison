@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class TokensRepositoryImpl implements TokensRepository {
 
-    private static final String TABLE_NAME_TOKENS = "UltraPrison_Tokens";
+    private static final String TABLE_NAME_TOKENS = "XPrison_Tokens";
 
     private static final String TOKENS_UUID_COLNAME = "UUID";
     private static final String TOKENS_TOKENS_COLNAME = "Tokens";

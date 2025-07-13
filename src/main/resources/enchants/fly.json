@@ -1,6 +1,6 @@
 {
   "class": "dev.drawethree.xprison.enchants.model.impl.FlyEnchant",
-  "id": 8,
+  "id": 6,
   "rawName": "fly",
   "name": "&cFly",
   "enabled": true,

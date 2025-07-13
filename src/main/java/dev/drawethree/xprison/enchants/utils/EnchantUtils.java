@@ -1,20 +1,14 @@
 package dev.drawethree.xprison.enchants.utils;
 
 import com.saicone.rtag.util.ServerInstance;
-import dev.drawethree.xprison.XPrison;
-import dev.drawethree.xprison.api.enchants.model.RefundableEnchant;
-import dev.drawethree.xprison.api.enchants.model.RequiresPickaxeLevel;
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.XPrisonEnchants;
+import dev.drawethree.xprison.enchants.model.RefundableEnchant;
+import dev.drawethree.xprison.enchants.model.XPrisonEnchantment;
 import dev.drawethree.xprison.enchants.model.impl.FortuneEnchant;
-import dev.drawethree.xprison.pickaxelevels.XPrisonPickaxeLevels;
-import dev.drawethree.xprison.pickaxelevels.model.PickaxeLevelImpl;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Optional;
 
 public final class EnchantUtils {
 
@@ -27,14 +21,7 @@ public final class EnchantUtils {
     }
 
     public static boolean canBeBought(XPrisonEnchantment enchantment, ItemStack pickAxe) {
-        if (!XPrison.getInstance().isModuleEnabled(XPrisonPickaxeLevels.MODULE_NAME)) {
-            return true;
-        }
-        if (!(enchantment instanceof RequiresPickaxeLevel)) {
-            return true;
-        }
-        Optional<PickaxeLevelImpl> pickaxeLevelOptional = XPrison.getInstance().getPickaxeLevels().getPickaxeLevelsManager().getPickaxeLevel(pickAxe);
-        return pickaxeLevelOptional.map(level -> level.getLevel() >= ((RequiresPickaxeLevel) enchantment).getRequiredPickaxeLevel()).orElse(true);
+        return true;
     }
 
     public static long getRefundForLevel(XPrisonEnchantment enchantment, int level) {

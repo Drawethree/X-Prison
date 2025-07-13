@@ -1,25 +1,17 @@
 package dev.drawethree.xprison.core;
 
-import dev.drawethree.xprison.XPrison;
+import dev.drawethree.xprison.XPrisonLite;
 import me.lucko.helper.Events;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class XPrisonCoreListener {
 
-    private final XPrison plugin;
+    private final XPrisonLite plugin;
 
-    public XPrisonCoreListener(XPrison plugin) {
+    public XPrisonCoreListener(XPrisonLite plugin) {
         this.plugin = plugin;
     }
 
-    private void subscribeToPlayerJoinEvent() {
-        Events.subscribe(PlayerJoinEvent.class, EventPriority.LOW)
-                .handler(e -> {
-                    this.plugin.getNicknameService().updatePlayerNickname(e.getPlayer());
-                }).bindWith(plugin);
-    }
     private void subscribeToPlayerQuitEvent() {
         Events.subscribe(PlayerQuitEvent.class)
                 .handler(e -> {
@@ -29,7 +21,6 @@ public class XPrisonCoreListener {
 
 
     public void subscribeToEvents() {
-        subscribeToPlayerJoinEvent();
         subscribeToPlayerQuitEvent();
     }
 }

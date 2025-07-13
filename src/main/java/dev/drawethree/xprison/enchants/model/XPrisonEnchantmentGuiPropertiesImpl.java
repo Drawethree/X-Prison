@@ -1,6 +1,5 @@
 package dev.drawethree.xprison.enchants.model;
 
-import dev.drawethree.xprison.api.enchants.model.XPrisonEnchantmentGuiProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

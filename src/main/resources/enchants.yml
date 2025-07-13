@@ -1,6 +1,4 @@
 messages:
-  pickaxe_level_required: '&e&lENCHANT &8» &fYour pickaxe must be &eLevel %pickaxe_level%
-    &fto buy this enchantment!'
   no_pickaxe_found: '&e&lENCHANT &8» &fYou do not have any diamond pickaxe!'
   enchant_max_level: '&e&lENCHANT &8» &fYou have already maxed out this enchantment'
   enchant_max_level_exceed: '&e&lENCHANT &8» &fThis transaction would exceed the max
@@ -21,26 +19,9 @@ messages:
   blessing_your: '&e&lBLESSING &8» &fYour enchant found you &e%amount% &fTokens'
   layer_disabled: '&e&lJACKHAMMER &8» &fEnchantment &e&lDISABLED'
   layer_enabled: '&e&lJACKHAMMER &8» &fEnchantment &e&lENABLED'
-  lucky_booster_on: '&e&lLUCKYBOOSTER &8» &fLucky Mode &fhas &eactivated&f, &FX2 Money
-    & Tokens &ffor &e5:00 Minutes'
-  lucky_booster_off: '&e&lENCHANT &8» &fLucky Mode &fhas &eDeactivated&f.'
-  block_booster_on: '&e&lENCHANT &8» &fDouble Blocks &fhas &eactivated&f, &FX2 Blocks
-    &ffor &e5:00 Minutes'
-  block_booster_off: '&e&lENCHANT &8» &fDouble Blocks &fhas &eDeactivated'
-  lucky_mode_timeleft: '&e&lENCHANT &8» &fLucky Mode Activated&f For: &a&l%timeleft%&f.'
-  lucky_mode_disabled: '&e&lENCHANT &8» &fLucky Mode &CDisabled&f.'
-  explosive_disabled: '&e&lEXPLOSIVE &8» &fEnchantment &e&lDISABLED'
-  explosive_enabled: '&e&lEXPLOSIVE &8» &fEnchantment &e&lENABLED'
-  value_no_permission: '&e&lVALUE &8» &fNo Permission, Unlock at &estore.yourserver.com'
-  value_no_pickaxe: '&e&lVALUE &8» &fYou must hold an pickaxe in your hand.'
-  value_value: '&e&lVALUE &8» &e%player%''s &fPickaxe Value: &e%amount%'
-  value_cooldown: '&e&lVALUE &8» &fPlease wait &e%time% Seconds&f before using this
-    command again.'
   pickaxe_given: '&e&lENCHANT &8» &fYou have given pickaxe to &e%player%'
   pickaxe_received: '&e&lENCHANT &8» &fYou have received pickaxe from &e%sender%'
   pickaxe_inventory_full: '&e&lENCHANT &8» &e%player% &fhas full inventory!'
-  prestige_finder: '&e&lPRESTIGE FINDER &8» &fYou''ve just found a &eX%prestige% Prestige
-    Level &fwhile mining.'
   transaction_in_progress: '&e&lENCHANT &8» &fPlease wait for your other transaction
     to complete.'
 # Should we keep UPC Enchanted pickaxes in players inventory when they die?
@@ -176,14 +157,6 @@ Pickaxe:
     - ' &e&l▎ %Enchant-13%'
     - ' &e&l▎ %Enchant-14%'
     - ' &e&l▎ %Enchant-15%'
-    - ' &e&l▎ %Enchant-16%'
-    - ' &e&l▎ %Enchant-17%'
-    - ' &e&l▎ %Enchant-18%'
-    - ' &e&l▎ %Enchant-19%'
-    - ' &e&l▎ %Enchant-20%'
-    - ' &e&l▎ %Enchant-21%'
-    - ' &e&l▎ %Enchant-22%'
-    - ' &e&l▎ %Enchant-23%'
 # First Join Pickaxe Settings
 first-join-pickaxe:
   # Should we give this pickaxe to players when they first join?

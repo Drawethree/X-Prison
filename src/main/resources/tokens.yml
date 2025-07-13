@@ -22,7 +22,6 @@ messages:
   token_message_disabled: '&e&lTOKENS &8» &fMessages &e&lOFF'
   token_message_enabled: '&e&lTOKENS &8» &fMessages &e&lON'
   tokens_received_mining: '&e&lTOKENS &8» &fYou found &e%amount% Tokens &fwhile mining'
-
 # Starting tokens for players
 starting-tokens: 1000
 tokens:
