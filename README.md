@@ -2,9 +2,9 @@
 # X-Prison
 ![Discord](https://img.shields.io/discord/1387881708581290257?label=Discord&logo=Discord)
 
-X-Prison is a feature-rich, highly configurable prison plugin for Paper/Folia servers. It includes a complete pickaxe progression system with 20+ enchantments, a prestige system for enchants, ranks, prestiges, rebirths, gangs, mines, multipliers, auto-sell, and much more — all configurable through YAML and JSON files without touching any code.
+X-Prison is a feature-rich, highly configurable prison plugin for Paper/Spigot/Folia servers. It includes a complete pickaxe progression system with 20+ enchantments, a prestige system for enchants, ranks, prestiges, rebirths, gangs, mines, multipliers, auto-sell, and much more — all configurable through YAML and JSON files without touching any code.
 
-> **What's New** — [2026.2.2.0-BETA: Enchant Prestige System, config auto-update, new Addon API events](https://github.com/Drawethree/X-Prison/wiki/Changelog)
+> **What's New** — [Enchant Upgrade Menu](https://github.com/Drawethree/X-Prison/wiki/Enchants): clicking an enchant now opens its own screen to buy **+1 / +5 / +25 / +50 / MAX** levels and to **toggle the enchant on or off** just for you. [See the Changelog](https://github.com/Drawethree/X-Prison/wiki/Changelog)
 
 ---
 
@@ -31,6 +31,28 @@ X-Prison is a feature-rich, highly configurable prison plugin for Paper/Folia se
 * [Refund Policy](https://github.com/Drawethree/X-Prison/blob/main/refund-policy.pdf)
 * [Terms of Service](https://github.com/Drawethree/X-Prison/blob/main/terms-of-service.pdf)
 
+### Modules
+* [Currencies](https://github.com/Drawethree/X-Prison/wiki/Currencies)
+* [Ranks](https://github.com/Drawethree/X-Prison/wiki/Ranks)
+* [Prestiges](https://github.com/Drawethree/X-Prison/wiki/Prestiges)
+* [Rebirths](https://github.com/Drawethree/X-Prison/wiki/Rebirths)
+* [Mines](https://github.com/Drawethree/X-Prison/wiki/Mines)
+* [AutoSell](https://github.com/Drawethree/X-Prison/wiki/AutoSell)
+* [AutoMiner](https://github.com/Drawethree/X-Prison/wiki/AutoMiner)
+* [Enchants](https://github.com/Drawethree/X-Prison/wiki/Enchants)
+* [Pickaxe Levels](https://github.com/Drawethree/X-Prison/wiki/Pickaxe-Levels)
+* [Pickaxe Skins](https://github.com/Drawethree/X-Prison/wiki/Pickaxe-Skins)
+* [Gangs](https://github.com/Drawethree/X-Prison/wiki/Gangs)
+* [Multipliers](https://github.com/Drawethree/X-Prison/wiki/Multipliers)
+* [Blocks](https://github.com/Drawethree/X-Prison/wiki/Blocks)
+* [Bombs](https://github.com/Drawethree/X-Prison/wiki/Bombs)
+* [History](https://github.com/Drawethree/X-Prison/wiki/History)
+* [Mining Stats](https://github.com/Drawethree/X-Prison/wiki/Mining-Stats)
+* [Nicknames](https://github.com/Drawethree/X-Prison/wiki/Nicknames)
+* [Battle Pass](https://github.com/Drawethree/X-Prison/wiki/Battle-Pass)
+* [Quests](https://github.com/Drawethree/X-Prison/wiki/Quests)
+* [Daily Rewards](https://github.com/Drawethree/X-Prison/wiki/Daily-Rewards)
+
 ### Default Files
 * [_config.yml_](https://github.com/Drawethree/X-Prison/wiki/config.yml)
 * [_autominer.yml_](https://github.com/Drawethree/X-Prison/wiki/autominer.yml)
@@ -45,8 +67,12 @@ X-Prison is a feature-rich, highly configurable prison plugin for Paper/Folia se
 * [_pickaxe-skins.yml_](https://github.com/Drawethree/X-Prison/wiki/pickaxe-skins.yml)
 * [_gangs.yml_](https://github.com/Drawethree/X-Prison/wiki/gangs.yml)
 * [_mines.yml_](https://github.com/Drawethree/X-Prison/wiki/mines.yml)
+* [_history.yml_](https://github.com/Drawethree/X-Prison/wiki/history.yml)
 * [_mining-stats.yml_](https://github.com/Drawethree/X-Prison/wiki/mining-stats.yml)
 * [_rebirths.yml_](https://github.com/Drawethree/X-Prison/wiki/rebirths.yml)
+* [_battlepass.yml_](https://github.com/Drawethree/X-Prison/wiki/battlepass.yml)
+* [_quests.yml_](https://github.com/Drawethree/X-Prison/wiki/quests.yml)
+* [_dailyrewards.yml_](https://github.com/Drawethree/X-Prison/wiki/dailyrewards.yml)
 
 ### Default Enchant Configs
 
@@ -91,8 +117,19 @@ X-Prison is a feature-rich, highly configurable prison plugin for Paper/Folia se
 * [_custom-enchant.json_](https://github.com/Drawethree/X-Prison/wiki/custom-enchant.json)
 * [_custom-currency-enchant.json_](https://github.com/Drawethree/X-Prison/wiki/custom-currency-enchant.json)
 
+### Addons
+* [Dashboard](https://github.com/Drawethree/X-Prison/wiki/Dashboard)
+* [Discord Sync](https://github.com/Drawethree/X-Prison/wiki/Discord-Sync)
+* [Coinflip](https://github.com/Drawethree/X-Prison/wiki/Coinflip)
+* [Shop](https://github.com/Drawethree/X-Prison/wiki/Shop)
+* [Events](https://github.com/Drawethree/X-Prison/wiki/Events)
+* [Momentum](https://github.com/Drawethree/X-Prison/wiki/Momentum)
+* [Vault Economy Hook](https://github.com/Drawethree/X-Prison/wiki/Vault-Economy-Hook)
+* [ExcellentEconomy Hook](https://github.com/Drawethree/X-Prison/wiki/ExcellentEconomy-Hook)
+* [PlayerPoints Hook](https://github.com/Drawethree/X-Prison/wiki/PlayerPoints-Hook)
+
 ### Support
-* [FAQ](https://github.com/Drawethree/X-Prison/wiki/Frequently-Asked-Questions)
+* [FAQ](https://github.com/Drawethree/X-Prison/wiki/Frequently-Asked-Questions---Troubleshooting)
 ### For Developers
 * [Developer API](https://github.com/Drawethree/X-Prison/wiki/Developer-API)
 
