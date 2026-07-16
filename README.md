@@ -4,6 +4,15 @@
 
 X-Prison is a feature-rich, highly configurable prison plugin for Paper/Spigot/Folia servers. It includes a complete pickaxe progression system with 20+ enchantments, a prestige system for enchants, ranks, prestiges, rebirths, gangs, mines, multipliers, auto-sell, and much more — all configurable through YAML and JSON files without touching any code.
 
+## 💎 Get X-Prison
+
+**X-Prison is a premium paid resource.** You can purchase it here:
+
+### 👉 [**Buy X-Prison on BuiltByBit**](https://builtbybit.com/resources/x-prison-core.18271/) 👈
+
+We also offer **a lot more for prison servers** — addons, setups and premium extras — at our [**Prison Store**](https://builtbybit.com/store/prison-store.392/), with **amazing bundle discounts**!
+
+
 > **What's New** — [Enchant Upgrade Menu](https://github.com/Drawethree/X-Prison/wiki/Enchants): clicking an enchant now opens its own screen to buy **+1 / +5 / +25 / +50 / MAX** levels and to **toggle the enchant on or off** just for you. [See the Changelog](https://github.com/Drawethree/X-Prison/wiki/Changelog)
 
 ---
