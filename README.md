@@ -1,4 +1,4 @@
-![X-Prison Header](https://imgur.com/Hrv0YkI.png)
+![X-Prison Header](https://i.imgur.com/qVzJPO6.jpeg)
 # X-Prison
 ![Discord](https://img.shields.io/discord/1387881708581290257?label=Discord&logo=Discord)
 
